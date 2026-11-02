@@ -1,10 +1,17 @@
-# MITRA Landing Page: Plan
+# INOK Landing Page: Plan
 Updated: 2026-11-03 · Source of truth for facts: the vault (`02-Projects/Active/MITRA Programme`). This file is a condensed copy.
 
 ## Goal
-A promotional landing page for GET Academy (Global Experiential Training Academy) that presents the 2024
-MITRA-funded *Program Pensijilan Digital Marketing Strategist* as a high-value success, with every figure matching the records.
+A promotional landing page branded **INOK, "Idhu Namme Oru Kedai"** (Tamil: "this is our shop").
+It presents the 2024 MITRA-funded *Program Pensijilan Digital Marketing Strategist*, delivered by GET Academy
+(Global Experiential Training Academy), as a high-value success, with every figure matching the records.
 Structure modelled on korporatlygroup.com.
+
+## Brand
+- Name: INOK. Expansion shown alongside it: "Idhu Namme Oru Kedai". Meaning: "This is our shop".
+- Wordmark: a striped shop awning (kedai) over "INOK", as an inline SVG (`src/components/Logo.astro`). Favicon matches.
+- Palette: marigold `#f4a51c` (brand), maroon `#8c1d40` (accent); dark-mode variants in `tokens.css`.
+- GET Academy is the organiser (`site.json` → `organiser`); its own logo appears only in Partners.
 
 ## Verified facts (safe to publish)
 | Fact | Value | Source |

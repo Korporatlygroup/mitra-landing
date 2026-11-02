@@ -1,6 +1,6 @@
-# MITRA Landing Page
+# INOK: Idhu Namme Oru Kedai
 
-Promotional landing page for GET Academy's 2024 Digital Marketing Strategist Certification Programme.
+Landing page ("this is our shop") for the 2024 Digital Marketing Strategist Certification Programme, delivered by GET Academy.
 Astro, static output. Rules and roles: [`CLAUDE.md`](CLAUDE.md). Plan and verified facts: [`docs/plan.md`](docs/plan.md).
 
 ```bash

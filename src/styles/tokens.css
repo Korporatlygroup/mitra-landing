@@ -1,8 +1,8 @@
 /* Colour + spacing tokens. Light is default; dark follows the OS unless data-theme forces one. */
 :root {
-  --brand: #f5b800;          /* GET Academy sun yellow */
-  --brand-ink: #1c1600;      /* text on brand */
-  --accent: #0f6b5c;         /* deep teal, echoes the leaf-print venue */
+  --brand: #f4a51c;          /* INOK marigold */
+  --brand-ink: #2a1500;      /* text on brand */
+  --accent: #8c1d40;         /* INOK maroon (awning stripes, eyebrows, figures) */
 
   --bg: #fbfaf6;
   --surface: #ffffff;
@@ -26,9 +26,9 @@
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --brand: #ffc928;
-    --brand-ink: #1c1600;
-    --accent: #4cc2ab;
+    --brand: #ffb838;
+    --brand-ink: #2a1500;
+    --accent: #f28aa6;
     --bg: #12110e;
     --surface: #1b1a16;
     --surface-2: #26241e;
@@ -42,9 +42,9 @@
 }
 
 :root[data-theme="dark"] {
-  --brand: #ffc928;
-  --brand-ink: #1c1600;
-  --accent: #4cc2ab;
+  --brand: #ffb838;
+  --brand-ink: #2a1500;
+  --accent: #f28aa6;
   --bg: #12110e;
   --surface: #1b1a16;
   --surface-2: #26241e;

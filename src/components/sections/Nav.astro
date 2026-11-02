@@ -1,19 +1,13 @@
 ---
 import site from '../../../content/site.json';
-import { getMedia, url } from '../../lib/media';
-
-const logo = getMedia(site.brand.logo);
+import Logo from '../Logo.astro';
 ---
 
 <header class="nav">
   <div class="container nav__inner">
-    <a class="nav__brand" href="#top" aria-label={`${site.brand.name}, back to top`}>
-      {logo.available && logo.item?.file ? (
-        <img src={url(logo.item.file)} alt="" width="36" height="36" />
-      ) : (
-        <span class="nav__mark" aria-hidden="true"></span>
-      )}
-      <span>{site.brand.name}</span>
+    <a class="nav__brand" href="#top" aria-label={`${site.brand.name}, ${site.brand.expansion}, back to top`}>
+      <Logo height={34} />
+      <span class="nav__expansion">{site.brand.expansion}</span>
     </a>
     <details class="nav__menu">
       <summary aria-label="Menu"><span></span></summary>
@@ -29,8 +23,9 @@ const logo = getMedia(site.brand.logo);
 <style>
   .nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
   .nav__inner { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
-  .nav__brand { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 800; text-decoration: none; }
-  .nav__mark { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 30%, transparent); }
+  .nav__brand { display: inline-flex; align-items: center; gap: 0.75rem; text-decoration: none; }
+  .nav__expansion { display: none; font-size: 0.8rem; font-weight: 600; line-height: 1.2; color: var(--text-muted); max-width: 9ch; }
+  @media (min-width: 420px) { .nav__expansion { display: block; } }
   .nav__menu summary { list-style: none; cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; }
   .nav__menu summary::-webkit-details-marker { display: none; }
   .nav__menu summary span, .nav__menu summary span::before, .nav__menu summary span::after { display: block; width: 22px; height: 2px; background: currentColor; position: relative; content: ''; }

@@ -1,11 +1,18 @@
 {
   "_readme": "All copy and figures for the page. Every number must be in docs/plan.md → Verified facts. Items with \"verify\": true stay hidden until the user confirms; items with \"pending\" are rendered as placeholders. Media fields reference ids in media.json.",
   "meta": {
-    "title": "Digital Marketing Strategist Programme | GET Academy",
-    "description": "A 26-day digital marketing certification programme by GET Academy: six days of hands-on training in Ipoh and 20 days of mentored implementation for Malaysian Indian entrepreneurs.",
+    "title": "INOK · Idhu Namme Oru Kedai | Digital Marketing Strategist Programme",
+    "description": "INOK (Idhu Namme Oru Kedai, 'this is our shop'): a 26-day digital marketing certification programme delivered by GET Academy, with six days of hands-on training in Ipoh and 20 days of mentored implementation for Malaysian Indian entrepreneurs.",
     "lang": "en"
   },
   "brand": {
+    "name": "INOK",
+    "expansion": "Idhu Namme Oru Kedai",
+    "meaning": "This is our shop",
+    "language": "Tamil",
+    "_note": "INOK is the page/initiative brand. GET Academy stays the named programme deliverer everywhere facts are stated. Logo is the built-in SVG wordmark (src/components/Logo.astro)."
+  },
+  "organiser": {
     "name": "GET Academy",
     "fullName": "Global Experiential Training Academy",
     "logo": "logo-get",
@@ -21,8 +28,8 @@
     { "label": "Contact", "href": "#contact" }
   ],
   "hero": {
-    "eyebrow": "Digital Marketing Strategist Certification · 2024",
-    "headline": "From local business to digital strategist",
+    "eyebrow": "Idhu Namme Oru Kedai · This is our shop",
+    "headline": "From local kedai to digital strategist",
     "subline": "Six days of hands-on training in Ipoh, then 20 days of mentored implementation. Malaysian Indian entrepreneurs built the skills to market and sell online.",
     "image": "hero-01",
     "video": "hero-clip",
@@ -32,10 +39,11 @@
     ]
   },
   "about": {
-    "heading": "Why this programme",
+    "heading": "Why INOK",
     "body": [
-      "Small businesses in the Malaysian Indian community often have strong products but little time or support to take them online. The Program Pensijilan Digital Marketing Strategist was designed to change that: practical digital-marketing skills, taught in person, then applied to each participant's own business with a mentor alongside.",
-      "Delivered by GET Academy in 2024 under a programme funded by MITRA (Malaysian Indian Community Transformation Unit), with certification through SEGi University."
+      "INOK stands for Idhu Namme Oru Kedai, Tamil for \"this is our shop\". Every participant came with a business of their own, and every lesson was about growing it.",
+      "Small businesses in the Malaysian Indian community often have strong products but little time or support to take them online. INOK was designed to change that: practical digital-marketing skills, taught in person, then applied to each participant's own business with a mentor alongside.",
+      "The 2024 Program Pensijilan Digital Marketing Strategist was delivered by GET Academy under a programme funded by MITRA (Malaysian Indian Community Transformation Unit), with certification through SEGi University."
     ],
     "image": "about-bunting",
     "_note": "Second paragraph names MITRA and SEGi factually (no logos, no endorsement). Confirm wording with the user before launch."
@@ -148,6 +156,7 @@
   "footer": {
     "address": "Level 33, Ilham Tower, Kuala Lumpur",
     "website": "https://geta.com.my",
+    "tagline": "INOK · Idhu Namme Oru Kedai. A programme delivered by GET Academy.",
     "socials": [],
     "legal": "© 2026 GET Academy (Global Experiential Training Academy)."
   }

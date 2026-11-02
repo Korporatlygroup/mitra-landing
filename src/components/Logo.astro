@@ -1,0 +1,41 @@
+---
+// INOK wordmark: a striped shop awning over the letters. Colours follow the theme tokens.
+interface Props {
+  height?: number;
+  class?: string;
+}
+
+const { height = 36, class: cls = '' } = Astro.props;
+const stripes = [0, 1, 2, 3, 4];
+---
+
+<svg
+  class:list={['logo', cls]}
+  viewBox="0 0 100 46"
+  height={height}
+  width={Math.round((height * 100) / 46)}
+  role="img"
+  aria-label="INOK"
+>
+  {stripes.map((i) => (
+    <path
+      d={`M${i * 20} 2h20v8a10 4.5 0 0 1-20 0z`}
+      fill={i % 2 ? 'var(--accent)' : 'var(--brand)'}
+    />
+  ))}
+  <rect x="0" y="0" width="100" height="3" rx="1.5" fill="var(--accent)" />
+  <text
+    x="50"
+    y="44"
+    text-anchor="middle"
+    fill="currentColor"
+    font-family="var(--font-display)"
+    font-weight="800"
+    font-size="27"
+    letter-spacing="2"
+  >INOK</text>
+</svg>
+
+<style>
+  .logo { display: block; overflow: visible; }
+</style>

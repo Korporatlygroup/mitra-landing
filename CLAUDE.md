@@ -1,7 +1,10 @@
-# CLAUDE.md: MITRA Landing Page
+# CLAUDE.md: INOK Landing Page
 
-Public promotional landing page for GET Academy's 2024 MITRA-funded
-"Program Pensijilan Digital Marketing Strategist" (Digital Marketing Strategist Certification Programme).
+**INOK = Idhu Namme Oru Kedai** (Tamil, "this is our shop"). The whole page is branded INOK.
+It presents GET Academy's 2024 MITRA-funded "Program Pensijilan Digital Marketing Strategist"
+(Digital Marketing Strategist Certification Programme). GET Academy stays named as the deliverer wherever facts are stated.
+Brand: `site.json` → `brand`; wordmark `src/components/Logo.astro` (striped awning over "INOK"); palette marigold `--brand` + maroon `--accent`.
+(Repo is still named `mitra-landing`.)
 Full plan: `docs/plan.md`. Long-term memory lives in the Obsidian vault (`C:\Korporatlygroup\Claude-Vault`), not here.
 
 ## Stack
