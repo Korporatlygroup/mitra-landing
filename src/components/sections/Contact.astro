@@ -1,0 +1,35 @@
+---
+import site from '../../../content/site.json';
+
+const { contact } = site;
+---
+
+<section class="section contact" id="contact">
+  <div class="container contact__inner">
+    <div>
+      <h2>{contact.heading}</h2>
+      <p class="lead">{contact.body}</p>
+    </div>
+    {contact.formAction ? (
+      <form class="form" method="post" action={contact.formAction}>
+        <label>Name<input name="name" autocomplete="name" required /></label>
+        <label>Organisation<input name="organisation" autocomplete="organization" /></label>
+        <label>Email<input name="email" type="email" autocomplete="email" required /></label>
+        <label>Message<textarea name="message" rows="4"></textarea></label>
+        <button class="btn btn--primary" type="submit">Send enquiry</button>
+      </form>
+    ) : (
+      <div><a class="btn btn--primary" href={contact.fallback.href}>{contact.fallback.label}</a></div>
+    )}
+  </div>
+</section>
+
+<style>
+  .contact { background: var(--text); color: var(--bg); }
+  .contact .lead { color: color-mix(in srgb, var(--bg) 75%, transparent); }
+  .contact__inner { display: grid; gap: 2rem; align-items: center; }
+  .form { display: grid; gap: 0.9rem; }
+  .form label { display: grid; gap: 0.3rem; font-weight: 600; font-size: 0.9rem; }
+  .form input, .form textarea { font: inherit; padding: 0.7rem 0.9rem; border-radius: var(--radius-sm); border: 1px solid transparent; background: var(--bg); color: var(--text); }
+  @media (min-width: 900px) { .contact__inner { grid-template-columns: 1.2fr 1fr; gap: 3rem; } }
+</style>

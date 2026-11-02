@@ -1,0 +1,25 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { trainer } = site;
+---
+
+<section class="section" id="trainer">
+  <div class="container trainer">
+    <Media id={trainer.image} sizes="(min-width: 900px) 360px, 80vw" class="trainer__photo" />
+    <div>
+      <span class="eyebrow">{trainer.heading}</span>
+      <h2>{trainer.name}</h2>
+      <p class="trainer__role">{trainer.role}</p>
+      <p class="lead">{trainer.bio}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .trainer { display: grid; gap: 2rem; align-items: center; }
+  .trainer :global(.trainer__photo) { max-width: 360px; aspect-ratio: 4 / 5; height: auto; }
+  .trainer__role { font-weight: 700; color: var(--accent); }
+  @media (min-width: 900px) { .trainer { grid-template-columns: 360px 1fr; gap: 3.5rem; } }
+</style>

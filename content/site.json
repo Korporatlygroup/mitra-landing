@@ -1,0 +1,154 @@
+{
+  "_readme": "All copy and figures for the page. Every number must be in docs/plan.md → Verified facts. Items with \"verify\": true stay hidden until the user confirms; items with \"pending\" are rendered as placeholders. Media fields reference ids in media.json.",
+  "meta": {
+    "title": "Digital Marketing Strategist Programme | GET Academy",
+    "description": "A 26-day digital marketing certification programme by GET Academy: six days of hands-on training in Ipoh and 20 days of mentored implementation for Malaysian Indian entrepreneurs.",
+    "lang": "en"
+  },
+  "brand": {
+    "name": "GET Academy",
+    "fullName": "Global Experiential Training Academy",
+    "logo": "logo-get",
+    "url": "https://geta.com.my"
+  },
+  "nav": [
+    { "label": "Programme", "href": "#about" },
+    { "label": "Impact", "href": "#impact" },
+    { "label": "Journey", "href": "#journey" },
+    { "label": "Gallery", "href": "#gallery" },
+    { "label": "Stories", "href": "#stories" },
+    { "label": "Partners", "href": "#partners" },
+    { "label": "Contact", "href": "#contact" }
+  ],
+  "hero": {
+    "eyebrow": "Digital Marketing Strategist Certification · 2024",
+    "headline": "From local business to digital strategist",
+    "subline": "Six days of hands-on training in Ipoh, then 20 days of mentored implementation. Malaysian Indian entrepreneurs built the skills to market and sell online.",
+    "image": "hero-01",
+    "video": "hero-clip",
+    "ctas": [
+      { "label": "Partner with us", "href": "#contact", "style": "primary" },
+      { "label": "Watch highlights", "href": "#gallery", "style": "secondary", "videoUrl": null }
+    ]
+  },
+  "about": {
+    "heading": "Why this programme",
+    "body": [
+      "Small businesses in the Malaysian Indian community often have strong products but little time or support to take them online. The Program Pensijilan Digital Marketing Strategist was designed to change that: practical digital-marketing skills, taught in person, then applied to each participant's own business with a mentor alongside.",
+      "Delivered by GET Academy in 2024 under a programme funded by MITRA (Malaysian Indian Community Transformation Unit), with certification through SEGi University."
+    ],
+    "image": "about-bunting",
+    "_note": "Second paragraph names MITRA and SEGi factually (no logos, no endorsement). Confirm wording with the user before launch."
+  },
+  "impact": {
+    "heading": "The programme in numbers",
+    "stats": [
+      { "value": "26", "label": "days of structured learning", "source": "Programme design" },
+      { "value": "6", "label": "days of hands-on, face-to-face training", "source": "Programme design" },
+      { "value": "20", "label": "days of mentored online implementation", "source": "Programme design" },
+      { "value": "10", "label": "participants present for all six face-to-face days", "source": "Final report; attendance sheets" },
+      { "value": "6 months", "label": "of on-the-job training for interns", "source": "GET Academy account", "verify": true }
+    ]
+  },
+  "curriculum": {
+    "heading": "What participants learned",
+    "intro": "Every module ended with participants applying it to their own business.",
+    "modules": [
+      { "title": "Digital marketing strategy", "icon": "compass" },
+      { "title": "Knowing your target customer", "icon": "target" },
+      { "title": "Business and product positioning", "icon": "layers" },
+      { "title": "Video editing with CapCut", "icon": "video" },
+      { "title": "Social media content", "icon": "image" },
+      { "title": "Facebook and Instagram marketing", "icon": "share" },
+      { "title": "Google Ads", "icon": "search" },
+      { "title": "ChatGPT for business", "icon": "sparkles" },
+      { "title": "Selling on Shopee and Lazada", "icon": "cart" }
+    ],
+    "images": ["hands-worksheet", "hands-laptop", "hands-phone"]
+  },
+  "journey": {
+    "heading": "The 26-day journey",
+    "steps": [
+      { "date": "8 Jul 2024", "title": "Day 1: Strategy and foundations", "text": "Mentored discussions on goals, customers and positioning.", "image": "hero-01" },
+      { "date": "9 Jul 2024", "title": "Day 2: Building your presence", "text": "Hands-on setup of business pages and digital tools.", "image": "day2-wide" },
+      { "date": "10–13 Jul 2024", "title": "Days 3–6: Content, ads and e-commerce", "text": "Video, social content, advertising and marketplace selling, practised on each participant's own business.", "image": null },
+      { "date": "14 Jul – 2 Aug 2024", "title": "20 days of mentored implementation", "text": "Participants put their plans to work online with continued guidance.", "image": null },
+      { "date": "2024", "title": "Certification", "text": "Certification through SEGi University.", "image": "cert-01", "verify": true }
+    ],
+    "_note": "Day-by-day topics for 10–13 Jul are generic: replace with the actual schedule from the final report if available."
+  },
+  "trainer": {
+    "heading": "Led by practitioners",
+    "name": "Ganesh Manokara",
+    "role": "Lead trainer, GET Academy",
+    "bio": "Over 20 years of training and placement work, from HRDF Train & Place (2009) to Penjana (2020).",
+    "image": "trainer-01"
+  },
+  "stories": {
+    "heading": "Participant stories",
+    "pending": true,
+    "items": [
+      { "media": "story-01", "quote": null, "business": null },
+      { "media": "story-02", "quote": null, "business": null }
+    ],
+    "_note": "No testimonials or consent yet. Hide the section or show 'Stories coming soon' until at least two consented stories exist. Never invent quotes."
+  },
+  "beyond": {
+    "heading": "Beyond the classroom",
+    "body": "GET Academy went beyond the funded programme: a team of interns received further training followed by about six months of on-the-job experience with monthly allowances.",
+    "image": "beyond-01",
+    "verify": true
+  },
+  "gallery": {
+    "heading": "Gallery",
+    "filters": [
+      { "id": "all", "label": "All" },
+      { "id": "day1", "label": "Day 1 · 8 Jul" },
+      { "id": "day2", "label": "Day 2 · 9 Jul" }
+    ],
+    "items": [
+      { "media": "hero-01", "tags": ["day1"] },
+      { "media": "gal-01", "tags": ["day1"] },
+      { "media": "gal-02", "tags": ["day1"] },
+      { "media": "hands-worksheet", "tags": ["day1"] },
+      { "media": "gal-03", "tags": ["day1"] },
+      { "media": "gal-04", "tags": ["day1"] },
+      { "media": "gal-v1", "tags": ["day1"] },
+      { "media": "gal-v2", "tags": ["day1"] },
+      { "media": "gal-v3", "tags": ["day1"] },
+      { "media": "gal-v4", "tags": ["day1"] },
+      { "media": "gal-v5", "tags": ["day1"] },
+      { "media": "gal-v6", "tags": ["day1"] },
+      { "media": "gal-05", "tags": ["day2"] },
+      { "media": "day2-wide", "tags": ["day2"] },
+      { "media": "hands-laptop", "tags": ["day2"] },
+      { "media": "hands-phone", "tags": ["day2"] },
+      { "media": "gal-06", "tags": ["day2"] }
+    ]
+  },
+  "partners": {
+    "heading": "Partners and accreditation",
+    "items": [
+      { "name": "GET Academy", "logo": "logo-get", "role": "Programme delivery", "permitted": true },
+      { "name": "SEGi University", "logo": "logo-segi", "role": "Certification", "permitted": false },
+      { "name": "HRD Corp", "logo": "logo-hrdf", "role": "GET Academy is an approved training provider", "permitted": false },
+      { "name": "MDEC", "logo": "logo-mdec", "role": "Approved provider", "permitted": false },
+      { "name": "TEN", "logo": "logo-ten", "role": "Recognised", "permitted": false },
+      { "name": "MITRA", "logo": "logo-mitra", "role": "Programme funder", "permitted": false }
+    ],
+    "_note": "permitted:false → render the name as text only (no logo). MITRA: render nothing until permitted; never imply endorsement."
+  },
+  "contact": {
+    "heading": "Bring this programme to your community",
+    "body": "Agencies, associations and community organisations: talk to us about running a certified digital-marketing programme for your members.",
+    "formAction": null,
+    "fallback": { "label": "Visit geta.com.my", "href": "https://geta.com.my" },
+    "_note": "Form destination is an open decision. With formAction null, show the fallback button instead of a form."
+  },
+  "footer": {
+    "address": "Level 33, Ilham Tower, Kuala Lumpur",
+    "website": "https://geta.com.my",
+    "socials": [],
+    "legal": "© 2026 GET Academy (Global Experiential Training Academy)."
+  }
+}

@@ -1,0 +1,59 @@
+---
+import site from '../../../content/site.json';
+import { getMedia, url } from '../../lib/media';
+
+const logo = getMedia(site.brand.logo);
+---
+
+<header class="nav">
+  <div class="container nav__inner">
+    <a class="nav__brand" href="#top" aria-label={`${site.brand.name}, back to top`}>
+      {logo.available && logo.item?.file ? (
+        <img src={url(logo.item.file)} alt="" width="36" height="36" />
+      ) : (
+        <span class="nav__mark" aria-hidden="true"></span>
+      )}
+      <span>{site.brand.name}</span>
+    </a>
+    <details class="nav__menu">
+      <summary aria-label="Menu"><span></span></summary>
+      <nav aria-label="Primary">
+        <ul>
+          {site.nav.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+        </ul>
+      </nav>
+    </details>
+  </div>
+</header>
+
+<style>
+  .nav { position: sticky; top: 0; z-index: 20; background: color-mix(in srgb, var(--bg) 88%, transparent); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
+  .nav__inner { display: flex; align-items: center; justify-content: space-between; min-height: 64px; }
+  .nav__brand { display: inline-flex; align-items: center; gap: 0.6rem; font-weight: 800; text-decoration: none; }
+  .nav__mark { width: 28px; height: 28px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 4px color-mix(in srgb, var(--brand) 30%, transparent); }
+  .nav__menu summary { list-style: none; cursor: pointer; width: 40px; height: 40px; display: grid; place-items: center; }
+  .nav__menu summary::-webkit-details-marker { display: none; }
+  .nav__menu summary span, .nav__menu summary span::before, .nav__menu summary span::after { display: block; width: 22px; height: 2px; background: currentColor; position: relative; content: ''; }
+  .nav__menu summary span::before { position: absolute; top: -7px; }
+  .nav__menu summary span::after { position: absolute; top: 7px; }
+  .nav__menu ul { list-style: none; margin: 0; padding: 0.5rem var(--gutter) 1rem; position: absolute; inset: 64px 0 auto; background: var(--bg); border-bottom: 1px solid var(--border); }
+  .nav__menu a { display: block; padding: 0.6rem 0; text-decoration: none; font-weight: 600; }
+  @media (min-width: 900px) {
+    .nav__menu summary { display: none; }
+    .nav__menu { display: contents; }
+    .nav__menu nav { display: block; }
+    .nav__menu ul { position: static; display: flex; gap: 1.6rem; padding: 0; border: 0; background: none; }
+    .nav__menu a { padding: 0; font-size: 0.95rem; color: var(--text-muted); }
+    .nav__menu a:hover { color: var(--text); }
+  }
+</style>
+
+<script>
+  // Desktop: keep links visible; mobile: close the menu after choosing a link.
+  const menu = document.querySelector<HTMLDetailsElement>('.nav__menu');
+  const mq = matchMedia('(min-width: 900px)');
+  const sync = () => { if (menu) menu.open = mq.matches; };
+  sync();
+  mq.addEventListener('change', sync);
+  menu?.querySelectorAll('a').forEach((a) => a.addEventListener('click', () => { if (!mq.matches) menu.open = false; }));
+</script>

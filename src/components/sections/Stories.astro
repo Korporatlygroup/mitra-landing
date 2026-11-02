@@ -1,0 +1,36 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { stories } = site;
+// Only stories with a real quote are shown. Never invent testimonials.
+const ready = stories.items.filter((s) => s.quote);
+---
+
+<section class="section section--alt" id="stories">
+  <div class="container">
+    <span class="eyebrow">Stories</span>
+    <h2>{stories.heading}</h2>
+    {ready.length ? (
+      <div class="stories">
+        {ready.map((s) => (
+          <figure class="story">
+            <Media id={s.media} sizes="(min-width: 900px) 50vw, 100vw" />
+            <blockquote>{s.quote}</blockquote>
+            {s.business && <figcaption>{s.business}</figcaption>}
+          </figure>
+        ))}
+      </div>
+    ) : (
+      <p class="lead">Participant stories are coming soon.</p>
+    )}
+  </div>
+</section>
+
+<style>
+  .stories { display: grid; gap: 1.5rem; }
+  .story { margin: 0; padding: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .story blockquote { margin: 1rem 0 0.5rem; font-size: 1.1rem; }
+  .story figcaption { color: var(--text-muted); font-weight: 600; }
+  @media (min-width: 900px) { .stories { grid-template-columns: repeat(2, 1fr); } }
+</style>

@@ -1,0 +1,45 @@
+# deps / build
+node_modules/
+dist/
+.astro/
+.vercel/
+.netlify/
+
+# env
+.env
+.env.*
+!.env.example
+
+# raw media and previews: never committed
+raw/
+_previews/
+_tools/
+INOK/
+*.zip
+*.rar
+*.7z
+*.mov
+*.MOV
+*.heic
+*.HEIC
+*.JPG
+*.jpeg
+*.CR2
+*.ARW
+*.NEF
+# originals: only optimised files under public/media/ are allowed
+public/media/**/*.jpg
+public/media/**/*.png
+!public/media/logos/*.png
+
+# python
+__pycache__/
+*.pyc
+.venv/
+
+# os / editors
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/

@@ -1,0 +1,47 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { curriculum } = site;
+
+// 24x24 stroke icons, keyed by site.json `icon`.
+const icons: Record<string, string> = {
+  compass: '<circle cx="12" cy="12" r="9"/><path d="m15.5 8.5-2 5-5 2 2-5z"/>',
+  target: '<circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/>',
+  layers: '<path d="m12 3 9 5-9 5-9-5z"/><path d="m3 13 9 5 9-5"/>',
+  video: '<rect x="3" y="6" width="13" height="12" rx="2"/><path d="m16 10 5-3v10l-5-3z"/>',
+  image: '<rect x="3" y="4" width="18" height="16" rx="2"/><circle cx="9" cy="10" r="2"/><path d="m21 16-5-5-9 9"/>',
+  share: '<circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="m8.6 13.5 6.8 4M15.4 6.5l-6.8 4"/>',
+  search: '<circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/>',
+  sparkles: '<path d="M12 3v4M12 17v4M3 12h4M17 12h4M6 6l2.5 2.5M15.5 15.5 18 18M6 18l2.5-2.5M15.5 8.5 18 6"/>',
+  cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M3 4h2l2.4 11h11.2L21 8H6.2"/>',
+};
+---
+
+<section class="section" id="curriculum">
+  <div class="container">
+    <span class="eyebrow">Curriculum</span>
+    <h2>{curriculum.heading}</h2>
+    <p class="lead">{curriculum.intro}</p>
+    <ul class="modules">
+      {curriculum.modules.map((m) => (
+        <li>
+          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[m.icon] ?? icons.compass} />
+          <span>{m.title}</span>
+        </li>
+      ))}
+    </ul>
+    <div class="shots">
+      {curriculum.images.map((id) => <Media id={id} sizes="(min-width: 900px) 33vw, 100vw" />)}
+    </div>
+  </div>
+</section>
+
+<style>
+  .modules { list-style: none; padding: 0; margin: 2rem 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 0.75rem; }
+  .modules li { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-weight: 600; }
+  .modules svg { flex: none; color: var(--accent); }
+  .shots { display: grid; gap: 1rem; }
+  .shots :global(.media) { aspect-ratio: 3 / 2; height: auto; }
+  @media (min-width: 700px) { .shots { grid-template-columns: repeat(3, 1fr); } }
+</style>

@@ -1,0 +1,84 @@
+---
+// Renders one media.json entry as <img>, <video> or a labelled placeholder when the file is missing.
+import { getMedia, url } from '../lib/media';
+
+interface Props {
+  id?: string | null;
+  sizes?: string;
+  eager?: boolean;
+  fit?: 'cover' | 'contain';
+  /** video only: muted autoplay loop (hero background) instead of player controls */
+  background?: boolean;
+  class?: string;
+}
+
+const { id, sizes = '100vw', eager = false, fit = 'cover', background = false, class: cls = '' } = Astro.props;
+const { item, available, hasSmall, hasPoster } = getMedia(id);
+const w = item?.w ?? 1600;
+const h = item?.h ?? 1000;
+---
+
+{available && item?.type === 'video' ? (
+  <video
+    class:list={['media', `media--${fit}`, cls]}
+    width={w}
+    height={h}
+    poster={hasPoster && item.poster ? url(item.poster) : undefined}
+    preload={background ? 'auto' : 'none'}
+    autoplay={background}
+    muted={background}
+    loop={background}
+    playsinline
+    controls={!background}
+    aria-label={item.alt}
+    data-bg-video={background ? '' : undefined}
+  >
+    <source src={url(item.file!)} type="video/mp4" />
+  </video>
+) : available && item ? (
+  <img
+    class:list={['media', `media--${fit}`, cls]}
+    src={url(item.file!)}
+    srcset={hasSmall && item.file_sm ? `${url(item.file_sm)} 800w, ${url(item.file!)} ${w}w` : undefined}
+    sizes={hasSmall ? sizes : undefined}
+    width={w}
+    height={h}
+    alt={item.alt}
+    loading={eager ? 'eager' : 'lazy'}
+    decoding="async"
+    fetchpriority={eager ? 'high' : undefined}
+  />
+) : (
+  <div
+    class:list={['media', 'media--placeholder', cls]}
+    style={`aspect-ratio: ${w} / ${h}`}
+    role="img"
+    aria-label={item?.alt ?? 'Image coming soon'}
+  >
+    <span>{item?.alt ?? 'Image coming soon'}</span>
+  </div>
+)}
+
+<style>
+  .media {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+    background: var(--surface-2);
+  }
+  .media--cover { object-fit: cover; }
+  .media--contain { object-fit: contain; background: transparent; }
+  .media--placeholder {
+    display: grid;
+    place-items: center;
+    padding: 1rem;
+    border: 1px dashed var(--border-strong);
+    color: var(--text-muted);
+    font-size: 0.875rem;
+    text-align: center;
+    background:
+      repeating-linear-gradient(45deg, transparent 0 12px, var(--surface-2) 12px 24px),
+      var(--surface);
+  }
+</style>

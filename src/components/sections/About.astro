@@ -1,0 +1,26 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { about } = site;
+---
+
+<section class="section" id="about">
+  <div class="container about">
+    <div>
+      <span class="eyebrow">The programme</span>
+      <h2>{about.heading}</h2>
+      {about.body.map((p, i) => <p class={i === 0 ? 'lead' : undefined}>{p}</p>)}
+    </div>
+    <figure class="about__art">
+      <Media id={about.image} fit="contain" sizes="(min-width: 900px) 320px, 60vw" />
+    </figure>
+  </div>
+</section>
+
+<style>
+  .about { display: grid; gap: 2.5rem; align-items: center; }
+  .about__art { margin: 0; max-width: 280px; justify-self: center; }
+  .about__art :global(.media) { max-height: 460px; box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.35); }
+  @media (min-width: 900px) { .about { grid-template-columns: 1.4fr 1fr; } }
+</style>

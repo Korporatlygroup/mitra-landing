@@ -1,0 +1,37 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { journey } = site;
+const steps = journey.steps.filter((s) => !('verify' in s && s.verify));
+---
+
+<section class="section section--alt" id="journey">
+  <div class="container">
+    <span class="eyebrow">Timeline</span>
+    <h2>{journey.heading}</h2>
+    <ol class="timeline">
+      {steps.map((s) => (
+        <li class:list={['step', { 'step--media': !!s.image }]}>
+          <div class="step__text">
+            <time>{s.date}</time>
+            <h3>{s.title}</h3>
+            <p>{s.text}</p>
+          </div>
+          {s.image && <Media id={s.image} sizes="(min-width: 900px) 420px, 100vw" />}
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .timeline { list-style: none; margin: 2rem 0 0; padding: 0 0 0 1.5rem; border-left: 2px solid var(--border-strong); display: grid; gap: 2rem; }
+  .step { position: relative; display: grid; gap: 1rem; }
+  .step::before { content: ''; position: absolute; left: calc(-1.5rem - 7px); top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 4px var(--surface-2); }
+  .step time { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
+  .step h3 { margin: 0.2rem 0 0.4rem; }
+  .step p { color: var(--text-muted); margin: 0; }
+  .step :global(.media) { aspect-ratio: 3 / 2; height: auto; }
+  @media (min-width: 900px) { .step--media { grid-template-columns: 1fr 420px; align-items: start; } }
+</style>

@@ -1,0 +1,46 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { gallery } = site;
+---
+
+<section class="section" id="gallery">
+  <div class="container">
+    <span class="eyebrow">In the room</span>
+    <h2>{gallery.heading}</h2>
+    <div class="filters" role="group" aria-label="Filter gallery">
+      {gallery.filters.map((f, i) => (
+        <button type="button" data-filter={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+      ))}
+    </div>
+    <ul class="grid">
+      {gallery.items.map((g) => (
+        <li data-tags={g.tags.join(' ')}>
+          <Media id={g.media} sizes="(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw" />
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
+  .filters button { font: inherit; font-weight: 600; font-size: 0.9rem; padding: 0.45rem 1rem; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; }
+  .filters button[aria-pressed='true'] { background: var(--text); color: var(--bg); border-color: var(--text); }
+  .grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
+  .grid li[hidden] { display: none; }
+  .grid :global(.media) { aspect-ratio: 3 / 2; height: auto; }
+</style>
+
+<script>
+  const buttons = document.querySelectorAll<HTMLButtonElement>('#gallery [data-filter]');
+  const tiles = document.querySelectorAll<HTMLLIElement>('#gallery [data-tags]');
+  buttons.forEach((b) =>
+    b.addEventListener('click', () => {
+      const f = b.dataset.filter!;
+      buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
+      tiles.forEach((t) => (t.hidden = f !== 'all' && !t.dataset.tags!.split(' ').includes(f)));
+    }),
+  );
+</script>

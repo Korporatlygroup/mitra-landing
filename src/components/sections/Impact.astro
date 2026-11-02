@@ -1,0 +1,28 @@
+---
+import site from '../../../content/site.json';
+
+const { impact } = site;
+// Figures flagged "verify" stay hidden until confirmed against the records.
+const stats = impact.stats.filter((s) => !('verify' in s && s.verify));
+---
+
+<section class="section section--alt" id="impact">
+  <div class="container">
+    <h2>{impact.heading}</h2>
+    <dl class="stats">
+      {stats.map((s) => (
+        <div class="stat">
+          <dt>{s.label}</dt>
+          <dd>{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+  </div>
+</section>
+
+<style>
+  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 1rem; margin: 0; }
+  .stat { display: flex; flex-direction: column-reverse; gap: 0.25rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .stat dd { margin: 0; font: 800 clamp(2.4rem, 5vw, 3.4rem)/1 var(--font-display); color: var(--accent); }
+  .stat dt { color: var(--text-muted); font-size: 0.98rem; }
+</style>

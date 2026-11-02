@@ -1,0 +1,36 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+import { getMedia } from '../../lib/media';
+
+const { partners } = site;
+// MITRA is shown only once permission is confirmed; others fall back to text without permission.
+const items = partners.items.filter((p) => p.name !== 'MITRA' || p.permitted);
+---
+
+<section class="section section--alt" id="partners">
+  <div class="container">
+    <span class="eyebrow">Partners</span>
+    <h2>{partners.heading}</h2>
+    <ul class="partners">
+      {items.map((p) => (
+        <li>
+          {p.permitted && getMedia(p.logo).available ? (
+            <Media id={p.logo} fit="contain" sizes="160px" />
+          ) : (
+            <strong>{p.name}</strong>
+          )}
+          <span>{p.role}</span>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .partners { list-style: none; margin: 1.5rem 0 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 200px), 1fr)); }
+  .partners li { display: grid; gap: 0.35rem; align-content: center; min-height: 112px; padding: 1.25rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+  .partners strong { font: 800 1.2rem/1.2 var(--font-display); }
+  .partners span { color: var(--text-muted); font-size: 0.9rem; }
+  .partners :global(.media) { max-height: 56px; width: auto; }
+</style>

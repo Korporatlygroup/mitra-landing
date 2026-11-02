@@ -1,0 +1,57 @@
+/* Colour + spacing tokens. Light is default; dark follows the OS unless data-theme forces one. */
+:root {
+  --brand: #f5b800;          /* GET Academy sun yellow */
+  --brand-ink: #1c1600;      /* text on brand */
+  --accent: #0f6b5c;         /* deep teal, echoes the leaf-print venue */
+
+  --bg: #fbfaf6;
+  --surface: #ffffff;
+  --surface-2: #f1eee5;
+  --text: #1d1b16;
+  --text-muted: #5f5a4e;
+  --border: #e4dfd2;
+  --border-strong: #c9c2b0;
+  --overlay: rgb(15 12 5 / 0.55);
+
+  --radius: 14px;
+  --radius-sm: 8px;
+  --gutter: clamp(16px, 4vw, 40px);
+  --section-y: clamp(56px, 9vw, 112px);
+  --max: 1160px;
+
+  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Plus Jakarta Sans", var(--font-sans);
+  color-scheme: light;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --brand: #ffc928;
+    --brand-ink: #1c1600;
+    --accent: #4cc2ab;
+    --bg: #12110e;
+    --surface: #1b1a16;
+    --surface-2: #26241e;
+    --text: #f3f0e7;
+    --text-muted: #b3ad9e;
+    --border: #2f2c25;
+    --border-strong: #4a463b;
+    --overlay: rgb(0 0 0 / 0.6);
+    color-scheme: dark;
+  }
+}
+
+:root[data-theme="dark"] {
+  --brand: #ffc928;
+  --brand-ink: #1c1600;
+  --accent: #4cc2ab;
+  --bg: #12110e;
+  --surface: #1b1a16;
+  --surface-2: #26241e;
+  --text: #f3f0e7;
+  --text-muted: #b3ad9e;
+  --border: #2f2c25;
+  --border-strong: #4a463b;
+  --overlay: rgb(0 0 0 / 0.6);
+  color-scheme: dark;
+}

@@ -1,0 +1,25 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+
+const { beyond } = site;
+---
+
+{!beyond.verify && (
+  <section class="section" id="beyond">
+    <div class="container beyond">
+      <div>
+        <span class="eyebrow">Going further</span>
+        <h2>{beyond.heading}</h2>
+        <p class="lead">{beyond.body}</p>
+      </div>
+      <Media id={beyond.image} sizes="(min-width: 900px) 50vw, 100vw" />
+    </div>
+  </section>
+)}
+
+<style>
+  .beyond { display: grid; gap: 2rem; align-items: center; }
+  .beyond :global(.media) { aspect-ratio: 3 / 2; height: auto; }
+  @media (min-width: 900px) { .beyond { grid-template-columns: 1fr 1fr; gap: 3rem; } }
+</style>

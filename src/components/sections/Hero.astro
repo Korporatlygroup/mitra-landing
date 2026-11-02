@@ -1,0 +1,38 @@
+---
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+import { getMedia } from '../../lib/media';
+
+const { hero } = site;
+const video = getMedia(hero.video);
+---
+
+<section class="hero" id="top">
+  <div class="hero__media" aria-hidden={video.available ? 'true' : undefined}>
+    <Media id={hero.image} eager sizes="100vw" />
+    {video.available && <Media id={hero.video} background class="hero__video" />}
+  </div>
+  <div class="container hero__content">
+    <span class="eyebrow">{hero.eyebrow}</span>
+    <h1>{hero.headline}</h1>
+    <p class="hero__sub">{hero.subline}</p>
+    <div class="hero__ctas">
+      {hero.ctas.map((c) => (
+        <a class:list={['btn', `btn--${c.style}`]} href={c.videoUrl ?? c.href}>{c.label}</a>
+      ))}
+    </div>
+  </div>
+</section>
+
+<style>
+  .hero { position: relative; min-height: min(92vh, 820px); display: grid; align-items: end; color: #fff; isolation: isolate; }
+  .hero__media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
+  .hero__media :global(.media) { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 0; object-fit: cover; object-position: 50% 40%; }
+  .hero__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / 0.15) 0%, rgb(0 0 0 / 0.35) 45%, rgb(0 0 0 / 0.78) 100%); }
+  .hero__content { padding-block: 6rem clamp(3rem, 8vw, 6rem); }
+  .hero .eyebrow { color: var(--brand); }
+  .hero h1 { max-width: 16ch; }
+  .hero__sub { font-size: clamp(1.05rem, 2vw, 1.3rem); max-width: 56ch; opacity: 0.92; }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  @media (prefers-reduced-motion: reduce) { .hero :global(.hero__video) { display: none; } }
+</style>
