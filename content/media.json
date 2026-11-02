@@ -333,13 +333,21 @@
       "section": "trainer",
       "type": "image",
       "file": "media/trainer-01.webp",
-      "w": 1200,
-      "h": 1500,
-      "alt": "Ganesh Manokara, lead trainer",
-      "description": "PLACEHOLDER (portrait 4:5). Wanted: a clear portrait or in-action shot of lead trainer Ganesh Manokara.",
+      "w": 521,
+      "h": 650,
+      "alt": "Ganesh Manokara, lead trainer at GET Academy, seated at a meeting table",
+      "description": "Portrait 4:5 (cropped from a 973x650 landscape original). Ganesh Manokara seated at a dark boardroom table, upper body, turned slightly to his left and looking off-camera with a calm, slight smile. Short dark hair, clear-framed glasses, trimmed beard; light grey blazer over a pink shirt, watch on his left wrist, hands resting on a white document folder. Background: warm light-wood wall panelling and black leather chairs. Foreground: glass water bottles at the bottom edge. Mood: professional, approachable. Face sits at y 0.12-0.40, centred; crop-safe for a circle crop centred at (0.5, 0.3).",
       "date": null,
-      "consent": "pending",
-      "notes": "Not yet identified in local media. Candidates: gal-02/hero-01 (white shirt, glasses, beard), gal-06 (blue shirt, presenting), gal-v3 (light blazer), gal-v5 (white shirt). User to confirm or supply a headshot."
+      "consent": "confirmed",
+      "notes": "Supplied by the user on 2026-11-03 for the trainer section. Low-res original (built at about 520x650): ask for a larger file if available. Ganesh may also be the man in the light blazer in the Day 1 montage (gal-v3, hero clip); not confirmed.",
+      "source": "extra:ganesh-portrait.webp",
+      "crop": [
+        0.245,
+        0.0,
+        0.535,
+        1.0
+      ],
+      "bytes": 18338
     },
     {
       "id": "story-01",

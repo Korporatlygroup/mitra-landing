@@ -7,7 +7,8 @@ Usage (PowerShell, from the repo root):
   python tools/optimize_media.py --only hero-01 gal-03
   python tools/optimize_media.py --src "D:\\other\\mitra" --force
 
-Per entry in media.json (only those with "source", a path relative to --src):
+Per entry in media.json (only those with "source", a path relative to --src;
+prefix "extra:" for files supplied separately, relative to --extra):
   type image  -> media/<id>.webp (<=1920 px wide) + media/<id>-sm.webp (800 px)
                  source may be a video: set "frame" ("m:ss" or seconds) to grab a still.
                  optional "crop": [x, y, w, h] and "blur": [[x, y, w, h], ...], fractions of the source frame.
@@ -29,6 +30,8 @@ repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
 ap.add_argument("--media", default=os.path.join(repo, "content", "media.json"))
 ap.add_argument("--src", default=os.environ.get("MITRA_SRC", r"C:\Korporatlygroup\INOK\mitra"))
+ap.add_argument("--extra", default=os.environ.get("MITRA_EXTRA", r"C:\Korporatlygroup\_media-extra"),
+                help="folder for media supplied outside the raw MITRA folder (headshots, logos)")
 ap.add_argument("--public", default=os.path.join(repo, "public"))
 ap.add_argument("--only", nargs="*")
 ap.add_argument("--force", action="store_true", help="rebuild even if the output exists")
@@ -37,6 +40,7 @@ args = ap.parse_args()
 FF, FP = shutil.which("ffmpeg"), shutil.which("ffprobe")
 work = tempfile.mkdtemp(prefix="mitra_opt_")
 src_root = os.path.realpath(args.src)
+extra_root = os.path.realpath(args.extra)
 
 def seconds(v):
     if isinstance(v, (int, float)): return float(v)
@@ -44,8 +48,11 @@ def seconds(v):
     return float(m or 0) * 60 + float(s)
 
 def resolve(rel):
-    p = os.path.realpath(os.path.join(src_root, rel))
-    if os.path.commonpath([p, src_root]) != src_root:
+    root = src_root
+    if rel.startswith("extra:"):
+        root, rel = extra_root, rel[len("extra:"):]
+    p = os.path.realpath(os.path.join(root, rel))
+    if os.path.commonpath([p, root]) != root:
         sys.exit(f"source escapes --src: {rel}")
     if any(s in rel.lower() for s in SKIP):
         sys.exit(f"refusing sensitive folder: {rel}")
@@ -85,8 +92,14 @@ def load_still(e, p):
 def do_image(e, p, out):
     im = load_still(e, p).convert("RGB")
     (w, h), n = save_webp(im, os.path.join(out, f"{e['id']}.webp"), IMG_MAX, IMG_BUDGET)
-    save_webp(im, os.path.join(out, f"{e['id']}-sm.webp"), IMG_SM, IMG_BUDGET // 3)
-    e.update(file=f"media/{e['id']}.webp", file_sm=f"media/{e['id']}-sm.webp", w=w, h=h, bytes=n)
+    sm = os.path.join(out, f"{e['id']}-sm.webp")
+    if w > IMG_SM:
+        save_webp(im, sm, IMG_SM, IMG_BUDGET // 3)
+        e["file_sm"] = f"media/{e['id']}-sm.webp"
+    else:  # source too small for a separate small size
+        e.pop("file_sm", None)
+        if os.path.exists(sm): os.remove(sm)
+    e.update(file=f"media/{e['id']}.webp", w=w, h=h, bytes=n)
     return n
 
 def do_logo(e, p, out):
