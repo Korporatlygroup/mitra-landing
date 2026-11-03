@@ -20,7 +20,9 @@ Structure modelled on korporatlygroup.com.
 | July cohort dates | 8 Jul – 2 Aug 2024; face-to-face 8–13 Jul 2024, Ipoh | Final report, bunting |
 | Participants present all 6 days | **10** | Final report (Laporan Akhir 16 Oct), attendance sheets |
 | Curriculum | Digital-marketing strategy, target customers, business/product positioning, CapCut video editing, social content, Facebook/Instagram marketing, Google Ads, ChatGPT, Shopee/Lazada | Programme design |
-| Certification partner | SEGi University (reported) | Programme documents |
+| Certification partner | **SEGi College Subang Jaya**, "Strategic Educational Partner", part of SEGi University & Colleges; issued the programme's certificates | User confirmed 2026-11-03 + official lockup supplied; 2024 poster says "SEGi University"; GET profile says "SEGi University and Colleges Malaysia" |
+| MITRA (public, sourced) | 2024: RM98.9m of RM100m spent, 122,082 beneficiaries (NST 19 Aug 2025) · allocation raised to RM150m citing strong performance (RTM) · 16 high-impact programmes approved by Jul 2025 (RTM) · 2024 PPSMI programmes incl. MISI, entrepreneurship, IPT 4.0, early-education subsidy, cybersecurity, dialysis (Sinar Harian 5 Oct 2024) · moved to KESUMA Jan 2026 (RTM) | URLs in `site.json` → `mitra.sources` |
+| Lead trainer (self-reported) | Ganesh Kumar Manokara: former Head of Microsoft's Malaysia AI National Skilling Initiative; 800,000+ Malaysians equipped with AI skills; MoE project; 10X1000 (Alibaba) alumnus; UNESCO EE-Net; MMK HCD Committee Penang; CPD Group approved provider | SEA AI Academy deck (Oct 2026), supplied by the user |
 | Beyond the funded scope | Interns trained, then about 6 months of on-the-job training with monthly allowances | GET Academy account (vault Research #8) |
 | GET Academy | Est. 2012; SEGi franchisee; HRDF and MDEC approved; TEN-recognised | Org profile |
 | Lead trainer | Ganesh Manokara, 20+ years (HRDF Train & Place 2009 → Penjana 2020) | Org profile |
@@ -32,12 +34,14 @@ Structure modelled on korporatlygroup.com.
 - An intern count (sources say 5 and ~6: conflicting). Use "a team of interns" until verified.
 - 13 approved / 3 absent / 76.92% participation, billing totals (12, 19, 21), eligibility (B40/M40, age), disputes, rejected sessions.
 - "100% 5-star", "~100% attendance" or other unverified profile claims.
-- MITRA / JPM crest / SEGi logos, until permission is confirmed.
+- JPM crest, until permission is confirmed. (MITRA and partner names currently shown: "sample build" decision by the user. SEGi College logo supplied by the user.)
+- MITRA figures without a public source.
 
 ## Page structure (one component each, `src/components/sections/`)
 1. **Nav**: logo · Programme · Impact · Journey · Gallery · Stories · Partners · Contact
 2. **Hero**: cohort photo + short muted video loop; headline, sub-line, CTAs (Partner with us / Watch highlights)
-3. **About**: why digital skills for Malaysian Indian entrepreneurs; one neutral paragraph of MITRA context
+3. **About**: why INOK, what happened over the 26 days, who delivered/funded/certified it
+3b. **MITRA** (`Mitra.astro`): who MITRA is, 4 sourced figures, 2024 initiatives, where INOK fits, numbered sources
 4. **Impact**: stats strip, verified numbers only
 5. **Curriculum**: icon grid of 9 modules/tools + hands-on photos
 6. **Journey**: timeline: 6 days in class (8–13 Jul) → 20 days implementation → certification

@@ -7,6 +7,7 @@ import { getMedia } from '../../lib/media';
 
 const { partners } = site;
 const d = partners.deliverer;
+const c = partners.certifier;
 const items = partners.items.filter((p) => p.permitted);
 const hasLogo = (p: { permitted: boolean; logo: string }) => p.permitted && getMedia(p.logo).available;
 
@@ -37,6 +38,7 @@ const icons: Record<string, string> = {
       <div>
         <p class="deliverer__name">{d.name}</p>
         <p class="deliverer__full">{d.fullName}</p>
+        {d.description && <p class="deliverer__desc">{d.description}</p>}
         <ul class="facts">
           {d.facts.map((f) => <li>{f}</li>)}
         </ul>
@@ -44,6 +46,26 @@ const icons: Record<string, string> = {
       </div>
     </div>
   </div>
+
+  {c?.permitted && (
+    <div class="creds__certifier" data-reveal style="--d:120">
+      <p class="creds__label">{partners.certifierLabel}</p>
+      <div class="certifier">
+        {getMedia(c.logo).available ? (
+          <div class="certifier__logo"><Media id={c.logo} fit="contain" sizes="(min-width: 900px) 320px, 80vw" /></div>
+        ) : (
+          <span class="mark mark--lg">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[c.icon]} />
+          </span>
+        )}
+        <div>
+          <p class="deliverer__name">{c.name}</p>
+          <p class="certifier__role">{c.role}</p>
+          {c.group && <p class="deliverer__full">{c.group}</p>}
+        </div>
+      </div>
+    </div>
+  )}
 
   <div class="creds__list-wrap">
     <p class="creds__label" data-reveal>{partners.credentialsLabel}</p>
@@ -97,6 +119,15 @@ const icons: Record<string, string> = {
   .deliverer__name { font: 700 1.6rem/1.1 var(--font-display); font-stretch: 94%; letter-spacing: -0.015em; }
   .deliverer__full { margin-top: 0.2rem !important; color: rgb(42 21 0 / 0.75); }
   .deliverer__addr { margin-top: 0.6rem !important; font-size: 0.9rem; color: rgb(42 21 0 / 0.72); }
+  .deliverer__desc { margin-top: 0.6rem !important; max-width: 52ch; line-height: 1.5; color: rgb(42 21 0 / 0.85); }
+
+  /* Certification partner: full-colour lockup on its own white card, never greyscaled. */
+  .certifier { display: grid; gap: 1rem; align-items: center; padding: 1.25rem; border-radius: var(--radius-lg); background: #fff; box-shadow: 0 14px 30px -20px rgb(42 21 0 / 0.7); }
+  .certifier p { margin: 0; }
+  .certifier__logo { width: min(340px, 100%); }
+  .certifier__logo :global(.media) { background: transparent; border-radius: 0; }
+  .certifier__role { margin-top: 0.25rem !important; font-weight: 650; color: #8c1d40; }
+  @media (min-width: 1000px) { .creds { grid-template-columns: 1fr 1fr; align-items: start; } .creds__list-wrap { grid-column: 1 / -1; } }
   .facts { list-style: none; margin: 0.8rem 0 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.4rem; }
   .facts li { padding: 0.3rem 0.7rem; border-radius: 999px; font-size: 0.85rem; font-weight: 600; background: rgb(255 247 232 / 0.65); }
 

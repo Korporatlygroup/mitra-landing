@@ -420,12 +420,20 @@
       "type": "logo",
       "file": "media/logos/logo-segi.webp",
       "w": 600,
-      "h": 300,
-      "alt": "SEGi University",
-      "description": "PLACEHOLDER. SEGi University logo.",
+      "h": 335,
+      "alt": "SEGi College Subang Jaya, Strategic Educational Partner",
+      "description": "Official SEGi partner lockup on a transparent background, landscape about 2:1. Top line in black: 'Strategic Educational Partner'. Below, left: a teal (#036a8c-ish) square with a white stylised domed rotunda/colonnade mark. Right: black wordmark 'SEGi' (large), 'COLLEGE', 'SUBANG JAYA' (small caps). Reads best on white or light cream; do not place on marigold without a white tile. A monochrome black version exists in _media-extra (segi-college-sj-mono.webp) if a one-colour mark is needed.",
       "date": null,
-      "consent": "pending",
-      "notes": "Missing; usage permission pending."
+      "consent": "not-needed",
+      "notes": "Supplied by the user on 2026-11-03, who confirmed SEGi College Subang Jaya as the programme's certification partner. Programme documents (2024 poster) and the GET Academy profile name 'SEGi University' / 'SEGi University and Colleges'. SEGi College Subang Jaya is part of that group; keep both names consistent in copy.",
+      "source": "extra:segi-college-sj-colour.webp",
+      "crop": [
+        0.115,
+        0.12,
+        0.77,
+        0.765
+      ],
+      "bytes": 20580
     },
     {
       "id": "logo-hrdf",

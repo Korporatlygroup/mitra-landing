@@ -1,0 +1,105 @@
+---
+// MITRA, the programme's funder: what it is, its sourced headline figures and the 2024 initiatives it funded.
+// Every figure carries a source index into mitra.sources; the source list renders under the section.
+import site from '../../../content/site.json';
+
+const { mitra } = site;
+
+const icons: Record<string, string> = {
+  store: '<path d="M3 9h18l-1.5-5h-15z"/><path d="M4.5 9v11h15V9"/><path d="M10 20v-6h4v6"/>',
+  certificate: '<rect x="3" y="4" width="18" height="12" rx="2"/><path d="M7 8h10M7 11h6"/><circle cx="16.5" cy="17.5" r="2.5"/>',
+  shield: '<path d="M12 3 5 6v5c0 4.5 3 8 7 10 4-2 7-5.5 7-10V6z"/><path d="m8.5 12 2.5 2.5 4.5-5"/>',
+  badge: '<circle cx="12" cy="9" r="6"/><path d="m9.5 14.5-1.5 7 4-2 4 2-1.5-7"/>',
+  award: '<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/>',
+  hand: '<circle cx="12" cy="7" r="3"/><path d="M5 21v-2a5 5 0 0 1 5-5h4a5 5 0 0 1 5 5v2"/>',
+};
+---
+
+<section class="section mitra" id="mitra">
+  <div class="container">
+    <div class="section__head">
+      <p class="mitra__eyebrow" data-reveal>{mitra.eyebrow}</p>
+      <h2 data-reveal style="--d:80">{mitra.heading}</h2>
+      <p class="lead" data-reveal style="--d:140">{mitra.intro}</p>
+    </div>
+
+    <dl class="mitra__stats">
+      {mitra.stats.map((s, i) => (
+        <div class="mstat" data-reveal style={`--d:${100 + i * 80}`}>
+          <dt>{s.label}<sup><a href={`#mitra-src-${s.source + 1}`} aria-label={`Source ${s.source + 1}`}>{s.source + 1}</a></sup></dt>
+          <dd>{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+
+    <h3 class="mitra__sub" data-reveal>{mitra.initiativesHeading}<sup><a href="#mitra-src-4" aria-label="Source 4">4</a></sup></h3>
+    <ul class="mitra__inits">
+      {mitra.initiatives.map((it, i) => (
+        <li data-reveal style={`--d:${80 + i * 60}`}>
+          <span class="mitra__icon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[it.icon] ?? icons.badge} />
+          </span>
+          <div>
+            <p class="init__title">{it.title}</p>
+            <p class="init__text">{it.text}</p>
+          </div>
+        </li>
+      ))}
+    </ul>
+
+    <div class="mitra__fit" data-reveal>
+      <p class="fit__main">{mitra.fit}</p>
+      <p class="fit__update">{mitra.update}<sup><a href="#mitra-src-5" aria-label="Source 5">5</a></sup></p>
+    </div>
+
+    <footer class="mitra__sources">
+      <p>{mitra.sourcesLabel}</p>
+      <ol>
+        {mitra.sources.map((s, i) => (
+          <li id={`mitra-src-${i + 1}`}><a href={s.url} target="_blank" rel="noopener">{s.label}</a></li>
+        ))}
+      </ol>
+      <p class="mitra__disclaimer">{mitra.disclaimer}</p>
+    </footer>
+  </div>
+</section>
+
+<style>
+  .mitra__eyebrow { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+  .mitra sup { font-size: 0.65em; margin-left: 0.15em; }
+  .mitra sup a { color: var(--accent-text); text-decoration: none; font-weight: 700; }
+
+  .mitra__stats { display: grid; gap: 1rem; margin: 0 0 clamp(2.5rem, 5vw, 3.5rem); grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .mitra__stats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .mitra__stats { grid-template-columns: repeat(4, 1fr); } }
+  .mstat {
+    display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 0.5rem;
+    padding: 1.4rem 1.3rem; border-radius: var(--radius-lg); background: var(--surface);
+    border: 1px solid var(--border); box-shadow: var(--shadow); border-top: 5px solid var(--brand);
+  }
+  .mstat:nth-child(even) { border-top-color: var(--accent); }
+  .mstat dd { margin: 0; font: 700 clamp(1.9rem, 3.4vw, 2.6rem)/1 var(--font-display); font-stretch: 92%; letter-spacing: -0.02em; color: var(--accent-text); }
+  .mstat dt { color: var(--text-muted); font-size: 0.97rem; line-height: 1.45; }
+
+  .mitra__sub { margin-bottom: 1.1rem; }
+  .mitra__inits { list-style: none; margin: 0 0 clamp(2.5rem, 5vw, 3.5rem); padding: 0; display: grid; gap: 0.8rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 320px), 1fr)); }
+  .mitra__inits li { display: flex; gap: 0.9rem; align-items: flex-start; padding: 1.1rem; border-radius: 16px; background: var(--surface-2); }
+  .mitra__inits p { margin: 0; }
+  .mitra__icon { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--surface); color: var(--accent); box-shadow: 0 6px 14px -10px rgb(42 21 0 / 0.5); }
+  .mitra__icon svg { width: 22px; height: 22px; }
+  .init__title { font: 650 1.05rem/1.25 var(--font-display); margin-bottom: 0.25rem !important; }
+  .init__text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+  .mitra__fit { padding: clamp(1.4rem, 3vw, 2rem); border-radius: var(--radius-lg); background: var(--accent-deep); color: var(--on-accent); }
+  .mitra__fit p { margin: 0; }
+  .fit__main { font: 600 clamp(1.2rem, 2.2vw, 1.55rem)/1.4 var(--font-display); font-stretch: 95%; max-width: 48ch; }
+  .fit__update { margin-top: 0.9rem !important; font-size: 0.95rem; opacity: 0.85; }
+  .mitra__fit sup a { color: var(--brand); }
+
+  .mitra__sources { margin-top: 1.75rem; font-size: 0.85rem; color: var(--text-muted); }
+  .mitra__sources > p:first-child { margin: 0 0 0.35rem; font-weight: 650; }
+  .mitra__sources ol { margin: 0 0 0.6rem; padding-left: 1.3rem; display: grid; gap: 0.2rem; }
+  .mitra__sources a { text-underline-offset: 3px; }
+  .mitra__sources li:target { color: var(--accent-text); font-weight: 650; }
+  .mitra__disclaimer { margin: 0; font-style: italic; }
+</style>

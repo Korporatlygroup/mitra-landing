@@ -24,6 +24,10 @@
       "href": "#about"
     },
     {
+      "label": "MITRA",
+      "href": "#mitra"
+    },
+    {
       "label": "Impact",
       "href": "#impact"
     },
@@ -73,10 +77,11 @@
     "body": [
       "INOK stands for Idhu Namme Oru Kedai, Tamil for \"this is our shop\". Every participant came with a business of their own, and every lesson was about growing it.",
       "Small businesses in the Malaysian Indian community often have strong products but little time or support to take them online. INOK was designed to change that: practical digital-marketing skills, taught in person, then applied to each participant's own business with a mentor alongside.",
-      "The 2024 Program Pensijilan Digital Marketing Strategist was delivered by GET Academy under a programme funded by MITRA (Malaysian Indian Community Transformation Unit), with certification through SEGi University."
+      "Over six days in Ipoh, participants worked through strategy, content, advertising, AI tools and marketplace selling with practitioners who run these campaigns for a living. They then spent 20 days putting it to work online, with a mentor checking in along the way.",
+      "The 2024 Program Pensijilan Digital Marketing Strategist was delivered by GET Academy with funding from MITRA, the Malaysian Indian Community Transformation Unit, and certified by SEGi College Subang Jaya, GET Academy's strategic educational partner within SEGi University & Colleges."
     ],
     "image": "about-bunting",
-    "_note": "Second paragraph names MITRA and SEGi factually (no logos, no endorsement). Confirm wording with the user before launch.",
+    "_note": "Paragraph 4 names MITRA (funder) and SEGi College Subang Jaya (certifier) factually. SEGi naming confirmed by the user 2026-11-03.",
     "imageCaption": "The programme banner, Ipoh, July 2024"
   },
   "impact": {
@@ -221,9 +226,8 @@
       {
         "date": "2024",
         "title": "Certification",
-        "text": "Certification through SEGi University.",
-        "image": "cert-01",
-        "verify": true,
+        "text": "Certificates issued by SEGi College Subang Jaya, GET Academy's strategic educational partner.",
+        "image": null,
         "phase": "online"
       }
     ],
@@ -235,10 +239,38 @@
   },
   "trainer": {
     "heading": "Led by practitioners",
-    "name": "Ganesh Manokara",
-    "role": "Lead trainer, GET Academy",
-    "bio": "Over 20 years of training and placement work, from HRDF Train & Place (2009) to Penjana (2020).",
-    "image": "trainer-01"
+    "name": "Ganesh Kumar Manokara",
+    "role": "Lead trainer, GET Academy · Former Head of Microsoft's Malaysia AI National Skilling Initiative",
+    "bio": "A digital transformation expert and business coach with more than 20 years in training and placement, from HRDF Train & Place (2009) to Penjana (2020). Ganesh helps entrepreneurs, organisations and institutions adopt technology, incubate businesses and grow.",
+    "image": "trainer-01",
+    "bigStat": {
+      "value": "800,000+",
+      "label": "Malaysians equipped with AI skills across ministries, government agencies, education, industry and communities"
+    },
+    "expertise": [
+      {
+        "title": "Digital transformation and business",
+        "text": "Technology adoption, business incubation and strategic growth across many sectors."
+      },
+      {
+        "title": "Cross-border business",
+        "text": "Market entry, partnerships and expansion across APAC, India and Central Asia."
+      },
+      {
+        "title": "Institutional engagement",
+        "text": "Government, education and industry work on AI, entrepreneurship and workforce development."
+      }
+    ],
+    "achievementsHeading": "Track record",
+    "achievements": [
+      "Former Head of Microsoft's Malaysia AI National Skilling Initiative",
+      "Won a Ministry of Education project: gap analysis, improvement plan, and organisational and leadership transformation",
+      "Honoured alumnus of the 10X1000 programme, part of the Alibaba Group",
+      "Represented Malaysia at UNESCO's Entrepreneurship Education Network (EE-Net) regional engagement in Uzbekistan",
+      "Member, MMK Human Capital Development Committee, Penang State Government",
+      "CPD Group approved training provider"
+    ],
+    "_note": "Expertise and track record from 'SEA AI Academy - Evidence-based Learning and Competency Verification.pptx' (slides 2-3), supplied by the user 2026-11-03. Self-reported; not independently verified."
   },
   "stories": {
     "heading": "Participant stories",
@@ -399,19 +431,15 @@
       "icon": "store",
       "facts": [
         "Est. 2012",
+        "HRD Corp approved",
+        "MDEC approved",
         "SEGi franchisee"
       ],
       "permitted": true,
-      "address": "Level 33, Ilham Tower, Kuala Lumpur"
+      "address": "Level 33, Ilham Tower, Kuala Lumpur",
+      "description": "A Kuala Lumpur training academy that grew from more than a decade of teaching into a digital-marketing and entrepreneurship development partner. Its curriculum is accredited by SEGi University & Colleges and by MDEC's Talent Expert Network (TEN)."
     },
     "items": [
-      {
-        "name": "SEGi University",
-        "logo": "logo-segi",
-        "icon": "certificate",
-        "role": "Certification",
-        "permitted": true
-      },
       {
         "name": "HRD Corp",
         "logo": "logo-hrdf",
@@ -441,7 +469,16 @@
         "permitted": true
       }
     ],
-    "_note": "SAMPLE BUILD: all partners set permitted:true at the user's request (this repo is a design sample, not the live page). A logo shows automatically once its file exists at the media.json path (media/logos/logo-*.webp); until then an icon + the name show. Re-check permissions before any real launch."
+    "_note": "SAMPLE BUILD: all partners set permitted:true at the user's request (this repo is a design sample, not the live page). A logo shows automatically once its file exists at the media.json path (media/logos/logo-*.webp); until then an icon + the name show. Re-check permissions before any real launch.",
+    "certifierLabel": "Certified by",
+    "certifier": {
+      "name": "SEGi College Subang Jaya",
+      "role": "Strategic Educational Partner · issued the programme's certificates",
+      "group": "Part of SEGi University & Colleges",
+      "logo": "logo-segi",
+      "icon": "certificate",
+      "permitted": true
+    }
   },
   "contact": {
     "heading": "Bring this programme to your community",
@@ -467,5 +504,92 @@
     "socials": [],
     "legal": "© 2026 GET Academy (Global Experiential Training Academy).",
     "backToTop": "Back to top"
+  },
+  "mitra": {
+    "eyebrow": "Our funding partner",
+    "heading": "MITRA: investing in the Malaysian Indian community",
+    "intro": "MITRA, the Malaysian Indian Community Transformation Unit (Unit Transformasi Masyarakat India Malaysia), is the Government of Malaysia's dedicated unit for the socioeconomic development of the Indian community. It began as SEDIC, the special unit for the socioeconomic development of the Indian community, and today funds programmes in education, skills, entrepreneurship, health and welfare across the country.",
+    "stats": [
+      {
+        "value": "122,082",
+        "label": "members of the Indian community benefited from MITRA programmes in 2024",
+        "source": 0
+      },
+      {
+        "value": "RM98.9 million",
+        "label": "of MITRA's RM100 million 2024 allocation put to work",
+        "source": 0
+      },
+      {
+        "value": "RM150 million",
+        "label": "allocation after a RM50 million increase, which the Prime Minister attributed to MITRA's strong performance",
+        "source": 1
+      },
+      {
+        "value": "16",
+        "label": "high-impact programmes approved by July 2025, in education and training, culture and social welfare",
+        "source": 2
+      }
+    ],
+    "initiativesHeading": "Initiatives funded in 2024 include",
+    "initiatives": [
+      {
+        "title": "Malaysian Indian Skills Initiative (MISI)",
+        "text": "Skills training to move people into better-paid work.",
+        "icon": "badge"
+      },
+      {
+        "title": "Indian Community Entrepreneurship Programme",
+        "text": "Support for Indian-owned small businesses to start and grow.",
+        "icon": "store"
+      },
+      {
+        "title": "MITRA IPT 4.0",
+        "text": "Early-admission assistance for students entering higher education.",
+        "icon": "certificate"
+      },
+      {
+        "title": "Early-education subsidy",
+        "text": "Help with private kindergarten fees, so children start school ready.",
+        "icon": "hand"
+      },
+      {
+        "title": "Cybersecurity training",
+        "text": "EC-Council professional certification with job placement, plus awareness programmes for Tamil-school and secondary students.",
+        "icon": "shield"
+      },
+      {
+        "title": "Dialysis subsidy",
+        "text": "Health support for families facing the cost of long-term treatment.",
+        "icon": "award"
+      }
+    ],
+    "fit": "INOK was part of that commitment: a MITRA-funded programme that gave Malaysian Indian entrepreneurs certified, hands-on digital-marketing skills to grow their own shops.",
+    "update": "Since January 2026 MITRA sits under the Ministry of Human Resources (KESUMA), with its mandate for the Indian community unchanged.",
+    "sourcesLabel": "Sources",
+    "sources": [
+      {
+        "label": "New Straits Times, 19 Aug 2025: PM in the Dewan Rakyat on MITRA's 2024 spending",
+        "url": "https://www.nst.com.my/amp/news/nation/2025/08/1262164/anwar-govt-support-indian-community-extends-beyond-mitra"
+      },
+      {
+        "label": "Berita RTM: MITRA allocation raised to RM150 million",
+        "url": "https://berita.rtm.gov.my/?p=631141"
+      },
+      {
+        "label": "Berita RTM, 30 Jul 2025: 16 high-impact programmes approved",
+        "url": "https://berita.rtm.gov.my/?p=170095"
+      },
+      {
+        "label": "Sinar Harian, 5 Oct 2024: 2024 PPSMI programmes",
+        "url": "https://www.sinarharian.com.my/ampArticle/689332"
+      },
+      {
+        "label": "Berita RTM, 27 Jan 2026: MITRA moves to KESUMA",
+        "url": "https://berita.rtm.gov.my/?p=362677"
+      }
+    ],
+    "disclaimer": "Figures are from public government statements and news reports. This page is published by GET Academy.",
+    "_note": "All MITRA figures are sourced (see sources). Don't add MITRA figures without a source. Initiative one-liners are plain descriptions of the named 2024 PPSMI programmes."
   }
 }

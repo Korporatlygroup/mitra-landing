@@ -105,6 +105,7 @@ def do_image(e, p, out):
 def do_logo(e, p, out):
     os.makedirs(os.path.join(out, "logos"), exist_ok=True)
     im = ImageOps.exif_transpose(Image.open(p)).convert("RGBA")
+    if e.get("crop"): im = im.crop(box(im, e["crop"]))
     (w, h), n = save_webp(im, os.path.join(out, "logos", f"{e['id']}.webp"), LOGO_MAX, 120_000)
     e.update(file=f"media/logos/{e['id']}.webp", w=w, h=h, bytes=n)
     return n

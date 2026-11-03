@@ -7,22 +7,56 @@ const { trainer } = site;
 
 <section class="section section--alt" id="trainer">
   <div class="container trainer">
-    <div class="trainer__photo" data-reveal="scale">
-      <Media id={trainer.image} sizes="(min-width: 900px) 300px, 60vw" />
+    <div class="trainer__side">
+      <div class="trainer__photo" data-reveal="scale">
+        <Media id={trainer.image} sizes="(min-width: 900px) 300px, 60vw" />
+      </div>
+      {trainer.bigStat && (
+        <p class="trainer__stat" data-reveal style="--d:160">
+          <strong>{trainer.bigStat.value}</strong>
+          <span>{trainer.bigStat.label}</span>
+        </p>
+      )}
     </div>
     <div class="trainer__text">
       <p class="trainer__heading" data-reveal>{trainer.heading}</p>
       <h2 data-reveal style="--d:80">{trainer.name}</h2>
       <p class="trainer__role" data-reveal style="--d:140">{trainer.role}</p>
       <p class="trainer__bio" data-reveal style="--d:200">{trainer.bio}</p>
+
+      {trainer.expertise?.length && (
+        <ul class="expertise">
+          {trainer.expertise.map((x, i) => (
+            <li data-reveal style={`--d:${120 + i * 70}`}>
+              <p class="x__title">{x.title}</p>
+              <p class="x__text">{x.text}</p>
+            </li>
+          ))}
+        </ul>
+      )}
+
+      {trainer.achievements?.length && (
+        <div class="record" data-reveal>
+          <p class="record__heading">{trainer.achievementsHeading}</p>
+          <ul>
+            {trainer.achievements.map((a) => (
+              <li>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                <span>{a}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   </div>
 </section>
 
 <style>
-  .trainer { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  .trainer { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: start; }
+  .trainer__side { display: grid; gap: 2.25rem; justify-items: start; }
   /* The source photo is only ~520px wide, so it is kept small to stay sharp. */
-  .trainer__photo { position: relative; width: min(300px, 70vw); justify-self: start; }
+  .trainer__photo { position: relative; width: min(300px, 70vw); }
   .trainer__photo::before {
     content: ''; position: absolute; inset: 14px -14px -14px 14px; border-radius: var(--radius-lg);
     background: repeating-linear-gradient(90deg, var(--brand) 0 22px, var(--accent) 22px 44px); opacity: 0.9;
@@ -30,9 +64,27 @@ const { trainer } = site;
   }
   .trainer__photo:hover::before { inset: 20px -20px -20px 20px; }
   .trainer__photo :global(.media) { position: relative; aspect-ratio: 4 / 5; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+  .trainer__stat { display: grid; gap: 0.3rem; max-width: 300px; margin: 0; }
+  .trainer__stat strong { font: 700 clamp(2.6rem, 5vw, 3.4rem)/1 var(--font-display); font-stretch: 90%; letter-spacing: -0.03em; color: var(--accent-text); }
+  .trainer__stat span { color: var(--text-muted); font-size: 0.95rem; line-height: 1.45; }
+
   .trainer__heading { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
   .trainer h2 { margin-bottom: 0.2em; }
-  .trainer__role { font-weight: 650; font-size: 1.1rem; margin-bottom: 1.25rem; }
-  .trainer__bio { font: 500 clamp(1.2rem, 2vw, 1.45rem)/1.5 var(--font-display); font-stretch: 95%; color: var(--text-muted); max-width: 36ch; margin: 0; }
+  .trainer__role { font-weight: 650; font-size: 1.1rem; margin-bottom: 1.25rem; max-width: 44ch; }
+  .trainer__bio { font: 500 clamp(1.15rem, 1.8vw, 1.35rem)/1.5 var(--font-display); font-stretch: 95%; color: var(--text-muted); max-width: 48ch; margin: 0 0 2rem; }
+
+  .expertise { list-style: none; margin: 0 0 2rem; padding: 0; display: grid; gap: 0.75rem; }
+  .expertise li { padding: 1rem 1.15rem; border-radius: 16px; background: var(--surface); border-left: 4px solid var(--brand); box-shadow: 0 8px 20px -16px rgb(60 30 10 / 0.5); }
+  .expertise li:nth-child(2) { border-left-color: var(--accent); }
+  .expertise p { margin: 0; }
+  .x__title { font: 650 1.05rem/1.25 var(--font-display); margin-bottom: 0.2rem !important; }
+  .x__text { font-size: 0.95rem; color: var(--text-muted); line-height: 1.5; }
+
+  .record__heading { margin: 0 0 0.75rem; font: 650 1.15rem/1.2 var(--font-display); }
+  .record ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.6rem; }
+  .record li { display: flex; gap: 0.65rem; align-items: flex-start; line-height: 1.5; }
+  .record svg { flex: none; width: 20px; height: 20px; margin-top: 0.15rem; padding: 2px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); }
+
+  @media (min-width: 700px) { .expertise { grid-template-columns: repeat(3, 1fr); } }
   @media (min-width: 900px) { .trainer { grid-template-columns: 300px 1fr; } }
 </style>
