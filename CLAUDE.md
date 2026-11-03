@@ -8,7 +8,7 @@ Brand: `site.json` → `brand`; wordmark `src/components/Logo.astro` (striped aw
 Full plan: `docs/plan.md`. Long-term memory lives in the Obsidian vault (`C:\Korporatlygroup\Claude-Vault`), not here.
 
 ## Stack
-Astro (static output), plain CSS with colour tokens (`src/styles/tokens.css`, light + dark). No UI framework.
+Astro (static output), plain CSS with colour tokens (`src/styles/tokens.css`). **Light theme only**: the user chose the light palette; don't add a dark mode. No UI framework.
 - `npm install` · `npm run dev` · `npm run build` (output in `dist/`).
 
 ## Where things live

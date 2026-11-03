@@ -10,7 +10,7 @@ Structure modelled on korporatlygroup.com.
 ## Brand
 - Name: INOK. Expansion shown alongside it: "Idhu Namme Oru Kedai". Meaning: "This is our shop".
 - Wordmark: a striped shop awning (kedai) over "INOK", as an inline SVG (`src/components/Logo.astro`). Favicon matches.
-- Palette: marigold `#f4a51c` (brand), maroon `#8c1d40` (accent); dark-mode variants in `tokens.css`.
+- Palette: marigold `#f4a51c` (brand), maroon `#8c1d40` (accent), on warm cream `#fffcf6`. Light theme only (no dark mode, user decision 2026-11-03).
 - GET Academy is the organiser (`site.json` → `organiser`); its own logo appears only in Partners.
 
 ## Verified facts (safe to publish)
