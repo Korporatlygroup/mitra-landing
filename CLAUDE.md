@@ -45,3 +45,9 @@ Astro (static output), plain CSS with colour tokens (`src/styles/tokens.css`). *
 ## Code style
 - Read copy from `site.json`, media from `media.json` via `src/lib/media.ts`. Missing data must degrade gracefully (placeholder, not a crash).
 - Mobile first, no horizontal scroll, images with explicit `width`/`height`, `loading="lazy"` below the fold, real `alt` text.
+
+## Security (see `SECURITY.md`)
+- Keep the site static and self-hosted: no PHP, no server code, no third-party scripts, fonts, embeds or trackers. Adding any external origin means updating the CSP in `astro.config.mjs` (and `form-action` for a form host).
+- Security headers live in both `vercel.json` and `public/_headers`. Change them together.
+- External links use `rel="noopener noreferrer"`. Never `set:html` content from `site.json`; only hard-coded icon markup.
+- Run `npm audit` before each push. Don't commit secrets or `.env` files.

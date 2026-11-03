@@ -56,7 +56,7 @@ const icons: Record<string, string> = {
       <p>{mitra.sourcesLabel}</p>
       <ol>
         {mitra.sources.map((s, i) => (
-          <li id={`mitra-src-${i + 1}`}><a href={s.url} target="_blank" rel="noopener">{s.label}</a></li>
+          <li id={`mitra-src-${i + 1}`}><a href={s.url} target="_blank" rel="noopener noreferrer">{s.label}</a></li>
         ))}
       </ol>
       <p class="mitra__disclaimer">{mitra.disclaimer}</p>
