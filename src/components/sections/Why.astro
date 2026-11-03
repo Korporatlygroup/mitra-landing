@@ -1,0 +1,17 @@
+---
+import site from '../../../content/site.json';
+
+const { why } = site;
+---
+
+<section class="section why" id="why">
+  <div class="container why__inner">
+    <h2 data-reveal>{why.heading}</h2>
+    <p class="why__body" data-reveal style="--d:80">{why.body}</p>
+  </div>
+</section>
+
+<style>
+  .why__inner { max-width: 62rem; }
+  .why__body { font: 500 clamp(1.25rem, 2vw, 1.5rem)/1.5 var(--font-display); font-stretch: 95%; letter-spacing: -0.01em; color: var(--text); max-width: 46ch; margin: 0; }
+</style>

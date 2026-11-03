@@ -79,6 +79,13 @@
     "_note": "Second paragraph names MITRA and SEGi factually (no logos, no endorsement). Confirm wording with the user before launch.",
     "imageCaption": "The programme banner, Ipoh, July 2024"
   },
+  "funding": {
+    "heading": "Funded by MITRA",
+    "body": "MITRA, the Malaysian Indian Community Transformation Unit (Unit Transformasi Masyarakat India Malaysia), is a Malaysian government unit that supports education, skills and business programmes for the Indian community. In 2024 it funded the Digital Marketing Strategist Certification Programme, which GET Academy delivered for micro-entrepreneurs and small businesses.",
+    "note": "This page is produced by GET Academy and is not an official MITRA publication.",
+    "logo": "logo-mitra",
+    "_note": "Logo renders only if logo-mitra exists on disk. No ministry name, funding amounts or endorsement wording here (CLAUDE.md). MITRA permission is still pending in CLAUDE.md."
+  },
   "impact": {
     "heading": "The programme in numbers",
     "stats": [
@@ -102,7 +109,7 @@
       },
       {
         "value": "10",
-        "label": "participants present for all six face-to-face days",
+        "label": "participants took part in the face-to-face sessions",
         "source": "Final report; attendance sheets",
         "key": "participants"
       },
@@ -123,6 +130,10 @@
     "gridHint": "Hover or tap any day for its date.",
     "dayWord": "Day",
     "daysWord": "days"
+  },
+  "why": {
+    "heading": "Why this programme",
+    "body": "The programme taught small business owners to sell online using TikTok, e-commerce platforms and AI tools. It ran over 26 days: six face-to-face in Ipoh, then 20 days of mentored online work."
   },
   "curriculum": {
     "heading": "What participants learned",
@@ -458,6 +469,19 @@
       "whatsapp": "Chat on WhatsApp",
       "email": "Email us",
       "submit": "Send enquiry"
+    },
+    "enquire": {
+      "heading": "Interested in the next batch?",
+      "line": "Message us.",
+      "whatsappMessage": "Hi GET Academy, I'd like to know about the next batch of the Digital Marketing Strategist programme.",
+      "emailSubject": "Enquiry: next batch of the Digital Marketing Strategist programme",
+      "nextIntake": null,
+      "price": null,
+      "labels": {
+        "nextIntake": "Next intake",
+        "price": "Fee"
+      },
+      "_note": "WhatsApp and email buttons use contact.whatsapp / contact.email and render only when those are set; otherwise the geta.com.my fallback shows. nextIntake and price render only when filled in (text, e.g. \"Intake: 2 June 2025\"). Leave null until confirmed."
     }
   },
   "footer": {

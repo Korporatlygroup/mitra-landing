@@ -1,0 +1,40 @@
+---
+// Funding context, placed right after About. Factual only: no ministry name, amounts or endorsement wording (CLAUDE.md).
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+import { getMedia } from '../../lib/media';
+
+const { funding } = site;
+const hasLogo = getMedia(funding.logo).available;
+---
+
+<section class="section" id="funded">
+  <div class:list={['container funded', { 'funded--logo': hasLogo }]}>
+    {hasLogo && (
+      <div class="funded__logo" data-reveal="scale">
+        <Media id={funding.logo} fit="contain" sizes="(min-width: 700px) 220px, 60vw" />
+      </div>
+    )}
+    <div class="funded__text">
+      <h2 data-reveal>{funding.heading}</h2>
+      <p class="lead" data-reveal style="--d:80">{funding.body}</p>
+      <p class="funded__note" data-reveal style="--d:160">{funding.note}</p>
+    </div>
+  </div>
+</section>
+
+<style>
+  .funded { display: grid; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
+  .funded__text { max-width: 62ch; }
+  .funded__note {
+    margin: 1.25rem 0 0; padding-left: 1rem; border-left: 3px solid var(--brand);
+    font-size: 0.95rem; color: var(--text-muted);
+  }
+  /* Logos are drawn for light backgrounds, so they always sit on a white tile (also in dark mode). */
+  .funded__logo {
+    justify-self: start; width: min(220px, 60vw); padding: 1rem 1.25rem; border-radius: var(--radius-lg);
+    background: #fff; box-shadow: var(--shadow);
+  }
+  .funded__logo :global(.media) { width: 100%; height: auto; aspect-ratio: 800 / 244; object-fit: contain; border-radius: 0; background: transparent; }
+  @media (min-width: 700px) { .funded--logo { grid-template-columns: 220px 1fr; } }
+</style>
