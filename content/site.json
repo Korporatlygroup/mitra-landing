@@ -431,7 +431,7 @@
         "logo": "logo-ten",
         "icon": "award",
         "role": "Recognised",
-        "permitted": true
+        "permitted": false
       },
       {
         "name": "MITRA",
@@ -441,7 +441,7 @@
         "permitted": true
       }
     ],
-    "_note": "SAMPLE BUILD: all partners set permitted:true at the user's request (this repo is a design sample, not the live page). A logo shows automatically once its file exists at the media.json path (media/logos/logo-*.webp); until then an icon + the name show. Re-check permissions before any real launch."
+    "_note": "SAMPLE BUILD: permitted:true is set only for partners whose logo was added (GET Academy, SEGi, HRD Corp, MDEC, MITRA; sources in docs/logo-sources.md). TEN stays false: which organisation 'TEN' is could not be confirmed and no official logo was found. CLAUDE.md still lists MITRA and SEGi logo permission as pending, so re-check permissions before any real launch."
   },
   "contact": {
     "heading": "Bring this programme to your community",

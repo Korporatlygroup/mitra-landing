@@ -406,26 +406,26 @@
       "section": "partners",
       "type": "logo",
       "file": "media/logos/logo-get.webp",
-      "w": 600,
-      "h": 600,
+      "w": 115,
+      "h": 112,
       "alt": "GET Academy",
-      "description": "PLACEHOLDER. GET Academy logo: yellow sun mark. Needs an official file (SVG preferred).",
+      "description": "GET Academy logo: white sun and the word GETA on a yellow square. Taken from geta.com.my (site icon), see docs/logo-sources.md.",
       "date": null,
       "consent": "not-needed",
-      "notes": "Missing. Request from GET Academy."
+      "notes": "Low resolution (115x112), the only standalone logo on the official site: soft on retina screens. Request an SVG or larger file from GET Academy."
     },
     {
       "id": "logo-segi",
       "section": "partners",
       "type": "logo",
       "file": "media/logos/logo-segi.webp",
-      "w": 600,
-      "h": 300,
+      "w": 258,
+      "h": 89,
       "alt": "SEGi University",
-      "description": "PLACEHOLDER. SEGi University logo.",
+      "description": "SEGi University logo: teal square with a white domed-building mark, then SEGi UNIVERSITY in black. Cropped from the university site header (the QS rankings block beside it was removed), see docs/logo-sources.md.",
       "date": null,
       "consent": "pending",
-      "notes": "Missing; usage permission pending."
+      "notes": "Added at the user's instruction while CLAUDE.md still lists SEGi logo permission as pending: not cleared for a live launch. Low resolution; request an SVG from SEGi."
     },
     {
       "id": "logo-hrdf",
@@ -433,12 +433,12 @@
       "type": "logo",
       "file": "media/logos/logo-hrdf.webp",
       "w": 600,
-      "h": 300,
+      "h": 174,
       "alt": "HRD Corp",
-      "description": "PLACEHOLDER. HRDF / HRD Corp logo.",
+      "description": "HRD Corp logo: blue HRD letters with orange CORP and the line HUMAN RESOURCE DEVELOPMENT CORPORATION. Cropped from the official lockup SVG, with the Ministry of Human Resources crest removed, see docs/logo-sources.md.",
       "date": null,
       "consent": "pending",
-      "notes": "Missing."
+      "notes": "Rasterised from the official SVG at 600 px wide. Use of the HRD Corp mark not confirmed with HRD Corp."
     },
     {
       "id": "logo-mdec",
@@ -446,12 +446,12 @@
       "type": "logo",
       "file": "media/logos/logo-mdec.webp",
       "w": 600,
-      "h": 300,
+      "h": 110,
       "alt": "MDEC",
-      "description": "PLACEHOLDER. MDEC logo.",
+      "description": "MDEC logo: black M and red DEC in bold italic, with a TM mark. Rasterised from the official colour SVG on mdec.my, see docs/logo-sources.md.",
       "date": null,
       "consent": "pending",
-      "notes": "Missing."
+      "notes": "Use of the MDEC mark not confirmed with MDEC."
     },
     {
       "id": "logo-ten",
@@ -464,20 +464,20 @@
       "description": "PLACEHOLDER. TEN logo.",
       "date": null,
       "consent": "pending",
-      "notes": "Missing."
+      "notes": "Missing. The repo only says 'TEN-recognised' and never expands TEN; web searches did not identify it. Confirm the organisation's full name with GET Academy before sourcing a logo."
     },
     {
       "id": "logo-mitra",
       "section": "partners",
       "type": "logo",
       "file": "media/logos/logo-mitra.webp",
-      "w": 600,
-      "h": 300,
+      "w": 800,
+      "h": 244,
       "alt": "MITRA",
-      "description": "PLACEHOLDER. MITRA logo. Render only when site.json partners.mitra.permitted is true.",
+      "description": "MITRA wordmark: dark navy MITRA with an orange I, and the line UNIT TRANSFORMASI MASYARAKAT INDIA MALAYSIA. From mitra.gov.my, wordmark only (no government crest), see docs/logo-sources.md.",
       "date": null,
       "consent": "pending",
-      "notes": "Local file 'Logo MITRA JPM (1).png' is actually the national coat of arms, not a MITRA mark. Do not use without explicit permission."
+      "notes": "Added at the user's instruction while CLAUDE.md still lists MITRA permission as pending: not cleared for a live launch. Must not imply MITRA endorses the page."
     },
     {
       "id": "poster",
