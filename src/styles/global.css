@@ -1,8 +1,9 @@
+@import '@fontsource-variable/bricolage-grotesque/standard.css';
+@import '@fontsource-variable/hanken-grotesk/wght.css';
 @import './tokens.css';
 
 *, *::before, *::after { box-sizing: border-box; }
-html { scroll-behavior: smooth; scroll-padding-top: 72px; -webkit-text-size-adjust: 100%; }
-@media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
+html { scroll-behavior: smooth; scroll-padding-top: calc(var(--nav-h) + 12px); -webkit-text-size-adjust: 100%; }
 
 body {
   margin: 0;
@@ -10,30 +11,56 @@ body {
   color: var(--text);
   font: 400 1.0625rem/1.65 var(--font-sans);
   overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3 { font-family: var(--font-display); line-height: 1.15; letter-spacing: -0.02em; margin: 0 0 0.6em; }
-h1 { font-size: clamp(2.25rem, 6vw, 4rem); font-weight: 800; }
-h2 { font-size: clamp(1.75rem, 3.6vw, 2.6rem); font-weight: 750; }
-h3 { font-size: 1.2rem; font-weight: 700; }
-p { margin: 0 0 1em; }
+/* Type scale: perfect-fourth steps from a 17px body. Headings carry the shop-sign personality via Bricolage. */
+h1, h2, h3 { font-family: var(--font-display); line-height: 1.04; margin: 0 0 0.5em; text-wrap: balance; }
+h1 { font-size: clamp(2.6rem, 6.6vw, 5rem); font-weight: 700; font-stretch: 96%; letter-spacing: -0.022em; }
+h2 { font-size: clamp(2rem, 4.2vw, 3.2rem); font-weight: 680; font-stretch: 97%; letter-spacing: -0.018em; }
+h3 { font-size: 1.25rem; font-weight: 650; letter-spacing: -0.01em; line-height: 1.2; }
+p { margin: 0 0 1em; text-wrap: pretty; }
 a { color: inherit; }
 img, video { max-width: 100%; }
+::selection { background: var(--brand); color: var(--brand-ink); }
 
 .container { width: min(100% - 2 * var(--gutter), var(--max)); margin-inline: auto; }
 .section { padding-block: var(--section-y); }
 .section--alt { background: var(--surface-2); }
-.eyebrow { display: inline-block; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 0.75rem; }
-.lead { font-size: 1.15rem; color: var(--text-muted); max-width: 62ch; }
+.section__head { max-width: 46rem; margin-bottom: clamp(2rem, 4vw, 3rem); }
+.section__head h2 { margin-bottom: 0.35em; }
+.lead { font-size: clamp(1.1rem, 1.6vw, 1.25rem); line-height: 1.6; color: var(--text-muted); max-width: 60ch; }
 
 .btn {
-  display: inline-flex; align-items: center; gap: 0.5rem;
-  padding: 0.85rem 1.4rem; border-radius: 999px; border: 2px solid transparent;
-  font-weight: 700; text-decoration: none; transition: transform 0.15s ease, background 0.15s ease;
+  display: inline-flex; align-items: center; justify-content: center; gap: 0.55rem;
+  min-height: 52px; padding: 0.9rem 1.6rem; border-radius: 999px; border: 2px solid transparent;
+  font: 650 1rem/1 var(--font-sans); text-decoration: none; cursor: pointer;
+  transition: transform 0.25s var(--ease-spring), background-color 0.2s ease, box-shadow 0.25s ease, color 0.2s ease;
 }
-.btn:hover { transform: translateY(-1px); }
-.btn--primary { background: var(--brand); color: var(--brand-ink); }
+.btn:hover { transform: translateY(-2px); }
+.btn:active { transform: translateY(0) scale(0.98); transition-duration: 0.08s; }
+.btn--primary { background: var(--brand); color: var(--brand-ink); box-shadow: 0 10px 24px -12px rgb(244 165 28 / 0.9); }
+.btn--primary:hover { box-shadow: 0 16px 30px -12px rgb(244 165 28 / 1); }
 .btn--secondary { border-color: currentColor; color: inherit; }
-.btn:focus-visible, a:focus-visible, button:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.btn--secondary:hover { background: rgb(255 255 255 / 0.12); }
+.btn--dark { background: var(--accent-deep); color: var(--on-accent); }
+.btn svg { width: 20px; height: 20px; flex: none; }
+
+:focus-visible { outline: 3px solid var(--brand); outline-offset: 3px; border-radius: 6px; }
 
 .visually-hidden { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- Motion ----------
+   The page is complete at rest: everything is visible by default. Only elements that start below the fold
+   get .is-pre from motion.ts, then fade and rise once when scrolled into view (.is-in). --d staggers (ms). */
+.js [data-reveal] { transition: opacity 0.7s var(--ease-out), transform 0.8s var(--ease-out); transition-delay: calc(var(--d, 0) * 1ms); }
+.js [data-reveal].is-pre { opacity: 0; transform: translateY(22px); }
+.js [data-reveal='scale'].is-pre { transform: translateY(14px) scale(0.96); }
+.js [data-reveal].is-pre.is-in { opacity: 1; transform: none; }
+
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+  *, *::before, *::after { animation-duration: 0.01ms !important; animation-iteration-count: 1 !important; transition-duration: 0.01ms !important; transition-delay: 0ms !important; }
+  .js [data-reveal].is-pre { opacity: 1; transform: none; }
+}

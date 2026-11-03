@@ -2,14 +2,15 @@
 import site from '../../../content/site.json';
 import Media from '../Media.astro';
 
+import { showBeyond } from '../../lib/content';
+
 const { beyond } = site;
 ---
 
-{!beyond.verify && (
-  <section class="section" id="beyond">
+{showBeyond && (
+  <section class="section section--alt" id="beyond">
     <div class="container beyond">
       <div>
-        <span class="eyebrow">Going further</span>
         <h2>{beyond.heading}</h2>
         <p class="lead">{beyond.body}</p>
       </div>

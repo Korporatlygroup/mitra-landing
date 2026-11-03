@@ -7,20 +7,48 @@ const { about } = site;
 
 <section class="section" id="about">
   <div class="container about">
-    <div>
-      <span class="eyebrow">The programme</span>
-      <h2>{about.heading}</h2>
-      {about.body.map((p, i) => <p class={i === 0 ? 'lead' : undefined}>{p}</p>)}
+    <div class="about__text">
+      <h2 data-reveal>{about.heading}</h2>
+      {about.body.map((p, i) => (
+        <p class={i === 0 ? 'about__lead' : undefined} data-reveal style={`--d:${80 + i * 90}`}>{p}</p>
+      ))}
     </div>
-    <figure class="about__art">
-      <Media id={about.image} fit="contain" sizes="(min-width: 900px) 320px, 60vw" />
+    <figure class="about__art" data-reveal="scale" style="--d:200">
+      {/* The banner shows the government crest at the top. Crest use is not yet permitted (CLAUDE.md),
+          so the frame crops the top 25% (crest plus the header line under it; media.json suggests at least 18%). Remove .about__crop once permission is confirmed. */}
+      <div class="about__poster" data-tilt>
+        <div class="about__crop">
+          <Media id={about.image} fit="cover" sizes="(min-width: 900px) 320px, 70vw" />
+        </div>
+      </div>
+      {about.imageCaption && <figcaption>{about.imageCaption}</figcaption>}
     </figure>
   </div>
 </section>
 
 <style>
-  .about { display: grid; gap: 2.5rem; align-items: center; }
-  .about__art { margin: 0; max-width: 280px; justify-self: center; }
-  .about__art :global(.media) { max-height: 460px; box-shadow: 0 20px 50px -20px rgb(0 0 0 / 0.35); }
-  @media (min-width: 900px) { .about { grid-template-columns: 1.4fr 1fr; } }
+  .about { display: grid; gap: clamp(2.5rem, 6vw, 5rem); align-items: center; }
+  .about__text { max-width: 62ch; }
+  .about__text p { color: var(--text-muted); font-size: 1.08rem; }
+  .about__text .about__lead { font: 500 clamp(1.25rem, 2vw, 1.5rem)/1.45 var(--font-display); font-stretch: 95%; color: var(--text); letter-spacing: -0.01em; }
+
+  .about__art { margin: 0; justify-self: center; width: min(300px, 78vw); text-align: center; }
+  .about__poster {
+    position: relative; rotate: -3deg; border-radius: 6px; background: var(--surface);
+    padding: 10px; box-shadow: var(--shadow);
+    transition: rotate 0.6s var(--ease-spring), box-shadow 0.4s ease, transform 0.6s var(--ease-spring);
+    transform-style: preserve-3d;
+  }
+  /* A strip of tape, like a banner pinned to the shop wall. */
+  .about__poster::before {
+    content: ''; position: absolute; top: -12px; left: 50%; translate: -50% 0; rotate: 4deg;
+    width: 90px; height: 24px; background: color-mix(in srgb, var(--brand) 55%, transparent);
+    border-radius: 2px; z-index: 1; box-shadow: 0 2px 4px rgb(0 0 0 / 0.1);
+  }
+  .about__poster:hover { rotate: 0deg; box-shadow: var(--shadow-lift); }
+  .about__crop { overflow: hidden; border-radius: 3px; aspect-ratio: 1080 / 1440; }
+  .about__crop :global(.media) { border-radius: 0; height: auto; margin-top: -44.5%; }
+  .about figcaption { margin-top: 1.1rem; font-size: 0.88rem; color: var(--text-muted); }
+
+  @media (min-width: 900px) { .about { grid-template-columns: 1.5fr 1fr; } }
 </style>

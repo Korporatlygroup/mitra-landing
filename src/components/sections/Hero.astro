@@ -1,20 +1,28 @@
 ---
 import site from '../../../content/site.json';
 import Media from '../Media.astro';
+import Awning from '../Awning.astro';
 import { getMedia } from '../../lib/media';
 
 const { hero } = site;
 const video = getMedia(hero.video);
+// Headline words animate in one by one: the page's single orchestrated load moment.
+const words = hero.headline.split(' ');
 ---
 
 <section class="hero" id="top">
-  <div class="hero__media" aria-hidden={video.available ? 'true' : undefined}>
+  <Awning size="lg" drop class="hero__awning" />
+  <div class="hero__media" aria-hidden="true">
     <Media id={hero.image} eager sizes="100vw" />
     {video.available && <Media id={hero.video} background class="hero__video" />}
   </div>
   <div class="container hero__content">
-    <span class="eyebrow">{hero.eyebrow}</span>
-    <h1>{hero.headline}</h1>
+    <p class="hero__kicker">{hero.eyebrow}</p>
+    <h1 aria-label={hero.headline}>
+      {words.map((w, i) => (
+        <span class="word" aria-hidden="true" style={`--i:${i}`}>{w}</span>
+      ))}
+    </h1>
     <p class="hero__sub">{hero.subline}</p>
     <div class="hero__ctas">
       {hero.ctas.map((c) => (
@@ -22,17 +30,58 @@ const video = getMedia(hero.video);
       ))}
     </div>
   </div>
+  <a class="hero__cue" href="#about" aria-label="Scroll to the programme">
+    <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6" /></svg>
+  </a>
 </section>
 
 <style>
-  .hero { position: relative; min-height: min(92vh, 820px); display: grid; align-items: end; color: #fff; isolation: isolate; }
-  .hero__media { position: absolute; inset: 0; z-index: -1; overflow: hidden; }
-  .hero__media :global(.media) { position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 0; object-fit: cover; object-position: 50% 40%; }
-  .hero__media::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, rgb(0 0 0 / 0.15) 0%, rgb(0 0 0 / 0.35) 45%, rgb(0 0 0 / 0.78) 100%); }
-  .hero__content { padding-block: 6rem clamp(3rem, 8vw, 6rem); }
-  .hero .eyebrow { color: var(--brand); }
-  .hero h1 { max-width: 16ch; }
-  .hero__sub { font-size: clamp(1.05rem, 2vw, 1.3rem); max-width: 56ch; opacity: 0.92; }
-  .hero__ctas { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
-  @media (prefers-reduced-motion: reduce) { .hero :global(.hero__video) { display: none; } }
+  .hero {
+    position: relative; isolation: isolate;
+    min-height: min(calc(100svh - var(--nav-h)), 860px);
+    display: grid; align-items: end;
+    color: #fff; overflow: hidden;
+    background: #1d120c;
+  }
+  .hero :global(.hero__awning) { position: absolute; inset: 0 0 auto; z-index: 2; }
+  .hero__media { position: absolute; inset: 0; z-index: -1; }
+  .hero__media :global(.media) {
+    position: absolute; inset: 0; width: 100%; height: 100%; border-radius: 0;
+    object-fit: cover; object-position: 50% 40%;
+    animation: hero-zoom 14s var(--ease-out) both;
+  }
+  .hero__media :global(.hero__video) { opacity: 0; transition: opacity 1s ease; }
+  .hero__media :global(.hero__video.is-playing) { opacity: 1; }
+  /* Dark from the left and the bottom, so text never sits on faces without contrast. */
+  .hero__media::after {
+    content: ''; position: absolute; inset: 0;
+    background:
+      linear-gradient(90deg, rgb(24 10 6 / 0.82) 0%, rgb(24 10 6 / 0.55) 42%, rgb(24 10 6 / 0.05) 75%),
+      linear-gradient(180deg, rgb(24 10 6 / 0) 45%, rgb(24 10 6 / 0.75) 100%);
+  }
+  .hero__content { padding-block: 8rem clamp(4rem, 9vw, 7rem); }
+  .hero__kicker { margin: 0 0 1.25rem; font-weight: 650; font-size: 1rem; color: var(--brand); max-width: 40ch; }
+  .hero h1 { max-width: 13ch; margin-bottom: 0.4em; }
+  .word { display: inline-block; margin-right: 0.24em; }
+  .hero__sub { font-size: clamp(1.1rem, 1.9vw, 1.35rem); line-height: 1.55; max-width: 52ch; color: rgb(255 248 236 / 0.9); }
+  .hero__ctas { display: flex; flex-wrap: wrap; gap: 0.85rem; margin-top: 2rem; }
+  .hero__cue {
+    position: absolute; left: 50%; bottom: 1.4rem; translate: -50% 0;
+    display: grid; place-items: center; width: 44px; height: 44px; border-radius: 50%;
+    color: #fff; border: 1.5px solid rgb(255 255 255 / 0.4);
+    animation: cue 2.4s ease-in-out 2s infinite;
+  }
+  .hero__cue:hover { background: rgb(255 255 255 / 0.12); }
+  @media (max-width: 899px) { .hero__cue { display: none; } }
+
+  /* Load sequence: awning drops (Awning.astro), words rise, then supporting copy. */
+  :global(.js) .hero__kicker, :global(.js) .word, :global(.js) .hero__sub, :global(.js) .hero__ctas { animation: rise 0.9s var(--ease-out) both; }
+  :global(.js) .hero__kicker { animation-delay: 0.45s; }
+  :global(.js) .word { animation-delay: calc(0.6s + var(--i) * 0.08s); }
+  :global(.js) .hero__sub { animation-delay: 1.2s; }
+  :global(.js) .hero__ctas { animation-delay: 1.35s; }
+
+  @keyframes rise { from { opacity: 0; transform: translateY(0.6em); filter: blur(6px); } }
+  @keyframes hero-zoom { from { transform: scale(1.08); } }
+  @keyframes cue { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(6px); } }
 </style>

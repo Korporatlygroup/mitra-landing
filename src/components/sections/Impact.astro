@@ -4,25 +4,163 @@ import site from '../../../content/site.json';
 const { impact } = site;
 // Figures flagged "verify" stay hidden until confirmed against the records.
 const stats = impact.stats.filter((s) => !('verify' in s && s.verify));
+const byKey = Object.fromEntries(stats.map((s) => [s.key, s]));
+const { total, inclass, online, participants } = byKey;
+
+// The timeline is drawn from the two phase figures and only renders if they add up to the total.
+const nIn = parseInt(inclass?.value ?? '', 10);
+const nOn = parseInt(online?.value ?? '', 10);
+const showTimeline = Number.isFinite(nIn) && Number.isFinite(nOn) && String(nIn + nOn) === total?.value;
+const nPeople = Math.min(parseInt(participants?.value ?? '', 10) || 0, 60);
+
+const start = new Date(`${impact.startDate}T00:00:00`);
+const dayDate = (i: number) => { const d = new Date(start); d.setDate(start.getDate() + i); return d; };
+const dShort = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
+const dFull = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
+// "8–13 Jul 2024" inside one month, "14 Jul – 2 Aug 2024" across two.
+const range = (a: Date, b: Date) =>
+  a.getMonth() === b.getMonth() ? `${a.getDate()}–${dFull.format(b)}` : `${dShort.format(a)} – ${dFull.format(b)}`;
+
+type Phase = 'inclass' | 'online';
+const phases = showTimeline
+  ? ([
+      { key: 'inclass', count: nIn, from: 0 },
+      { key: 'online', count: nOn, from: nIn },
+    ] as { key: Phase; count: number; from: number }[]).map((p) => ({
+      ...p,
+      title: impact.dayLabels[p.key],
+      dates: range(dayDate(p.from), dayDate(p.from + p.count - 1)),
+      days: Array.from({ length: p.count }, (_, j) => {
+        const i = p.from + j;
+        return { i, label: `${impact.dayWord} ${i + 1} · ${dFull.format(dayDate(i))} · ${impact.dayLabels[p.key]}` };
+      }),
+    }))
+  : [];
+const used = new Set(showTimeline ? ['total', 'inclass', 'online', 'participants'] : ['participants']);
+const rest = stats.filter((s) => !used.has(s.key));
 ---
 
-<section class="section section--alt" id="impact">
+<section class="impact" id="impact">
   <div class="container">
-    <h2>{impact.heading}</h2>
-    <dl class="stats">
-      {stats.map((s) => (
-        <div class="stat">
-          <dt>{s.label}</dt>
-          <dd>{s.value}</dd>
-        </div>
-      ))}
-    </dl>
+    <header class="impact__head">
+      <h2 data-reveal>{impact.heading}</h2>
+      {showTimeline && (
+        <p class="impact__total" data-reveal style="--d:100">
+          <span class="impact__num">{total.value}</span>
+          <span>{total.label}</span>
+        </p>
+      )}
+    </header>
+
+    {showTimeline && (
+      <div class="tl" data-days data-reveal style={`--d:160; --in:${nIn}; --on:${nOn}`}>
+        {phases.map((p) => (
+          <div class:list={['phase', `phase--${p.key}`]}>
+            <div class="phase__head">
+              <p class="phase__count"><span>{p.count}</span> {impact.daysWord}</p>
+              <p class="phase__title">{p.title}</p>
+              <p class="phase__dates">{p.dates}</p>
+            </div>
+            <ol class="cells" aria-label={`${p.title}, ${p.dates}`}>
+              {p.days.map((d) => (
+                <li style={`--i:${d.i}`}>
+                  <button type="button" class="cell" title={d.label} data-label={d.label} aria-label={d.label}></button>
+                </li>
+              ))}
+            </ol>
+
+            {p.key === 'online' && <p class="readout" data-days-readout aria-live="polite">{impact.gridHint}</p>}
+
+            {p.key === 'inclass' && nPeople > 0 && (
+              <div class="people">
+                <ul class="people__marks" aria-hidden="true">
+                  {Array.from({ length: nPeople }, (_, k) => (
+                    <li style={`--k:${k}`}>
+                      <svg viewBox="0 0 16 22" width="14" height="19"><circle cx="8" cy="5" r="4" /><path d="M1 21c0-5 3-8.5 7-8.5s7 3.5 7 8.5z" /></svg>
+                    </li>
+                  ))}
+                </ul>
+                <p><strong>{participants.value}</strong> {participants.label}</p>
+              </div>
+            )}
+          </div>
+        ))}
+      </div>
+    )}
+
+    {!showTimeline && participants && (
+      <p class="impact__total"><span class="impact__num">{participants.value}</span><span>{participants.label}</span></p>
+    )}
+    {rest.length > 0 && (
+      <dl class="extra">
+        {rest.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
+      </dl>
+    )}
   </div>
 </section>
 
 <style>
-  .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 200px), 1fr)); gap: 1rem; margin: 0; }
-  .stat { display: flex; flex-direction: column-reverse; gap: 0.25rem; padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
-  .stat dd { margin: 0; font: 800 clamp(2.4rem, 5vw, 3.4rem)/1 var(--font-display); color: var(--accent); }
-  .stat dt { color: var(--text-muted); font-size: 0.98rem; }
+  .impact { position: relative; padding-block: var(--section-y); background: var(--accent-deep); color: var(--on-accent); overflow: hidden; }
+  /* One faint awning edge along the top of the band instead of full-height stripes. */
+  .impact::before {
+    content: ''; position: absolute; inset: 0 0 auto; height: 10px; pointer-events: none;
+    background: repeating-linear-gradient(90deg, var(--brand) 0 44px, transparent 44px 88px); opacity: 0.55;
+  }
+
+  .impact__head { display: grid; gap: 1.5rem; align-items: end; margin-bottom: clamp(2.5rem, 5vw, 4rem); }
+  .impact__head h2 { margin: 0; max-width: 14ch; }
+  .impact__total { display: flex; align-items: baseline; gap: 0.9rem; margin: 0; font-size: 1.15rem; line-height: 1.3; color: color-mix(in srgb, var(--on-accent) 82%, transparent); }
+  .impact__total span:last-child { max-width: 20ch; }
+  .impact__num { font: 750 clamp(5rem, 13vw, 9.5rem)/0.8 var(--font-display); font-stretch: 92%; letter-spacing: -0.035em; color: var(--brand); }
+  @media (min-width: 900px) { .impact__head { grid-template-columns: 1fr auto; } }
+
+  /* Timeline: the two phases sit side by side at their true proportions (6 : 20), so cells stay the same size. */
+  .tl { display: grid; gap: 2.25rem; }
+  @media (min-width: 900px) {
+    .tl { display: flex; gap: clamp(1.5rem, 3vw, 2.75rem); }
+    .phase--inclass { flex: var(--in) 1 0; }
+    .phase--online { flex: var(--on) 1 0; }
+  }
+
+  .phase { display: grid; gap: 1rem; align-content: start; min-width: 0; }
+  .phase__head { display: grid; gap: 0.15rem; padding-bottom: 0.9rem; border-bottom: 1px solid color-mix(in srgb, var(--on-accent) 22%, transparent); }
+  .phase--inclass .phase__head { border-bottom-color: var(--brand); }
+  .phase__head p { margin: 0; }
+  .phase__count { font-size: 1rem; font-weight: 600; color: color-mix(in srgb, var(--on-accent) 80%, transparent); }
+  .phase__count span { font: 700 2.6rem/1 var(--font-display); font-stretch: 92%; letter-spacing: -0.02em; color: var(--on-accent); margin-right: 0.15rem; }
+  .phase__title { font: 650 1.15rem/1.25 var(--font-display); }
+  .phase__dates { font-size: 0.95rem; color: color-mix(in srgb, var(--on-accent) 70%, transparent); font-variant-numeric: tabular-nums; }
+
+  .cells { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
+  .phase--inclass .cells { grid-template-columns: repeat(10, 1fr); }
+  .phase--online .cells { grid-template-columns: repeat(10, 1fr); }
+  @media (min-width: 900px) {
+    .phase--inclass .cells { grid-template-columns: repeat(6, 1fr); }
+    .phase--online .cells { grid-template-columns: repeat(20, 1fr); }
+  }
+  .cell {
+    display: block; width: 100%; aspect-ratio: 1; padding: 0; cursor: pointer;
+    border-radius: 5px; border: 1.5px solid color-mix(in srgb, var(--brand) 60%, transparent);
+    background: color-mix(in srgb, var(--brand) 12%, transparent);
+    transition: transform 0.25s var(--ease-spring), background-color 0.2s ease, border-color 0.2s ease;
+  }
+  .phase--inclass .cell { background: var(--brand); border-color: var(--brand); }
+  .cell:hover, .cell:focus-visible, .cell:global(.is-current) { transform: translateY(-4px) scale(1.12); background: var(--on-accent); border-color: var(--on-accent); outline: none; }
+  /* Days fill in order, left to right, when the band first scrolls into view. */
+  :global(.js) .tl:global(.is-pre) .cells li { opacity: 0; transform: scale(0.5); transition: opacity 0.35s ease, transform 0.45s var(--ease-spring); transition-delay: calc(350ms + var(--i) * 30ms); }
+  :global(.js) .tl:global(.is-pre.is-in) .cells li { opacity: 1; transform: none; }
+
+  .people { display: grid; gap: 0.7rem; margin-top: 0.5rem; }
+  .people__marks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; color: var(--brand); }
+  .people__marks svg { display: block; fill: currentColor; }
+  .people p { margin: 0; font-size: 1rem; line-height: 1.4; color: color-mix(in srgb, var(--on-accent) 85%, transparent); max-width: 26ch; }
+  .people strong { font-weight: 750; color: var(--on-accent); }
+  :global(.js) .tl:global(.is-pre) .people__marks li { opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.4s var(--ease-spring); transition-delay: calc(700ms + var(--k) * 60ms); }
+  :global(.js) .tl:global(.is-pre.is-in) .people__marks li { opacity: 1; transform: none; }
+
+  .readout { min-height: 1.5em; margin: 0.25rem 0 0; font-size: 0.95rem; font-weight: 600; color: color-mix(in srgb, var(--on-accent) 75%, transparent); font-variant-numeric: tabular-nums; }
+
+  .extra { display: flex; flex-wrap: wrap; gap: 2rem; margin: 2rem 0 0; }
+  .extra div { display: flex; flex-direction: column-reverse; }
+  .extra dd { margin: 0; font: 700 2.4rem/1 var(--font-display); color: var(--brand); }
 </style>

@@ -1,46 +1,118 @@
 ---
 import site from '../../../content/site.json';
 import Media from '../Media.astro';
+import { getMedia, url } from '../../lib/media';
 
 const { gallery } = site;
+// Only photos whose files exist; a gallery of empty boxes reads as broken.
+const items = gallery.items.filter((g) => getMedia(g.media).available);
+const initial = Math.min(gallery.initial ?? items.length, items.length);
+// Bento rhythm: every 6th visible tile is large. motion.ts reapplies this after filtering.
+const isLarge = (i: number) => i % 6 === 0;
 ---
 
 <section class="section" id="gallery">
   <div class="container">
-    <span class="eyebrow">In the room</span>
-    <h2>{gallery.heading}</h2>
-    <div class="filters" role="group" aria-label="Filter gallery">
-      {gallery.filters.map((f, i) => (
-        <button type="button" data-filter={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
-      ))}
+    <div class="gallery__head">
+      <h2 data-reveal>{gallery.heading}</h2>
+      <div class="filters" role="group" aria-label="Filter photos by day" data-reveal style="--d:80">
+        {gallery.filters.map((f, i) => (
+          <button type="button" data-filter={f.id} aria-pressed={i === 0 ? 'true' : 'false'}>{f.label}</button>
+        ))}
+      </div>
     </div>
-    <ul class="grid">
-      {gallery.items.map((g) => (
-        <li data-tags={g.tags.join(' ')}>
-          <Media id={g.media} sizes="(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw" />
-        </li>
-      ))}
+
+    <ul class="bento" data-gallery data-initial={initial}>
+      {items.map((g, i) => {
+        const m = getMedia(g.media);
+        return (
+          <li
+            class:list={['tile', { 'tile--lg': isLarge(i) }]}
+            data-tags={g.tags.join(' ')}
+            hidden={i >= initial}
+            data-reveal="scale"
+            style={`--d:${(i % 6) * 70}`}
+          >
+            <button type="button" class="tile__btn" data-full={url(m.item!.file!)} data-alt={m.item!.alt} aria-label={`Open photo: ${m.item!.alt}`}>
+              <Media id={g.media} sizes="(min-width: 900px) 33vw, (min-width: 600px) 50vw, 100vw" />
+              <span class="tile__zoom" aria-hidden="true">
+                <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7" /></svg>
+              </span>
+            </button>
+          </li>
+        );
+      })}
     </ul>
+
+    {items.length > initial && (
+      <div class="gallery__more">
+        <button type="button" class="btn btn--secondary" data-gallery-more data-more={gallery.showAll.replace('{n}', String(items.length))} data-less={gallery.showLess} aria-expanded="false">
+          {gallery.showAll.replace('{n}', String(items.length))}
+        </button>
+      </div>
+    )}
   </div>
+
+  <dialog class="lightbox" data-lightbox aria-label="Photo viewer">
+    <figure>
+      <img data-lightbox-img alt="" />
+      <figcaption data-lightbox-cap></figcaption>
+    </figure>
+    <button type="button" class="lb-btn lb-close" data-lb="close" aria-label="Close">
+      <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18" /></svg>
+    </button>
+    <button type="button" class="lb-btn lb-prev" data-lb="prev" aria-label="Previous photo">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m15 18-6-6 6-6" /></svg>
+    </button>
+    <button type="button" class="lb-btn lb-next" data-lb="next" aria-label="Next photo">
+      <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6" /></svg>
+    </button>
+    <span class="lb-count" data-lightbox-count></span>
+  </dialog>
 </section>
 
 <style>
-  .filters { display: flex; flex-wrap: wrap; gap: 0.5rem; margin: 1rem 0 1.5rem; }
-  .filters button { font: inherit; font-weight: 600; font-size: 0.9rem; padding: 0.45rem 1rem; border-radius: 999px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); cursor: pointer; }
-  .filters button[aria-pressed='true'] { background: var(--text); color: var(--bg); border-color: var(--text); }
-  .grid { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: repeat(auto-fill, minmax(min(100%, 280px), 1fr)); }
-  .grid li[hidden] { display: none; }
-  .grid :global(.media) { aspect-ratio: 3 / 2; height: auto; }
-</style>
+  .gallery__head { display: flex; flex-wrap: wrap; align-items: end; justify-content: space-between; gap: 1rem 2rem; margin-bottom: 1.75rem; }
+  .gallery__head h2 { margin: 0; }
+  .filters { display: inline-flex; flex-wrap: wrap; gap: 4px; padding: 4px; border-radius: 999px; background: var(--surface-2); }
+  .filters button {
+    font: 650 0.95rem/1 var(--font-sans); padding: 0.7rem 1.1rem; border-radius: 999px; border: 0;
+    background: transparent; color: var(--text-muted); cursor: pointer; transition: background-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
+  }
+  .filters button:hover { color: var(--text); }
+  .filters button[aria-pressed='true'] { background: var(--surface); color: var(--text); box-shadow: 0 2px 8px -2px rgb(60 30 10 / 0.25); }
 
-<script>
-  const buttons = document.querySelectorAll<HTMLButtonElement>('#gallery [data-filter]');
-  const tiles = document.querySelectorAll<HTMLLIElement>('#gallery [data-tags]');
-  buttons.forEach((b) =>
-    b.addEventListener('click', () => {
-      const f = b.dataset.filter!;
-      buttons.forEach((x) => x.setAttribute('aria-pressed', String(x === b)));
-      tiles.forEach((t) => (t.hidden = f !== 'all' && !t.dataset.tags!.split(' ').includes(f)));
-    }),
-  );
-</script>
+  .bento { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.75rem; grid-template-columns: repeat(2, 1fr); grid-auto-flow: dense; }
+  @media (min-width: 900px) { .bento { grid-template-columns: repeat(3, 1fr); gap: 1rem; } }
+  .tile[hidden] { display: none; }
+  .tile--lg { grid-column: span 2; grid-row: span 2; }
+  .tile__btn { position: relative; display: block; width: 100%; height: 100%; padding: 0; border: 0; border-radius: var(--radius); overflow: hidden; cursor: zoom-in; background: var(--surface-2); }
+  .tile__btn :global(.media) { width: 100%; height: 100%; aspect-ratio: 3 / 2; border-radius: 0; transition: transform 0.9s var(--ease-out), filter 0.4s ease; }
+  .tile--lg .tile__btn :global(.media) { aspect-ratio: auto; min-height: 100%; }
+  .tile__btn:hover :global(.media) { transform: scale(1.06); }
+  .tile__zoom {
+    position: absolute; right: 10px; bottom: 10px; display: grid; place-items: center; width: 36px; height: 36px; border-radius: 50%;
+    background: rgb(255 255 255 / 0.92); color: #2a1a12; opacity: 0; transform: scale(0.7);
+    transition: opacity 0.25s ease, transform 0.35s var(--ease-spring);
+  }
+  .tile__btn:hover .tile__zoom, .tile__btn:focus-visible .tile__zoom { opacity: 1; transform: none; }
+  @media (hover: none) { .tile__zoom { opacity: 1; transform: none; } }
+  .gallery__more { display: flex; justify-content: center; margin-top: 2rem; }
+
+  .lightbox { width: 100vw; height: 100dvh; max-width: none; max-height: none; margin: 0; padding: 0; border: 0; background: rgb(18 8 4 / 0.94); color: #fff; overflow: hidden; }
+  .lightbox::backdrop { background: transparent; }
+  .lightbox[open] { display: grid; place-items: center; animation: lb-in 0.3s ease; }
+  .lightbox figure { margin: 0; display: grid; justify-items: center; gap: 0.9rem; padding: 4rem 1rem 3.5rem; max-width: 100%; }
+  .lightbox img { max-width: min(92vw, 1600px); max-height: calc(100dvh - 9rem); width: auto; height: auto; border-radius: 10px; object-fit: contain; animation: lb-img 0.4s var(--ease-out); }
+  .lightbox img.is-switching { animation: none; opacity: 0.2; }
+  .lightbox figcaption { max-width: 70ch; text-align: center; font-size: 0.95rem; color: rgb(255 244 228 / 0.8); }
+  .lb-btn { position: absolute; display: grid; place-items: center; width: 48px; height: 48px; border-radius: 50%; border: 0; cursor: pointer; background: rgb(255 255 255 / 0.12); color: #fff; transition: background-color 0.2s ease, transform 0.25s var(--ease-spring); }
+  .lb-btn:hover { background: rgb(255 255 255 / 0.24); transform: scale(1.06); }
+  .lb-close { top: 1rem; right: 1rem; }
+  .lb-prev { left: 1rem; top: 50%; translate: 0 -50%; }
+  .lb-next { right: 1rem; top: 50%; translate: 0 -50%; }
+  .lb-count { position: absolute; top: 1.6rem; left: 1.25rem; font-weight: 600; font-size: 0.9rem; color: rgb(255 244 228 / 0.75); }
+  @media (max-width: 600px) { .lb-prev, .lb-next { top: auto; bottom: 1rem; translate: none; } }
+  @keyframes lb-in { from { opacity: 0; } }
+  @keyframes lb-img { from { opacity: 0; transform: scale(0.96); } }
+</style>

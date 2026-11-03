@@ -18,30 +18,60 @@ const icons: Record<string, string> = {
 };
 ---
 
-<section class="section" id="curriculum">
+<section class="section section--alt" id="curriculum">
   <div class="container">
-    <span class="eyebrow">Curriculum</span>
-    <h2>{curriculum.heading}</h2>
-    <p class="lead">{curriculum.intro}</p>
-    <ul class="modules">
-      {curriculum.modules.map((m) => (
-        <li>
-          <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[m.icon] ?? icons.compass} />
-          <span>{m.title}</span>
-        </li>
+    <div class="section__head">
+      <h2 data-reveal>{curriculum.heading}</h2>
+      <p class="lead" data-reveal style="--d:80">{curriculum.intro}</p>
+    </div>
+    <div class="groups">
+      {curriculum.groups.map((g, gi) => (
+        <div class="group" data-reveal style={`--d:${gi * 120}`}>
+          <h3>{g.title}</h3>
+          <ul>
+            {g.modules.map((m, mi) => (
+              <li class="module" style={`--d:${gi * 120 + mi * 70 + 150}`}>
+                <span class="module__icon">
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[m.icon] ?? icons.compass} />
+                </span>
+                <span>{m.title}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
       ))}
-    </ul>
+    </div>
     <div class="shots">
-      {curriculum.images.map((id) => <Media id={id} sizes="(min-width: 900px) 33vw, 100vw" />)}
+      {curriculum.images.map((id, i) => (
+        <div class="shot" data-reveal="scale" style={`--d:${i * 110}`}>
+          <Media id={id} sizes="(min-width: 900px) 33vw, 100vw" />
+        </div>
+      ))}
     </div>
   </div>
 </section>
 
 <style>
-  .modules { list-style: none; padding: 0; margin: 2rem 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 0.75rem; }
-  .modules li { display: flex; align-items: center; gap: 0.85rem; padding: 1rem 1.1rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-sm); font-weight: 600; }
-  .modules svg { flex: none; color: var(--accent); }
-  .shots { display: grid; gap: 1rem; }
-  .shots :global(.media) { aspect-ratio: 3 / 2; height: auto; }
+  .groups { display: grid; gap: 1rem; }
+  .group { padding: 1.5rem; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+  .group h3 { margin: 0 0 1rem; font-size: 1.35rem; }
+  .group ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.35rem; }
+  .module {
+    display: flex; align-items: center; gap: 0.9rem; padding: 0.6rem 0.65rem; margin-inline: -0.65rem;
+    border-radius: var(--radius-sm); font-weight: 600; font-size: 1.02rem; line-height: 1.3;
+    transition: background-color 0.25s ease, transform 0.3s var(--ease-out);
+  }
+  .module__icon {
+    flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px;
+    background: var(--brand-soft); color: var(--accent-text);
+    transition: background-color 0.25s ease, color 0.25s ease, transform 0.45s var(--ease-spring);
+  }
+  .module:hover { background: var(--surface-2); transform: translateX(4px); }
+  .module:hover .module__icon { background: var(--brand); color: var(--brand-ink); transform: rotate(-8deg) scale(1.08); }
+  .shots { display: grid; gap: 1rem; margin-top: clamp(1.5rem, 4vw, 2.5rem); }
+  .shot { overflow: hidden; border-radius: var(--radius-lg); }
+  .shot :global(.media) { aspect-ratio: 3 / 2; height: auto; border-radius: 0; transition: transform 0.9s var(--ease-out); }
+  .shot:hover :global(.media) { transform: scale(1.05); }
   @media (min-width: 700px) { .shots { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 900px) { .groups { grid-template-columns: repeat(3, 1fr); } }
 </style>
