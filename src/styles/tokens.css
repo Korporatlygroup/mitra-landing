@@ -1,57 +1,82 @@
-/* Colour + spacing tokens. Light is default; dark follows the OS unless data-theme forces one. */
+/* Colour, type and spacing tokens. Light is the designed default; dark follows the OS unless data-theme forces one.
+   Fills use --brand (marigold) and --accent (maroon). Text accents use --accent-text, which stays readable in both themes. */
 :root {
-  --brand: #f4a51c;          /* INOK marigold */
-  --brand-ink: #2a1500;      /* text on brand */
-  --accent: #8c1d40;         /* INOK maroon (awning stripes, eyebrows, figures) */
+  --brand: #f4a51c;          /* INOK marigold: awning, buttons, highlights */
+  --brand-soft: #fde7b8;
+  --brand-ink: #2a1500;      /* text on marigold */
+  --accent: #8c1d40;         /* INOK maroon: awning stripes, figures */
+  --accent-deep: #5c0f28;    /* maroon band background */
+  --accent-text: #8c1d40;    /* small accent text on light surfaces */
+  --on-accent: #fff4e2;      /* text on maroon */
 
-  --bg: #fbfaf6;
+  --bg: #fffcf6;
   --surface: #ffffff;
-  --surface-2: #f1eee5;
-  --text: #1d1b16;
-  --text-muted: #5f5a4e;
-  --border: #e4dfd2;
-  --border-strong: #c9c2b0;
-  --overlay: rgb(15 12 5 / 0.55);
+  --surface-2: #fcf1dc;      /* marigold wash for alternate sections */
+  --text: #2a1a12;
+  --text-muted: #6b5747;
+  --border: #f0e3ca;
+  --border-strong: #dcc8a4;
+  --footer-bg: #2a0d17;
+  --footer-text: #f3e3cf;
+  --shadow: 0 1px 2px rgb(60 30 10 / 0.06), 0 12px 32px -14px rgb(92 15 40 / 0.22);
+  --shadow-lift: 0 2px 4px rgb(60 30 10 / 0.08), 0 22px 44px -16px rgb(92 15 40 / 0.32);
 
+  --radius-lg: 22px;
   --radius: 14px;
-  --radius-sm: 8px;
+  --radius-sm: 10px;
   --gutter: clamp(16px, 4vw, 40px);
-  --section-y: clamp(56px, 9vw, 112px);
-  --max: 1160px;
+  --section-y: clamp(64px, 10vw, 128px);
+  --max: 1180px;
+  --nav-h: 68px;
 
-  --font-sans: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
-  --font-display: "Plus Jakarta Sans", var(--font-sans);
+  --font-sans: "Hanken Grotesk Variable", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-display: "Bricolage Grotesque Variable", var(--font-sans);
+
+  --ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
   color-scheme: light;
 }
 
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --brand: #ffb838;
-    --brand-ink: #2a1500;
-    --accent: #f28aa6;
-    --bg: #12110e;
-    --surface: #1b1a16;
-    --surface-2: #26241e;
-    --text: #f3f0e7;
-    --text-muted: #b3ad9e;
-    --border: #2f2c25;
-    --border-strong: #4a463b;
-    --overlay: rgb(0 0 0 / 0.6);
+    --brand-soft: #4a3412;
+    --accent: #b02a55;
+    --accent-deep: #3d0a1b;
+    --accent-text: #ffc560;
+    --on-accent: #ffeed6;
+    --bg: #17110d;
+    --surface: #211812;
+    --surface-2: #2a1d13;
+    --text: #f7ecdc;
+    --text-muted: #c4ae97;
+    --border: #3a2a1d;
+    --border-strong: #5a4430;
+    --footer-bg: #0f0a07;
+    --footer-text: #e9d9c3;
+    --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -14px rgb(0 0 0 / 0.6);
+    --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 22px 44px -16px rgb(0 0 0 / 0.7);
     color-scheme: dark;
   }
 }
 
 :root[data-theme="dark"] {
   --brand: #ffb838;
-  --brand-ink: #2a1500;
-  --accent: #f28aa6;
-  --bg: #12110e;
-  --surface: #1b1a16;
-  --surface-2: #26241e;
-  --text: #f3f0e7;
-  --text-muted: #b3ad9e;
-  --border: #2f2c25;
-  --border-strong: #4a463b;
-  --overlay: rgb(0 0 0 / 0.6);
+  --brand-soft: #4a3412;
+  --accent: #b02a55;
+  --accent-deep: #3d0a1b;
+  --accent-text: #ffc560;
+  --on-accent: #ffeed6;
+  --bg: #17110d;
+  --surface: #211812;
+  --surface-2: #2a1d13;
+  --text: #f7ecdc;
+  --text-muted: #c4ae97;
+  --border: #3a2a1d;
+  --border-strong: #5a4430;
+  --footer-bg: #0f0a07;
+  --footer-text: #e9d9c3;
+  --shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 12px 32px -14px rgb(0 0 0 / 0.6);
+  --shadow-lift: 0 2px 4px rgb(0 0 0 / 0.35), 0 22px 44px -16px rgb(0 0 0 / 0.7);
   color-scheme: dark;
 }

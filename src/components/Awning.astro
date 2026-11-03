@@ -1,0 +1,42 @@
+---
+// The INOK signature: a striped kedai awning with a scalloped edge, the same motif as the wordmark.
+// Pure CSS (stripes + mask), so it scales to any width without distorting the scallops.
+// `drop` plays a one-time unroll on load (hero); `sway` makes it react gently to hover.
+interface Props {
+  size?: 'lg' | 'md';
+  drop?: boolean;
+  class?: string;
+}
+const { size = 'md', drop = false, class: cls = '' } = Astro.props;
+---
+
+<div class:list={['awning', `awning--${size}`, { 'awning--drop': drop }, cls]} aria-hidden="true"></div>
+
+<style>
+  .awning {
+    --stripe: 44px;
+    --depth: 34px;
+    position: relative;
+    height: var(--depth);
+    width: 100%;
+    background: repeating-linear-gradient(90deg, var(--brand) 0 var(--stripe), var(--accent) var(--stripe) calc(var(--stripe) * 2));
+    /* Solid top half + one half-ellipse per stripe = scalloped bottom edge. */
+    -webkit-mask:
+      linear-gradient(#000 0 0) top / 100% 50% no-repeat,
+      radial-gradient(calc(var(--stripe) / 2) 50% at 50% 50%, #000 97%, transparent 100%) 0 0 / var(--stripe) 100% repeat-x;
+    mask:
+      linear-gradient(#000 0 0) top / 100% 50% no-repeat,
+      radial-gradient(calc(var(--stripe) / 2) 50% at 50% 50%, #000 97%, transparent 100%) 0 0 / var(--stripe) 100% repeat-x;
+    filter: drop-shadow(0 6px 6px rgb(42 13 23 / 0.25));
+    transform-origin: top center;
+  }
+  .awning--lg { --stripe: clamp(40px, 5vw, 64px); --depth: clamp(30px, 3.6vw, 46px); }
+  .awning--drop { animation: awning-drop 1.1s var(--ease-spring) 0.15s both; }
+
+  @keyframes awning-drop {
+    0% { transform: scaleY(0); }
+    60% { transform: scaleY(1.12); }
+    80% { transform: scaleY(0.96); }
+    100% { transform: scaleY(1); }
+  }
+</style>

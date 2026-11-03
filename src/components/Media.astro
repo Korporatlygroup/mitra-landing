@@ -19,22 +19,36 @@ const h = item?.h ?? 1000;
 ---
 
 {available && item?.type === 'video' ? (
-  <video
-    class:list={['media', `media--${fit}`, cls]}
-    width={w}
-    height={h}
-    poster={hasPoster && item.poster ? url(item.poster) : undefined}
-    preload={background ? 'auto' : 'none'}
-    autoplay={background}
-    muted={background}
-    loop={background}
-    playsinline
-    controls={!background}
-    aria-label={item.alt}
-    data-bg-video={background ? '' : undefined}
-  >
-    <source src={url(item.file!)} type="video/mp4" />
-  </video>
+  background ? (
+    // Background loop: no src in the HTML, so nothing downloads until motion.ts confirms the
+    // visitor hasn't asked for reduced motion. The poster/still underneath covers the gap.
+    <video
+      class:list={['media', `media--${fit}`, cls]}
+      width={w}
+      height={h}
+      poster={hasPoster && item.poster ? url(item.poster) : undefined}
+      preload="none"
+      muted
+      loop
+      playsinline
+      aria-hidden="true"
+      data-bg-video
+      data-src={url(item.file!)}
+    ></video>
+  ) : (
+    <video
+      class:list={['media', `media--${fit}`, cls]}
+      width={w}
+      height={h}
+      poster={hasPoster && item.poster ? url(item.poster) : undefined}
+      preload="none"
+      playsinline
+      controls
+      aria-label={item.alt}
+    >
+      <source src={url(item.file!)} type="video/mp4" />
+    </video>
+  )
 ) : available && item ? (
   <img
     class:list={['media', `media--${fit}`, cls]}

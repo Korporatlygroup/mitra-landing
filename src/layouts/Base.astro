@@ -1,8 +1,13 @@
 ---
 import '../styles/global.css';
 import site from '../../content/site.json';
+import { getMedia, url } from '../lib/media';
 
 const { meta } = site;
+// OG image needs an absolute URL, so it is only emitted once `site` is set in astro.config.mjs.
+const og = getMedia(site.hero.image);
+const ogImage = Astro.site && og.available && og.item?.file ? new URL(url(og.item.file), Astro.site).href : undefined;
+const canonical = Astro.site ? new URL(Astro.url.pathname, Astro.site).href : undefined;
 ---
 
 <!doctype html>
@@ -12,17 +17,27 @@ const { meta } = site;
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{meta.title}</title>
     <meta name="description" content={meta.description} />
+    {canonical && <link rel="canonical" href={canonical} />}
+    <meta property="og:type" content="website" />
     <meta property="og:title" content={meta.title} />
     <meta property="og:description" content={meta.description} />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Plus+Jakarta+Sans:wght@700;800&display=swap"
-    />
+    {ogImage && <meta property="og:image" content={ogImage} />}
+    {ogImage && <meta name="twitter:card" content="summary_large_image" />}
+    <meta name="theme-color" content="#f4a51c" />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    {/* Mark JS as available before first paint so reveal styles never flash. */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
   </head>
   <body>
+    <a class="skip" href="#main">Skip to content</a>
     <slot />
+    <script>
+      import '../scripts/motion';
+    </script>
   </body>
 </html>
+
+<style>
+  .skip { position: absolute; left: 1rem; top: -100px; z-index: 100; padding: 0.7rem 1rem; border-radius: 10px; background: var(--brand); color: var(--brand-ink); font-weight: 700; text-decoration: none; }
+  .skip:focus { top: 1rem; }
+</style>

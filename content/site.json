@@ -19,13 +19,34 @@
     "url": "https://geta.com.my"
   },
   "nav": [
-    { "label": "Programme", "href": "#about" },
-    { "label": "Impact", "href": "#impact" },
-    { "label": "Journey", "href": "#journey" },
-    { "label": "Gallery", "href": "#gallery" },
-    { "label": "Stories", "href": "#stories" },
-    { "label": "Partners", "href": "#partners" },
-    { "label": "Contact", "href": "#contact" }
+    {
+      "label": "Programme",
+      "href": "#about"
+    },
+    {
+      "label": "Impact",
+      "href": "#impact"
+    },
+    {
+      "label": "Journey",
+      "href": "#journey"
+    },
+    {
+      "label": "Gallery",
+      "href": "#gallery"
+    },
+    {
+      "label": "Stories",
+      "href": "#stories"
+    },
+    {
+      "label": "Partners",
+      "href": "#partners"
+    },
+    {
+      "label": "Contact",
+      "href": "#contact"
+    }
   ],
   "hero": {
     "eyebrow": "Idhu Namme Oru Kedai · This is our shop",
@@ -34,8 +55,17 @@
     "image": "hero-01",
     "video": "hero-clip",
     "ctas": [
-      { "label": "Partner with us", "href": "#contact", "style": "primary" },
-      { "label": "Watch highlights", "href": "#gallery", "style": "secondary", "videoUrl": null }
+      {
+        "label": "Partner with us",
+        "href": "#contact",
+        "style": "primary"
+      },
+      {
+        "label": "Watch highlights",
+        "href": "#gallery",
+        "style": "secondary",
+        "videoUrl": null
+      }
     ]
   },
   "about": {
@@ -46,44 +76,162 @@
       "The 2024 Program Pensijilan Digital Marketing Strategist was delivered by GET Academy under a programme funded by MITRA (Malaysian Indian Community Transformation Unit), with certification through SEGi University."
     ],
     "image": "about-bunting",
-    "_note": "Second paragraph names MITRA and SEGi factually (no logos, no endorsement). Confirm wording with the user before launch."
+    "_note": "Second paragraph names MITRA and SEGi factually (no logos, no endorsement). Confirm wording with the user before launch.",
+    "imageCaption": "The programme banner, Ipoh, July 2024"
   },
   "impact": {
     "heading": "The programme in numbers",
     "stats": [
-      { "value": "26", "label": "days of structured learning", "source": "Programme design" },
-      { "value": "6", "label": "days of hands-on, face-to-face training", "source": "Programme design" },
-      { "value": "20", "label": "days of mentored online implementation", "source": "Programme design" },
-      { "value": "10", "label": "participants present for all six face-to-face days", "source": "Final report; attendance sheets" },
-      { "value": "6 months", "label": "of on-the-job training for interns", "source": "GET Academy account", "verify": true }
-    ]
+      {
+        "value": "26",
+        "label": "days of structured learning",
+        "source": "Programme design",
+        "key": "total"
+      },
+      {
+        "value": "6",
+        "label": "days of hands-on, face-to-face training",
+        "source": "Programme design",
+        "key": "inclass"
+      },
+      {
+        "value": "20",
+        "label": "days of mentored online implementation",
+        "source": "Programme design",
+        "key": "online"
+      },
+      {
+        "value": "10",
+        "label": "participants present for all six face-to-face days",
+        "source": "Final report; attendance sheets",
+        "key": "participants"
+      },
+      {
+        "value": "6 months",
+        "label": "of on-the-job training for interns",
+        "source": "GET Academy account",
+        "verify": true,
+        "key": "ojt"
+      }
+    ],
+    "_note": "Stats carry a `key` used by Impact.astro: total = inclass + online drives the 26-day grid; participants is shown on its own. Values still come only from here.",
+    "dayLabels": {
+      "inclass": "Face-to-face in Ipoh",
+      "online": "Mentored online"
+    },
+    "startDate": "2024-07-08",
+    "gridHint": "Hover or tap any day for its date.",
+    "dayWord": "Day",
+    "daysWord": "days"
   },
   "curriculum": {
     "heading": "What participants learned",
     "intro": "Every module ended with participants applying it to their own business.",
-    "modules": [
-      { "title": "Digital marketing strategy", "icon": "compass" },
-      { "title": "Knowing your target customer", "icon": "target" },
-      { "title": "Business and product positioning", "icon": "layers" },
-      { "title": "Video editing with CapCut", "icon": "video" },
-      { "title": "Social media content", "icon": "image" },
-      { "title": "Facebook and Instagram marketing", "icon": "share" },
-      { "title": "Google Ads", "icon": "search" },
-      { "title": "ChatGPT for business", "icon": "sparkles" },
-      { "title": "Selling on Shopee and Lazada", "icon": "cart" }
+    "images": [
+      "hands-worksheet",
+      "hands-laptop",
+      "hands-phone"
     ],
-    "images": ["hands-worksheet", "hands-laptop", "hands-phone"]
+    "groups": [
+      {
+        "title": "Strategy",
+        "modules": [
+          {
+            "title": "Digital marketing strategy",
+            "icon": "compass"
+          },
+          {
+            "title": "Knowing your target customer",
+            "icon": "target"
+          },
+          {
+            "title": "Business and product positioning",
+            "icon": "layers"
+          }
+        ]
+      },
+      {
+        "title": "Content and social",
+        "modules": [
+          {
+            "title": "Video editing with CapCut",
+            "icon": "video"
+          },
+          {
+            "title": "Social media content",
+            "icon": "image"
+          },
+          {
+            "title": "Facebook and Instagram marketing",
+            "icon": "share"
+          }
+        ]
+      },
+      {
+        "title": "Ads, AI and selling",
+        "modules": [
+          {
+            "title": "Google Ads",
+            "icon": "search"
+          },
+          {
+            "title": "ChatGPT for business",
+            "icon": "sparkles"
+          },
+          {
+            "title": "Selling on Shopee and Lazada",
+            "icon": "cart"
+          }
+        ]
+      }
+    ],
+    "_note": "Grouping is editorial (order unchanged from the programme design list). Edit titles freely."
   },
   "journey": {
     "heading": "The 26-day journey",
     "steps": [
-      { "date": "8 Jul 2024", "title": "Day 1: Strategy and foundations", "text": "Mentored discussions on goals, customers and positioning.", "image": "hero-01" },
-      { "date": "9 Jul 2024", "title": "Day 2: Building your presence", "text": "Hands-on setup of business pages and digital tools.", "image": "day2-wide" },
-      { "date": "10–13 Jul 2024", "title": "Days 3–6: Content, ads and e-commerce", "text": "Video, social content, advertising and marketplace selling, practised on each participant's own business.", "image": null },
-      { "date": "14 Jul – 2 Aug 2024", "title": "20 days of mentored implementation", "text": "Participants put their plans to work online with continued guidance.", "image": null },
-      { "date": "2024", "title": "Certification", "text": "Certification through SEGi University.", "image": "cert-01", "verify": true }
+      {
+        "date": "8 Jul 2024",
+        "title": "Day 1: Strategy and foundations",
+        "text": "Mentored discussions on goals, customers and positioning.",
+        "image": "hero-01",
+        "phase": "inclass"
+      },
+      {
+        "date": "9 Jul 2024",
+        "title": "Day 2: Building your presence",
+        "text": "Hands-on setup of business pages and digital tools.",
+        "image": "day2-wide",
+        "phase": "inclass"
+      },
+      {
+        "date": "10–13 Jul 2024",
+        "title": "Days 3–6: Content, ads and e-commerce",
+        "text": "Video, social content, advertising and marketplace selling, practised on each participant's own business.",
+        "image": null,
+        "phase": "inclass"
+      },
+      {
+        "date": "14 Jul – 2 Aug 2024",
+        "title": "20 days of mentored implementation",
+        "text": "Participants put their plans to work online with continued guidance.",
+        "image": null,
+        "phase": "online"
+      },
+      {
+        "date": "2024",
+        "title": "Certification",
+        "text": "Certification through SEGi University.",
+        "image": "cert-01",
+        "verify": true,
+        "phase": "online"
+      }
     ],
-    "_note": "Day-by-day topics for 10–13 Jul are generic: replace with the actual schedule from the final report if available."
+    "_note": "Day-by-day topics for 10–13 Jul are generic: replace with the actual schedule from the final report if available.",
+    "phases": {
+      "inclass": "In class, Ipoh",
+      "online": "Online, with a mentor"
+    }
   },
   "trainer": {
     "heading": "Led by practitioners",
@@ -96,8 +244,16 @@
     "heading": "Participant stories",
     "pending": true,
     "items": [
-      { "media": "story-01", "quote": null, "business": null },
-      { "media": "story-02", "quote": null, "business": null }
+      {
+        "media": "story-01",
+        "quote": null,
+        "business": null
+      },
+      {
+        "media": "story-02",
+        "quote": null,
+        "business": null
+      }
     ],
     "_note": "No testimonials or consent yet. Hide the section or show 'Stories coming soon' until at least two consented stories exist. Never invent quotes."
   },
@@ -110,54 +266,206 @@
   "gallery": {
     "heading": "Gallery",
     "filters": [
-      { "id": "all", "label": "All" },
-      { "id": "day1", "label": "Day 1 · 8 Jul" },
-      { "id": "day2", "label": "Day 2 · 9 Jul" }
+      {
+        "id": "all",
+        "label": "All"
+      },
+      {
+        "id": "day1",
+        "label": "Day 1 · 8 Jul"
+      },
+      {
+        "id": "day2",
+        "label": "Day 2 · 9 Jul"
+      }
     ],
     "items": [
-      { "media": "hero-01", "tags": ["day1"] },
-      { "media": "gal-01", "tags": ["day1"] },
-      { "media": "gal-02", "tags": ["day1"] },
-      { "media": "hands-worksheet", "tags": ["day1"] },
-      { "media": "gal-03", "tags": ["day1"] },
-      { "media": "gal-04", "tags": ["day1"] },
-      { "media": "gal-v1", "tags": ["day1"] },
-      { "media": "gal-v2", "tags": ["day1"] },
-      { "media": "gal-v3", "tags": ["day1"] },
-      { "media": "gal-v4", "tags": ["day1"] },
-      { "media": "gal-v5", "tags": ["day1"] },
-      { "media": "gal-v6", "tags": ["day1"] },
-      { "media": "gal-05", "tags": ["day2"] },
-      { "media": "day2-wide", "tags": ["day2"] },
-      { "media": "hands-laptop", "tags": ["day2"] },
-      { "media": "hands-phone", "tags": ["day2"] },
-      { "media": "gal-06", "tags": ["day2"] }
-    ]
+      {
+        "media": "hero-01",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-01",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-02",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "hands-worksheet",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-03",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-04",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-v1",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-v2",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-v3",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-v4",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-v5",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-v6",
+        "tags": [
+          "day1"
+        ]
+      },
+      {
+        "media": "gal-05",
+        "tags": [
+          "day2"
+        ]
+      },
+      {
+        "media": "day2-wide",
+        "tags": [
+          "day2"
+        ]
+      },
+      {
+        "media": "hands-laptop",
+        "tags": [
+          "day2"
+        ]
+      },
+      {
+        "media": "hands-phone",
+        "tags": [
+          "day2"
+        ]
+      },
+      {
+        "media": "gal-06",
+        "tags": [
+          "day2"
+        ]
+      }
+    ],
+    "initial": 9,
+    "_note": "`initial` = tiles shown before 'Show all'. Every few visible tiles render large (bento); order here decides which.",
+    "showAll": "Show all {n} photos",
+    "showLess": "Show fewer"
   },
   "partners": {
     "heading": "Partners and accreditation",
+    "delivererLabel": "Delivered by",
+    "credentialsLabel": "Certified and recognised by",
+    "deliverer": {
+      "name": "GET Academy",
+      "fullName": "Global Experiential Training Academy",
+      "logo": "logo-get",
+      "icon": "store",
+      "facts": [
+        "Est. 2012",
+        "SEGi franchisee"
+      ],
+      "permitted": true,
+      "address": "Level 33, Ilham Tower, Kuala Lumpur"
+    },
     "items": [
-      { "name": "GET Academy", "logo": "logo-get", "role": "Programme delivery", "permitted": true },
-      { "name": "SEGi University", "logo": "logo-segi", "role": "Certification", "permitted": false },
-      { "name": "HRD Corp", "logo": "logo-hrdf", "role": "GET Academy is an approved training provider", "permitted": false },
-      { "name": "MDEC", "logo": "logo-mdec", "role": "Approved provider", "permitted": false },
-      { "name": "TEN", "logo": "logo-ten", "role": "Recognised", "permitted": false },
-      { "name": "MITRA", "logo": "logo-mitra", "role": "Programme funder", "permitted": false }
+      {
+        "name": "SEGi University",
+        "logo": "logo-segi",
+        "icon": "certificate",
+        "role": "Certification",
+        "permitted": true
+      },
+      {
+        "name": "HRD Corp",
+        "logo": "logo-hrdf",
+        "icon": "shield",
+        "role": "Approved training provider",
+        "permitted": true
+      },
+      {
+        "name": "MDEC",
+        "logo": "logo-mdec",
+        "icon": "badge",
+        "role": "Approved provider",
+        "permitted": true
+      },
+      {
+        "name": "TEN",
+        "logo": "logo-ten",
+        "icon": "award",
+        "role": "Recognised",
+        "permitted": true
+      },
+      {
+        "name": "MITRA",
+        "logo": "logo-mitra",
+        "icon": "hand",
+        "role": "Programme funder",
+        "permitted": true
+      }
     ],
-    "_note": "permitted:false → render the name as text only (no logo). MITRA: render nothing until permitted; never imply endorsement."
+    "_note": "SAMPLE BUILD: all partners set permitted:true at the user's request (this repo is a design sample, not the live page). A logo shows automatically once its file exists at the media.json path (media/logos/logo-*.webp); until then an icon + the name show. Re-check permissions before any real launch."
   },
   "contact": {
     "heading": "Bring this programme to your community",
     "body": "Agencies, associations and community organisations: talk to us about running a certified digital-marketing programme for your members.",
     "formAction": null,
-    "fallback": { "label": "Visit geta.com.my", "href": "https://geta.com.my" },
-    "_note": "Form destination is an open decision. With formAction null, show the fallback button instead of a form."
+    "fallback": {
+      "label": "Visit geta.com.my",
+      "href": "https://geta.com.my"
+    },
+    "_note": "Form destination is an open decision. Set `whatsapp` (digits only, with country code, e.g. 60123456789) and/or `email` to show direct buttons. With all of formAction/whatsapp/email null, only the fallback button shows.",
+    "whatsapp": null,
+    "email": null,
+    "labels": {
+      "whatsapp": "Chat on WhatsApp",
+      "email": "Email us",
+      "submit": "Send enquiry"
+    }
   },
   "footer": {
     "address": "Level 33, Ilham Tower, Kuala Lumpur",
     "website": "https://geta.com.my",
     "tagline": "INOK · Idhu Namme Oru Kedai. A programme delivered by GET Academy.",
     "socials": [],
-    "legal": "© 2026 GET Academy (Global Experiential Training Academy)."
+    "legal": "© 2026 GET Academy (Global Experiential Training Academy).",
+    "backToTop": "Back to top"
   }
 }

@@ -5,21 +5,34 @@ import Media from '../Media.astro';
 const { trainer } = site;
 ---
 
-<section class="section" id="trainer">
+<section class="section section--alt" id="trainer">
   <div class="container trainer">
-    <Media id={trainer.image} sizes="(min-width: 900px) 360px, 80vw" class="trainer__photo" />
-    <div>
-      <span class="eyebrow">{trainer.heading}</span>
-      <h2>{trainer.name}</h2>
-      <p class="trainer__role">{trainer.role}</p>
-      <p class="lead">{trainer.bio}</p>
+    <div class="trainer__photo" data-reveal="scale">
+      <Media id={trainer.image} sizes="(min-width: 900px) 300px, 60vw" />
+    </div>
+    <div class="trainer__text">
+      <p class="trainer__heading" data-reveal>{trainer.heading}</p>
+      <h2 data-reveal style="--d:80">{trainer.name}</h2>
+      <p class="trainer__role" data-reveal style="--d:140">{trainer.role}</p>
+      <p class="trainer__bio" data-reveal style="--d:200">{trainer.bio}</p>
     </div>
   </div>
 </section>
 
 <style>
-  .trainer { display: grid; gap: 2rem; align-items: center; }
-  .trainer :global(.trainer__photo) { max-width: 360px; aspect-ratio: 4 / 5; height: auto; }
-  .trainer__role { font-weight: 700; color: var(--accent); }
-  @media (min-width: 900px) { .trainer { grid-template-columns: 360px 1fr; gap: 3.5rem; } }
+  .trainer { display: grid; gap: clamp(2rem, 5vw, 4rem); align-items: center; }
+  /* The source photo is only ~520px wide, so it is kept small to stay sharp. */
+  .trainer__photo { position: relative; width: min(300px, 70vw); justify-self: start; }
+  .trainer__photo::before {
+    content: ''; position: absolute; inset: 14px -14px -14px 14px; border-radius: var(--radius-lg);
+    background: repeating-linear-gradient(90deg, var(--brand) 0 22px, var(--accent) 22px 44px); opacity: 0.9;
+    transition: inset 0.5s var(--ease-spring);
+  }
+  .trainer__photo:hover::before { inset: 20px -20px -20px 20px; }
+  .trainer__photo :global(.media) { position: relative; aspect-ratio: 4 / 5; height: auto; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+  .trainer__heading { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+  .trainer h2 { margin-bottom: 0.2em; }
+  .trainer__role { font-weight: 650; font-size: 1.1rem; margin-bottom: 1.25rem; }
+  .trainer__bio { font: 500 clamp(1.2rem, 2vw, 1.45rem)/1.5 var(--font-display); font-stretch: 95%; color: var(--text-muted); max-width: 36ch; margin: 0; }
+  @media (min-width: 900px) { .trainer { grid-template-columns: 300px 1fr; } }
 </style>

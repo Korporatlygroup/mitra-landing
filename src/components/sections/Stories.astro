@@ -2,30 +2,28 @@
 import site from '../../../content/site.json';
 import Media from '../Media.astro';
 
+import { readyStories as ready, showStories } from '../../lib/content';
+
 const { stories } = site;
-// Only stories with a real quote are shown. Never invent testimonials.
-const ready = stories.items.filter((s) => s.quote);
+// Hidden (and removed from the nav) until at least two real, consented quotes exist. Never invent testimonials.
 ---
 
-<section class="section section--alt" id="stories">
+{showStories && (
+<section class="section" id="stories">
   <div class="container">
-    <span class="eyebrow">Stories</span>
-    <h2>{stories.heading}</h2>
-    {ready.length ? (
+    <h2 data-reveal>{stories.heading}</h2>
       <div class="stories">
         {ready.map((s) => (
-          <figure class="story">
+          <figure class="story" data-reveal>
             <Media id={s.media} sizes="(min-width: 900px) 50vw, 100vw" />
             <blockquote>{s.quote}</blockquote>
             {s.business && <figcaption>{s.business}</figcaption>}
           </figure>
         ))}
       </div>
-    ) : (
-      <p class="lead">Participant stories are coming soon.</p>
-    )}
   </div>
 </section>
+)}
 
 <style>
   .stories { display: grid; gap: 1.5rem; }

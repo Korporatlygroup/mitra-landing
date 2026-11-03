@@ -4,34 +4,89 @@ import Media from '../Media.astro';
 
 const { journey } = site;
 const steps = journey.steps.filter((s) => !('verify' in s && s.verify));
+const phaseLabel = (p?: string) => journey.phases[(p ?? 'inclass') as 'inclass' | 'online'];
+const first = steps[0];
 ---
 
-<section class="section section--alt" id="journey">
-  <div class="container">
-    <span class="eyebrow">Timeline</span>
-    <h2>{journey.heading}</h2>
-    <ol class="timeline">
-      {steps.map((s) => (
-        <li class:list={['step', { 'step--media': !!s.image }]}>
-          <div class="step__text">
+<section class="section" id="journey">
+  <div class="container journey">
+    {/* Sticky side panel: follows the reader and shows which step they are on. */}
+    <div class="journey__aside">
+      <h2 data-reveal>{journey.heading}</h2>
+      <div class="now" data-reveal style="--d:120" aria-hidden="true">
+        <span class="now__phase" data-journey-phase>{phaseLabel(first?.phase)}</span>
+        <span class="now__date" data-journey-date>{first?.date}</span>
+        <div class="now__bar"><span data-journey-bar></span></div>
+      </div>
+    </div>
+
+    <div class="timeline" data-journey>
+      <span class="timeline__track" aria-hidden="true"><span class="timeline__fill" data-journey-fill></span></span>
+      <ol class="timeline__list">
+      {steps.map((s, i) => (
+        <li
+          class:list={['step', `step--${s.phase}`, { 'step--media': !!s.image }]}
+          data-step
+          data-phase={phaseLabel(s.phase)}
+          data-date={s.date}
+          data-reveal
+          style={`--d:${i * 60}`}
+        >
+          <span class="step__dot" aria-hidden="true"></span>
+          <div class="step__card">
             <time>{s.date}</time>
             <h3>{s.title}</h3>
             <p>{s.text}</p>
+            {s.image && (
+              <div class="step__media">
+                <Media id={s.image} sizes="(min-width: 900px) 560px, 100vw" />
+              </div>
+            )}
           </div>
-          {s.image && <Media id={s.image} sizes="(min-width: 900px) 420px, 100vw" />}
         </li>
       ))}
-    </ol>
+      </ol>
+    </div>
   </div>
 </section>
 
 <style>
-  .timeline { list-style: none; margin: 2rem 0 0; padding: 0 0 0 1.5rem; border-left: 2px solid var(--border-strong); display: grid; gap: 2rem; }
-  .step { position: relative; display: grid; gap: 1rem; }
-  .step::before { content: ''; position: absolute; left: calc(-1.5rem - 7px); top: 0.35rem; width: 12px; height: 12px; border-radius: 50%; background: var(--brand); box-shadow: 0 0 0 4px var(--surface-2); }
-  .step time { font-size: 0.85rem; font-weight: 700; color: var(--accent); }
-  .step h3 { margin: 0.2rem 0 0.4rem; }
+  .journey { display: grid; gap: 2.5rem; }
+  .now { display: grid; gap: 0.35rem; margin-top: 1.5rem; padding: 1.25rem 1.4rem; border-radius: var(--radius-lg); background: var(--surface-2); max-width: 360px; }
+  .now__phase { font-weight: 650; color: var(--accent-text); }
+  .now__date { font: 700 clamp(1.6rem, 3vw, 2.2rem)/1.1 var(--font-display); font-stretch: 90%; letter-spacing: -0.02em; transition: opacity 0.25s ease; }
+  .now__date.is-swapping { opacity: 0; }
+  .now__bar { height: 6px; margin-top: 0.75rem; border-radius: 6px; background: var(--border); overflow: hidden; }
+  .now__bar span { display: block; height: 100%; width: calc(var(--p, 0) * 100%); background: linear-gradient(90deg, var(--brand), var(--accent)); border-radius: inherit; transition: width 0.15s linear; }
+
+  .timeline { position: relative; padding-left: 2.25rem; }
+  .timeline__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+  .timeline__track { position: absolute; left: 7px; top: 8px; bottom: 8px; width: 3px; border-radius: 3px; background: var(--border-strong); }
+  .timeline__fill { position: absolute; inset: 0 0 auto; height: calc(var(--p, 0) * 100%); border-radius: inherit; background: linear-gradient(180deg, var(--brand), var(--accent)); }
+  :global(html:not(.js)) .timeline__fill { height: 100%; }
+
+  .step { position: relative; }
+  .step__dot {
+    position: absolute; left: calc(-2.25rem + 1px); top: 1.55rem; width: 15px; height: 15px; border-radius: 50%;
+    background: var(--bg); border: 3px solid var(--border-strong);
+    transition: border-color 0.3s ease, background-color 0.3s ease, transform 0.4s var(--ease-spring);
+  }
+  .step:global(.is-reached) .step__dot, :global(html:not(.js)) .step__dot { border-color: var(--brand); background: var(--brand); transform: scale(1.15); }
+  .step__card {
+    padding: 1.4rem 1.5rem; border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border);
+    transition: border-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s var(--ease-out);
+  }
+  .step:global(.is-active) .step__card { border-color: var(--brand); box-shadow: var(--shadow-lift); }
+  .step--online .step__card { background: var(--surface-2); }
+  .step time { font-size: 0.9rem; font-weight: 700; color: var(--accent-text); }
+  .step h3 { margin: 0.25rem 0 0.4rem; font-size: 1.4rem; }
   .step p { color: var(--text-muted); margin: 0; }
-  .step :global(.media) { aspect-ratio: 3 / 2; height: auto; }
-  @media (min-width: 900px) { .step--media { grid-template-columns: 1fr 420px; align-items: start; } }
+  .step__media { margin-top: 1.1rem; overflow: hidden; border-radius: var(--radius); }
+  .step__media :global(.media) { aspect-ratio: 16 / 9; height: auto; border-radius: 0; }
+
+  @media (min-width: 900px) {
+    .journey { grid-template-columns: minmax(260px, 1fr) 1.6fr; gap: 4rem; align-items: start; }
+    .journey__aside { position: sticky; top: calc(var(--nav-h) + 2rem); }
+  }
+  @media (max-width: 899px) { .now { display: none; } }
 </style>
