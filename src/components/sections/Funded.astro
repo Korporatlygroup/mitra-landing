@@ -18,7 +18,6 @@ const hasLogo = getMedia(funding.logo).available;
     <div class="funded__text">
       <h2 data-reveal>{funding.heading}</h2>
       <p class="lead" data-reveal style="--d:80">{funding.body}</p>
-      <p class="funded__note" data-reveal style="--d:160">{funding.note}</p>
     </div>
   </div>
 </section>
@@ -26,10 +25,6 @@ const hasLogo = getMedia(funding.logo).available;
 <style>
   .funded { display: grid; gap: clamp(1.5rem, 4vw, 3rem); align-items: center; }
   .funded__text { max-width: 62ch; }
-  .funded__note {
-    margin: 1.25rem 0 0; padding-left: 1rem; border-left: 3px solid var(--brand);
-    font-size: 0.95rem; color: var(--text-muted);
-  }
   /* Logos are drawn for light backgrounds, so they always sit on a white tile (also in dark mode). */
   .funded__logo {
     justify-self: start; width: min(220px, 60vw); padding: 1rem 1.25rem; border-radius: var(--radius-lg);

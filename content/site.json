@@ -82,7 +82,6 @@
   "funding": {
     "heading": "Funded by MITRA",
     "body": "MITRA, the Malaysian Indian Community Transformation Unit (Unit Transformasi Masyarakat India Malaysia), is a Malaysian government unit that supports education, skills and business programmes for the Indian community. In 2024 it funded the Digital Marketing Strategist Certification Programme, which GET Academy delivered for micro-entrepreneurs and small businesses.",
-    "note": "This page is produced by GET Academy and is not an official MITRA publication.",
     "logo": "logo-mitra",
     "_note": "Logo renders only if logo-mitra exists on disk. No ministry name, funding amounts or endorsement wording here (CLAUDE.md). MITRA permission is still pending in CLAUDE.md."
   },
