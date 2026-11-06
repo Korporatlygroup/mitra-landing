@@ -1,10 +1,26 @@
+import fs from 'node:fs';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { defineConfig } from 'astro/config';
+
+// Every file under public/, listed once here (resolved from this file, not the working directory) and
+// baked into the build as __PUBLIC_FILES__. src/lib/media.ts uses it to decide real file vs placeholder,
+// so the result doesn't depend on the host's build cwd or runtime (Cloudflare, Vercel, ...).
+// In dev, restart the server after adding media.
+const publicDir = fileURLToPath(new URL('./public/', import.meta.url));
+const publicFiles = fs
+  .readdirSync(publicDir, { recursive: true, withFileTypes: true })
+  .filter((d) => d.isFile())
+  .map((d) => path.relative(publicDir, path.join(d.parentPath ?? d.path, d.name)).split(path.sep).join('/'));
 
 // Static output. Set `site` once hosting is decided (geta.com.my / korporatlygroup.com / standalone).
 export default defineConfig({
   output: 'static',
-  // Emit every asset (incl. small font subsets) as a file rather than a data: URI, so font-src stays 'self'.
-  vite: { build: { assetsInlineLimit: 0 } },
+  vite: {
+    define: { __PUBLIC_FILES__: JSON.stringify(publicFiles) },
+    // Emit every asset (incl. small font subsets) as a file rather than a data: URI, so font-src stays 'self'.
+    build: { assetsInlineLimit: 0 },
+  },
   // Content-Security-Policy as a <meta> tag: Astro hashes every bundled/inline script and style.
   // Everything is self-hosted (fonts, media), so only 'self' is allowed. Headers a <meta> tag
   // can't carry (frame-ancestors, HSTS, ...) are set by the host: see vercel.json and public/_headers.

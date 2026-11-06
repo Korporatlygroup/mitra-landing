@@ -1,5 +1,3 @@
-import fs from 'node:fs';
-import path from 'node:path';
 import mediaJson from '../../content/media.json';
 
 export type MediaItem = {
@@ -21,8 +19,11 @@ const items = new Map<string, MediaItem>(
   (mediaJson.items as MediaItem[]).map((m) => [m.id, m]),
 );
 
-const publicDir = path.resolve(process.cwd(), 'public');
-const onDisk = (file?: string) => !!file && fs.existsSync(path.join(publicDir, file));
+// Files under public/, listed at build time in astro.config.mjs (no filesystem access here, so this works
+// whatever the host's build cwd or runtime).
+declare const __PUBLIC_FILES__: string[];
+const publicFiles = new Set(__PUBLIC_FILES__);
+const onDisk = (file?: string) => !!file && publicFiles.has(file);
 
 /** Looks up a media.json entry and whether its optimised file exists in public/. */
 export function getMedia(id?: string | null) {
