@@ -516,8 +516,8 @@
     "eyebrow": "Funded by MITRA · Delivered by GET Academy",
     "heading": "MITRA backed it. We built it.",
     "intro": "MITRA, the Malaysian Indian Community Transformation Unit, funded INOK to give Malaysian Indian business owners real digital-marketing skills. GET Academy turned that funding into a complete programme: designed, taught, mentored and certified, end to end.",
-    "image": "gal-v2",
-    "imageCaption": "In class in Ipoh",
+    "image": "gal-v6",
+    "imageCaption": "Working through it together, Ipoh",
     "deliveredHeading": "What we delivered",
     "delivered": [
       {
@@ -609,14 +609,46 @@
   "interviews": {
     "eyebrow": "Interviews",
     "heading": "In their own words",
-    "intro": "Participants and trainers on camera on the first day: why they came, what they wanted for their business, and what they took home.",
+    "intro": "Sit down with the business owners of Idhu Namma Oru Kedai: what they sell, what it took to start, and what keeps them going. Each conversation runs in seven short parts.",
     "items": [
       {
         "media": "interview-day1",
-        "title": "Day 1: the participants and trainers",
-        "text": "The full Day 1 film, with interviews from the lounge and the training room."
+        "title": "The Day 1 film",
+        "text": "Participants and trainers on the first day, in the lounge and the training room."
       }
     ],
-    "_note": "Add the six vendor interview videos as interview-02.. in media.json and list them here once a copy is obtained (vendor email 1 Aug 2024; private Drive link). Items without a file are skipped."
+    "_note": "series: vertical interview episodes from Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl, one player per guest with part buttons. No guest names in page copy (handoff rule), though guests say their names on camera. Parts without a file are skipped; a series with none is hidden. items: landscape films.",
+    "series": [
+      {
+        "key": "tour",
+        "label": "Series 1",
+        "title": "Building a tour business, and the lessons along the way",
+        "text": "A tour operator on family, trust, the hard lessons, and why you must always plan.",
+        "parts": [
+          "series-tour-1",
+          "series-tour-2",
+          "series-tour-3",
+          "series-tour-4",
+          "series-tour-5",
+          "series-tour-6",
+          "series-tour-7"
+        ]
+      },
+      {
+        "key": "perfume",
+        "label": "Series 2",
+        "title": "From a night-market stall to a perfume shop on TikTok",
+        "text": "Shopee, a night market, even pani puri. Now a perfume business on TikTok, run from home so the family comes first.",
+        "parts": [
+          "series-perfume-1",
+          "series-perfume-2",
+          "series-perfume-3",
+          "series-perfume-4",
+          "series-perfume-5",
+          "series-perfume-6",
+          "series-perfume-7"
+        ]
+      }
+    ]
   }
 }

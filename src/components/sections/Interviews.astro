@@ -1,8 +1,9 @@
 ---
-// Interview videos with sound and player controls. Only items whose file exists render (lib/content.ts).
+// Interview series (vertical episodes, one player per guest with part buttons) and landscape films.
+// Only parts/films whose file exists render (lib/content.ts).
 import site from '../../../content/site.json';
 import Media from '../Media.astro';
-import { readyInterviews as items, showInterviews } from '../../lib/content';
+import { readyInterviews as items, readySeries as series, showInterviews } from '../../lib/content';
 
 const { interviews } = site;
 ---
@@ -16,26 +17,133 @@ const { interviews } = site;
         <p class="lead" data-reveal style="--d:140">{interviews.intro}</p>
       </div>
 
-      <div class:list={['interviews', { 'interviews--single': items.length === 1 }]}>
-        {items.map((it, i) => (
-          <figure class="interview" data-reveal style={`--d:${120 + i * 80}`}>
-            <div class="interview__player">
-              <Media id={it.media} sizes="(min-width: 1000px) 960px, 100vw" />
-            </div>
-            <figcaption>
-              <span class="interview__title">{it.title}</span>
-              <span class="interview__text">{it.text}</span>
-            </figcaption>
-          </figure>
-        ))}
-      </div>
+      {series.length > 0 && (
+        <div class="series-list">
+          {series.map((s, i) => (
+            <article class="series" data-series data-reveal style={`--d:${120 + i * 100}`}>
+              <div class="series__player">
+                <video
+                  class="series__video"
+                  width={s.parts[0].w}
+                  height={s.parts[0].h}
+                  poster={s.parts[0].poster}
+                  preload="none"
+                  playsinline
+                  controls
+                  aria-label={s.parts[0].alt}
+                  data-series-video
+                >
+                  <source src={s.parts[0].src} type="video/mp4" />
+                </video>
+              </div>
+              <div class="series__text">
+                <p class="series__label">{s.label} · {s.parts.length} parts</p>
+                <h3>{s.title}</h3>
+                <p>{s.text}</p>
+                {s.parts.length > 1 && (
+                  <div class="series__parts" role="group" aria-label={`${s.label}: choose a part`}>
+                    {s.parts.map((p, n) => (
+                      <button
+                        type="button"
+                        class="series__part"
+                        aria-pressed={n === 0 ? 'true' : 'false'}
+                        data-src={p.src}
+                        data-poster={p.poster}
+                        data-alt={p.alt}
+                        aria-label={`Part ${n + 1} of ${s.parts.length}`}
+                      >
+                        {n + 1}
+                      </button>
+                    ))}
+                  </div>
+                )}
+                {s.parts.length > 1 && <p class="series__hint">Plays straight through: the next part starts when one ends.</p>}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
+
+      {items.length > 0 && (
+        <div class:list={['interviews', { 'interviews--single': items.length === 1, 'interviews--after': series.length > 0 }]}>
+          {items.map((it, i) => (
+            <figure class="interview" data-reveal style={`--d:${120 + i * 80}`}>
+              <div class="interview__player">
+                <Media id={it.media} sizes="(min-width: 1000px) 960px, 100vw" />
+              </div>
+              <figcaption>
+                <span class="interview__title">{it.title}</span>
+                <span class="interview__text">{it.text}</span>
+              </figcaption>
+            </figure>
+          ))}
+        </div>
+      )}
     </div>
   </section>
 )}
 
+<script>
+  // Part buttons swap the episode in place; when a part ends, the next one plays.
+  document.querySelectorAll<HTMLElement>('[data-series]').forEach((root) => {
+    const video = root.querySelector<HTMLVideoElement>('[data-series-video]');
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('.series__part')];
+    if (!video || buttons.length === 0) return;
+    let current = 0;
+
+    const select = (i: number, play: boolean) => {
+      const b = buttons[i];
+      if (!b?.dataset.src) return;
+      current = i;
+      buttons.forEach((x, n) => x.setAttribute('aria-pressed', String(n === i)));
+      video.querySelector('source')?.remove();
+      if (b.dataset.poster) video.poster = b.dataset.poster;
+      if (b.dataset.alt) video.setAttribute('aria-label', b.dataset.alt);
+      video.src = b.dataset.src;
+      video.load();
+      if (play) video.play().catch(() => {});
+    };
+
+    buttons.forEach((b, i) => b.addEventListener('click', () => select(i, true)));
+    video.addEventListener('ended', () => {
+      if (current < buttons.length - 1) select(current + 1, true);
+    });
+  });
+</script>
+
 <style>
   .interviews__eyebrow { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+
+  /* Series: a phone-shaped player beside its title, blurb and part buttons. */
+  .series-list { display: grid; gap: clamp(1.5rem, 4vw, 2.5rem); }
+  @media (min-width: 1100px) { .series-list { grid-template-columns: repeat(2, 1fr); } }
+  .series {
+    display: grid; gap: 1.25rem; align-items: center;
+    padding: clamp(1rem, 2.5vw, 1.4rem); border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  @media (min-width: 640px) { .series { grid-template-columns: minmax(220px, 260px) 1fr; } }
+  .series__player { width: min(100%, 300px); margin-inline: auto; border-radius: 22px; overflow: hidden; background: #000; box-shadow: var(--shadow-lift); }
+  .series__video { display: block; width: 100%; height: auto; aspect-ratio: 9 / 16; background: #000; }
+  .series__label { margin: 0 0 0.35rem; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-text); }
+  .series h3 { margin: 0 0 0.5rem; font: 700 clamp(1.25rem, 2.2vw, 1.5rem)/1.2 var(--font-display); }
+  .series__text > p:not(.series__label):not(.series__hint) { margin: 0 0 1.1rem; line-height: 1.55; color: var(--text-muted); }
+  .series__parts { display: flex; flex-wrap: wrap; gap: 0.5rem; }
+  .series__part {
+    min-width: 44px; height: 44px; padding: 0 0.6rem; border-radius: 12px; cursor: pointer;
+    font: 700 1rem/1 var(--font-display); color: var(--text);
+    background: var(--surface-2); border: 1.5px solid var(--border);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .series__part:hover { border-color: var(--accent); }
+  .series__part:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .series__part[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  .series__hint { margin: 0.8rem 0 0; font-size: 0.85rem; color: var(--text-muted); }
+  /* Without JS the part buttons can't switch the player; hide them so only part 1 shows. */
+  :global(html:not(.js)) .series__parts, :global(html:not(.js)) .series__hint { display: none; }
+
   .interviews { display: grid; gap: 1.5rem; }
+  .interviews--after { margin-top: clamp(2.5rem, 5vw, 3.5rem); }
   @media (min-width: 800px) { .interviews:not(.interviews--single) { grid-template-columns: repeat(2, 1fr); } }
   .interviews--single { max-width: 980px; }
   .interview { margin: 0; }

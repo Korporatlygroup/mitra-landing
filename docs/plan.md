@@ -48,7 +48,7 @@ Structure modelled on korporatlygroup.com.
 5. **Curriculum**: icon grid of 9 modules/tools + hands-on photos
 6. **Journey**: Day 1 … Day 6 (topics from the final report) → 20 days implementation → certification
 7. **Trainer**: Ganesh Manokara and team
-8. **Interviews** (`Interviews.astro`): videos with sound and controls; currently the full Day 1 film (4 min). Hidden if no video file exists
+8. **Interviews** (`Interviews.astro`): two INOK interview series (vertical, 7 parts each: a tour operator and a TikTok perfume seller), one player per guest with part buttons that auto-advance; then the full Day 1 film (4 min). No guest names in page copy. Hidden if no video file exists
 9. **Gallery**: 12–24 photos/stills, filterable by day
 10. **Partners and accreditation**: SEGi, HRDF, MDEC, TEN (+ MITRA if permitted)
 11. **Contact / CTA**: two paths (learn and grow digitally · bring INOK to your community), each a mailto to tech@korporatlygroup.com with its own subject
@@ -57,7 +57,7 @@ Structure modelled on korporatlygroup.com.
 ## Media status (from `content/media.json`)
 Local media covers **8 and 9 Jul only**: 13 photos + one 4-min Day 1 montage. Gaps:
 - Journey days 10–13 Jul → text-only timeline items.
-- Interviews: only the Day 1 film. The six vendor interview videos (vendor email 1 Aug 2024) are in the vendor's private Drive: get a copy, add as interview-02… in media.json.
+- Interviews: 14 series parts (`series-tour-1..7`, `series-perfume-1..7`) from Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl ("Yashodaran edited", "Letchumy edited"), encoded 540x960 with sound; plus the Day 1 film. To rebuild, download that folder and pass it as `--src`. Consent for guests on camera: pending.
 - Certification and placement photos: none yet.
 - Partner logos (GET Academy, SEGi, HRDF, MDEC, TEN) → need official files from the brand owners.
 - Trainer: which person is Ganesh is not yet identified.
@@ -74,4 +74,4 @@ More footage is probably in Drive "MITRA 2026" (not accessible from the connecte
 ## Workflow
 LOCAL session = media (contact sheets → shortlist → `tools/optimize_media.py` → `media.json`).
 CLOUD session = code only, from `site.json` + `media.json` text. See `CLAUDE.md`.
-Media budget: images < 400 KB, clips < 8 MB, `public/media/` < 60 MB total. Long videos → YouTube/Vimeo.
+Media budget: images < 400 KB, clips < 8 MB, `public/media/` < 100 MB total (videos are preload="none", so they only download on play). Long videos → bitrate cap (`maxrate`) to stay under the host's 25 MiB per-file limit, or YouTube/Vimeo.
