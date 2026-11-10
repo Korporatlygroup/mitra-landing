@@ -7,7 +7,8 @@ import { createClient } from '@supabase/supabase-js';
  * with supabase.auth.getUser().
  *
  * Sign-in, MFA and sign-up audit events are written by database triggers; the app can only record the
- * two events the database cannot observe itself.
+ * two events the database cannot observe itself. Phase 2 adds private-bucket object access and the
+ * service-only verification RPCs (see the bottom of this file).
  */
 
 export type AuthEventAction = 'auth.logout' | 'auth.password_changed';
@@ -56,5 +57,130 @@ export async function authAttempt(key: string, max: number, windowSeconds: numbe
   } catch {
     console.error('auth throttle unavailable');
     return false;
+  }
+}
+
+// ---------------------------------------------------------------------------------------------------------------
+// Verification evidence: private Storage bucket + service-only RPCs. Callers (server actions / route handlers) must
+// have authorised the user first; the database re-checks membership in service_register_document.
+// ---------------------------------------------------------------------------------------------------------------
+
+export const DOCS_BUCKET = 'verification-docs';
+
+export interface RegisterDocumentInput {
+  orgId: string;
+  userId: string;
+  claimType: string;
+  docType: string;
+  displayName: string;
+  mime: string;
+  size: number;
+  sha256: string;
+  storagePath: string;
+  scanStatus: 'clean' | 'pending';
+  scanEngine: string | null;
+}
+
+export async function uploadObject(path: string, bytes: Uint8Array, contentType: string): Promise<{ ok: boolean }> {
+  try {
+    const { error } = await serviceClient().storage.from(DOCS_BUCKET).upload(path, bytes, { contentType, upsert: false });
+    if (error) console.error('object upload failed', { code: error.name });
+    return { ok: !error };
+  } catch {
+    console.error('object upload failed');
+    return { ok: false };
+  }
+}
+
+export async function downloadObject(path: string): Promise<Blob | null> {
+  try {
+    const { data, error } = await serviceClient().storage.from(DOCS_BUCKET).download(path);
+    if (error || !data) return null;
+    return data;
+  } catch {
+    return null;
+  }
+}
+
+export async function deleteObject(path: string): Promise<boolean> {
+  try {
+    const { error } = await serviceClient().storage.from(DOCS_BUCKET).remove([path]);
+    if (error) console.error('object delete failed', { code: error.name });
+    return !error;
+  } catch {
+    console.error('object delete failed');
+    return false;
+  }
+}
+
+export async function registerDocument(i: RegisterDocumentInput): Promise<{ ok: true; id: string } | { ok: false; error: { code?: string; message?: string } }> {
+  try {
+    const { data, error } = await serviceClient().rpc('service_register_document', {
+      p_org: i.orgId,
+      p_user: i.userId,
+      p_claim_type: i.claimType,
+      p_doc_type: i.docType,
+      p_display_name: i.displayName,
+      p_mime: i.mime,
+      p_size: i.size,
+      p_sha256: i.sha256,
+      p_storage_path: i.storagePath,
+      p_scan_status: i.scanStatus,
+      p_scan_engine: i.scanEngine,
+    });
+    if (error) return { ok: false, error: { code: error.code, message: error.message } };
+    return { ok: true, id: String(data) };
+  } catch {
+    return { ok: false, error: {} };
+  }
+}
+
+export async function setScanResult(docId: string, status: 'clean' | 'infected' | 'failed', engine: string): Promise<boolean> {
+  try {
+    const { error } = await serviceClient().rpc('service_set_scan_result', { p_doc: docId, p_status: status, p_engine: engine });
+    return !error;
+  } catch {
+    return false;
+  }
+}
+
+export async function listUnscanned(limit: number): Promise<{ id: string; storage_path: string; mime_type: string }[]> {
+  try {
+    const { data, error } = await serviceClient().rpc('service_list_unscanned_documents', { p_limit: limit });
+    if (error) return [];
+    return (data ?? []) as { id: string; storage_path: string; mime_type: string }[];
+  } catch {
+    return [];
+  }
+}
+
+export async function recipientEmails(orgId: string): Promise<string[]> {
+  try {
+    const { data, error } = await serviceClient().rpc('service_org_recipient_emails', { p_org: orgId });
+    if (error) return [];
+    return (data ?? []) as string[];
+  } catch {
+    return [];
+  }
+}
+
+export async function recordRejectedUpload(
+  orgId: string,
+  userId: string,
+  claimType: string,
+  reason: 'infected' | 'bad_type' | 'too_large' | 'unsafe_content' | 'empty',
+  sha256: string | null,
+): Promise<void> {
+  try {
+    const { error } = await serviceClient().rpc('service_record_rejected_upload', {
+      p_org: orgId,
+      p_user: userId,
+      p_claim_type: claimType,
+      p_reason: reason,
+      p_sha256: sha256,
+    });
+    if (error) console.error('rejected upload not recorded', { code: error.code });
+  } catch {
+    console.error('rejected upload not recorded');
   }
 }

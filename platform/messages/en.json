@@ -22,7 +22,8 @@
     "signUp": "Create account",
     "signOut": "Sign out",
     "terms": "Terms",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "notifications": "Messages"
   },
   "home": {
     "titleSignedOut": "Welcome to MITRA",
@@ -34,7 +35,8 @@
     "openOrgs": "See all organisations",
     "adminTitle": "Administration",
     "adminUsers": "Administrators",
-    "adminAudit": "Audit log"
+    "adminAudit": "Audit log",
+    "adminVerification": "Verification queue"
   },
   "signup": {
     "title": "Create your account",
@@ -110,7 +112,8 @@
     "typePartnerHint": "Owners of partner organisations must use an authenticator app.",
     "nameLabel": "Name",
     "nameHint": "2 to 160 characters. Buyers can use their own name.",
-    "submit": "Create"
+    "submit": "Create",
+    "businessLink": "Business profile and verification"
   },
   "orgTypes": {
     "business": "Business",
@@ -202,6 +205,15 @@
       "action": "Open this link to accept",
       "expires": "The link works once and expires in 7 days.",
       "ignore": "If you did not expect this email, you can ignore it."
+    },
+    "decision": {
+      "subject": "An update on your MITRA verification",
+      "intro": "There is an update on the item \"{claim}\" for your business on MITRA.",
+      "approve": "Decision: documents reviewed.",
+      "reject": "Decision: not accepted.",
+      "request_info": "Decision: more information is needed.",
+      "reason": "Message from the reviewer: {reason}",
+      "open": "Open your verification page"
     }
   },
   "errors": {
@@ -244,7 +256,49 @@
     "invalid_consent": "Something went wrong. Please try again.",
     "invalid_throttle": "Something went wrong. Please try again.",
     "last_admin": "There must always be at least one super administrator.",
-    "mfa_required": "This change needs your authenticator code first."
+    "mfa_required": "This change needs your authenticator code first.",
+    "invalid_ssm": "Please check the SSM number. Example: 202001012345 or 1234567-A.",
+    "invalid_state": "Please choose a state.",
+    "invalid_postcode": "The postcode must be 5 digits.",
+    "invalid_phone": "Please check the phone number.",
+    "invalid_category": "Please choose a category from the list.",
+    "category_required": "Please choose what kind of business this is.",
+    "org_not_business": "This page is only for business organisations.",
+    "profile_required": "Please fill in the business details first.",
+    "details_incomplete": "Some details are missing. Please finish the earlier steps.",
+    "documents_not_ready": "Some documents are not ready. They must be scanned and safe.",
+    "document_count": "Please send between 1 and 5 documents.",
+    "claim_not_resubmittable": "This item cannot be sent right now.",
+    "claim_not_withdrawable": "This item cannot be withdrawn now.",
+    "claim_not_reviewable": "This item is not waiting for review.",
+    "stale_version": "Someone changed this item while you were reading it. Please reload the page and check again.",
+    "conflict_of_interest": "You cannot review a business you belong to.",
+    "reason_required": "Please give a reason (at least 5 characters).",
+    "invalid_decision": "Please choose a decision.",
+    "document_in_use": "This document was already sent for review and cannot be removed.",
+    "document_not_available": "This document is not available.",
+    "document_limit_reached": "You have reached the limit of 50 documents.",
+    "invalid_doc_type": "That document type does not fit this item.",
+    "infected_not_stored": "That file was rejected.",
+    "invalid_note": "Please shorten or simplify your note.",
+    "invalid_data": "Something went wrong. Please try again.",
+    "invalid_description": "Please check the description.",
+    "invalid_registration_status": "Please say whether the business is registered.",
+    "invalid_business_type": "Please choose a business type.",
+    "invalid_district": "The district is too long or has odd characters.",
+    "invalid_address": "Please check the street address.",
+    "already_scanned": "Something went wrong. Please try again.",
+    "invalid_status": "Something went wrong. Please try again.",
+    "invalid_reason": "Something went wrong. Please try again.",
+    "invalid_hash": "Something went wrong. Please try again.",
+    "file_empty": "The file is empty.",
+    "file_too_large": "The file is larger than 10 MB.",
+    "file_type_not_allowed": "Only PDF, PNG or JPEG files are accepted. Check that the file really is that type.",
+    "file_unsafe_content": "This file could not be accepted because it contains active or unreadable content. Please send a plain scan, photo or print-to-PDF copy.",
+    "file_infected": "This file was rejected by the security scan.",
+    "upload_failed": "The file could not be saved. Please try again.",
+    "evidence_not_clean": "Some attached documents are not clean or not scanned yet, so this cannot be approved.",
+    "org_not_active": "This organisation is suspended, so it cannot be reviewed now."
   },
   "consent": {
     "title": "Review and accept terms and privacy",
@@ -266,5 +320,249 @@
     "submit": "Save new password",
     "noSession": "This link did not work or has expired.",
     "askAgain": "Ask for a new link"
+  },
+  "biz": {
+    "title": "My business",
+    "notStarted": "Not started",
+    "unverified": "Unverified profile",
+    "statusTitle": "Verification status",
+    "nextHeading": "What to do next",
+    "next": {
+      "start": "Start here: tell us about your business",
+      "registration": "Add your registration details",
+      "location": "Add your business location",
+      "representative": "Add the authorised person",
+      "documents": "Add documents and send for review",
+      "fix": "Read the reviewer's message and fix it",
+      "wait": "Your documents are waiting for review",
+      "preview": "See how your profile looks"
+    },
+    "openOnboarding": "Continue set-up",
+    "openVerification": "Verification",
+    "openPreview": "Preview public profile",
+    "openMembers": "Team and invitations",
+    "unreadTitle": "New messages",
+    "noUnread": "No new messages.",
+    "allMessages": "See all messages",
+    "notBusiness": "This page is only for business organisations.",
+    "readOnly": "Your role can add business details but cannot send documents for review.",
+    "staffNoVerification": "Only owners and managers can see verification."
+  },
+  "claimTypes": {
+    "business_registration": "Business registration",
+    "business_location": "Business location",
+    "representative_authority": "Authorised person"
+  },
+  "claimScope": {
+    "business_registration": "business registration details",
+    "business_location": "business location",
+    "representative_authority": "the authority of the business representative"
+  },
+  "claimStatus": {
+    "none": "Not started",
+    "draft": "Draft",
+    "submitted": "Sent, waiting for review",
+    "in_review": "Being reviewed",
+    "needs_info": "More information needed",
+    "approved": "Documents reviewed",
+    "rejected": "Not accepted",
+    "stale": "Details changed, please send again",
+    "withdrawn": "Withdrawn"
+  },
+  "ob": {
+    "progressLabel": "Your progress",
+    "stepOf": "Step {n} of {total}",
+    "next": "Save and continue",
+    "later": "Save and finish later",
+    "back": "Back",
+    "s1": {
+      "title": "About your business",
+      "name": "Business name",
+      "category": "What kind of business is it?",
+      "categoryChoose": "Choose one",
+      "registeredLegend": "Is your business registered with SSM?",
+      "yes": "Yes, it is registered",
+      "no": "No, not registered"
+    },
+    "s2": {
+      "title": "Registration details",
+      "ssm": "SSM registration number",
+      "ssmHint": "Example: 202001012345 or 1234567-A",
+      "type": "Type of business",
+      "typeChoose": "Choose one"
+    },
+    "s3": {
+      "title": "Where is your business?",
+      "state": "State",
+      "stateChoose": "Choose a state",
+      "district": "District",
+      "address": "Street address (private)",
+      "postcode": "Postcode (private)",
+      "privacy": "Your street address and postcode stay private. Residential addresses are not published. Only the state and district can appear on your public profile."
+    },
+    "s4": {
+      "title": "Authorised person",
+      "name": "Full name",
+      "role": "Their role in the business",
+      "email": "Email (optional)",
+      "phone": "Phone (optional)",
+      "note": "We do not ask for identity card numbers or photos."
+    },
+    "s5": {
+      "title": "Documents",
+      "intro": "Add one to five documents for each item, then send it for review. Files must be PDF, PNG or JPEG.",
+      "docType": "Type of document",
+      "file": "Choose a file",
+      "fileHint": "PDF, PNG or JPEG, up to 10 MB.",
+      "upload": "Upload document",
+      "noDocs": "No documents yet.",
+      "remove": "Remove",
+      "noteLabel": "Note for the reviewer (optional)",
+      "noteHint": "For example: where to find the number in the document.",
+      "submit": "Send for review",
+      "alreadySent": "Already sent. See the Verification page.",
+      "needDetails": "Finish the earlier steps first."
+    }
+  },
+  "businessTypes": {
+    "sole_proprietorship": "Sole proprietorship",
+    "partnership": "Partnership",
+    "sdn_bhd": "Sdn Bhd (private limited company)",
+    "llp": "LLP (limited liability partnership)",
+    "other": "Other"
+  },
+  "repRoles": {
+    "owner": "Owner",
+    "director": "Director",
+    "partner": "Partner",
+    "authorised_person": "Authorised person"
+  },
+  "docTypes": {
+    "ssm_certificate": "SSM certificate",
+    "ssm_form": "SSM form",
+    "business_licence": "Business licence",
+    "address_proof": "Proof of address",
+    "authorisation_letter": "Authorisation letter",
+    "other": "Other document"
+  },
+  "documents": {
+    "received": "Document received and scanned.",
+    "pendingScan": "Received, waiting for security scan.",
+    "scanClean": "Scanned, safe to use",
+    "scanPending": "Waiting for security scan",
+    "scanInfected": "Rejected: unsafe file",
+    "scanFailed": "Scan did not finish, waiting",
+    "download": "Download",
+    "removed": "Document removed.",
+    "none": "No documents yet."
+  },
+  "ver": {
+    "title": "Verification",
+    "intro": "Each item is reviewed separately. MITRA reviews the documents you send.",
+    "history": "History",
+    "reasonTitle": "Message from the reviewer",
+    "yourNote": "Your note",
+    "docsTitle": "Documents",
+    "addDocs": "Add documents",
+    "resubmit": "Send again",
+    "send": "Send for review",
+    "withdraw": "Withdraw",
+    "withdrawnDone": "Claim withdrawn.",
+    "sent": "Sent for review. We will tell you when there is an update.",
+    "startItem": "Start this item"
+  },
+  "events": {
+    "claim_created": "Started",
+    "document_uploaded": "Document uploaded",
+    "document_removed": "Document removed",
+    "document_viewed": "Document opened",
+    "scan_result": "Security scan finished",
+    "submitted": "Sent for review",
+    "resubmitted": "Sent again",
+    "withdrawn": "Withdrawn",
+    "review_started": "Review started",
+    "approved": "Documents reviewed",
+    "rejected": "Not accepted",
+    "info_requested": "More information requested",
+    "marked_stale": "Details changed"
+  },
+  "preview": {
+    "title": "Public profile preview",
+    "banner": "This is how your profile reads publicly. Your street address, postcode and contact details are never shown.",
+    "unregistered": "Not registered with SSM. Limited, unverified profile.",
+    "unverified": "Unverified profile",
+    "registeredNote": "The owner says this business is registered with SSM.",
+    "reviewedOn": "Documents reviewed by MITRA on {date} for: {scope}",
+    "category": "Category",
+    "location": "Location",
+    "noLocation": "Not given",
+    "nothingReviewed": "No documents have been reviewed yet.",
+    "notReviewedYet": "This has not been reviewed by MITRA yet."
+  },
+  "notifications": {
+    "title": "Messages",
+    "none": "You have no messages.",
+    "markRead": "Mark as read",
+    "new": "New",
+    "open": "Open",
+    "kinds": {
+      "verification_approved": "Documents were reviewed",
+      "verification_rejected": "An item was not accepted",
+      "verification_info_requested": "More information is needed",
+      "other": "New message"
+    }
+  },
+  "adminVer": {
+    "title": "Verification queue",
+    "intro": "Oldest first. You can look at a claim and start a review. Only some roles can decide.",
+    "filterLabel": "Show",
+    "filterApply": "Show",
+    "filterOpen": "Open (waiting and in review)",
+    "filterAll": "All",
+    "countsTitle": "Counts",
+    "empty": "Nothing in this list.",
+    "business": "Business",
+    "claim": "Item",
+    "status": "Status",
+    "age": "Waiting",
+    "ageDays": "{days} days",
+    "open": "Open",
+    "noAccess": "You do not have access to this page.",
+    "back": "Back to the queue",
+    "snapshotTitle": "Details submitted",
+    "ownerNote": "Note from the owner",
+    "noNote": "No note.",
+    "docsTitle": "Documents",
+    "noDocs": "No documents.",
+    "scan": "Security scan",
+    "download": "Download",
+    "startReview": "Start review",
+    "reviewStarted": "Review started.",
+    "decisionTitle": "Your decision",
+    "approve": "Approve (documents reviewed)",
+    "reject": "Reject",
+    "requestInfo": "Request more information",
+    "reason": "Reason (required, at least 5 characters)",
+    "reasonHint": "The business owner will read this message.",
+    "saveDecision": "Save decision",
+    "decided": "Decision saved.",
+    "readOnly": "You can look at this item but you cannot decide.",
+    "scanNow": "Run security scan now",
+    "scanDone": "Scan finished: {clean} safe, {infected} unsafe, {waiting} still waiting.",
+    "version": "Version {n}",
+    "historyTitle": "History",
+    "decisionReason": "Reason given",
+    "fields": {
+      "business_name": "Business name",
+      "ssm_number": "SSM number",
+      "business_type": "Business type",
+      "state": "State",
+      "district": "District",
+      "address_line": "Street address",
+      "postcode": "Postcode",
+      "full_name": "Full name",
+      "role_title": "Role"
+    },
+    "evidenceWarning": "Warning: at least one attached document is not clean or has not been scanned yet. You cannot approve until every document is scanned and safe."
   }
 }

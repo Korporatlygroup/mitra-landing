@@ -7,9 +7,18 @@ export type MemberRole = (typeof MEMBER_ROLES)[number];
 export type OrgType = 'business' | 'buyer' | 'partner' | 'mitra';
 
 export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
-  owner: ['org:manage', 'member:invite', 'member:remove', 'member:set_role', 'audit:read'],
-  manager: ['member:invite', 'member:remove', 'member:set_role'],
-  staff: [],
+  owner: [
+    'org:manage',
+    'member:invite',
+    'member:remove',
+    'member:set_role',
+    'audit:read',
+    'business:edit',
+    'verification:submit',
+    'verification:read',
+  ],
+  manager: ['member:invite', 'member:remove', 'member:set_role', 'business:edit', 'verification:submit', 'verification:read'],
+  staff: ['business:edit'],
   viewer: [],
   admin_super: [
     'admin:users',
@@ -19,9 +28,10 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'programme:publish',
     'case:reply',
     'report:view',
+    'verification:decide',
   ],
   admin_ops: ['audit:read', 'report:view'],
-  admin_review: ['verification:review'],
+  admin_review: ['verification:review', 'verification:decide'],
   admin_content: ['programme:publish'],
   admin_support: ['case:reply'],
 };

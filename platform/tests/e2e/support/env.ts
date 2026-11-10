@@ -26,6 +26,10 @@ export const PUBLISHABLE_KEY = process.env.TEST_PUBLISHABLE_KEY ?? f.NEXT_PUBLIC
 export const SERVICE_KEY = process.env.TEST_SERVICE_KEY ?? f.SUPABASE_SECRET_KEY ?? '';
 export const MAILPIT_URL = process.env.TEST_MAILPIT_URL ?? f.MAILPIT_URL ?? 'http://127.0.0.1:54424';
 export const DB_URL = process.env.TEST_DB_URL ?? 'postgresql://postgres:postgres@127.0.0.1:54422/postgres';
+/** Stub scanner (clamd) and its control port; also the secret for POST /api/v1/jobs/rescan. Fixed so the webServer env and workers agree. */
+export const CLAMD_PORT = Number(process.env.E2E_CLAMD_PORT ?? 58310);
+export const CLAMD_CONTROL_PORT = Number(process.env.E2E_CLAMD_CONTROL_PORT ?? 58311);
+export const CRON_SECRET = process.env.E2E_CRON_SECRET ?? 'e2e-cron-secret-0123456789abcdef';
 export const BASE_URL = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3000';
 
 // Safety: only ever run against a local stack and a local app, and never the unrelated stack on 54321-54329.

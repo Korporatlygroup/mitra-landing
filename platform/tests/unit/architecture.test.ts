@@ -23,9 +23,21 @@ describe('privileged (service-role) boundary', () => {
     expect(read('src/server/privileged.ts')).toMatch(/^import 'server-only';/m);
   });
 
-  it('privileged.ts exposes exactly recordAuthEvent and authAttempt', () => {
+  it('privileged.ts exposes exactly the audited set of functions', () => {
     const exported = [...read('src/server/privileged.ts').matchAll(/^export (?:async )?(?:function|const) (\w+)/gm)].map((m) => m[1]);
-    expect(exported).toEqual(['recordAuthEvent', 'authAttempt']);
+    expect(exported).toEqual([
+      'recordAuthEvent',
+      'authAttempt',
+      'DOCS_BUCKET',
+      'uploadObject',
+      'downloadObject',
+      'deleteObject',
+      'registerDocument',
+      'setScanResult',
+      'listUnscanned',
+      'recipientEmails',
+      'recordRejectedUpload',
+    ]);
   });
 
   it('the app records only the two events the database cannot observe (login/MFA/signup are DB-derived)', () => {
@@ -49,6 +61,15 @@ describe('privileged (service-role) boundary', () => {
     order('src/app/[locale]/forgot-password/actions.ts', 'authAttempt', 'requestPasswordReset(supabase');
     order('src/app/[locale]/mfa/verify/actions.ts', 'authAttempt', 'verifyTotp(supabase');
     order('src/app/[locale]/mfa/enrol/actions.ts', 'authAttempt', 'verifyTotp(supabase');
+  });
+
+  it('uploads are throttled after auth and permission checks and before any file processing', () => {
+    const t = read('src/app/[locale]/orgs/[id]/business/actions.ts');
+    const upload = t.slice(t.indexOf('export async function uploadDocumentAction'), t.indexOf('export async function removeDocumentAction'));
+    const order = ['currentUser()', 'verification:submit', 'uploadUserKey(', 'uploadOrgKey(', "formData.get('file')", 'arrayBuffer()', 'ingestDocument('].map((n) => upload.indexOf(n));
+    expect(order.every((i) => i >= 0)).toBe(true);
+    expect([...order].sort((a, b) => a - b)).toEqual(order);
+    expect(upload).toContain("failure('rate_limited')");
   });
 
   it('no server code reads identity from the session object (getSession)', () => {
@@ -91,10 +112,49 @@ describe('public environment variables', () => {
 });
 
 describe('pages use the session gate', () => {
-  it('every protected page calls requireSession', () => {
-    const protectedPages = ['account', 'orgs', 'orgs/new', 'orgs/[id]/members', 'admin/users', 'admin/audit', 'mfa/enrol', 'mfa/verify'];
+  it('every protected page calls a gate (requireSession / requireBusinessContext / requireReviewer)', () => {
+    const protectedPages = [
+      'account',
+      'orgs',
+      'orgs/new',
+      'orgs/[id]/members',
+      'orgs/[id]/business',
+      'orgs/[id]/business/onboarding',
+      'orgs/[id]/business/verification',
+      'orgs/[id]/business/preview',
+      'admin/users',
+      'admin/audit',
+      'admin/verification',
+      'admin/verification/[claimId]',
+      'notifications',
+      'mfa/enrol',
+      'mfa/verify',
+    ];
     for (const p of protectedPages) {
-      expect(read(`src/app/[locale]/${p}/page.tsx`), p).toContain('requireSession(');
+      expect(read(`src/app/[locale]/${p}/page.tsx`), p).toMatch(/requireSession\(|requireBusinessContext\(|requireReviewer\(/);
     }
+  });
+
+  it('the business and reviewer gates are built on requireSession (MFA rules included)', () => {
+    expect(read('src/server/business-context.ts')).toContain('requireSession(');
+    expect(read('src/server/reviewer.ts')).toContain('requireSession(');
+  });
+
+  it('privileged is imported only by actions.ts and route.ts files (documents, rescan, decisions included)', () => {
+    const users = srcFiles.filter((f) => f !== 'src/server/privileged.ts' && /@\/server\/privileged/.test(read(f)));
+    expect(users.length).toBeGreaterThan(5);
+    for (const f of users) expect(f, f).toMatch(/(\/actions\.ts|\/route\.ts)$/);
+    expect(users).toEqual(expect.arrayContaining(['src/app/api/v1/documents/[id]/route.ts', 'src/app/api/v1/jobs/rescan/route.ts']));
+  });
+
+  it('document and rescan routes keep their safety headers and constant-time secret check', () => {
+    const doc = read('src/app/api/v1/documents/[id]/route.ts');
+    for (const needle of ['get_document_access', 'X-Content-Type-Options', "'no-store'", "default-src 'none'", 'contentDispositionAttachment']) {
+      expect(doc, needle).toContain(needle);
+    }
+    expect(doc.indexOf('get_document_access')).toBeLessThan(doc.indexOf('downloadObject('));
+    const job = read('src/app/api/v1/jobs/rescan/route.ts');
+    expect(job).toContain('bearerMatches(');
+    expect(job).toContain('CRON_SECRET');
   });
 });

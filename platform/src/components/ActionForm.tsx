@@ -5,10 +5,20 @@ import { useActionState, useEffect, useRef, type ReactNode } from 'react';
 import { useFormStatus } from 'react-dom';
 import { idle, type FormState } from '@/lib/form-state';
 
-export function SubmitButton({ children, variant = 'primary' }: { children: ReactNode; variant?: 'primary' | 'secondary' | 'danger' }) {
+export function SubmitButton({
+  children,
+  variant = 'primary',
+  name,
+  value,
+}: {
+  children: ReactNode;
+  variant?: 'primary' | 'secondary' | 'danger';
+  name?: string;
+  value?: string;
+}) {
   const { pending } = useFormStatus();
   return (
-    <button type="submit" className={`btn btn-${variant}`} disabled={pending} aria-busy={pending}>
+    <button type="submit" name={name} value={value} className={`btn btn-${variant}`} disabled={pending} aria-busy={pending}>
       {children}
     </button>
   );
@@ -17,7 +27,7 @@ export function SubmitButton({ children, variant = 'primary' }: { children: Reac
 /** Announces the result of an action. Errors start with a word ("Error"), so meaning never depends on colour. */
 export function FormMessage({ state }: { state: FormState }) {
   const t = useTranslations();
-  const text = state.messageKey ? t(state.messageKey) : '';
+  const text = state.messageKey ? t(state.messageKey, state.data ?? {}) : '';
   return (
     <div role={state.status === 'error' ? 'alert' : 'status'} aria-live="polite" className="form-message-slot">
       {text ? (
@@ -36,10 +46,12 @@ interface Props {
   children?: ReactNode;
   variant?: 'primary' | 'secondary' | 'danger';
   className?: string;
+  /** Optional second submit button (e.g. "Save and finish later"), sent as intent=<value>. */
+  secondary?: { label: string; value: string };
 }
 
 /** Generic form wrapper: pending state, announced result, and restoring non-secret values React resets after an action. */
-export default function ActionForm({ action, submitLabel, children, variant = 'primary', className }: Props) {
+export default function ActionForm({ action, submitLabel, children, variant = 'primary', className, secondary }: Props) {
   const [state, formAction] = useActionState(action, idle);
   const ref = useRef<HTMLFormElement>(null);
 
@@ -67,7 +79,14 @@ export default function ActionForm({ action, submitLabel, children, variant = 'p
     <form ref={ref} action={formAction} className={className ?? 'form'}>
       {children}
       <FormMessage state={state} />
-      <SubmitButton variant={variant}>{submitLabel}</SubmitButton>
+      <SubmitButton variant={variant} name={secondary ? 'intent' : undefined} value={secondary ? 'next' : undefined}>
+        {submitLabel}
+      </SubmitButton>
+      {secondary ? (
+        <SubmitButton variant="secondary" name="intent" value={secondary.value}>
+          {secondary.label}
+        </SubmitButton>
+      ) : null}
     </form>
   );
 }

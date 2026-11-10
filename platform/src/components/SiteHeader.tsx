@@ -21,6 +21,9 @@ export default async function SiteHeader({ locale, signedIn }: { locale: string;
               <Link href="/orgs" locale={locale}>
                 {t('nav.organisations')}
               </Link>
+              <Link href="/notifications" locale={locale}>
+                {t('nav.notifications')}
+              </Link>
               <Link href="/account" locale={locale}>
                 {t('nav.account')}
               </Link>

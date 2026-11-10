@@ -79,6 +79,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 {t('adminUsers')}
               </Link>
             ) : null}
+            {isAdmin ? (
+              <Link href="/admin/verification" locale={locale}>
+                {t('adminVerification')}
+              </Link>
+            ) : null}
             <Link href="/admin/audit" locale={locale}>
               {t('adminAudit')}
             </Link>

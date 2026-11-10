@@ -45,6 +45,13 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
       <p className="muted">
         {t(`orgTypes.${org.type}`)} &middot; {t('orgs.role')}: {t(`roles.${mine.role}`)}
       </p>
+      {org.type === 'business' ? (
+        <p>
+          <Link href={`/orgs/${id}/business`} locale={locale}>
+            {t('orgs.businessLink')}
+          </Link>
+        </p>
+      ) : null}
       <MembersManager locale={locale} org={org} meId={s.user.id} myRole={mine.role} perms={perms} members={members} invitations={invitations} />
     </>
   );

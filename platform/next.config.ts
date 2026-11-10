@@ -10,6 +10,18 @@ const nextConfig: NextConfig = {
   turbopack: { root: path.resolve(import.meta.dirname) },
   reactStrictMode: true,
   agentRules: false,
+  // Document uploads (max 10 MiB, enforced by the server action itself) go through a server action AND through the
+  // proxy. Next buffers the request body for the proxy and silently truncates it at proxyClientMaxBodySize (default
+  // 10 MB), which broke uploads of ~10 MiB with "Unexpected end of form". Both limits sit above 10 MiB + multipart
+  // overhead so the action's own check stays authoritative and over-limit files get the clear "file too large" message.
+  //
+  // KNOWN RESIDUAL RISK: these limits apply to every proxied route, not only uploads. src/proxy.ts refuses POSTs over
+  // 1 MB (by Content-Length) outside the two upload pages, but /api and /auth bypass the proxy and chunked bodies carry
+  // no length; put edge/WAF body limits in front, or move uploads to a dedicated route in a later hardening pass.
+  experimental: {
+    serverActions: { bodySizeLimit: '16mb' },
+    proxyClientMaxBodySize: '16mb',
+  },
   async headers() {
     const common = [
       { key: 'Strict-Transport-Security', value: 'max-age=63072000; includeSubDomains' },

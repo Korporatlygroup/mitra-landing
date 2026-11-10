@@ -66,3 +66,47 @@ export function CheckField({ id, name, label }: { id: string; name: string; labe
     </div>
   );
 }
+
+export function FileField({ id, name, label, hint, accept }: { id: string; name: string; label: string; hint?: string; accept?: string }) {
+  const hintId = hint ? `${id}-hint` : undefined;
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      {hint ? (
+        <p id={hintId} className="hint">
+          {hint}
+        </p>
+      ) : null}
+      <input id={id} name={name} type="file" required accept={accept} aria-describedby={hintId} />
+    </div>
+  );
+}
+
+export function TextArea({
+  id,
+  name,
+  label,
+  hint,
+  required,
+  maxLength,
+}: {
+  id: string;
+  name: string;
+  label: string;
+  hint?: string;
+  required?: boolean;
+  maxLength?: number;
+}) {
+  const hintId = hint ? `${id}-hint` : undefined;
+  return (
+    <div className="field">
+      <label htmlFor={id}>{label}</label>
+      {hint ? (
+        <p id={hintId} className="hint">
+          {hint}
+        </p>
+      ) : null}
+      <textarea id={id} name={name} rows={4} required={required} maxLength={maxLength} aria-describedby={hintId} />
+    </div>
+  );
+}

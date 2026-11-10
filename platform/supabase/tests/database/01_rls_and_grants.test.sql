@@ -90,7 +90,7 @@ begin
   return p_id;
 end $$;
 
-select plan(35);
+select plan(36);
 
 -- ============================ S6: RLS everywhere ============================
 select is_empty(
@@ -155,11 +155,15 @@ select is(
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'EXECUTE')),
   array['accept_invitation(p_token text)', 'create_invitation(p_org uuid, p_email text, p_role member_role)',
-        'create_org(p_type org_type, p_name text)', 'grant_consent(p_purpose text, p_version text)', 'remove_member(p_org uuid, p_user uuid)',
-        'rename_org(p_org uuid, p_name text)', 'revoke_invitation(p_invitation uuid)',
-        'set_member_role(p_org uuid, p_user uuid, p_role member_role)',
+        'create_org(p_type org_type, p_name text)', 'decide_claim(p_claim uuid, p_decision text, p_reason text, p_expected_version integer)',
+        'get_document_access(p_doc uuid)', 'get_verification_summary(p_org uuid)', 'grant_consent(p_purpose text, p_version text)', 'mark_notification_read(p_id uuid)',
+        'remove_document(p_doc uuid)', 'remove_member(p_org uuid, p_user uuid)', 'rename_org(p_org uuid, p_name text)',
+        'revoke_invitation(p_invitation uuid)', 'save_business_profile(p_org uuid, p_data jsonb)',
+        'save_representative(p_org uuid, p_name text, p_role text, p_email text, p_phone text)',
+        'set_member_role(p_org uuid, p_user uuid, p_role member_role)', 'start_review(p_claim uuid)',
+        'submit_claim(p_org uuid, p_type claim_type, p_document_ids uuid[], p_note text)', 'withdraw_claim(p_claim uuid)',
         'withdraw_consent(p_id uuid)'],
-  'S7.6 authenticated can execute exactly the 9 allow-listed public RPCs');
+  'S7.6 authenticated can execute exactly the 19 allow-listed public RPCs');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -173,8 +177,9 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'service_auth_attempt', 'service_record_auth_event'],
-  'S7.8 service_role executes only service_record_auth_event, service_auth_attempt and bootstrap_first_admin from public');
+  array['bootstrap_first_admin', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_org_recipient_emails',
+        'service_record_auth_event', 'service_record_rejected_upload', 'service_register_document', 'service_set_scan_result'],
+  'S7.8 service_role executes exactly the 8 allow-listed service_* / bootstrap functions from public');
 
 select is_empty(
   $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -217,6 +222,11 @@ select is(
   array['display_name', 'language'],
   'S7.15 authenticated may update only profiles.display_name and profiles.language');
 
+select ok(not has_function_privilege('authenticated', 'private.has_org_involvement(uuid, uuid)', 'EXECUTE')
+      and not has_function_privilege('anon', 'private.has_org_involvement(uuid, uuid)', 'EXECUTE')
+      and not has_function_privilege('service_role', 'private.has_org_involvement(uuid, uuid)', 'EXECUTE'),
+  'S7.30 private.has_org_involvement is not executable by authenticated, anon or service_role');
+
 -- anon behaves as expected over real statements
 select tt.anon();
 select throws_ok($$ select * from public.organisations $$, '42501', null, 'S7.16 anon select on organisations denied');
@@ -248,7 +258,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  8, 'S6.6 inventory: exactly the 8 expected public tables exist (new tables must come with RLS tests)');
+  17, 'S6.6 inventory: exactly the 17 expected public tables exist (new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

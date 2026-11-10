@@ -4,7 +4,9 @@ import { sql } from './support/db';
 import { API_URL, BASE_URL, platformDir, PUBLISHABLE_KEY, readState, stateFile, writeState } from './support/env';
 import fs from 'node:fs';
 import { clearMailbox } from './support/mail';
+import { startClamdStub } from './support/clamd-stub';
 import { signUpAndConfirm } from './support/ui';
+import { CRON_SECRET } from './support/env';
 
 async function waitForApi(): Promise<void> {
   const deadline = Date.now() + 120_000;
@@ -27,13 +29,25 @@ async function waitForApi(): Promise<void> {
  * (single-use bootstrap): the account signs up and confirms through the real UI + Mailpit, then
  * scripts/bootstrap-admin.mjs promotes it. MFA enrolment is left to the E5 spec.
  */
-export default async function globalSetup(_config: FullConfig): Promise<void> {
+export default async function globalSetup(_config: FullConfig): Promise<() => Promise<void>> {
+  // Stub scanner first: the app (started by webServer) connects to it at upload time.
+  const stub = await startClamdStub();
+  const teardown = async () => stub.close();
+  await prepare();
+  return teardown;
+}
+
+async function prepare(): Promise<void> {
   if (process.env.E2E_NO_RESET !== '1') {
     fs.rmSync(stateFile, { force: true });
     execSync('npx supabase db reset', { cwd: platformDir, stdio: 'inherit' });
   }
   await waitForApi();
   await clearMailbox();
+
+  // The app must have been started with the same CRON_SECRET (a reused server may not have been).
+  const probe = await fetch(`${BASE_URL}/api/v1/jobs/rescan`, { method: 'POST', headers: { authorization: `Bearer ${CRON_SECRET}` } });
+  if (probe.status !== 200) throw new Error(`App rescan endpoint answered ${probe.status}: the running server was not started with CRON_SECRET/CLAMD_* (stop it so the webServer can start one).`);
 
   const bootstrapped = Number((await sql(`select count(*)::int as n from public.memberships where role = 'admin_super'`))[0]!.n) > 0;
   const st = readState();

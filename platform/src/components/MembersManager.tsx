@@ -52,7 +52,7 @@ export default async function MembersManager({ locale, org, meId, myRole, perms,
       <h2>{t('members.membersTitle')}</h2>
       {!canInvite && !canRemove && !canSetRole ? <p className="muted">{t('members.readOnly')}</p> : null}
       <div className="table-wrap">
-        <table>
+        <table className="stack">
           <thead>
             <tr>
               <th scope="col">{t('members.name')}</th>
@@ -67,12 +67,12 @@ export default async function MembersManager({ locale, org, meId, myRole, perms,
               const actable = canActOn(m);
               return (
                 <tr key={m.userId}>
-                  <td>
+                  <td data-label={t('members.name')}>
                     {m.displayName || t('members.noName')} {isMe ? <span className="muted">{t('members.you')}</span> : null}
                   </td>
-                  <td>{t(`roles.${m.role}`)}</td>
-                  <td>{fmt.dateTime(new Date(m.since), { dateStyle: 'medium', timeZone: 'UTC' })}</td>
-                  <td>
+                  <td data-label={t('members.role')}>{t(`roles.${m.role}`)}</td>
+                  <td data-label={t('members.since')}>{fmt.dateTime(new Date(m.since), { dateStyle: 'medium', timeZone: 'UTC' })}</td>
+                  <td data-label={t('members.actions')}>
                     {canSetRole && actable ? (
                       <ActionForm action={setRoleAction} submitLabel={t('members.changeRole')} variant="secondary" className="inline-form">
                         {hidden({ userId: m.userId })}
