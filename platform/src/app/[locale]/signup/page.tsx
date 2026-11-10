@@ -35,6 +35,7 @@ export default async function SignUpPage({ params }: { params: Promise<{ locale:
         <SelectField id="language" name="language" label={t('language')} defaultValue={locale}>
           <option value="en">English</option>
           <option value="ta">தமிழ்</option>
+          <option value="ms">Bahasa Melayu</option>
         </SelectField>
         <CheckField id="acceptTerms" name="acceptTerms" label={t('acceptTerms')} />
         <CheckField id="acceptPrivacy" name="acceptPrivacy" label={t('acceptPrivacy')} />

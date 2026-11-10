@@ -29,7 +29,7 @@ export const SCHEMA_ERROR_KEYS = [
   'invalid_doc_type',
 ] as const;
 
-export const LOCALES = ['en', 'ta'] as const;
+export const LOCALES = ['en', 'ta', 'ms'] as const;
 export const localeSchema = z.enum(LOCALES, 'invalid_language');
 
 export const emailSchema = z

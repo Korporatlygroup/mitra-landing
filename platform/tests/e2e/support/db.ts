@@ -33,7 +33,7 @@ export interface TestUser {
 }
 
 /** Creates an email-confirmed user through the Auth admin API (setup only; some specs sign up through the UI instead). */
-export async function createUser(prefix = 'user', opts: { email?: string; language?: 'en' | 'ta'; name?: string; consent?: boolean } = {}): Promise<TestUser> {
+export async function createUser(prefix = 'user', opts: { email?: string; language?: 'en' | 'ta' | 'ms'; name?: string; consent?: boolean } = {}): Promise<TestUser> {
   const email = opts.email ?? uniqEmail(prefix);
   const password = strongPassword();
   const name = opts.name ?? `E2E ${prefix}`;

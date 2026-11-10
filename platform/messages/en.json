@@ -1,5 +1,5 @@
 {
-  "_meta": "Tamil (ta) text is a first draft and needs native-speaker review before launch.",
+  "_meta": "Tamil (ta) and Bahasa Melayu (ms) text are first drafts and need native-speaker review before public launch.",
   "common": {
     "appName": "MITRA",
     "skipToContent": "Skip to main content",
@@ -12,7 +12,9 @@
     "required": "required",
     "mainNav": "Main menu",
     "error": "Error",
-    "done": "Done"
+    "done": "Done",
+    "langMs": "BM",
+    "langMsFull": "BM – Bahasa Melayu"
   },
   "nav": {
     "home": "Home",
@@ -1060,5 +1062,20 @@
     "yourStatus": "Your answer",
     "notAnswered": "Not answered yet",
     "link": "Find customer requests"
+  },
+  "categories": {
+    "food-beverage": "Food and beverage",
+    "retail-shop": "Retail shop",
+    "tailoring-apparel": "Tailoring and apparel",
+    "beauty-wellness": "Beauty and wellness",
+    "home-services": "Home and repair services",
+    "education-training": "Education and training",
+    "tech-digital": "Technology and digital",
+    "manufacturing": "Manufacturing and crafts",
+    "agriculture": "Agriculture",
+    "transport-logistics": "Transport and logistics",
+    "events-hospitality": "Events and hospitality",
+    "professional-services": "Professional services",
+    "other": "Other"
   }
 }

@@ -6,6 +6,7 @@ import { MY_STATES } from '@/lib/schemas';
 import { requireBusinessContext } from '@/server/business-context';
 import { BOARD_PAGE_SIZE, listBoardRequests } from '@/server/services/directory';
 import { listCategories } from '@/server/services/verification';
+import { catName } from '@/lib/category';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'board.title');
@@ -70,7 +71,7 @@ export default async function RequestBoardPage({
             <option value="">{t('board.all')}</option>
             {categories.map((c) => (
               <option key={c.slug} value={c.slug}>
-                {locale === 'ta' ? c.name_ta : c.name_en}
+                {catName(locale, c)}
               </option>
             ))}
           </select>
@@ -122,7 +123,7 @@ export default async function RequestBoardPage({
                   </h2>
                   <p className="muted" style={{ margin: '0 0 6px' }}>
                     {[
-                      cat ? (locale === 'ta' ? cat.name_ta : cat.name_en) : null,
+                      cat ? (catName(locale, cat)) : null,
                       [r.target_district, r.target_state].filter(Boolean).join(', '),
                       r.quantity ? `${r.quantity} ${r.unit ?? ''}` : null,
                       r.needed_by ? t('inbox.by', { date: r.needed_by }) : null,

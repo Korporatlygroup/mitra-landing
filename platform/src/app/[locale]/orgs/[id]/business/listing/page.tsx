@@ -3,6 +3,7 @@ import ActionForm from '@/components/ActionForm';
 import { Field, SelectField } from '@/components/Field';
 import StatusChip from '@/components/StatusChip';
 import { Link } from '@/i18n/navigation';
+import { catName } from '@/lib/category';
 import { pageTitle } from '@/lib/metadata';
 import { MY_STATES } from '@/lib/schemas';
 import { requireBusinessContext } from '@/server/business-context';
@@ -161,7 +162,7 @@ export default async function ListingEditorPage({ params }: { params: Promise<{ 
                 <SelectField id={`svc_cat_${i}`} name={`svc_cat_${i}`} label={t('listing.svcCategory')} defaultValue={s?.category_slug ?? categories.find((c) => c.id === profile.category_id)?.slug ?? ''}>
                   {categories.map((c) => (
                     <option key={c.slug} value={c.slug}>
-                      {locale === 'ta' ? c.name_ta : c.name_en}
+                      {catName(locale, c)}
                     </option>
                   ))}
                 </SelectField>

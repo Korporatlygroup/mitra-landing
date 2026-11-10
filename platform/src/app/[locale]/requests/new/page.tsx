@@ -11,6 +11,7 @@ import { getBuyerRequest, getRequestContact } from '@/server/services/directory'
 import { requireSession } from '@/server/session';
 import { listCategories } from '@/server/services/verification';
 import { saveRequestStepAction, submitRequestAction } from '../actions';
+import { catName } from '@/lib/category';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'req.wizardTitle');
@@ -87,7 +88,7 @@ export default async function NewRequestPage({
               <option value="">{t('ob.s1.categoryChoose')}</option>
               {categories.map((c) => (
                 <option key={c.slug} value={c.slug}>
-                  {locale === 'ta' ? c.name_ta : c.name_en}
+                  {catName(locale, c)}
                 </option>
               ))}
             </select>
@@ -184,7 +185,7 @@ export default async function NewRequestPage({
               {request.title} {edit(1)}
             </dd>
             <dt>{t('req.s1.category')}</dt>
-            <dd>{cat ? (locale === 'ta' ? cat.name_ta : cat.name_en) : '-'}</dd>
+            <dd>{cat ? (catName(locale, cat)) : '-'}</dd>
             <dt>{t('req.s2.state')}</dt>
             <dd>
               {[request.target_district, request.target_state].filter(Boolean).join(', ') || '-'} {edit(2)}

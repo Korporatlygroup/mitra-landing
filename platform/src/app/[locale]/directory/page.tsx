@@ -4,6 +4,7 @@ import { pageTitle } from '@/lib/metadata';
 import { directoryFilterSchema, MY_STATES } from '@/lib/schemas';
 import { searchListings, PAGE_SIZE, type ListingCard } from '@/server/services/directory';
 import { getOptionalUser } from '@/server/session';
+import { catName } from '@/lib/category';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'dir.title');
@@ -32,7 +33,7 @@ async function Card({ b, locale }: { b: ListingCard; locale: string }) {
         </Link>
       </h2>
       <p className="muted" style={{ margin: '0 0 6px' }}>
-        {locale === 'ta' ? b.category.name_ta : b.category.name_en}
+        {catName(locale, b.category)}
         {place ? ` · ${place}` : null}
       </p>
       {b.headline ? <p style={{ margin: '0 0 6px' }}>{b.headline}</p> : null}
@@ -96,7 +97,7 @@ export default async function DirectoryPage({
             <option value="">{t('dir.anyCategory')}</option>
             {(data?.categories ?? []).map((c) => (
               <option key={c.slug} value={c.slug}>
-                {locale === 'ta' ? c.name_ta : c.name_en}
+                {catName(locale, c)}
               </option>
             ))}
           </select>

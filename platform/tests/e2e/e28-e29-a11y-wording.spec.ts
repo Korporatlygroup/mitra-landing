@@ -31,7 +31,7 @@ async function seed(page: Page, browser: Browser, locale: Locale) {
   return { ...biz, rv, rp, rctx, claimId: claim.id };
 }
 
-for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
+for (const locale of ['en', 'ta', 'ms'] as const satisfies readonly Locale[]) {
   test(`E28 axe and no horizontal scroll on the onboarding, verification, preview, messages and reviewer pages in ${locale}`, async ({ page, browser }) => {
     test.setTimeout(300_000);
     const s = await seed(page, browser, locale);
@@ -71,7 +71,7 @@ for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
 // Regression (was D4): at 360px the verification queue overflows the page in both languages
 // (EN scrollWidth ~429-451, TA ~617). The "Show" filter <select> is as wide as its longest option text and the
 // table plus its visually-hidden header add more; the table wrapper does not contain them.
-for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
+for (const locale of ['en', 'ta', 'ms'] as const satisfies readonly Locale[]) {
   test(`E28 the ${locale} verification queue has no horizontal scroll at the project viewport`, async ({ page }) => {
     const rv = await createReviewer('admin_review');
     await reviewerGoto(page, rv, `/${locale}/admin/verification`);
@@ -138,7 +138,7 @@ test('E28 keyboard-only walk through onboarding step 1 with a visible focus indi
 // E29: wording. Only "documents reviewed by MITRA ... for: <scope>"; never an implied official SSM or government check.
 const BANNED = [/verified by SSM/i, /SSM[- ]verified/i, /officially verified/i, /government[- ]verified/i, /guaranteed?/i];
 
-for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
+for (const locale of ['en', 'ta', 'ms'] as const satisfies readonly Locale[]) {
   test(`E29 wording on the owner and reviewer pages in ${locale}: no banned phrases, no unqualified "verified"`, async ({ page, browser }) => {
     test.setTimeout(300_000);
     const s = await seed(page, browser, locale);

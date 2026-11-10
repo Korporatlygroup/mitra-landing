@@ -1,5 +1,5 @@
 {
-  "_meta": "Tamil (ta) text is a first draft and needs native-speaker review before launch.",
+  "_meta": "Tamil (ta) and Bahasa Melayu (ms) text are first drafts and need native-speaker review before public launch.",
   "common": {
     "appName": "MITRA",
     "skipToContent": "முதன்மை உள்ளடக்கத்திற்குச் செல்லவும்",
@@ -12,7 +12,9 @@
     "required": "கட்டாயம்",
     "mainNav": "முதன்மை பட்டி",
     "error": "பிழை",
-    "done": "முடிந்தது"
+    "done": "முடிந்தது",
+    "langMs": "BM",
+    "langMsFull": "BM – Bahasa Melayu"
   },
   "nav": {
     "home": "முகப்பு",
@@ -1060,5 +1062,20 @@
     "yourStatus": "உங்கள் பதில்",
     "notAnswered": "இன்னும் பதிலளிக்கவில்லை",
     "link": "வாடிக்கையாளர் கோரிக்கைகளைத் தேடுங்கள்"
+  },
+  "categories": {
+    "food-beverage": "உணவு மற்றும் பானங்கள்",
+    "retail-shop": "சில்லறை கடை",
+    "tailoring-apparel": "தையல் மற்றும் ஆடை",
+    "beauty-wellness": "அழகு மற்றும் நலம்",
+    "home-services": "வீட்டுச் சேவைகள்",
+    "education-training": "கல்வி மற்றும் பயிற்சி",
+    "tech-digital": "தொழில்நுட்பம் மற்றும் டிஜிட்டல்",
+    "manufacturing": "உற்பத்தி மற்றும் கைவினை",
+    "agriculture": "விவசாயம்",
+    "transport-logistics": "போக்குவரத்து மற்றும் விநியோகம்",
+    "events-hospitality": "நிகழ்வுகள் மற்றும் விருந்தோம்பல்",
+    "professional-services": "தொழில்முறை சேவைகள்",
+    "other": "மற்றவை"
   }
 }

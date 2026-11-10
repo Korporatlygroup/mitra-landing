@@ -4,7 +4,7 @@ import { msg } from './support/i18n';
 import { confirmEmailUi, expectNoHorizontalScroll, loginUi, signUpUi, type Locale } from './support/ui';
 
 // E1 (F1): sign-up -> confirmation email (Mailpit) -> login -> home, in en and ta.
-for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
+for (const locale of ['en', 'ta', 'ms'] as const satisfies readonly Locale[]) {
   test(`E1 sign-up, email confirmation, login and home in ${locale}`, async ({ page, context }) => {
     const email = uniqEmail(`e1-${locale}`);
     const password = strongPassword();

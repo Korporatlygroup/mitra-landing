@@ -10,6 +10,7 @@ import { getBuyerRequest, listRequestMatches, type MatchRow } from '@/server/ser
 import { requireSession } from '@/server/session';
 import { listCategories } from '@/server/services/verification';
 import { endRequestAction, findMoreAction, inviteSellerAction } from '../actions';
+import { catName } from '@/lib/category';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'req.detailTitle');
@@ -133,7 +134,7 @@ export default async function RequestDetailPage({
 
       <dl className="dl card">
         <dt>{t('req.s1.category')}</dt>
-        <dd>{cat ? (locale === 'ta' ? cat.name_ta : cat.name_en) : '-'}</dd>
+        <dd>{cat ? (catName(locale, cat)) : '-'}</dd>
         <dt>{t('req.s2.state')}</dt>
         <dd>{[r.target_district, r.target_state].filter(Boolean).join(', ') || '-'}</dd>
         <dt>{t('req.s3.quantity')}</dt>

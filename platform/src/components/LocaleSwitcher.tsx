@@ -12,7 +12,7 @@ export default function LocaleSwitcher() {
   const search = useSearchParams().toString();
   const href = search ? `${pathname}?${search}` : pathname;
 
-  const item = (l: 'en' | 'ta', short: string, full: string) => (
+  const item = (l: 'en' | 'ta' | 'ms', short: string, full: string) => (
     <Link
       href={href}
       locale={l}
@@ -31,6 +31,8 @@ export default function LocaleSwitcher() {
       {item('en', t('langEn'), t('langEnFull'))}
       <span aria-hidden="true">|</span>
       {item('ta', t('langTa'), t('langTaFull'))}
+      <span aria-hidden="true">|</span>
+      {item('ms', t('langMs'), t('langMsFull'))}
     </nav>
   );
 }

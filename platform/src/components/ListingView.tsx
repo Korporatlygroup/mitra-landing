@@ -1,9 +1,10 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import type { ReviewedClaim, ServiceDetail } from '@/server/services/directory';
+import { catName } from '@/lib/category';
 
 export interface ListingViewData {
   name: string;
-  category: { name_en: string; name_ta: string } | null;
+  category: { slug?: string; name_en: string; name_ta: string } | null;
   state: string | null;
   district: string | null;
   headline: string | null;
@@ -28,7 +29,7 @@ export default async function ListingView({ data, locale, headingLevel = 1 }: { 
     <article aria-labelledby="listing-name">
       <H id="listing-name">{data.name}</H>
       <p className="muted">
-        {data.category ? (locale === 'ta' ? data.category.name_ta : data.category.name_en) : null}
+        {data.category ? (catName(locale, data.category)) : null}
         {place ? ` · ${place}` : null}
       </p>
       {data.headline ? <p className="lead">{data.headline}</p> : null}

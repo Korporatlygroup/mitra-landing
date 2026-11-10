@@ -11,6 +11,7 @@ import { getRequestForSeller } from '@/server/services/directory';
 import { listCategories } from '@/server/services/verification';
 import { reportAction } from '@/app/[locale]/directory/actions';
 import { respondAction } from '../actions';
+import { catName } from '@/lib/category';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'inbox.detailTitle');
@@ -59,7 +60,7 @@ export default async function SellerRequestPage({ params }: { params: Promise<{ 
       {v.title ? (
         <dl className="dl card">
           <dt>{t('req.s1.category')}</dt>
-          <dd>{cat ? (locale === 'ta' ? cat.name_ta : cat.name_en) : '-'}</dd>
+          <dd>{cat ? (catName(locale, cat)) : '-'}</dd>
           <dt>{t('req.s2.state')}</dt>
           <dd>{[v.target_district, v.target_state].filter(Boolean).join(', ') || '-'}</dd>
           <dt>{t('req.s3.quantity')}</dt>
