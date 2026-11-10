@@ -1,0 +1,47 @@
+---
+// Interview videos with sound and player controls. Only items whose file exists render (lib/content.ts).
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+import { readyInterviews as items, showInterviews } from '../../lib/content';
+
+const { interviews } = site;
+---
+
+{showInterviews && (
+  <section class="section section--alt" id="interviews">
+    <div class="container">
+      <div class="section__head">
+        <p class="interviews__eyebrow" data-reveal>{interviews.eyebrow}</p>
+        <h2 data-reveal style="--d:80">{interviews.heading}</h2>
+        <p class="lead" data-reveal style="--d:140">{interviews.intro}</p>
+      </div>
+
+      <div class:list={['interviews', { 'interviews--single': items.length === 1 }]}>
+        {items.map((it, i) => (
+          <figure class="interview" data-reveal style={`--d:${120 + i * 80}`}>
+            <div class="interview__player">
+              <Media id={it.media} sizes="(min-width: 1000px) 960px, 100vw" />
+            </div>
+            <figcaption>
+              <span class="interview__title">{it.title}</span>
+              <span class="interview__text">{it.text}</span>
+            </figcaption>
+          </figure>
+        ))}
+      </div>
+    </div>
+  </section>
+)}
+
+<style>
+  .interviews__eyebrow { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+  .interviews { display: grid; gap: 1.5rem; }
+  @media (min-width: 800px) { .interviews:not(.interviews--single) { grid-template-columns: repeat(2, 1fr); } }
+  .interviews--single { max-width: 980px; }
+  .interview { margin: 0; }
+  .interview__player { border-radius: var(--radius-lg); overflow: hidden; background: #000; box-shadow: var(--shadow-lift); }
+  .interview__player :global(.media) { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; border-radius: 0; }
+  .interview figcaption { display: grid; gap: 0.2rem; margin-top: 0.9rem; }
+  .interview__title { font: 650 1.15rem/1.25 var(--font-display); }
+  .interview__text { color: var(--text-muted); }
+</style>

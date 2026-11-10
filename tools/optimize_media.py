@@ -13,7 +13,7 @@ prefix "extra:" for files supplied separately, relative to --extra):
                  source may be a video: set "frame" ("m:ss" or seconds) to grab a still.
                  optional "crop": [x, y, w, h] and "blur": [[x, y, w, h], ...], fractions of the source frame.
   type logo   -> media/logos/<id>.webp (<=600 px wide, keeps transparency)
-  type video  -> media/<id>.mp4 (H.264, <=720p, CRF 28, "start"/"duration", "mute") + media/<id>-poster.webp
+  type video  -> media/<id>.mp4 (H.264, <=720p, CRF 28, "start"/"duration", "mute", "maxrate") + media/<id>-poster.webp ("poster_at")
 Writes back: file, w, h, bytes (+ file_sm / poster). Budget: images <400 KB, clips <8 MB, public/media <60 MB.
 
 Needs: Python 3, Pillow, ffmpeg/ffprobe on PATH.
@@ -116,10 +116,12 @@ def do_video(e, p, out):
     if e.get("duration"): a += ["-t", f"{seconds(e['duration']):.2f}"]
     a += ["-i", p, "-vf", "scale=-2:'min(720,ih)'", "-c:v", "libx264", "-preset", "slow",
           "-crf", str(e.get("crf", 28)), "-pix_fmt", "yuv420p", "-movflags", "+faststart"]
+    # Long films: cap the bitrate so the file stays under the host's per-file limit (Cloudflare Pages: 25 MiB).
+    if e.get("maxrate"): a += ["-maxrate", e["maxrate"], "-bufsize", e["maxrate"]]
     a += ["-an"] if e.get("mute", True) else ["-c:a", "aac", "-b:a", "96k"]
     ff(*a, dst)
     poster = os.path.join(work, f"{e['id']}-poster.png")
-    ff("-i", dst, "-frames:v", "1", poster)
+    ff("-ss", f"{seconds(e.get('poster_at', 0)):.2f}", "-i", dst, "-frames:v", "1", poster)
     (pw, ph), pn = save_webp(Image.open(poster).convert("RGB"), os.path.join(out, f"{e['id']}-poster.webp"), IMG_MAX, IMG_BUDGET)
     r = subprocess.run([FP, "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height",
                         "-of", "csv=p=0", dst], capture_output=True, text=True)

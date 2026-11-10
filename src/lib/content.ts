@@ -1,11 +1,10 @@
 import site from '../../content/site.json';
+import { getMedia } from './media';
 
-/** Stories with a real quote. Never invent testimonials: with fewer than this, the section stays hidden. */
-export const MIN_STORIES = 2;
-export const readyStories = site.stories.items.filter((s) => s.quote);
-export const showStories = readyStories.length >= MIN_STORIES;
-export const showBeyond = !site.beyond.verify;
+/** Interview videos whose file exists in public/. With none, the section and its nav link are hidden. */
+export const readyInterviews = site.interviews.items.filter((i) => getMedia(i.media).available);
+export const showInterviews = readyInterviews.length > 0;
 
 /** Nav links, minus sections that are currently hidden. */
-const hidden = new Set([!showStories && '#stories', !showBeyond && '#beyond'].filter(Boolean));
+const hidden = new Set([!showInterviews && '#interviews'].filter(Boolean));
 export const navLinks = site.nav.filter((n) => !hidden.has(n.href));

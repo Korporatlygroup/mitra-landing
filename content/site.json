@@ -28,20 +28,20 @@
       "href": "#mitra"
     },
     {
-      "label": "Impact",
-      "href": "#impact"
+      "label": "Results",
+      "href": "#results"
     },
     {
       "label": "Journey",
       "href": "#journey"
     },
     {
-      "label": "Gallery",
-      "href": "#gallery"
+      "label": "Interviews",
+      "href": "#interviews"
     },
     {
-      "label": "Stories",
-      "href": "#stories"
+      "label": "Gallery",
+      "href": "#gallery"
     },
     {
       "label": "Partners",
@@ -66,7 +66,7 @@
       },
       {
         "label": "Watch highlights",
-        "href": "#gallery",
+        "href": "#interviews",
         "style": "secondary",
         "videoUrl": null
       }
@@ -78,11 +78,11 @@
       "INOK stands for Idhu Namme Oru Kedai, Tamil for \"this is our shop\". Every participant came with a business of their own, and every lesson was about growing it.",
       "Small businesses in the Malaysian Indian community often have strong products but little time or support to take them online. INOK was designed to change that: practical digital-marketing skills, taught in person, then applied to each participant's own business with a mentor alongside.",
       "Over six days in Ipoh, participants worked through strategy, content, advertising, AI tools and marketplace selling with practitioners who run these campaigns for a living. They then spent 20 days putting it to work online, with a mentor checking in along the way.",
-      "The 2024 Program Pensijilan Digital Marketing Strategist was delivered by GET Academy with funding from MITRA, the Malaysian Indian Community Transformation Unit, and certified by SEGi College Subang Jaya, GET Academy's strategic educational partner within SEGi University & Colleges."
+      "The Program Pensijilan Digital Marketing Strategist was delivered by GET Academy with funding from MITRA, the Malaysian Indian Community Transformation Unit, and certified by SEGi College Subang Jaya, GET Academy's strategic educational partner within SEGi University & Colleges."
     ],
-    "image": "about-bunting",
-    "_note": "Paragraph 4 names MITRA (funder) and SEGi College Subang Jaya (certifier) factually. SEGi naming confirmed by the user 2026-11-03.",
-    "imageCaption": "The programme banner, Ipoh, July 2024"
+    "image": "gal-v4",
+    "_note": "Paragraph 4 names MITRA (funder) and SEGi College Subang Jaya (certifier) factually. No programme dates or participant counts anywhere on the page (user decision 2026-11-10).",
+    "imageCaption": "Working through a plan together, Ipoh"
   },
   "impact": {
     "heading": "The programme in numbers",
@@ -106,12 +106,6 @@
         "key": "online"
       },
       {
-        "value": "10",
-        "label": "participants present for all six face-to-face days",
-        "source": "Final report; attendance sheets",
-        "key": "participants"
-      },
-      {
         "value": "6 months",
         "label": "of on-the-job training for interns",
         "source": "GET Academy account",
@@ -119,13 +113,12 @@
         "key": "ojt"
       }
     ],
-    "_note": "Stats carry a `key` used by Impact.astro: total = inclass + online drives the 26-day grid; participants is shown on its own. Values still come only from here.",
+    "_note": "Stats carry a `key` used by Impact.astro: total = inclass + online drives the 26-day grid. No participant count or calendar dates (user decision 2026-11-10).",
     "dayLabels": {
       "inclass": "Face-to-face in Ipoh",
       "online": "Mentored online"
     },
-    "startDate": "2024-07-08",
-    "gridHint": "Hover or tap any day for its date.",
+    "gridHint": "Hover or tap any day to see its phase.",
     "dayWord": "Day",
     "daysWord": "days"
   },
@@ -196,42 +189,63 @@
     "heading": "The 26-day journey",
     "steps": [
       {
-        "date": "8 Jul 2024",
-        "title": "Day 1: Strategy and foundations",
-        "text": "Mentored discussions on goals, customers and positioning.",
+        "date": "Day 1",
+        "phase": "inclass",
         "image": "hero-01",
-        "phase": "inclass"
+        "title": "Know yourself",
+        "text": "Digital-marketing fundamentals and a business persona for each participant, built around the one business they would grow all programme. First videos edited in CapCut."
       },
       {
-        "date": "9 Jul 2024",
-        "title": "Day 2: Building your presence",
-        "text": "Hands-on setup of business pages and digital tools.",
+        "date": "Day 2",
+        "phase": "inclass",
         "image": "day2-wide",
-        "phase": "inclass"
+        "title": "Know your product",
+        "text": "Facebook and Instagram pages set up, Google Ads, and ChatGPT for writing and planning content."
       },
       {
-        "date": "10–13 Jul 2024",
-        "title": "Days 3–6: Content, ads and e-commerce",
-        "text": "Video, social content, advertising and marketplace selling, practised on each participant's own business.",
+        "date": "Day 3",
+        "phase": "inclass",
         "image": null,
-        "phase": "inclass"
+        "title": "Know your customer",
+        "text": "Hands-on video production: participants recorded and published informational videos on TikTok, in class."
       },
       {
-        "date": "14 Jul – 2 Aug 2024",
-        "title": "20 days of mentored implementation",
-        "text": "Participants put their plans to work online with continued guidance.",
+        "date": "Day 4",
+        "phase": "inclass",
         "image": null,
-        "phase": "online"
+        "title": "Know your place",
+        "text": "Choosing TikTok topics that sell, and running live-streams."
       },
       {
-        "date": "2024",
-        "title": "Certification",
-        "text": "Certificates issued by SEGi College Subang Jaya, GET Academy's strategic educational partner.",
+        "date": "Day 5",
+        "phase": "inclass",
         "image": null,
-        "phase": "online"
+        "title": "Know your strategy",
+        "text": "Selling on Shopee and Lazada: choosing products, finding suppliers and setting up shop."
+      },
+      {
+        "date": "Day 6",
+        "phase": "inclass",
+        "image": null,
+        "title": "Go viral",
+        "text": "A viral-marketing challenge, product branding, and live selling sessions on TikTok."
+      },
+      {
+        "date": "20 days",
+        "phase": "online",
+        "image": null,
+        "title": "Mentored implementation",
+        "text": "Back at their own shops, participants put the plan to work online with a mentor checking in."
+      },
+      {
+        "date": "Graduation",
+        "phase": "online",
+        "image": null,
+        "title": "Certified",
+        "text": "Certificates issued by SEGi College Subang Jaya, GET Academy's strategic educational partner."
       }
     ],
-    "_note": "Day-by-day topics for 10–13 Jul are generic: replace with the actual schedule from the final report if available.",
+    "_note": "Day topics from the final report's delivery schedule (Laporan Akhir section 3). No calendar dates.",
     "phases": {
       "inclass": "In class, Ipoh",
       "online": "Online, with a mentor"
@@ -272,29 +286,6 @@
     ],
     "_note": "Expertise and track record from 'SEA AI Academy - Evidence-based Learning and Competency Verification.pptx' (slides 2-3), supplied by the user 2026-11-03. Self-reported; not independently verified."
   },
-  "stories": {
-    "heading": "Participant stories",
-    "pending": true,
-    "items": [
-      {
-        "media": "story-01",
-        "quote": null,
-        "business": null
-      },
-      {
-        "media": "story-02",
-        "quote": null,
-        "business": null
-      }
-    ],
-    "_note": "No testimonials or consent yet. Hide the section or show 'Stories coming soon' until at least two consented stories exist. Never invent quotes."
-  },
-  "beyond": {
-    "heading": "Beyond the classroom",
-    "body": "GET Academy went beyond the funded programme: a team of interns received further training followed by about six months of on-the-job experience with monthly allowances.",
-    "image": "beyond-01",
-    "verify": true
-  },
   "gallery": {
     "heading": "Gallery",
     "filters": [
@@ -304,11 +295,11 @@
       },
       {
         "id": "day1",
-        "label": "Day 1 · 8 Jul"
+        "label": "Day 1"
       },
       {
         "id": "day2",
-        "label": "Day 2 · 9 Jul"
+        "label": "Day 2"
       }
     ],
     "items": [
@@ -481,21 +472,37 @@
     }
   },
   "contact": {
-    "heading": "Bring this programme to your community",
-    "body": "Agencies, associations and community organisations: talk to us about running a certified digital-marketing programme for your members.",
+    "heading": "Ready to grow your business online?",
+    "body": "Whether you run a small shop or lead a community organisation, we'll help you build the digital skills that bring in customers.",
     "formAction": null,
     "fallback": {
       "label": "Visit geta.com.my",
       "href": "https://geta.com.my"
     },
-    "_note": "Form destination is an open decision. Set `whatsapp` (digits only, with country code, e.g. 60123456789) and/or `email` to show direct buttons. With all of formAction/whatsapp/email null, only the fallback button shows.",
+    "_note": "Each path opens an email to `email` with its subject. Destination chosen by the user 2026-11-10 (tech@korporatlygroup.com). Set `whatsapp` (digits, with country code) to add a WhatsApp button.",
     "whatsapp": null,
-    "email": null,
+    "email": "tech@korporatlygroup.com",
     "labels": {
       "whatsapp": "Chat on WhatsApp",
       "email": "Email us",
       "submit": "Send enquiry"
-    }
+    },
+    "paths": [
+      {
+        "icon": "sprout",
+        "title": "Learn and grow digitally",
+        "text": "For business owners and individuals: join an upcoming programme and take your shop online.",
+        "cta": "Ask about the next programme",
+        "subject": "I want to learn and grow digitally"
+      },
+      {
+        "icon": "people",
+        "title": "Bring INOK to your community",
+        "text": "For agencies, associations and community organisations: run a certified programme for your members.",
+        "cta": "Plan a programme with us",
+        "subject": "Bringing INOK to our community"
+      }
+    ]
   },
   "footer": {
     "address": "Level 33, Ilham Tower, Kuala Lumpur",
@@ -510,7 +517,7 @@
     "heading": "MITRA backed it. We built it.",
     "intro": "MITRA, the Malaysian Indian Community Transformation Unit, funded INOK to give Malaysian Indian business owners real digital-marketing skills. GET Academy turned that funding into a complete programme: designed, taught, mentored and certified, end to end.",
     "image": "gal-v2",
-    "imageCaption": "In class in Ipoh, July 2024",
+    "imageCaption": "In class in Ipoh",
     "deliveredHeading": "What we delivered",
     "delivered": [
       {
@@ -520,13 +527,8 @@
       },
       {
         "title": "Six days face-to-face in Ipoh",
-        "text": "8 to 13 July 2024: hands-on sessions in strategy, content, ads, AI and marketplace selling, led by practitioners who run these campaigns for a living.",
+        "text": "Hands-on sessions in strategy, content, ads, AI and marketplace selling, led by practitioners who run these campaigns for a living.",
         "icon": "calendar"
-      },
-      {
-        "title": "10 participants, all six days",
-        "text": "Ten participants were present for every one of the six face-to-face days.",
-        "icon": "users"
       },
       {
         "title": "20 days of mentored follow-through",
@@ -539,10 +541,9 @@
         "icon": "certificate"
       },
       {
-        "title": "Beyond the funded scope",
-        "text": "A team of interns received further training and about six months of on-the-job experience with monthly allowances.",
-        "icon": "award",
-        "verify": true
+        "title": "Into paid work placements",
+        "text": "Trainees moved on to paid placements of about six months, running live digital-marketing projects.",
+        "icon": "award"
       }
     ],
     "statement": "MITRA funded the opportunity. GET Academy made it count.",
@@ -551,5 +552,71 @@
       "href": "#contact"
     },
     "_note": "Showcases GET Academy's delivery of the MITRA-funded programme. Deliberately no MITRA track-record figures or initiatives (user decision 2026-11-07: \"we are not their mouthpiece\"). Every claim must be in docs/plan.md → Verified facts; items with verify: true stay hidden. Don't imply MITRA endorses the page."
+  },
+  "results": {
+    "eyebrow": "Results",
+    "heading": "Real shops. Real results.",
+    "intro": "Participants didn't just learn digital marketing. They used it on their own businesses while the programme was still running, and the numbers followed.",
+    "stats": [
+      {
+        "value": "9,020",
+        "label": "views on videos one participant's small business posted during the programme"
+      },
+      {
+        "value": "2,700",
+        "label": "views on a single live-stream selling session"
+      },
+      {
+        "value": "~100",
+        "label": "new TikTok followers for one participant's shop, with first online sales within days"
+      },
+      {
+        "value": "6 days",
+        "label": "for one participant to build a business website from scratch"
+      }
+    ],
+    "wins": [
+      {
+        "icon": "cart",
+        "title": "From zero to first sales",
+        "text": "A participant took a TikTok shop from its first live-selling session to its first online orders within days of leaving the classroom."
+      },
+      {
+        "icon": "play",
+        "title": "Videos that travelled",
+        "text": "Short videos shot and edited in class reached thousands of viewers, proof that a local business can win attention online."
+      },
+      {
+        "icon": "globe",
+        "title": "Websites, built in class",
+        "text": "Participants launched portfolio websites for their businesses. One built a complete site within the six days."
+      },
+      {
+        "icon": "video",
+        "title": "Creators on camera",
+        "text": "Participants recorded, edited and published their own TikTok videos in class, then ran live-selling sessions."
+      }
+    ],
+    "image": "hands-phone",
+    "imageCaption": "Recording content for their own business, in class",
+    "placement": {
+      "title": "Straight into paid placements",
+      "text": "The programme kept going after graduation: trainees moved on to paid work placements of about six months, running live digital-marketing projects."
+    },
+    "sourceNote": "Results from participants' own account screenshots, compiled in the programme's final report.",
+    "_note": "Every figure is from the final report (Laporan Akhir, section 6, Lampiran G4) and must match it. Placement: GET-run internships with monthly allowances (vault Research #8); the user asked not to say \"intern\" or name GET Academy (2026-11-10). No placement count (sources conflict)."
+  },
+  "interviews": {
+    "eyebrow": "Interviews",
+    "heading": "In their own words",
+    "intro": "Participants and trainers on camera on the first day: why they came, what they wanted for their business, and what they took home.",
+    "items": [
+      {
+        "media": "interview-day1",
+        "title": "Day 1: the participants and trainers",
+        "text": "The full Day 1 film, with interviews from the lounge and the training room."
+      }
+    ],
+    "_note": "Add the six vendor interview videos as interview-02.. in media.json and list them here once a copy is obtained (vendor email 1 Aug 2024; private Drive link). Items without a file are skipped."
   }
 }

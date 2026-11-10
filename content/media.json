@@ -350,6 +350,25 @@
       "bytes": 18338
     },
     {
+      "id": "interview-day1",
+      "section": "interviews",
+      "type": "video",
+      "source": "MITRA Picture & Videos/Videos/Montage DAY 1/DAY 1.mp4",
+      "mute": false,
+      "crf": 30,
+      "maxrate": "650k",
+      "poster_at": "0:36",
+      "alt": "The Day 1 film: participants and trainers talk about the programme on its first day",
+      "description": "16:9, 4 min 4 s, with sound. The videographer's edited Day 1 film: participants interviewed on the lounge sofa and around the training table, trainers addressing the group, hands-on work. Plays with controls (not autoplay).",
+      "consent": "pending",
+      "notes": "Full Day-1 montage with audio, bitrate-capped to stay under Cloudflare Pages' 25 MiB file limit. The six separate vendor interview videos (vendor email 1 Aug 2024) are in the vendor's private Drive: add them here as interview-02.. once a copy is obtained.",
+      "file": "media/interview-day1.mp4",
+      "poster": "media/interview-day1-poster.webp",
+      "w": 1280,
+      "h": 720,
+      "bytes": 12458247
+    },
+    {
       "id": "story-01",
       "section": "stories",
       "type": "video",

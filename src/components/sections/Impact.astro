@@ -5,21 +5,13 @@ const { impact } = site;
 // Figures flagged "verify" stay hidden until confirmed against the records.
 const stats = impact.stats.filter((s) => !('verify' in s && s.verify));
 const byKey = Object.fromEntries(stats.map((s) => [s.key, s]));
-const { total, inclass, online, participants } = byKey;
+const { total, inclass, online } = byKey;
 
 // The timeline is drawn from the two phase figures and only renders if they add up to the total.
+// No calendar dates or participant count on the page (user decision 2026-11-10): days are labelled by phase.
 const nIn = parseInt(inclass?.value ?? '', 10);
 const nOn = parseInt(online?.value ?? '', 10);
 const showTimeline = Number.isFinite(nIn) && Number.isFinite(nOn) && String(nIn + nOn) === total?.value;
-const nPeople = Math.min(parseInt(participants?.value ?? '', 10) || 0, 60);
-
-const start = new Date(`${impact.startDate}T00:00:00`);
-const dayDate = (i: number) => { const d = new Date(start); d.setDate(start.getDate() + i); return d; };
-const dShort = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short' });
-const dFull = new Intl.DateTimeFormat('en-GB', { day: 'numeric', month: 'short', year: 'numeric' });
-// "8–13 Jul 2024" inside one month, "14 Jul – 2 Aug 2024" across two.
-const range = (a: Date, b: Date) =>
-  a.getMonth() === b.getMonth() ? `${a.getDate()}–${dFull.format(b)}` : `${dShort.format(a)} – ${dFull.format(b)}`;
 
 type Phase = 'inclass' | 'online';
 const phases = showTimeline
@@ -29,14 +21,13 @@ const phases = showTimeline
     ] as { key: Phase; count: number; from: number }[]).map((p) => ({
       ...p,
       title: impact.dayLabels[p.key],
-      dates: range(dayDate(p.from), dayDate(p.from + p.count - 1)),
       days: Array.from({ length: p.count }, (_, j) => {
         const i = p.from + j;
-        return { i, label: `${impact.dayWord} ${i + 1} · ${dFull.format(dayDate(i))} · ${impact.dayLabels[p.key]}` };
+        return { i, label: `${impact.dayWord} ${i + 1} · ${impact.dayLabels[p.key]}` };
       }),
     }))
   : [];
-const used = new Set(showTimeline ? ['total', 'inclass', 'online', 'participants'] : ['participants']);
+const used = new Set(showTimeline ? ['total', 'inclass', 'online'] : []);
 const rest = stats.filter((s) => !used.has(s.key));
 ---
 
@@ -59,9 +50,8 @@ const rest = stats.filter((s) => !used.has(s.key));
             <div class="phase__head">
               <p class="phase__count"><span>{p.count}</span> {impact.daysWord}</p>
               <p class="phase__title">{p.title}</p>
-              <p class="phase__dates">{p.dates}</p>
             </div>
-            <ol class="cells" aria-label={`${p.title}, ${p.dates}`}>
+            <ol class="cells" aria-label={p.title}>
               {p.days.map((d) => (
                 <li style={`--i:${d.i}`}>
                   <button type="button" class="cell" title={d.label} data-label={d.label} aria-label={d.label}></button>
@@ -70,27 +60,11 @@ const rest = stats.filter((s) => !used.has(s.key));
             </ol>
 
             {p.key === 'online' && <p class="readout" data-days-readout aria-live="polite">{impact.gridHint}</p>}
-
-            {p.key === 'inclass' && nPeople > 0 && (
-              <div class="people">
-                <ul class="people__marks" aria-hidden="true">
-                  {Array.from({ length: nPeople }, (_, k) => (
-                    <li style={`--k:${k}`}>
-                      <svg viewBox="0 0 16 22" width="14" height="19"><circle cx="8" cy="5" r="4" /><path d="M1 21c0-5 3-8.5 7-8.5s7 3.5 7 8.5z" /></svg>
-                    </li>
-                  ))}
-                </ul>
-                <p><strong>{participants.value}</strong> {participants.label}</p>
-              </div>
-            )}
           </div>
         ))}
       </div>
     )}
 
-    {!showTimeline && participants && (
-      <p class="impact__total"><span class="impact__num">{participants.value}</span><span>{participants.label}</span></p>
-    )}
     {rest.length > 0 && (
       <dl class="extra">
         {rest.map((s) => <div><dt>{s.label}</dt><dd>{s.value}</dd></div>)}
@@ -129,7 +103,6 @@ const rest = stats.filter((s) => !used.has(s.key));
   .phase__count { font-size: 1rem; font-weight: 600; color: color-mix(in srgb, var(--on-accent) 80%, transparent); }
   .phase__count span { font: 700 2.6rem/1 var(--font-display); font-stretch: 92%; letter-spacing: -0.02em; color: var(--on-accent); margin-right: 0.15rem; }
   .phase__title { font: 650 1.15rem/1.25 var(--font-display); }
-  .phase__dates { font-size: 0.95rem; color: color-mix(in srgb, var(--on-accent) 70%, transparent); font-variant-numeric: tabular-nums; }
 
   .cells { list-style: none; margin: 0; padding: 0; display: grid; gap: 5px; }
   .phase--inclass .cells { grid-template-columns: repeat(10, 1fr); }
@@ -149,14 +122,6 @@ const rest = stats.filter((s) => !used.has(s.key));
   /* Days fill in order, left to right, when the band first scrolls into view. */
   :global(.js) .tl:global(.is-pre) .cells li { opacity: 0; transform: scale(0.5); transition: opacity 0.35s ease, transform 0.45s var(--ease-spring); transition-delay: calc(350ms + var(--i) * 30ms); }
   :global(.js) .tl:global(.is-pre.is-in) .cells li { opacity: 1; transform: none; }
-
-  .people { display: grid; gap: 0.7rem; margin-top: 0.5rem; }
-  .people__marks { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 4px; color: var(--brand); }
-  .people__marks svg { display: block; fill: currentColor; }
-  .people p { margin: 0; font-size: 1rem; line-height: 1.4; color: color-mix(in srgb, var(--on-accent) 85%, transparent); max-width: 26ch; }
-  .people strong { font-weight: 750; color: var(--on-accent); }
-  :global(.js) .tl:global(.is-pre) .people__marks li { opacity: 0; transform: translateY(6px); transition: opacity 0.3s ease, transform 0.4s var(--ease-spring); transition-delay: calc(700ms + var(--k) * 60ms); }
-  :global(.js) .tl:global(.is-pre.is-in) .people__marks li { opacity: 1; transform: none; }
 
   .readout { min-height: 1.5em; margin: 0.25rem 0 0; font-size: 0.95rem; font-weight: 600; color: color-mix(in srgb, var(--on-accent) 75%, transparent); font-variant-numeric: tabular-nums; }
 

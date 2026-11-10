@@ -1,0 +1,112 @@
+---
+// What participants achieved with what they learned. Every figure comes from the final report (site.json → results._note).
+import site from '../../../content/site.json';
+import Media from '../Media.astro';
+import { getMedia } from '../../lib/media';
+
+const { results } = site;
+const hasImage = getMedia(results.image).available;
+
+const icons: Record<string, string> = {
+  cart: '<circle cx="9" cy="20" r="1.5"/><circle cx="18" cy="20" r="1.5"/><path d="M2 3h3l2.6 12.4a1.5 1.5 0 0 0 1.5 1.1h8.6a1.5 1.5 0 0 0 1.5-1.2L21 7H6"/>',
+  play: '<rect x="3" y="4" width="18" height="16" rx="3"/><path d="m10 9 5 3-5 3z"/>',
+  globe: '<circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a14 14 0 0 1 0 18M12 3a14 14 0 0 0 0 18"/>',
+  video: '<rect x="2" y="6" width="14" height="12" rx="2"/><path d="m16 10 6-3v10l-6-3"/>',
+};
+---
+
+<section class="section results" id="results">
+  <div class="container">
+    <div class="section__head">
+      <p class="results__eyebrow" data-reveal>{results.eyebrow}</p>
+      <h2 data-reveal style="--d:80">{results.heading}</h2>
+      <p class="lead" data-reveal style="--d:140">{results.intro}</p>
+    </div>
+
+    <dl class="rstats">
+      {results.stats.map((s, i) => (
+        <div class="rstat" data-reveal style={`--d:${100 + i * 80}`}>
+          <dt>{s.label}</dt>
+          <dd>{s.value}</dd>
+        </div>
+      ))}
+    </dl>
+
+    <div class="results__body">
+      <ul class="wins">
+        {results.wins.map((w, i) => (
+          <li data-reveal style={`--d:${80 + i * 70}`}>
+            <span class="wins__icon">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={icons[w.icon] ?? icons.play} />
+            </span>
+            <div>
+              <h3>{w.title}</h3>
+              <p>{w.text}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+
+      {hasImage && (
+        <figure class="results__photo" data-reveal="scale" style="--d:160">
+          <Media id={results.image} sizes="(min-width: 1000px) 440px, 90vw" />
+          {results.imageCaption && <figcaption>{results.imageCaption}</figcaption>}
+        </figure>
+      )}
+    </div>
+
+    <div class="placement" data-reveal>
+      <span class="placement__icon" aria-hidden="true">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><path d="M3 13h18"/></svg>
+      </span>
+      <div>
+        <h3>{results.placement.title}</h3>
+        <p>{results.placement.text}</p>
+      </div>
+    </div>
+
+    <p class="results__source">{results.sourceNote}</p>
+  </div>
+</section>
+
+<style>
+  .results__eyebrow { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+
+  .rstats { display: grid; gap: 1rem; margin: 0 0 clamp(2.5rem, 5vw, 3.5rem); grid-template-columns: 1fr; }
+  @media (min-width: 600px) { .rstats { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1100px) { .rstats { grid-template-columns: repeat(4, 1fr); } }
+  .rstat {
+    display: flex; flex-direction: column-reverse; justify-content: flex-end; gap: 0.55rem;
+    padding: 1.5rem 1.35rem; border-radius: var(--radius-lg); background: var(--surface);
+    border: 1px solid var(--border); box-shadow: var(--shadow); border-top: 5px solid var(--brand);
+  }
+  .rstat:nth-child(even) { border-top-color: var(--accent); }
+  .rstat dd { margin: 0; font: 750 clamp(2.4rem, 4.4vw, 3.3rem)/1 var(--font-display); font-stretch: 92%; letter-spacing: -0.03em; color: var(--accent-text); }
+  .rstat dt { color: var(--text-muted); font-size: 0.97rem; line-height: 1.45; }
+
+  .results__body { display: grid; gap: clamp(1.5rem, 4vw, 3rem); align-items: start; }
+  @media (min-width: 1000px) { .results__body { grid-template-columns: 1fr 440px; } }
+  .wins { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.9rem; }
+  @media (min-width: 700px) { .wins { grid-template-columns: repeat(2, 1fr); } }
+  .wins li { display: flex; gap: 0.9rem; align-items: flex-start; padding: 1.2rem; border-radius: 18px; background: var(--surface-2); }
+  .wins h3 { margin: 0 0 0.3rem; font: 650 1.12rem/1.25 var(--font-display); }
+  .wins p { margin: 0; font-size: 0.97rem; line-height: 1.5; color: var(--text-muted); }
+  .wins__icon { flex: none; display: grid; place-items: center; width: 44px; height: 44px; border-radius: 12px; background: var(--surface); color: var(--accent); box-shadow: 0 6px 14px -10px rgb(42 21 0 / 0.5); }
+  .wins__icon svg { width: 22px; height: 22px; }
+
+  .results__photo { margin: 0; }
+  .results__photo :global(.media) { aspect-ratio: 4 / 3; border-radius: var(--radius-lg); box-shadow: var(--shadow); }
+  .results__photo figcaption { margin-top: 0.6rem; font-size: 0.9rem; color: var(--text-muted); }
+
+  .placement {
+    display: flex; gap: 1.1rem; align-items: center; margin-top: clamp(2rem, 4vw, 3rem);
+    padding: clamp(1.4rem, 3.5vw, 2.2rem); border-radius: var(--radius-lg);
+    background: var(--brand); color: var(--brand-ink);
+  }
+  .placement h3 { margin: 0 0 0.3rem; font: 750 clamp(1.4rem, 2.8vw, 2rem)/1.1 var(--font-display); font-stretch: 92%; letter-spacing: -0.015em; }
+  .placement p { margin: 0; max-width: 60ch; font-size: 1.05rem; line-height: 1.5; }
+  .placement__icon { flex: none; display: grid; place-items: center; width: 60px; height: 60px; border-radius: 16px; background: var(--brand-ink); color: var(--brand); }
+  .placement__icon svg { width: 30px; height: 30px; }
+
+  .results__source { margin: 1rem 0 0; font-size: 0.85rem; font-style: italic; color: var(--text-muted); }
+</style>
