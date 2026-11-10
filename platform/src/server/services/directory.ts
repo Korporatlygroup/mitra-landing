@@ -47,7 +47,7 @@ export interface ListingDetail extends ListingCard {
   phone: string | null;
   email: string | null;
   service_details: ServiceDetail[];
-  portfolio: { title: string; description: string | null }[];
+  portfolio: { title: string; description: string | null; category_slug?: string | null; project_date?: string | null }[];
 }
 
 export interface SearchResult {
@@ -80,7 +80,7 @@ export interface ListingDraft {
   public_phone?: string | null;
   public_email?: string | null;
   services?: DraftService[];
-  portfolio?: { title: string; description: string | null }[];
+  portfolio?: { title: string; description: string | null; category_slug?: string | null; project_date?: string | null }[];
   profile?: { business_name: string; category_id: string; state: string | null; district: string | null };
 }
 

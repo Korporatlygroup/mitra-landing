@@ -52,8 +52,10 @@ function readRows(formData: FormData) {
   for (let i = 0; i < MAX_PORTFOLIO; i++) {
     const title = text(formData.get(`pf_title_${i}`));
     const description = text(formData.get(`pf_desc_${i}`));
-    if (!title && !description) continue;
-    portfolio.push({ title, description: orNull(description) });
+    const category = text(formData.get(`pf_cat_${i}`));
+    const date = text(formData.get(`pf_date_${i}`));
+    if (!title && !description && !date) continue;
+    portfolio.push({ title, description: orNull(description), category_slug: orNull(category), project_date: orNull(date) });
   }
   return { services, portfolio };
 }

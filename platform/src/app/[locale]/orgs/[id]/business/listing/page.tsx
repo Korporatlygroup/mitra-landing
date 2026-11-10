@@ -196,10 +196,24 @@ export default async function ListingEditorPage({ params }: { params: Promise<{ 
 
           <h2>{t('listing.portfolioTitle')}</h2>
           <p>{t('listing.portfolioHint')}</p>
+          {portfolio.length === 0 ? <p className="muted">{t('listing.portfolioEmpty')}</p> : <p className="muted">{t('listing.pfRemoveHint')}</p>}
+          <p className="muted">{t('listing.portfolioImagesLater')}</p>
           {Array.from({ length: portfolioRows }, (_, i) => (
             <fieldset key={i}>
               <legend>{t('listing.exampleN', { n: i + 1 })}</legend>
               <Field id={`pf_title_${i}`} name={`pf_title_${i}`} label={t('listing.pfTitle')} defaultValue={portfolio[i]?.title ?? ''} maxLength={120} />
+              <SelectField id={`pf_cat_${i}`} name={`pf_cat_${i}`} label={t('listing.pfCategory')} defaultValue={portfolio[i]?.category_slug ?? ''}>
+                <option value="">{t('listing.pfNoCategory')}</option>
+                {categories.map((c) => (
+                  <option key={c.slug} value={c.slug}>
+                    {catName(locale, c)}
+                  </option>
+                ))}
+              </SelectField>
+              <div className="field">
+                <label htmlFor={`pf_date_${i}`}>{t('listing.pfDate')}</label>
+                <input id={`pf_date_${i}`} name={`pf_date_${i}`} type="month" max={new Date().toISOString().slice(0, 7)} defaultValue={portfolio[i]?.project_date?.slice(0, 7) ?? ''} />
+              </div>
               <div className="field">
                 <label htmlFor={`pf_desc_${i}`}>{t('listing.pfDescription')}</label>
                 <textarea id={`pf_desc_${i}`} name={`pf_desc_${i}`} rows={2} maxLength={600} defaultValue={portfolio[i]?.description ?? ''} />

@@ -14,13 +14,14 @@ export interface ListingViewData {
   reviewed: ReviewedClaim[];
   accepting_requests: boolean;
   service_details: ServiceDetail[];
-  portfolio: { title: string; description: string | null }[];
+  portfolio: { title: string; description: string | null; category_slug?: string | null; project_date?: string | null }[];
 }
 
 /** The public business profile. Used by the public page, the owner preview and the moderation review. Never shows a street address. */
 export default async function ListingView({ data, locale, headingLevel = 1 }: { data: ListingViewData; locale: string; headingLevel?: 1 | 2 }) {
   const t = await getTranslations({ locale });
   const fmt = await getFormatter({ locale });
+  const msgCategory = (slug: string) => t(`categories.${slug}`);
   const H = headingLevel === 1 ? 'h1' : 'h2';
   const place = [data.district, data.state].filter(Boolean).join(', ');
   const reviewed = data.reviewed.filter((c) => c.decided_at);
@@ -107,6 +108,16 @@ export default async function ListingView({ data, locale, headingLevel = 1 }: { 
             {data.portfolio.map((p, i) => (
               <li key={`${p.title}-${i}`} className="card">
                 <strong>{p.title}</strong>
+                {p.category_slug || p.project_date ? (
+                  <p className="muted" style={{ margin: '2px 0 0' }}>
+                    {[
+                      p.category_slug ? msgCategory(p.category_slug) : null,
+                      p.project_date ? fmt.dateTime(new Date(`${p.project_date}T00:00:00Z`), { month: 'long', year: 'numeric', timeZone: 'UTC' }) : null,
+                    ]
+                      .filter(Boolean)
+                      .join(' · ')}
+                  </p>
+                ) : null}
                 {p.description ? <p style={{ margin: '4px 0 0' }}>{p.description}</p> : null}
               </li>
             ))}
@@ -115,21 +126,24 @@ export default async function ListingView({ data, locale, headingLevel = 1 }: { 
       ) : null}
 
       <h2>{t('dir.contact')}</h2>
-      <dl className="dl">
-        {data.phone ? (
-          <>
-            <dt>{t('dir.phone')}</dt>
-            <dd>{data.phone}</dd>
-          </>
-        ) : null}
-        {data.email ? (
-          <>
-            <dt>{t('dir.email')}</dt>
-            <dd>{data.email}</dd>
-          </>
-        ) : null}
-        {!data.phone && !data.email ? <dd>{t('dir.contactInApp')}</dd> : null}
-      </dl>
+      {data.phone || data.email ? (
+        <dl className="dl">
+          {data.phone ? (
+            <>
+              <dt>{t('dir.phone')}</dt>
+              <dd>{data.phone}</dd>
+            </>
+          ) : null}
+          {data.email ? (
+            <>
+              <dt>{t('dir.email')}</dt>
+              <dd>{data.email}</dd>
+            </>
+          ) : null}
+        </dl>
+      ) : (
+        <p>{t('dir.contactInApp')}</p>
+      )}
     </article>
   );
 }

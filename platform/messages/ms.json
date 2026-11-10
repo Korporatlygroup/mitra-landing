@@ -787,7 +787,13 @@
     },
     "previewTitle": "Pratonton halaman awam anda",
     "previewBanner": "Ini draf yang anda simpan. Ia belum awam sehingga MITRA meluluskannya.",
-    "previewEmpty": "Simpan tajuk utama, penerangan dan sekurang-kurangnya satu perkhidmatan dahulu."
+    "previewEmpty": "Simpan tajuk utama, penerangan dan sekurang-kurangnya satu perkhidmatan dahulu.",
+    "pfCategory": "Jenis kerja (pilihan)",
+    "pfNoCategory": "Tidak dinyatakan",
+    "pfDate": "Bila ia dilakukan? (pilihan)",
+    "portfolioEmpty": "Anda belum menambah sebarang contoh. Beberapa contoh ringkas membantu pelanggan mempercayai apa yang anda tawarkan.",
+    "pfRemoveHint": "Untuk membuang satu contoh, kosongkan tajuk dan penerangannya, kemudian simpan.",
+    "portfolioImagesLater": "Gambar kerja anda belum boleh ditambah lagi."
   },
   "req": {
     "title": "Permintaan saya",

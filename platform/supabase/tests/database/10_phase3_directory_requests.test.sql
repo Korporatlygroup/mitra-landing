@@ -187,7 +187,7 @@ create function tt.cands(p_req uuid) returns text language sql stable as $$
   where request_id = p_req and status = 'candidate' and seller_org_id in (tt.oid('A'), tt.oid('B'), tt.oid('C'))
 $$;
 
-select plan(228);
+select plan(235);
 
 select tt.fresh_mitra();
 select tt.mkuser(n) from unnest(array[
@@ -757,5 +757,21 @@ select throws_ok($$ select public.get_request_for_seller(tt.id('G7'), tt.oid('C'
 select is((public.list_board_requests(tt.oid('C'), 'tailoring-apparel', null, 0)) ->> 'total', '0', 'B21 the category filter narrows the list');
 select throws_ok($$ select public.list_board_requests(tt.oid('C'), 'no-such-category', null, 0) $$, 'PT422', 'invalid_category', 'B22 an unknown category is refused');
 
+-- ============================ PORTFOLIO FIELDS (migration 000102) ============================
+select tt.act('tt_d_owner');
+select lives_ok($$ select public.save_listing_draft(tt.oid('D'), '{"portfolio":[{"title":"Office lunch boxes","description":"60 boxes","category_slug":"food-beverage","project_date":"2026-03"}]}'::jsonb,
+  (select draft_version from public.business_listings where org_id = tt.oid('D'))) $$, 'F1 a portfolio example can have a type of work and a month');
+select is((select draft -> 'portfolio' -> 0 ->> 'project_date' from public.business_listings where org_id = tt.oid('D')), '2026-03-01', 'F2 the month is stored as a date');
+select throws_ok($$ select public.save_listing_draft(tt.oid('D'), '{"portfolio":[{"title":"Future job","project_date":"2999-01"}]}'::jsonb,
+  (select draft_version from public.business_listings where org_id = tt.oid('D'))) $$, 'PT422', 'invalid_date', 'F3 a date in the future is refused');
+select throws_ok($$ select public.save_listing_draft(tt.oid('D'), '{"portfolio":[{"title":"Odd job","project_date":"last week"}]}'::jsonb,
+  (select draft_version from public.business_listings where org_id = tt.oid('D'))) $$, 'PT422', 'invalid_date', 'F4 a date that is not a month or a day is refused');
+select throws_ok($$ select public.save_listing_draft(tt.oid('D'), '{"portfolio":[{"title":"Odd job","category_slug":"no-such-type"}]}'::jsonb,
+  (select draft_version from public.business_listings where org_id = tt.oid('D'))) $$, 'PT422', 'invalid_category', 'F5 an unknown type of work is refused');
+select tt.act('tt_a_owner');
+select lives_ok($$ select public.save_listing_draft(tt.oid('A'), '{"portfolio":[{"title":"Cafe uniforms","description":"40 aprons","category_slug":"tailoring-apparel","project_date":"2026-01-15"}]}'::jsonb,
+  (select draft_version from public.business_listings where org_id = tt.oid('A'))) $$, 'F6 the owner of a live page edits the examples as a draft');
+select tt.anon();
+select is((public.get_listing((public.search_listings('Alpha Uniforms Qx3', null, null))->'items'->0->>'slug')) -> 'portfolio' -> 0 ->> 'title', 'Wedding order', 'F7 the public page still shows the approved examples, not the draft');
 select * from finish();
 rollback;

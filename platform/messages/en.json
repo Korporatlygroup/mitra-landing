@@ -787,7 +787,13 @@
     },
     "previewTitle": "Preview of your public page",
     "previewBanner": "This is your saved draft. It is not public until MITRA approves it.",
-    "previewEmpty": "Save a headline, a description and at least one service first."
+    "previewEmpty": "Save a headline, a description and at least one service first.",
+    "pfCategory": "Type of work (optional)",
+    "pfNoCategory": "Not specified",
+    "pfDate": "When was it done? (optional)",
+    "portfolioEmpty": "You have not added any examples yet. A few short examples help customers trust what you offer.",
+    "pfRemoveHint": "To remove an example, clear its title and description, then save.",
+    "portfolioImagesLater": "Photos of your work cannot be added yet."
   },
   "req": {
     "title": "My requests",
