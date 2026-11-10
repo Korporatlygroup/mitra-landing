@@ -76,6 +76,7 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   const adminCtx = await freshContext(browser, page);
   const admin = await adminCtx.newPage();
   await reviewerGoto(admin, rv, '/en/admin/listings');
+  await admin.waitForLoadState('networkidle'); // let the page hydrate before clicking a form (slow CI runners)
   const qrow = admin.locator('tbody tr').filter({ hasText: bizName });
   await expect(qrow).toHaveCount(1);
   await qrow.getByRole('link', { name: t('adminList.open') }).click();
@@ -250,6 +251,7 @@ test('E41 moderation: changes requested, resubmitted, approved, then suspended a
 
   const rv = await createReviewer('admin_review');
   await reviewerGoto(page, rv, `/en/admin/listings/${seller.orgId}`);
+  await page.waitForLoadState('networkidle'); // let the page hydrate before clicking a form (slow CI runners)
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(bizName);
   // A decision without a reason is refused in plain language.
   await page.locator('#dec-request_changes').check();
@@ -273,6 +275,7 @@ test('E41 moderation: changes requested, resubmitted, approved, then suspended a
   expect((await sc.client.rpc('save_listing_draft', { p_org: seller.orgId, p_data: { description: `${draft.description} Open 9am to 6pm.` }, p_expected_version: v })).error).toBeNull();
   expect((await sc.client.rpc('submit_listing', { p_org: seller.orgId, p_expected_version: v + 1 })).error).toBeNull();
   await page.goto(`/en/admin/listings/${seller.orgId}`);
+  await page.waitForLoadState('networkidle');
   await page.locator('#dec-approve').check();
   await page.getByRole('button', { name: t('adminList.save'), exact: true }).click();
   await expect(page.getByText(t('adminList.nothingPending'))).toBeVisible();
@@ -291,6 +294,7 @@ test('E41 moderation: changes requested, resubmitted, approved, then suspended a
 
   // Suspend from the admin page; the public listing disappears and the seller is told.
   await page.goto(`/en/admin/listings/${seller.orgId}`);
+  await page.waitForLoadState('networkidle');
   await page.locator('#sreason').fill('Photos are not the business\'s own.');
   await page.getByRole('button', { name: t('adminList.suspend'), exact: true }).click();
   await expect(page.getByRole('heading', { name: t('adminList.reinstateTitle') })).toBeVisible();
@@ -323,6 +327,7 @@ test('E42 no match, decline, reports and request moderation', async ({ page, bro
 
   const rv = await createReviewer('admin_super');
   await reviewerGoto(page, rv, `/en/admin/listings/${seller.orgId}`);
+  await page.waitForLoadState('networkidle'); // let the page hydrate before clicking a form (slow CI runners)
   await page.locator('#dec-approve').check();
   await page.getByRole('button', { name: t('adminList.save'), exact: true }).click();
   await expect(page.getByText(t('adminList.nothingPending'))).toBeVisible();
