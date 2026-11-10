@@ -4,7 +4,32 @@ import ActionForm from '@/components/ActionForm';
 import { Link } from '@/i18n/navigation';
 import type { NotificationRow } from '@/server/services/verification';
 
-const KNOWN_KINDS = new Set(['verification_approved', 'verification_rejected', 'verification_info_requested']);
+const KNOWN_KINDS = new Set([
+  'verification_approved',
+  'verification_rejected',
+  'verification_info_requested',
+  'listing_approved',
+  'listing_rejected',
+  'listing_changes_requested',
+  'listing_suspended',
+  'listing_reinstated',
+  'request_invited',
+  'request_interested',
+  'request_question',
+  'request_declined',
+  'request_removed',
+  'enquiry_opened',
+]);
+
+function targetFor(n: NotificationRow): string | null {
+  if (n.entity_type === 'verification_claim' && n.org_id) return `/orgs/${n.org_id}/business/verification`;
+  if (n.entity_type === 'listing' && n.org_id) return `/orgs/${n.org_id}/business/listing`;
+  if (n.entity_type === 'buyer_request' && n.entity_id) {
+    return n.kind === 'request.invited' && n.org_id ? `/orgs/${n.org_id}/business/requests/${n.entity_id}` : `/requests/${n.entity_id}`;
+  }
+  if (n.entity_type === 'enquiry' && n.entity_id) return `/enquiries/${n.entity_id}`;
+  return null;
+}
 
 /** Notification rows with a "Mark as read" action each (RPC mark_notification_read). */
 export default async function NotificationList({ locale, items }: { locale: string; items: NotificationRow[] }) {
@@ -25,8 +50,8 @@ export default async function NotificationList({ locale, items }: { locale: stri
               {fmt.dateTime(new Date(n.created_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC
             </p>
             <div className="link-row">
-              {n.org_id && n.entity_type === 'verification_claim' ? (
-                <Link href={`/orgs/${n.org_id}/business/verification`} locale={locale}>
+              {targetFor(n) ? (
+                <Link href={targetFor(n) as string} locale={locale}>
                   {t('open')}
                 </Link>
               ) : null}

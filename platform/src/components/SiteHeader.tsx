@@ -16,8 +16,14 @@ export default async function SiteHeader({ locale, signedIn }: { locale: string;
           <LocaleSwitcher />
         </Suspense>
         <nav aria-label={t('common.mainNav')} className="main-nav">
+          <Link href="/directory" locale={locale}>
+            {t('nav.find')}
+          </Link>
           {signedIn ? (
             <>
+              <Link href="/requests" locale={locale}>
+                {t('nav.requests')}
+              </Link>
               <Link href="/orgs" locale={locale}>
                 {t('nav.organisations')}
               </Link>
