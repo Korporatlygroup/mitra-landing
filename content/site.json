@@ -506,90 +506,50 @@
     "backToTop": "Back to top"
   },
   "mitra": {
-    "eyebrow": "Our funding partner",
-    "heading": "MITRA: investing in the Malaysian Indian community",
-    "intro": "MITRA, the Malaysian Indian Community Transformation Unit (Unit Transformasi Masyarakat India Malaysia), is the Government of Malaysia's dedicated unit for the socioeconomic development of the Indian community. It began as SEDIC, the special unit for the socioeconomic development of the Indian community, and today funds programmes in education, skills, entrepreneurship, health and welfare across the country.",
-    "stats": [
+    "eyebrow": "Funded by MITRA · Delivered by GET Academy",
+    "heading": "MITRA backed it. We built it.",
+    "intro": "MITRA, the Malaysian Indian Community Transformation Unit, funded INOK to give Malaysian Indian business owners real digital-marketing skills. GET Academy turned that funding into a complete programme: designed, taught, mentored and certified, end to end.",
+    "image": "gal-v2",
+    "imageCaption": "In class in Ipoh, July 2024",
+    "deliveredHeading": "What we delivered",
+    "delivered": [
       {
-        "value": "122,082",
-        "label": "members of the Indian community benefited from MITRA programmes in 2024",
-        "source": 0
-      },
-      {
-        "value": "RM98.9 million",
-        "label": "of MITRA's RM100 million 2024 allocation put to work",
-        "source": 0
-      },
-      {
-        "value": "RM150 million",
-        "label": "allocation after a RM50 million increase, which the Prime Minister attributed to MITRA's strong performance",
-        "source": 1
-      },
-      {
-        "value": "16",
-        "label": "high-impact programmes approved by July 2025, in education and training, culture and social welfare",
-        "source": 2
-      }
-    ],
-    "initiativesHeading": "Initiatives funded in 2024 include",
-    "initiatives": [
-      {
-        "title": "Malaysian Indian Skills Initiative (MISI)",
-        "text": "Skills training to move people into better-paid work.",
-        "icon": "badge"
-      },
-      {
-        "title": "Indian Community Entrepreneurship Programme",
-        "text": "Support for Indian-owned small businesses to start and grow.",
+        "title": "Built for the community MITRA serves",
+        "text": "Designed around Malaysian Indian entrepreneurs and their own shops. Every lesson was applied to a real business, not a case study.",
         "icon": "store"
       },
       {
-        "title": "MITRA IPT 4.0",
-        "text": "Early-admission assistance for students entering higher education.",
-        "icon": "certificate"
+        "title": "Six days face-to-face in Ipoh",
+        "text": "8 to 13 July 2024: hands-on sessions in strategy, content, ads, AI and marketplace selling, led by practitioners who run these campaigns for a living.",
+        "icon": "calendar"
       },
       {
-        "title": "Early-education subsidy",
-        "text": "Help with private kindergarten fees, so children start school ready.",
+        "title": "10 participants, all six days",
+        "text": "Ten participants were present for every one of the six face-to-face days.",
+        "icon": "users"
+      },
+      {
+        "title": "20 days of mentored follow-through",
+        "text": "After the classroom, participants put their plans to work online with a mentor checking in.",
         "icon": "hand"
       },
       {
-        "title": "Cybersecurity training",
-        "text": "EC-Council professional certification with job placement, plus awareness programmes for Tamil-school and secondary students.",
-        "icon": "shield"
+        "title": "Certified by SEGi College Subang Jaya",
+        "text": "Certificates issued through GET Academy's strategic educational partner within SEGi University & Colleges.",
+        "icon": "certificate"
       },
       {
-        "title": "Dialysis subsidy",
-        "text": "Health support for families facing the cost of long-term treatment.",
-        "icon": "award"
+        "title": "Beyond the funded scope",
+        "text": "A team of interns received further training and about six months of on-the-job experience with monthly allowances.",
+        "icon": "award",
+        "verify": true
       }
     ],
-    "fit": "INOK was part of that commitment: a MITRA-funded programme that gave Malaysian Indian entrepreneurs certified, hands-on digital-marketing skills to grow their own shops.",
-    "update": "Since January 2026 MITRA sits under the Ministry of Human Resources (KESUMA), with its mandate for the Indian community unchanged.",
-    "sourcesLabel": "Sources",
-    "sources": [
-      {
-        "label": "New Straits Times, 19 Aug 2025: PM in the Dewan Rakyat on MITRA's 2024 spending",
-        "url": "https://www.nst.com.my/amp/news/nation/2025/08/1262164/anwar-govt-support-indian-community-extends-beyond-mitra"
-      },
-      {
-        "label": "Berita RTM: MITRA allocation raised to RM150 million",
-        "url": "https://berita.rtm.gov.my/?p=631141"
-      },
-      {
-        "label": "Berita RTM, 30 Jul 2025: 16 high-impact programmes approved",
-        "url": "https://berita.rtm.gov.my/?p=170095"
-      },
-      {
-        "label": "Sinar Harian, 5 Oct 2024: 2024 PPSMI programmes",
-        "url": "https://www.sinarharian.com.my/ampArticle/689332"
-      },
-      {
-        "label": "Berita RTM, 27 Jan 2026: MITRA moves to KESUMA",
-        "url": "https://berita.rtm.gov.my/?p=362677"
-      }
-    ],
-    "disclaimer": "Figures are from public government statements and news reports. This page is published by GET Academy.",
-    "_note": "All MITRA figures are sourced (see sources). Don't add MITRA figures without a source. Initiative one-liners are plain descriptions of the named 2024 PPSMI programmes."
+    "statement": "MITRA funded the opportunity. GET Academy made it count.",
+    "cta": {
+      "label": "Run INOK for your community",
+      "href": "#contact"
+    },
+    "_note": "Showcases GET Academy's delivery of the MITRA-funded programme. Deliberately no MITRA track-record figures or initiatives (user decision 2026-11-07: \"we are not their mouthpiece\"). Every claim must be in docs/plan.md → Verified facts; items with verify: true stay hidden. Don't imply MITRA endorses the page."
   }
 }
