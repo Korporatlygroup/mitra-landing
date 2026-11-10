@@ -339,7 +339,9 @@
     "seller_not_accepting": "This business is not taking new enquiries right now.",
     "same_organisation": "You cannot do this with your own business.",
     "already_reported": "You already reported this. MITRA will look at it.",
-    "report_not_open": "This report has already been handled."
+    "report_not_open": "This report has already been handled.",
+    "contact_in_public_text": "Please remove phone numbers and email addresses from the title and description. Your contact details stay private.",
+    "request_response_limit": "This request already has enough replies."
   },
   "consent": {
     "title": "Review and accept terms and privacy",
@@ -389,7 +391,8 @@
     "readOnly": "Your role can add business details but cannot send documents for review.",
     "staffNoVerification": "Only owners and managers can see verification.",
     "openListing": "Your public page",
-    "openRequests": "Customer requests"
+    "openRequests": "Customer requests",
+    "openBoard": "Find customer requests"
   },
   "claimTypes": {
     "business_registration": "Business registration",
@@ -839,7 +842,8 @@
       "phone": "Phone number",
       "email": "Email",
       "share": "Let a business see my contact details after it replies to my request",
-      "shareHint": "If you leave this empty, businesses can only reply inside MITRA."
+      "shareHint": "If you leave this empty, businesses can only reply inside MITRA.",
+      "publicHint": "If suitable businesses can see this request, do not write a phone number or email address here."
     },
     "s5": {
       "title": "Check and send",
@@ -849,7 +853,15 @@
       "shared": "Shown to a business after it replies",
       "notShared": "Not shown. Replies stay inside MITRA.",
       "note": "After you send it you can see which businesses match and choose whom to invite. Sending does not promise that anyone can do the job.",
-      "send": "Send my request"
+      "send": "Send my request",
+      "visTitle": "Who can see this request?",
+      "visPrivate": "Only businesses I invite",
+      "visPrivateHint": "Only the businesses you choose and invite can read it.",
+      "visBoard": "Suitable businesses can find it",
+      "visBoardHint": "Businesses that sell this and serve your area can read the title, description, area, quantity, deadline and budget. They never see your name, phone or email unless you agree after they reply.",
+      "visLabel": "Who can see it",
+      "visShownBoard": "Suitable businesses",
+      "visShownPrivate": "Only businesses you invite"
     },
     "detailTitle": "Your request",
     "sentNote": "Your request is open. Businesses that match: {n}. Choose whom to invite below.",
@@ -1028,5 +1040,25 @@
     },
     "reportSave": "Save",
     "reportHandled": "The report was handled."
+  },
+  "board": {
+    "title": "Find customer requests",
+    "intro": "Requests that match what you sell and where you serve.",
+    "category": "Category",
+    "state": "State",
+    "all": "All",
+    "apply": "Show requests",
+    "count": "{n} requests",
+    "open": "Open request",
+    "emptyTitle": "No matching requests right now",
+    "emptyBody": "Keep your services and areas up to date and keep \"Accepting requests\" on. New requests will appear here.",
+    "emptyFiltered": "No requests match these choices. Try All.",
+    "prev": "Previous",
+    "next": "Next",
+    "fromBoardNote": "This customer let suitable businesses reply. Their contact details stay private until you reply and they agree to share.",
+    "needsListing": "To see customer requests, your public page must be published and accepting requests.",
+    "yourStatus": "Your answer",
+    "notAnswered": "Not answered yet",
+    "link": "Find customer requests"
   }
 }

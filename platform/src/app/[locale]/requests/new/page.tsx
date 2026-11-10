@@ -146,7 +146,7 @@ export default async function NewRequestPage({
           <div className="field">
             <label htmlFor="description">{t('req.s4.description')}</label>
             <p className="hint" id="description-hint">
-              {t('req.s4.descriptionHint')}
+              {t('req.s4.descriptionHint')} {t('req.s4.publicHint')}
             </p>
             <textarea id="description" name="description" rows={6} required minLength={20} maxLength={2000} defaultValue={request?.description ?? ''} aria-describedby="description-hint" />
           </div>
@@ -205,6 +205,8 @@ export default async function NewRequestPage({
             <dd>{[contact?.contact_phone, contact?.contact_email].filter(Boolean).join(' / ') || '-'}</dd>
             <dt>{t('req.s5.sharing')}</dt>
             <dd>{request.share_contact ? t('req.s5.shared') : t('req.s5.notShared')}</dd>
+            <dt>{t('req.s5.visLabel')}</dt>
+            <dd>{request.visibility === 'eligible_sellers' ? t('req.s5.visShownBoard') : t('req.s5.visShownPrivate')}</dd>
           </dl>
         ) : null}
         <p className="muted">{t('req.s5.note')}</p>
@@ -213,6 +215,23 @@ export default async function NewRequestPage({
             <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="requestId" value={request.id} />
             <input type="hidden" name="expectedVersion" value={request.version} />
+            <fieldset>
+              <legend>{t('req.s5.visTitle')}</legend>
+              <div className="field check">
+                <input id="vis-board" name="visibility" type="radio" value="eligible_sellers" defaultChecked={request.visibility === 'eligible_sellers'} aria-describedby="vis-board-hint" />
+                <label htmlFor="vis-board">{t('req.s5.visBoard')}</label>
+              </div>
+              <p className="hint" id="vis-board-hint">
+                {t('req.s5.visBoardHint')}
+              </p>
+              <div className="field check">
+                <input id="vis-private" name="visibility" type="radio" value="private_invite" defaultChecked={request.visibility !== 'eligible_sellers'} aria-describedby="vis-private-hint" />
+                <label htmlFor="vis-private">{t('req.s5.visPrivate')}</label>
+              </div>
+              <p className="hint" id="vis-private-hint">
+                {t('req.s5.visPrivateHint')}
+              </p>
+            </fieldset>
           </ActionForm>
         ) : null}
       </>

@@ -41,8 +41,8 @@ export default async function SellerRequestPage({ params }: { params: Promise<{ 
   return (
     <>
       <p>
-        <Link href={`${base}/requests`} locale={locale}>
-          {t('inbox.title')}
+        <Link href={`${base}/requests${v.from_board ? '/board' : ''}`} locale={locale}>
+          {v.from_board ? t('board.title') : t('inbox.title')}
         </Link>
       </p>
       {v.title ? <h1>{v.title}</h1> : <h1>{t('inbox.detailTitle')}</h1>}
@@ -54,6 +54,7 @@ export default async function SellerRequestPage({ params }: { params: Promise<{ 
       </p>
 
       {!v.title ? <p>{t('inbox.noLongerShown')}</p> : null}
+      {v.from_board && v.match_status === 'invited' && v.title ? <p className="muted">{t('board.fromBoardNote')}</p> : null}
 
       {v.title ? (
         <dl className="dl card">

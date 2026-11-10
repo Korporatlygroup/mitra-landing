@@ -187,7 +187,7 @@ create function tt.cands(p_req uuid) returns text language sql stable as $$
   where request_id = p_req and status = 'candidate' and seller_org_id in (tt.oid('A'), tt.oid('B'), tt.oid('C'))
 $$;
 
-select plan(193);
+select plan(228);
 
 select tt.fresh_mitra();
 select tt.mkuser(n) from unnest(array[
@@ -652,6 +652,110 @@ select tt.act('tt_d_owner');
 select lives_ok($$ select public.save_listing_draft(tt.oid('D'), '{"headline":"A draft nobody has seen yet"}'::jsonb, 0) $$, 'V7a an owner saves a draft without submitting it');
 select tt.act('tt_rev', 'aal2');
 select is((select count(*)::int from public.business_listings where org_id = tt.oid('D')), 0, 'V7 a reviewer cannot read an unsubmitted draft');
+
+-- ============================ PUBLIC REQUEST BOARD (migration 000100) ============================
+select tt.pg();
+create function tt.mkboard(p_label text, p_user text, p_key text, p_title text, p_cat text, p_state text, p_share boolean default false,
+  p_desc text default 'We need this made and delivered, please reply with what you can do.') returns jsonb language plpgsql as $$
+declare d jsonb; r jsonb;
+begin
+  perform tt.act(p_user);
+  d := public.save_request_draft(tt.oid('Q'), null, p_key, jsonb_build_object('title', p_title, 'category_slug', p_cat,
+    'description', p_desc, 'target_state', p_state, 'share_contact', p_share,
+    'contact_phone', '+60 12 345 6789', 'contact_email', 'buyer@example.test'), 0);
+  perform public.set_request_visibility((d ->> 'id')::uuid, 'eligible_sellers');
+  r := public.submit_request((d ->> 'id')::uuid, (d ->> 'version')::int);
+  perform tt.pg();
+  insert into tt.ids (label, id) values (p_label, (d ->> 'id')::uuid);
+  return r;
+end $$;
+create function tt.onboard(p_org uuid, p_req uuid) returns int language sql stable as $$
+  select count(*)::int from jsonb_array_elements(public.list_board_requests(p_org, null, null, 0) -> 'items') e where e ->> 'request_id' = p_req::text
+$$;
+
+select tt.pg();
+update public.buyer_requests set status = 'closed' where buyer_org_id = tt.oid('Q') and status = 'open';
+delete from public.rate_limit_events where key like 'reqsubmit:%' or key like 'reqdraft:%';
+select is((tt.mkboard('G1', 'tt_q_owner', 'key-brd-0001', 'Catering for a company dinner', 'food-beverage', 'Selangor')) ->> 'status', 'open', 'B1 a buyer publishes a request to eligible sellers');
+select tt.act('tt_q_owner');
+select lives_ok($$ select public.save_request_draft(tt.oid('Q'), null, 'key-brd-0002', jsonb_build_object('title', 'Catering with a phone number', 'category_slug', 'food-beverage',
+  'description', 'Please call me on 0123456789 to discuss the menu.', 'target_state', 'Selangor', 'contact_phone', '+60 12 345 6789'), 0) $$, 'B2a draft saved');
+select tt.pg();
+delete from public.rate_limit_events where key like 'reqsubmit:%';
+insert into tt.ids (label, id) select 'G2', id from public.buyer_requests where idempotency_key = 'key-brd-0002';
+select tt.act('tt_q_owner');
+select lives_ok($$ select public.set_request_visibility(tt.id('G2'), 'eligible_sellers') $$, 'B2b visibility can be set on a draft');
+select throws_ok($$ select public.submit_request(tt.id('G2'), (select version from public.buyer_requests where id = tt.id('G2'))) $$, 'PT422', 'contact_in_public_text',
+  'B2 a phone number in the public text is refused');
+
+select tt.act('tt_c_owner');
+select is(tt.onboard(tt.oid('C'), tt.id('G1')), 1, 'B3 an eligible seller (food, Selangor) sees the request on the board');
+select tt.act('tt_a_owner');
+select is(tt.onboard(tt.oid('A'), tt.id('G1')), 0, 'B4 a seller in another category does not see it');
+select throws_ok($$ select public.get_request_for_seller(tt.id('G1'), tt.oid('A')) $$, 'PT404', 'not_found', 'B4b and cannot open it (404, no existence leak)');
+select tt.act('tt_a_viewer');
+select throws_ok($$ select public.list_board_requests(tt.oid('A'), null, null, 0) $$, 'PT403', 'forbidden', 'B5 a viewer cannot use the board');
+select tt.act('tt_c_owner');
+select is((public.get_request_for_seller(tt.id('G1'), tt.oid('C'))) ->> 'title', 'Catering for a company dinner', 'B6 an eligible seller can read the request');
+select is((public.get_request_for_seller(tt.id('G1'), tt.oid('C'))) ->> 'contact_email', null, 'B6b with no buyer email');
+select is((public.get_request_for_seller(tt.id('G1'), tt.oid('C'))) ->> 'buyer_name', null, 'B6c and no buyer name');
+
+select tt.pg();
+select tt.mkreq('G3', tt.oid('Q'), 'tt_q_owner', 'key-brd-0003', 'Private catering lunch', 'food-beverage', 'Selangor', null, null);
+select tt.act('tt_c_owner');
+select is(tt.onboard(tt.oid('C'), tt.id('G3')), 0, 'B7 an invitation-only request is not on the board');
+select throws_ok($$ select public.get_request_for_seller(tt.id('G3'), tt.oid('C')) $$, 'PT404', 'not_found', 'B7b and is not readable by a seller that was not invited');
+select tt.pg();
+select tt.mkboard('G4', 'tt_q_owner', 'key-brd-0004', 'Uniforms for a Selangor cafe', 'tailoring-apparel', 'Selangor');
+select tt.act('tt_b_owner');
+select is(tt.onboard(tt.oid('B'), tt.id('G4')), 0, 'B8 a seller that does not serve the area (Penang only) does not see it');
+select throws_ok($$ select public.get_request_for_seller(tt.id('G4'), tt.oid('B')) $$, 'PT404', 'not_found', 'B8b nor open it');
+select tt.act('tt_a_owner');
+select is(tt.onboard(tt.oid('A'), tt.id('G4')), 1, 'B8c while a seller that serves Selangor does');
+select tt.act('tt_c_owner');
+
+select is((public.respond_to_invitation(tt.id('G1'), tt.oid('C'), 'interested', 'We can cater for 80 guests.')) ->> 'status', 'interested', 'B9 an eligible seller answers Interested from the board');
+select tt.pg();
+select is((select count(*)::int from public.enquiries where buyer_request_id = tt.id('G1') and seller_org_id = tt.oid('C') and origin = 'request_invitation'), 1, 'B9b a valid enquiry was created');
+select tt.act('tt_c_owner');
+select is((public.respond_to_invitation(tt.id('G1'), tt.oid('C'), 'interested', 'We can cater for 80 guests.')) ->> 'enquiry_id',
+  (select id::text from public.enquiries where buyer_request_id = tt.id('G1')), 'B10 repeating the same answer is a harmless retry (same enquiry)');
+select throws_ok($$ select public.respond_to_invitation(tt.id('G1'), tt.oid('C'), 'declined', null) $$, 'PT409', 'already_responded', 'B11 a different second answer is refused');
+select is((public.get_request_for_seller(tt.id('G1'), tt.oid('C'))) ->> 'buyer_name', null, 'B12 no buyer name without the buyer''s consent');
+select tt.act('tt_a_owner');
+select throws_ok($$ select public.respond_to_invitation(tt.id('G1'), tt.oid('A'), 'interested', null) $$, 'PT404', 'not_found', 'B13 an ineligible seller cannot reply');
+select tt.act('tt_q_owner');
+select is((select (e ->> 'interested')::int from jsonb_array_elements(public.list_buyer_requests(tt.oid('Q'))) e where e ->> 'id' = tt.id('G1')::text), 1, 'B14 the buyer sees the response');
+
+select tt.pg();
+select tt.mkboard('G5', 'tt_q_owner', 'key-brd-0005', 'Catering for an open day', 'food-beverage', 'Selangor', true);
+select tt.act('tt_c_owner');
+select is((public.respond_to_invitation(tt.id('G5'), tt.oid('C'), 'question', 'Is a halal certificate needed?')) ->> 'status', 'question', 'B15 Ask a question works from the board');
+select is((public.get_request_for_seller(tt.id('G5'), tt.oid('C'))) ->> 'buyer_name', 'Quick Buyer', 'B15b the buyer name is shown after a reply when the buyer agreed');
+select tt.pg();
+select throws_ok($$ update public.buyer_requests set visibility = 'private_invite' where id = tt.id('G1') $$, 'PT409', 'immutable_columns', 'B16 visibility never changes once a request is open');
+select tt.act('tt_q_owner');
+select throws_ok($$ select public.set_request_visibility(tt.id('G1'), 'private_invite') $$, 'PT409', 'request_not_editable', 'B16b and cannot be set after posting');
+
+select tt.pg();
+select tt.mkboard('G6', 'tt_q_owner', 'key-brd-0006', 'Catering for a school sports day', 'food-beverage', 'Selangor');
+select tt.act('tt_c_owner');
+select is((public.respond_to_invitation(tt.id('G6'), tt.oid('C'), 'declined', 'Fully booked that week.')) ->> 'enquiry_id', null, 'B17 Cannot take it makes no enquiry');
+select tt.anon();
+select throws_ok($$ select public.list_board_requests(tt.oid('C'), null, null, 0) $$, '42501', null, 'B18 anon cannot call the board');
+
+select tt.pg();
+update public.buyer_requests set status = 'closed' where id in (tt.id('G3'), tt.id('G4'), tt.id('G6'));
+select tt.mkboard('G7', 'tt_q_owner', 'key-brd-0007', 'Catering for a book launch', 'food-beverage', 'Selangor');
+select tt.act('tt_c_owner');
+select is(tt.onboard(tt.oid('C'), tt.id('G7')), 1, 'B19 an open board request is listed');
+select tt.act('tt_q_owner');
+select lives_ok($$ select public.end_request(tt.id('G7'), 'withdrawn', 'Changed my mind') $$, 'B19b the buyer withdraws it');
+select tt.act('tt_c_owner');
+select is(tt.onboard(tt.oid('C'), tt.id('G7')), 0, 'B20 a withdrawn request leaves the board at once');
+select throws_ok($$ select public.get_request_for_seller(tt.id('G7'), tt.oid('C')) $$, 'PT404', 'not_found', 'B20b and a seller that never replied cannot open it');
+select is((public.list_board_requests(tt.oid('C'), 'tailoring-apparel', null, 0)) ->> 'total', '0', 'B21 the category filter narrows the list');
+select throws_ok($$ select public.list_board_requests(tt.oid('C'), 'no-such-category', null, 0) $$, 'PT422', 'invalid_category', 'B22 an unknown category is refused');
 
 select * from finish();
 rollback;

@@ -161,6 +161,7 @@ select is(
         'get_document_access(p_doc uuid)', 'get_listing(p_slug text)', 'get_request_for_seller(p_request uuid, p_seller_org uuid)',
         'get_verification_summary(p_org uuid)', 'grant_consent(p_purpose text, p_version text)',
         'handle_report(p_report uuid, p_action text, p_note text)', 'invite_seller(p_request uuid, p_seller_org uuid)',
+        'list_board_requests(p_seller_org uuid, p_category text, p_state text, p_offset integer)',
         'list_buyer_requests(p_org uuid)', 'list_request_matches(p_request uuid)',
         'list_seller_requests(p_seller_org uuid, p_filter text)', 'mark_notification_read(p_id uuid)',
         'open_listing_enquiry(p_buyer_org uuid, p_slug text, p_topic text, p_note text)',
@@ -174,12 +175,12 @@ select is(
         'save_representative(p_org uuid, p_name text, p_role text, p_email text, p_phone text)',
         'save_request_draft(p_org uuid, p_request uuid, p_key text, p_data jsonb, p_expected_version integer)',
         'search_listings(p_q text, p_category text, p_state text, p_limit integer, p_offset integer)',
-        'set_accepting_requests(p_org uuid, p_value boolean)', 'set_member_role(p_org uuid, p_user uuid, p_role member_role)',
+        'set_accepting_requests(p_org uuid, p_value boolean)', 'set_member_role(p_org uuid, p_user uuid, p_role member_role)', 'set_request_visibility(p_request uuid, p_visibility text)',
         'start_review(p_claim uuid)', 'submit_claim(p_org uuid, p_type claim_type, p_document_ids uuid[], p_note text)',
         'submit_listing(p_org uuid, p_expected_version integer)', 'submit_request(p_request uuid, p_expected_version integer)',
         'suspend_listing(p_org uuid, p_reason text)', 'unpublish_listing(p_org uuid)', 'withdraw_claim(p_claim uuid)',
         'withdraw_consent(p_id uuid)', 'withdraw_listing_submission(p_org uuid)'],
-  'S7.6 authenticated can execute exactly the 46 allow-listed public RPCs');
+  'S7.6 authenticated can execute exactly the 48 allow-listed public RPCs');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)

@@ -121,6 +121,7 @@ export interface BuyerRequestRow {
   budget_min: number | null;
   budget_max: number | null;
   share_contact: boolean;
+  visibility: 'private_invite' | 'eligible_sellers';
   status: RequestStatus;
   version: number;
   expires_at: string | null;
@@ -179,6 +180,7 @@ export interface SellerRequestView {
   response_note: string | null;
   enquiry_id: string | null;
   expires_at: string | null;
+  from_board?: boolean;
   title?: string;
   description?: string;
   category_slug?: string;
@@ -309,7 +311,7 @@ export async function getBuyerRequest(db: Db, id: string): Promise<BuyerRequestR
   const { data } = await db
     .from('buyer_requests')
     .select(
-      'id, buyer_org_id, category_id, title, description, target_state, target_district, quantity, unit, needed_by, budget_min, budget_max, share_contact, status, version, expires_at, closed_reason, created_at',
+      'id, buyer_org_id, category_id, title, description, target_state, target_district, quantity, unit, needed_by, budget_min, budget_max, share_contact, visibility, status, version, expires_at, closed_reason, created_at',
     )
     .eq('id', id)
     .maybeSingle();
@@ -332,6 +334,42 @@ export async function listSellerRequests(db: Db, orgId: string, filter: 'all' | 
   const r = await rpc<SellerInboxRow[]>(db, 'list_seller_requests', { p_seller_org: orgId, p_filter: filter });
   return r.ok ? r.data : [];
 }
+
+export interface BoardRow {
+  request_id: string;
+  title: string;
+  category_slug: string;
+  target_state: string;
+  target_district: string | null;
+  quantity: number | null;
+  unit: string | null;
+  needed_by: string | null;
+  budget_min: number | null;
+  budget_max: number | null;
+  created_at: string;
+  expires_at: string;
+  my_status: MatchStatus | null;
+}
+
+export const BOARD_PAGE_SIZE = 20;
+
+/** Requests an organisation may see on the board. The database decides eligibility; nothing here filters for privacy. */
+export async function listBoardRequests(
+  db: Db,
+  orgId: string,
+  filters: { category?: string | null; state?: string | null; offset?: number },
+): Promise<{ ok: true; total: number; items: BoardRow[] } | { ok: false; errorKey: string }> {
+  const r = await rpc<{ total: number; items: BoardRow[] }>(db, 'list_board_requests', {
+    p_seller_org: orgId,
+    p_category: filters.category || null,
+    p_state: filters.state || null,
+    p_offset: filters.offset ?? 0,
+  });
+  return r.ok ? { ok: true, total: r.data.total, items: r.data.items } : { ok: false, errorKey: r.errorKey };
+}
+
+export const setRequestVisibility = (db: Db, requestId: string, visibility: 'private_invite' | 'eligible_sellers') =>
+  rpc<null>(db, 'set_request_visibility', { p_request: requestId, p_visibility: visibility });
 
 export const getRequestForSeller = (db: Db, requestId: string, orgId: string) =>
   rpc<SellerRequestView>(db, 'get_request_for_seller', { p_request: requestId, p_seller_org: orgId });

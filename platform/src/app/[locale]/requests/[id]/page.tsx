@@ -120,6 +120,9 @@ export default async function RequestDetailPage({
       <p>
         <StatusChip status={open ? 'approved' : r.status === 'removed' ? 'rejected' : 'none'} label={t(`req.status.${r.status}`)} />
       </p>
+      <p className="muted">
+        {t('req.s5.visLabel')}: {r.visibility === 'eligible_sellers' ? t('req.s5.visShownBoard') : t('req.s5.visShownPrivate')}
+      </p>
       {sp.sent ? (
         <p className="message message-ok" role="status">
           {t('req.sentNote', { n: candidates.length })}

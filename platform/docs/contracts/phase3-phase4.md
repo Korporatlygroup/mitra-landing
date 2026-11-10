@@ -1,9 +1,9 @@
 # Phase 3 / Phase 4 shared contract
 
-**Contract version:** `p3p4-contract/1.0` (reconciled against the real Phase 1/2 schema at `adc8c96` and against the implemented Phase 3 migrations; this supersedes the *proposed* contract in `02_Phase3_Phase4_Shared_Contract.md` where they differ)
+**Contract version:** `p3p4-contract/1.1` (1.0 plus section 10, additive only; nothing in sections 1 to 9 changed meaning) (reconciled against the real Phase 1/2 schema at `adc8c96` and against the implemented Phase 3 migrations; this supersedes the *proposed* contract in `02_Phase3_Phase4_Shared_Contract.md` where they differ)
 **Status:** Implemented locally and tested (see `phase3-report.md`). **Not yet acknowledged by Codex** and not applied to hosted staging. Codex should acknowledge by writing the version above and the commit SHA of this file into its own plan.
 **Migration owner (shared entities):** Claude (Phase 3). Codex writes P4 migrations only after the P3 migrations below exist locally, as separate files with later version prefixes.
-**Migration files:** `20260701000012_p3_directory_schema.sql`, `…013_p3_listing_rpcs.sql`, `…014_p3_request_rpcs.sql`.
+**Migration files:** `20260701000012_p3_directory_schema.sql`, `…013_p3_listing_rpcs.sql`, `…014_p3_request_rpcs.sql`, and (1.1) `20260701000100_p3_request_board.sql`.
 
 ## 1. What P3 owns and what P4 may rely on
 
@@ -101,3 +101,18 @@ Standard `PT401/403/404/409/422/429`. P3 adds keys: `listing_incomplete`, `listi
 - Known, accepted limits: anonymous `search_listings` has no DB rate limit (needs an edge limit); a user can create up to 200 draft rows an hour (10 live drafts at a time).
 - Buyer name and phone/email are served to a seller only while the request is `open`. After it closes or expires the seller keeps the request text but not the buyer's contact.
 - `enquiries.topic` is a copy of the request title taken when the seller replied, so it stays readable to both participants after the request ends. P4 may close the enquiry when it wants.
+
+## 10. Version 1.1: public request board (additive)
+
+**Migration numbering.** Phase 3 addenda use `20260701000100` and above. **Phase 4 keeps `20260701000015` to `20260701000099`.** The addendum `…000100` runs after any P4 migration in that range; it only redefines `get_request_for_seller`, `respond_to_invitation` and `invite_seller` and adds new objects, none of which P4 should redefine. If P4 needs to change one of those three functions, tell Claude first.
+
+**What changed (no new tables, no new enquiry path).**
+- `buyer_requests.visibility` now allows `private_invite` (default) and `eligible_sellers`. The value is frozen once the request leaves `draft` (trigger). New RPC `set_request_visibility(request, visibility)` works on drafts only.
+- A request with `eligible_sellers` is readable, before any invitation, by a seller organisation that passes `private.board_eligible`: request `open` and not expired, buyer organisation active, seller is an active business with a `published` listing that is `accepting_requests`, and one of its services matches the request category and area (or is nationwide) and is not excluded by minimum order. Anything else is `404 not_found`.
+- New RPC `list_board_requests(seller_org, category, state, offset)` (needs `request:respond`) returns `{ total, items }` (20 per page); items carry only public request fields plus `my_status`.
+- `get_request_for_seller` has the same output shape plus `from_board: boolean`. For a board request the seller has not answered, `match_status` is the virtual value `invited`, `reason_codes`/`caution_codes` are empty, and no buyer name or contact is returned.
+- `respond_to_invitation` creates the `request_seller_matches` row on the first reply to a board request (`invited_by` null) and then behaves exactly as before, including `open_enquiry` with origin `request_invitation`. P4 therefore still sees one enquiry per (buyer org, seller org, request), whichever way it began. Duplicate replies are retry-safe; a different second answer is `409 already_responded`; at most 20 non-declined board replies per request (`409 request_response_limit`); 40 board replies per user per day.
+- The invitation cap (10) now counts only invitations the buyer sent.
+- The audit entry for a reply has `details.via` = `board` or `invitation`.
+- Submitting a board request whose title, description or district contains an email address or a run of nine or more digits is refused with `422 contact_in_public_text` (trigger). Buyer name, phone and email are never part of a board response and follow section 9 after a reply.
+- Withdraw, close, expiry and moderator removal take the request off the board at once (the list only returns `open`); sellers that already replied keep their restricted view as before.

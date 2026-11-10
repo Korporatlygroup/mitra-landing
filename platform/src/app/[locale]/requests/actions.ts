@@ -5,10 +5,10 @@ import { redirect } from 'next/navigation';
 import { eligibleBuyerOrgs } from '@/lib/buyer-orgs';
 import { formToObject, nonSecretValues, parseForm } from '@/lib/form';
 import { failure, success, type FormState } from '@/lib/form-state';
-import { endRequestSchema, findMoreSchema, inviteSellerSchema, requestStepSchema, requestVersionSchema } from '@/lib/schemas';
+import { endRequestSchema, findMoreSchema, inviteSellerSchema, requestStepSchema, submitRequestSchema } from '@/lib/schemas';
 import { actionUser } from '@/server/action-user';
 import { getProfile } from '@/server/services/auth';
-import { endRequest, findCandidates, getBuyerRequest, inviteSeller, saveRequestDraft, submitRequest } from '@/server/services/directory';
+import { endRequest, findCandidates, getBuyerRequest, inviteSeller, saveRequestDraft, setRequestVisibility, submitRequest } from '@/server/services/directory';
 import { createOrg, listMyMemberships } from '@/server/services/orgs';
 
 /** Which fields each wizard step may write (anything else in the form is ignored). */
@@ -55,10 +55,12 @@ export async function saveRequestStepAction(_prev: FormState, formData: FormData
 }
 
 export async function submitRequestAction(_prev: FormState, formData: FormData): Promise<FormState> {
-  const p = parseForm(requestVersionSchema, formData);
+  const p = parseForm(submitRequestSchema, formData);
   if (!p.ok) return failure(p.errorKey);
   const { supabase, user } = await actionUser();
   if (!user) return failure('unauthenticated');
+  const vis = await setRequestVisibility(supabase, p.data.requestId, p.data.visibility);
+  if (!vis.ok) return failure(vis.errorKey);
   const r = await submitRequest(supabase, p.data.requestId, p.data.expectedVersion);
   if (!r.ok) return failure(r.errorKey);
   revalidatePath('/', 'layout');

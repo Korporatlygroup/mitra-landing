@@ -56,6 +56,11 @@ export default async function SellerInboxPage({
         </Link>
       </p>
       <h1>{t('inbox.title')}</h1>
+      <p>
+        <Link href={`${base}/requests/board`} locale={locale} className="btn btn-secondary">
+          {t('board.link')}
+        </Link>
+      </p>
       <nav aria-label={t('inbox.filters')} className="link-row">
         {FILTERS.map((f) => (
           <Link key={f} href={`${base}/requests?filter=${f}`} locale={locale} className={f === filter ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={f === filter ? 'page' : undefined}>

@@ -257,6 +257,12 @@ export const requestStepSchema = z.object({
   share_contact: checkboxOrEmpty,
 });
 export const requestVersionSchema = z.object({ locale: localeSchema, requestId: uuidSchema, expectedVersion: intField });
+export const submitRequestSchema = z.object({
+  locale: localeSchema,
+  requestId: uuidSchema,
+  expectedVersion: intField,
+  visibility: z.enum(['private_invite', 'eligible_sellers'], 'invalid_input'),
+});
 export const requestIdSchema = z.object({ locale: localeSchema, requestId: uuidSchema });
 export const findMoreSchema = z.object({ locale: localeSchema, requestId: uuidSchema, broaden: z.enum(['true', 'false'], 'invalid_input') });
 export const inviteSellerSchema = z.object({ locale: localeSchema, requestId: uuidSchema, sellerOrgId: uuidSchema });
