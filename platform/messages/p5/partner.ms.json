@@ -1,1 +1,15 @@
-{}
+{
+  "p5partner": {
+    "nav": {
+      "label": "Bahagian rakan kongsi",
+      "menu": "Menu",
+      "home": "Utama",
+      "suppliers": "Pembekal",
+      "products": "Produk",
+      "import": "Import Katalog",
+      "requests": "Permintaan Pembeli",
+      "notifications": "Pemberitahuan",
+      "settings": "Tetapan"
+    }
+  }
+}

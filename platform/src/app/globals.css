@@ -528,3 +528,95 @@ main {
     font-weight: 600;
   }
 }
+
+/* ===== Phase 5 additions (foundation). Additive only; keep other blocks untouched. ===== */
+/* Partner section shell: sidebar + content. Wider main only on pages that contain the shell. */
+main:has(.partner-shell) {
+  max-width: 72rem;
+}
+.partner-shell {
+  display: grid;
+  gap: var(--space);
+  grid-template-columns: minmax(0, 1fr);
+}
+.partner-side {
+  min-width: 0;
+}
+.partner-content {
+  min-width: 0;
+}
+.partner-org {
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+.partner-nav-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+.partner-nav-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.partner-nav-list[hidden] {
+  display: none;
+}
+.partner-nav-list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.partner-nav-list a:hover {
+  background: var(--surface);
+}
+.partner-nav-list a[aria-current='page'] {
+  border-color: var(--charcoal);
+  font-weight: 700;
+}
+@media (min-width: 721px) {
+  .partner-shell {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    align-items: start;
+  }
+  .partner-nav-toggle {
+    display: none;
+  }
+  .partner-nav-list {
+    margin-top: 0;
+  }
+  .partner-nav-list[hidden] {
+    display: grid;
+  }
+}
+/* Catalogue helpers shared by the partner, catalogue and admin screens. */
+.p5-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+}
+.p5-thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+.p5-price {
+  font-weight: 700;
+}
+.p5-stat {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}

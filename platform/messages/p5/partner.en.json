@@ -1,1 +1,15 @@
-{}
+{
+  "p5partner": {
+    "nav": {
+      "label": "Partner sections",
+      "menu": "Menu",
+      "home": "Home",
+      "suppliers": "Suppliers",
+      "products": "Products",
+      "import": "Import Catalogue",
+      "requests": "Buyer Requests",
+      "notifications": "Notifications",
+      "settings": "Settings"
+    }
+  }
+}
