@@ -1,13 +1,14 @@
 import { describe, expect, it } from 'vitest';
-import en from '../../messages/en.json';
-import ta from '../../messages/ta.json';
-import ms from '../../messages/ms.json';
+import { messagesFor } from '@/i18n/messages';
 import { KNOWN_MESSAGE_KEYS, allErrorKeys } from '@/lib/errors';
 import { MEMBER_ROLES } from '@/lib/permissions';
 import { SCHEMA_ERROR_KEYS } from '@/lib/schemas';
 import { AUDIT_ACTIONS } from '@/server/services/audit';
 import { flatten } from './helpers';
 
+const en = messagesFor('en') as Record<string, any>; // eslint-disable-line @typescript-eslint/no-explicit-any
+const ta = messagesFor('ta') as Record<string, unknown>;
+const ms = messagesFor('ms') as Record<string, unknown>;
 const fe = flatten(en);
 const ft = flatten(ta);
 const fm = flatten(ms);
