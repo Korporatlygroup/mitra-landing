@@ -20,6 +20,7 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'request:post',
     'request:respond',
     'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
+    'supplier:manage', 'catalogue:manage', 'sourcing:respond',
   ],
   manager: [
     'member:invite',
@@ -32,8 +33,12 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'request:post',
     'request:respond',
     'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
+    'supplier:manage', 'catalogue:manage', 'sourcing:respond',
   ],
-  staff: ['business:edit', 'request:post', 'request:respond', 'enquiry:write', 'quote:send', 'lead:manage', 'review:write'],
+  staff: [
+    'business:edit', 'request:post', 'request:respond', 'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
+    'supplier:manage', 'catalogue:manage', 'sourcing:respond',
+  ],
   viewer: [],
   admin_super: [
     'admin:users',
@@ -47,11 +52,15 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'listing:review',
     'request:moderate',
     'review:moderate',
+    'supplier:review',
+    'catalogue:review',
+    'partner:manage',
+    'catalogue:moderate',
   ],
   admin_ops: ['audit:read', 'report:view'],
-  admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate'],
+  admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate', 'supplier:review', 'catalogue:review', 'partner:manage'],
   admin_content: ['programme:publish'],
-  admin_support: ['case:reply', 'request:moderate'],
+  admin_support: ['case:reply', 'request:moderate', 'catalogue:moderate'],
 };
 
 /** Mirrors private.role_rank. */

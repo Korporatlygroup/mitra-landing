@@ -1,6 +1,6 @@
 # Phase 5 / Phase 6 contract: India-Malaysia supplier catalogue and sourcing
 
-**Contract version:** `p5p6-contract/0.1` (DRAFT, owned by Phase 5 / Claude). Baseline: `integration/phase1-4` at `e0781e2` (contract `p3p4-contract/1.2` unchanged). Nothing here is applied to hosted staging.
+**Contract version:** `p5p6-contract/0.2` (DRAFT, owned by Phase 5 / Claude). Baseline: `integration/phase1-4` at `e0781e2` (contract `p3p4-contract/1.2` unchanged). Nothing here is applied to hosted staging.
 
 ## 1. Migration allocation (one authoritative sequence)
 | Versions | Owner | Use |
@@ -8,7 +8,7 @@
 | `000001`-`000014`, `000100`-`000105` | Phases 1-4 | as already integrated (hosted still has 1-11 under other stamps) |
 | `000106` | Phase 4 owner | **reserved**: Phase 4 account-erasure fix (`referral_suggestions` delete rules) |
 | `000107`-`000109` | integration | reserved for Phase 1-4 integration fixes |
-| `000110` | Phase 5 | `p5_partners_suppliers` |
+| `000110` | Phase 5 | `p5_partners_suppliers` (also `product_categories` and the 12 seeded categories, moved here from 000111 because suppliers reference a category) |
 | `000111` | Phase 5 | `p5_catalogue` (categories, products, revisions, live tables, media) |
 | `000112` | Phase 5 | `p5_import` |
 | `000113` | Phase 5 | `p5_buyer` (search, saved products, sourcing requests, reports) |
@@ -46,6 +46,8 @@ Buyers: any active member with `request:post` of a `buyer` or `business` organis
 - `saved_products(user_id -> auth.users cascade, product_id -> products cascade, saved_at; pk(user_id, product_id))`.
 - `sourcing_requests(id, reference text unique, buyer_org_id cascade, partner_org_id, supplier_id, status: submitted|acknowledged|clarification_requested|closed|withdrawn, destination_state, destination_city, needed_by, notes, idempotency_key unique per buyer org, created_by set null, version, timestamps)`, `sourcing_request_items(id, request_id, line_no, product_id set null, variant_id set null, snapshot jsonb (name, sku, unit, moq, price terms as shown, currency, confirmed dates), quantity numeric, unit)`, `sourcing_request_events(id, request_id, actor set null, kind, note, at)` append-only.
 - `product_reports(id, product_id, reporter set null, reason, note, status open|actioned|dismissed, handled_by, handled_at)`.
+
+**Implementation notes (0.2).** Exact signatures, shapes and error keys: `phase5-rpc-reference.md`. Changes from 0.1: (a) `product_categories` is created in 000110; (b) a buyer reply moves `clarification_requested -> submitted` (not straight to acknowledged); (c) suppliers use `draft_submitted_version` so an approved supplier stays live while a revision is reviewed; (d) tiers must be contiguous (gaps refused) with whole-number quantities; (e) `sourcing_requests.partner_org_id/supplier_id` are `on delete set null` and `supplier_name` is snapshotted; (f) `supplier_events` has no foreign key (append-only); (g) import duplicates flag only later copies and `_client_invalid` is accepted; (h) admin-provisioned partner owners accept through `accept_partner_invitation` (generic `accept_invitation` refuses them); (i) search/detail/compare/media-access are granted to `anon`; (j) added RPCs: `withdraw_supplier_submission`, `reinstate_supplier`, `reinstate_product`, `suspend_partner`, `resend_partner_invitation`, `cancel_import`, `get_import`, `get_my_product`, `get_product_for_review`, `list_partner_orgs`, `list_product_reports`, `reply_sourcing_request`, `withdraw_sourcing_request`, `close_sourcing_request`, media RPCs.
 
 ## 5. Public and cross-role interfaces (RPCs, all `security definer`, `search_path = ''`, allow-listed in test 01)
 Partner: `provision/approve_partner`, `save_supplier_draft`, `submit_supplier`, `list_my_suppliers`, `get_supplier`, `register_supplier_document` (service), `save_product_draft`, `submit_product`, `publish_product`, `unpublish_product`, `list_my_products`, `stage_import`, `commit_import`, `list_imports`, `list_partner_requests`, `respond_sourcing_request(acknowledge|clarify)`. Admin: `list_supplier_reviews`, `review_supplier`, `list_product_reviews`, `review_product`, `suspend_supplier/product`, `handle_product_report`, `catalogue_stats`. Buyer/public: `search_catalogue(q, category, supplier, moq_max, price_min, price_max, currency, offset)`, `get_catalogue_item(id)`, `compare_items(ids[])`, `save_product`, `unsave_product`, `list_saved_products`, `submit_sourcing_request(...)`, `list_my_sourcing_requests`, `get_sourcing_request`, `report_product`. Hidden or unpublished resources are `404`, never `403`, except a caller naming an org they are not a member of (`403`, as Phase 3).
