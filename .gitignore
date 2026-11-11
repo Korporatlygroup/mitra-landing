@@ -44,3 +44,5 @@ desktop.ini
 .vscode/
 .idea/
 .p6-local/
+.erasure-local/
+.erasure-final/

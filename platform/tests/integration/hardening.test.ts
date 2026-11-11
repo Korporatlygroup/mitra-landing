@@ -251,15 +251,15 @@ describe('M3: service_auth_attempt', () => {
 // M4: account deletion through the real Auth admin API
 // ------------------------------------------------------------------------------------------
 describe('M4: deleting a sole owner through GoTrue', () => {
-  it('succeeds, keeps the organisation and writes a membership.deleted audit row', async () => {
+  it('succeeds, keeps the organisation and retains a redacted membership.deleted audit row', async () => {
     const owner = await signIn(await createConfirmedUser('m4'));
     const org = await owner.client.rpc('create_org', { p_type: 'business', p_name: 'Sole Owner Org' });
     expect(org.error).toBeNull();
     const del = await serviceClient().auth.admin.deleteUser(owner.user.id);
     expect(del.error).toBeNull();
     const rows = await sql<{ n: string }>(
-      `select count(*)::text as n from public.audit_log where action = 'membership.deleted' and org_id = $1 and details ->> 'user_id' = $2`,
-      [org.data, owner.user.id],
+      `select count(*)::text as n from public.audit_log where action = 'membership.deleted' and org_id = $1 and actor_user_id is null and not (details ? 'user_id')`,
+      [org.data],
     );
     expect(Number(rows[0]!.n)).toBe(1);
     const o = await sql<{ created_by: string | null }>('select created_by from public.organisations where id = $1', [org.data]);
