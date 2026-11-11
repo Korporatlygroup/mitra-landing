@@ -62,7 +62,7 @@ async function publishSeller(owner: TestUser, orgId: string, name: string, categ
 
 test('E43 buyer posts a board request; eligible seller finds, reads and answers; privacy and isolation hold', async ({ page, browser }) => {
   test.setTimeout(420_000);
-  const tag = uniq('brd').replace(/-/g, '');
+  const tag = uniq('brd').replace(/[-0-9]/g, (c) => 'qrstuvwxyz'[Number(c) || 0] ?? 'k');
   const title = `Office lunch boxes ${tag}`;
   const reviewer = await createUser('brd-rev');
   const [mitra] = await sql<{ id: string }>(`select id from public.organisations where type = 'mitra' limit 1`);
@@ -188,7 +188,7 @@ test('E43 buyer posts a board request; eligible seller finds, reads and answers;
 
 test('E43b an invitation-only request never appears on the board, and an anonymous visitor cannot open it', async ({ page, browser }) => {
   test.setTimeout(240_000);
-  const tag = uniq('brdp').replace(/-/g, '');
+  const tag = uniq('brdp').replace(/[-0-9]/g, (c) => 'qrstuvwxyz'[Number(c) || 0] ?? 'k');
   const reviewer = await createUser('brdp-rev');
   const [mitra] = await sql<{ id: string }>(`select id from public.organisations where type = 'mitra' limit 1`);
   await sql(`insert into public.memberships (org_id, user_id, role) values ($1, $2, 'admin_review')`, [mitra!.id, reviewer.id]);

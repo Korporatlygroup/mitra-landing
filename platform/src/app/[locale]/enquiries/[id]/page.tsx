@@ -5,15 +5,13 @@ import { pageTitle } from '@/lib/metadata';
 import { uuidSchema } from '@/lib/schemas';
 import { getEnquiry, getEnquiryParties } from '@/server/services/directory';
 import { requireSession } from '@/server/session';
+import P4Workspace from './P4Workspace';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'enq.title');
 }
 
-/**
- * Phase 3 seam: the enquiry's identity, participants and opening note. Phase 4 adds the message thread and
- * quotations to this page. Nothing here is a chat yet and the page says so.
- */
+/** The Phase 3 enquiry identity with its Phase 4 participant workspace. */
 export default async function EnquiryPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
   if (!uuidSchema.safeParse(id).success) notFound();
@@ -28,9 +26,6 @@ export default async function EnquiryPage({ params }: { params: Promise<{ locale
   return (
     <>
       <h1>{e.topic}</h1>
-      <p className="banner" role="note">
-        {t('enq.notChatYet')}
-      </p>
       <dl className="dl card">
         <dt>{t('enq.buyer')}</dt>
         <dd>{p.buyer_name ?? t('enq.customerHidden')}</dd>
@@ -66,6 +61,7 @@ export default async function EnquiryPage({ params }: { params: Promise<{ locale
           </Link>
         ) : null}
       </p>
+      <P4Workspace db={session.supabase} enquiryId={id} side={p.you_are} buyerOrgId={e.buyer_org_id} />
     </>
   );
 }

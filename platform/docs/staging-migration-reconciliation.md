@@ -1,6 +1,6 @@
 # Staging migration-history reconciliation plan (status: PROPOSED, independently reviewed: approve with changes, changes applied below; NOT EXECUTED)
 
-Target: Supabase project `udxzukodfqjzdukweygy` (mitra-staging). Nothing in this document has been run against hosted data. Evidence below was gathered with read-only queries (`supabase db query --linked --read-only`) on 2026-11-10.
+Target: Supabase project `udxzukodfqjzdukweygy` (mitra-staging). Nothing in this document has been run against hosted data. Re-checked read-only on 2026-11-11: hosted history unchanged (the same 11 execution-time versions). Evidence below was gathered with read-only queries (`supabase db query --linked --read-only`) on 2026-11-10.
 
 ## Findings
 1. Hosted `supabase_migrations.schema_migrations` holds 11 rows. Their `name` columns equal the committed files `20260701000001` to `…011` (name part only), but their `version` columns are execution-time stamps (`20261110074212` … `20261110074243`).
@@ -30,13 +30,13 @@ supabase migration repair --remote --yes --status applied 20260701000001 2026070
 Step 3, check:
 ```
 supabase migration list --remote     # expect 11 matched pairs, 000012-000014 local-only
-supabase db push --remote --dry-run  # expect it to list ONLY 000012, 000013, 000014, 000100, 000101, 000102, in that order
+supabase db push --remote --dry-run  # expect it to list ONLY 000012, 000013, 000014, 000100, 000101, 000102, 000103, 000104, 000105, in that order (on the integrated branch; on the Phase 3 branch alone, only the first six)
 ```
 Expected effect: no table, trigger, policy, function or bucket changes (the repair command never touches them). Only 11 history rows change. Note: whether `repair --status applied` also stores the local file's statements is not confirmed by the docs; it is harmless either way (the CLI compares versions). After repair, compare the `statements` column with the files read-only to settle it. `--yes` removes the CLI's confirmation prompt, so use it only after the owner approves. `--linked` is deprecated in v3; use `--remote`.
 
 Rollback: Step 1/2 are reversible with the opposite `repair` commands using the original versions listed above.
 
-Then, only with approval, apply Phase 3 hosted: `supabase db push` (applies 000012-000014 in one pass), followed by hosted pgTAP-equivalent smoke checks.
+Then, only with approval, apply hosted: `supabase db push` (applies 000012-000014, 000100-000102, 000103-000104 and 000105 in one pass), followed by the read-only verification queries in `integration/phase1-4-staging-deployment.md`.
 
 ## Open items before executing
 - Independent review of this plan: done (approve with changes; applied below). A human owner should still read it before approval.
@@ -46,7 +46,7 @@ Then, only with approval, apply Phase 3 hosted: `supabase db push` (applies 0000
 
 ## Changes required by the independent review (all applied above or listed here)
 1. Use `--remote` (not `--linked`), and `--yes` only after approval.
-2. **Ordering rule.** Every new migration version must be greater than the highest version already applied to hosted. A plain `db push` refuses migrations that sort before the last applied one, and `--include-all` would apply them out of order and let staging drift from a fresh `db reset`. Phase 3 addenda are `000100` to `000102`; Phase 4 was told to use `000015` to `000099`. If Phase 3 reaches hosted first, Phase 4 must start at `000103` or above, or both must be pushed in one run. **Decision needed from the owner and Codex before any hosted push.**
+2. **Ordering rule.** Every new migration version must be greater than the highest version already applied to hosted. A plain `db push` refuses migrations that sort before the last applied one, and `--include-all` would apply them out of order and let staging drift from a fresh `db reset`. Phase 3 addenda are `000100` to `000102`. **Decided 2026-11-11 (owner instruction): Phase 4's two migrations are renumbered `000103` and `000104` (content unchanged, renamed by Codex), and Phase 3's referral hand-off is `000105`.** All nine new versions go in one push. The exact sequence is in `integration/phase1-4-staging-deployment.md`.
 3. Freeze other writers (MCP `apply_migration`, Codex, other developers) during the window; that tool caused the version mismatch. Applying migrations to staging should be done only by `supabase db push` from CI or one named person.
 4. Step 1 and step 2 are separate commands; if step 2 fails the history is empty. Rollback is the reverse repair using the snapshot of the 11 original rows.
 5. After repair, re-dump the schema and diff against `staging-before.sql` (expect no difference).
