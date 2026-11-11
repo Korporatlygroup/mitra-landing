@@ -1,8 +1,11 @@
 ---
 import site from '../../../content/site.json';
 import Media from '../Media.astro';
+import { getMedia } from '../../lib/media';
 
 const { trainer } = site;
+// Monogram for a team member without a usable photo.
+const initials = (name: string) => name.split(/\s+/).map((w) => w[0]).slice(0, 2).join('').toUpperCase();
 ---
 
 <section class="section section--alt" id="trainer">
@@ -50,6 +53,42 @@ const { trainer } = site;
       )}
     </div>
   </div>
+
+  {trainer.team?.items?.length && (
+    <div class="container team">
+      <div class="team__head">
+        <h3 data-reveal>{trainer.team.heading}</h3>
+        <p data-reveal style="--d:80">{trainer.team.intro}</p>
+      </div>
+      <ul class="team__list">
+        {trainer.team.items.map((t, i) => (
+          <li class="member" data-reveal style={`--d:${80 + i * 80}`}>
+            <div class="member__photo">
+              {t.image && getMedia(t.image).available ? (
+                <Media id={t.image} sizes="(min-width: 900px) 180px, 40vw" />
+              ) : (
+                <span class="member__initials" aria-hidden="true">{initials(t.name)}</span>
+              )}
+            </div>
+            <div class="member__text">
+              <p class="member__taught">{t.taught}</p>
+              <h4>{t.name}</h4>
+              <p class="member__role">{t.role}</p>
+              <p class="member__bio">{t.bio}</p>
+              <ul class="member__creds">
+                {t.credentials.map((c) => (
+                  <li>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m5 12.5 4.5 4.5L19 7.5"/></svg>
+                    <span>{c}</span>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
 </section>
 
 <style>
@@ -87,4 +126,31 @@ const { trainer } = site;
 
   @media (min-width: 700px) { .expertise { grid-template-columns: repeat(3, 1fr); } }
   @media (min-width: 900px) { .trainer { grid-template-columns: 300px 1fr; } }
+
+  /* The teaching team: one card per specialist trainer. */
+  .team { margin-top: clamp(3rem, 7vw, 5rem); }
+  .team__head { max-width: 62ch; margin-bottom: 1.5rem; }
+  .team__head h3 { margin: 0 0 0.5rem; font: 700 clamp(1.5rem, 2.8vw, 2rem)/1.15 var(--font-display); }
+  .team__head p { margin: 0; color: var(--text-muted); font-size: 1.05rem; line-height: 1.55; }
+  .team__list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1.25rem; }
+  @media (min-width: 1000px) { .team__list { grid-template-columns: repeat(2, 1fr); } }
+  .member {
+    display: grid; gap: 1.1rem; padding: 1.25rem; border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border); box-shadow: var(--shadow);
+  }
+  @media (min-width: 560px) { .member { grid-template-columns: 150px 1fr; align-items: start; } }
+  .member__photo { width: min(150px, 45vw); aspect-ratio: 4 / 5; border-radius: var(--radius); overflow: hidden; background: var(--brand-soft); }
+  .member__photo :global(.media) { width: 100%; height: 100%; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 0; }
+  .member__initials {
+    display: grid; place-items: center; width: 100%; height: 100%;
+    background: repeating-linear-gradient(135deg, var(--brand) 0 18px, color-mix(in srgb, var(--brand) 82%, var(--accent)) 18px 36px);
+    font: 750 2.4rem/1 var(--font-display); letter-spacing: -0.02em; color: var(--brand-ink);
+  }
+  .member__taught { margin: 0 0 0.3rem; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.02em; color: var(--accent-text); }
+  .member h4 { margin: 0; font: 700 1.3rem/1.2 var(--font-display); }
+  .member__role { margin: 0.2rem 0 0.7rem; font-weight: 600; font-size: 0.95rem; }
+  .member__bio { margin: 0 0 0.9rem; color: var(--text-muted); line-height: 1.55; }
+  .member__creds { list-style: none; margin: 0; padding: 0; display: grid; gap: 0.4rem; }
+  .member__creds li { display: flex; gap: 0.55rem; align-items: flex-start; font-size: 0.93rem; line-height: 1.45; }
+  .member__creds svg { flex: none; width: 18px; height: 18px; margin-top: 0.1rem; padding: 2px; border-radius: 50%; background: var(--brand); color: var(--brand-ink); }
 </style>

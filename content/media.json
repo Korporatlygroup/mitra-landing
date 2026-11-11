@@ -1106,6 +1106,72 @@
       "h": 720,
       "bytes": 4495769,
       "consentNote": "Signed consent on file (confirmed by the user 2026-11-11)."
+    },
+    {
+      "id": "trainer-elton",
+      "section": "trainer",
+      "type": "image",
+      "source": "day-2.mp4",
+      "frame": "6:21.2",
+      "crop": [
+        0.3125,
+        0.111,
+        0.396,
+        0.88
+      ],
+      "alt": "Elton Kuah, smiling, presenting to participants in a blue shirt on Day 2",
+      "date": "2024-07-09",
+      "consent": "confirmed",
+      "consentNote": "Signed consent on file (confirmed by the user 2026-11-11).",
+      "notes": "Still from the videographer's day film (Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4); identity matched to the captioned photos in the final report's Lampiran H3. Consent confirmed by the user 2026-11-11.",
+      "file": "media/trainer-elton.webp",
+      "w": 760,
+      "h": 950,
+      "bytes": 40482
+    },
+    {
+      "id": "trainer-kong",
+      "section": "trainer",
+      "type": "image",
+      "source": "day-4.mp4",
+      "frame": "0:05.8",
+      "crop": [
+        0.297,
+        0.12,
+        0.396,
+        0.88
+      ],
+      "alt": "Kong Wai Theng, in a black blazer, teaching in front of the projector on Day 4",
+      "date": "2024-07-11",
+      "consent": "confirmed",
+      "consentNote": "Signed consent on file (confirmed by the user 2026-11-11).",
+      "notes": "Still from the videographer's day film (Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4); identity matched to the captioned photos in the final report's Lampiran H3. Consent confirmed by the user 2026-11-11.",
+      "file": "media/trainer-kong.webp",
+      "w": 761,
+      "h": 950,
+      "bytes": 18828
+    },
+    {
+      "id": "trainer-jagathis",
+      "section": "trainer",
+      "type": "image",
+      "source": "day-6.mp4",
+      "frame": "1:52.2",
+      "crop": [
+        0.39,
+        0.083,
+        0.396,
+        0.88
+      ],
+      "alt": "Chef Jagathis Kumar Manakora, in chef's whites and an apron, preparing a dish on the veranda on Day 6",
+      "date": "2024-07-13",
+      "consent": "confirmed",
+      "consentNote": "Signed consent on file (confirmed by the user 2026-11-11).",
+      "notes": "Still from the videographer's day film (Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4); identity matched to the captioned photos in the final report's Lampiran H3. Consent confirmed by the user 2026-11-11.",
+      "file": "media/trainer-jagathis.webp",
+      "w": 760,
+      "h": 950,
+      "bytes": 38802
     }
   ]
 }

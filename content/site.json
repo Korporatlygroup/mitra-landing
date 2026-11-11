@@ -335,7 +335,66 @@
       "Member, MMK Human Capital Development Committee, Penang State Government",
       "CPD Group approved training provider"
     ],
-    "_note": "Expertise and track record from 'SEA AI Academy - Evidence-based Learning and Competency Verification.pptx' (slides 2-3), supplied by the user 2026-11-03. Self-reported; not independently verified."
+    "_note": "Expertise and track record from 'SEA AI Academy - Evidence-based Learning and Competency Verification.pptx' (slides 2-3), supplied by the user 2026-11-03. Self-reported; not independently verified.",
+    "team": {
+      "heading": "The teaching team",
+      "intro": "Mr Ganesh led the programme alongside four specialists, each teaching the part of digital business they practise every day: video, digital marketing, e-commerce and food branding.",
+      "items": [
+        {
+          "name": "Megan Raj",
+          "role": "Videographer and video editor",
+          "taught": "Days 1 to 6 · Video editing with CapCut",
+          "image": null,
+          "bio": "A working videographer whose camera has covered music videos, portraits, products and weddings. Megan was in the room all six days, teaching participants to shoot and edit their own videos on a phone, step by step.",
+          "credentials": [
+            "Diploma in Graphic Design",
+            "Music-video cinematographer and video editor",
+            "Portrait, product and wedding photography and videography"
+          ]
+        },
+        {
+          "name": "Elton Kuah",
+          "role": "Digital marketing consultant",
+          "taught": "Day 2 · Facebook, Instagram, Google Ads and ChatGPT",
+          "image": "trainer-elton",
+          "bio": "An engineer turned digital marketer, Elton has delivered digital-marketing services to businesses since 2009, with a focus on market research, digital transformation and design thinking.",
+          "credentials": [
+            "BEng (Hons) Electrical and Electronic Engineering, University of Nottingham",
+            "Digital-marketing services since 2009",
+            "Market intelligence and research",
+            "Digital transformation, innovation and design thinking"
+          ]
+        },
+        {
+          "name": "Kong Wai Theng",
+          "role": "E-commerce trainer and consultant",
+          "taught": "Days 4 and 5 · TikTok, Shopee and Lazada",
+          "image": "trainer-kong",
+          "bio": "A pharmacist who ran a community pharmacy for over fifteen years before moving into e-commerce. Kong now trains sellers on Lazada, Shopee and TikTok and advises companies on running their online stores.",
+          "credentials": [
+            "Lazada Senior Certified Trainer (since 2020)",
+            "HRDF Accredited Trainer (since 2021)",
+            "Freelance trainer for Lazada, Shopee and TikTok",
+            "E-commerce consultant and manager to companies (since 2021)",
+            "Bachelor of Pharmacy, Universiti Malaya"
+          ]
+        },
+        {
+          "name": "Jagathis Kumar Manakora",
+          "role": "Chef · Sous Chef, Happy Go Lucky (F&B), Singapore",
+          "taught": "Day 6 · Food-business branding, with a live cooking demonstration",
+          "image": "trainer-jagathis",
+          "bio": "A professional chef with more than twenty years in hotel and restaurant kitchens in Kuala Lumpur and Singapore. On the last classroom day Jagathis cooked in front of the participants to show how presentation sells food.",
+          "credentials": [
+            "Sous Chef, Happy Go Lucky (F&B) Pte Ltd, Singapore (since 2015)",
+            "Chef de Cuisine, 1 Market by Chef Wan (2013 to 2015)",
+            "Junior Sous Chef, Concorde Hotel Singapore (2008 to 2013)",
+            "Trained at Concorde Hotel Kuala Lumpur and Novotel Singapore"
+          ]
+        }
+      ],
+      "_note": "Profiles from each trainer's signed qualification and experience sheet in the final report (Laporan Akhir Lampiran H2, extracted 2026-11-11 with the user's permission; trainer pages only) and the handover document (10 Sep 2024). Teaching days from the sheets' dates and the Lampiran H3 photo captions. Phone numbers and e-mails are deliberately not published. Megan Raj has no photo (behind the camera); a monogram shows instead."
+    }
   },
   "gallery": {
     "heading": "Gallery",

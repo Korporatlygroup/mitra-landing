@@ -48,7 +48,7 @@ Structure modelled on korporatlygroup.com.
 4. **Impact**: 26-day grid (6 face-to-face + 20 online), no dates or participant count
 5. **Curriculum**: three strands, each with an intro line; 9 modules, each with a sentence on what was taught + hands-on photos
 6. **Journey**: Day 1 … Day 6 (topics and module numbers from the final report) with a paragraph, a "They left with" line and the videographer's film of that day (long films cut into parts with part buttons, `FilmPlayer.astro`) → 20 days implementation → certification
-7. **Trainer**: Ganesh Manokara and team
+7. **Trainer**: Ganesh Manokara (lead), then "The teaching team": Megan Raj (video, Days 1–6), Elton Kuah (digital marketing, Day 2), Kong Wai Theng (e-commerce, Days 4–5), Jagathis Kumar Manakora (chef, food branding, Day 6). From their signed sheets in the final report (Lampiran H2) + handover doc; no phone numbers or e-mails. Photos are stills from the day films (Megan has none: monogram)
 8. **Interviews** (`Interviews.astro`): two INOK interview series (vertical, 7 parts each: a tour operator and a TikTok perfume seller), one player per guest with part buttons that auto-advance; then "More voices from the programme": three landscape interviews (`voice-1..3`). The Day 1 film moved to Journey Day 1. No guest names in page copy. Hidden if no video file exists
 9. **Gallery**: 12–24 photos/stills, filterable by day
 10. **Partners and accreditation**: SEGi, HRDF, MDEC, TEN (+ MITRA if permitted)
