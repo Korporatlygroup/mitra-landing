@@ -18,7 +18,7 @@ export type QuoteComparison = {
 };
 
 export function compareQuotes(quotes: QuoteSummary[], now: Date): QuoteComparison {
-  if (quotes.length < 2 || quotes.length > 4 || Number.isNaN(now.getTime())) throw new Error('invalid_comparison');
+  if (quotes.length < 2 || quotes.length > 20 || Number.isNaN(now.getTime())) throw new Error('invalid_comparison');
   const reasons: QuoteComparison['reasons'] = [];
   const first = quotes[0];
   if (quotes.some((q) => q.currency !== first.currency)) reasons.push('currency');

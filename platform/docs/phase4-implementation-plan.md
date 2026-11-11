@@ -1,30 +1,27 @@
-# MITRA Phase 4 implementation plan
+# MITRA Phase 4 local integration and deployment plan
 
-Status: in progress. Baseline `adc8c9663080c69a680c43099392c401655cc579` on `feature/phase4-preparation`. The proposed enquiry seam is in `docs/contracts/phase3-phase4-proposal-v1.md`; it is not frozen.
+Status: implemented and under final local regression on `feature/phase4-preparation`. No push, remote merge, hosted migration or deployment has occurred.
 
-## Existing implementation audit
+## Baseline and contract
 
-Phase 1 provides `organisations`, organization-scoped `memberships`, profiles, permissions, audit, consent, MFA and RLS. Phase 2 provides `business_profiles` keyed by organization, categories, private contact fields, representatives, verification claims/documents, notifications and private storage. Phase 4 reuses these identities and permissions. No Phase 3 enquiry/request tables are in this branch. Hosted Phase 1/2 migration history versions differ from file prefixes, blocking automated hosted `db push` until reviewed reconciliation.
+Phase 1 supplies organization identity, membership, permissions, audit, consent and MFA. Phase 2 supplies business profiles, verification, notifications and private storage. Phase 3 was fetched directly from `C:\Projects\MITRA\MITRA-Claude` and verified as commit `6ef9f01af9903960b07418d449eab0f79fa21c5b`, then merged locally in `ee73f24`. Its migrations are `20260701000012`–`14`.
 
-## Integration seam
+The finalized shared contract is `docs/contracts/phase3-phase4.md`, version `p3p4-contract/1.0`, SHA-256 `64E054F30248E8CBD258F39871FC3489078097C9089FC66F70661E3E3E80741B` (Git blob `a90ac260eeaa65b1f81ee91a6540b4c3a2c68e5c`). Phase 3 owns `enquiries`, buyer requests and opening RPCs. Phase 4 consumes the immutable enquiry identity and drives later status/version transitions. The earlier proposed enquiry idempotency key is superseded by Phase 3's unique open pair. Phase 4 creates no Phase 3 tables and does not insert into `enquiries`.
 
-Claude owns `buyer_requests`, `request_seller_matches`, `enquiries` and authorized opening/read services. Codex consumes one stable `enquiries.id`, immutable buyer/seller organization IDs, optional request ID, status and version. Freeze schema, roles, opening moment, idempotency, transitions and API types in a versioned file acknowledged by both sides before dependent database work. No second conversation or Phase 3 SQL edits.
+## Implemented scope
 
-## Delivery order
+Migrations `20260701000015_p4_schema.sql` and `20260701000016_p4_workflows.sql` add organization-scoped messages, seller-only quote drafts, immutable quotation versions and line items, private lead activities, consent-gated referrals, and moderated reviews. RPCs enforce permissions and expected versions, calculate MYR totals in SQL, notify participants and write audit events. A public review RPC returns only moderated content without buyer identity. Seller responses require a separate moderation decision before public display.
 
-1. Independent rules: exact decimal MYR quote calculation, guarded transitions and comparison that exposes currency, quantity, unit and scope differences. Implemented provisionally with unit tests.
-2. After Phase 3 transfer, integrate locally. Add P4-only migrations for messages, quotations, immutable versions/items, lead activities, referrals and reviews. RLS and RPCs authorize active organization participants and use atomic expected-version transitions. Sent versions are immutable; seller notes are seller-only. Audit actions and queue notifications with honest delivery status.
-3. Implement typed services and EN/TA screens: buyer enquiries/thread, quote detail/comparison, seller leads/thread, quote builder/preview, follow-ups, reviews/moderation and performance. Simple primary fields precede expandable advanced fields. Support 360px and desktop, keyboard and accessible feedback.
-4. Test cross-org denial, forged IDs, role separation, suspended/removed actors, expired/withdrawn/superseded offers, duplicate and concurrent actions, review eligibility and referral consent. Run pgTAP, unit, integration, Playwright E2E, lint/typecheck/build and Astro regression. Independent reviewer examines integrated diff and security evidence.
+The buyer and seller enquiry workspace supports conversation, quote drafting/preview/sending, revision requests, version-bound selection, lead stages, private notes, follow-up dates, referral proposal/consent, reviews and seller responses. Buyers can compare displayed offers for currency, unit, quantity, scope and validity differences. The seller lead page calculates counts and response time from persisted data; reported wins/losses are explicitly self-reported.
 
-## Product decisions
+## Security and review
 
-Confirm quote tax treatment, currencies beyond provisional MYR, unit vocabulary, expiry limits, legal wording of offer selection, review qualification, moderation ownership, referral consent and notification delivery policy. Selection implies neither payment nor delivery. Wins/losses are self-reported. Metrics derive from stored events only.
+An independent read-only reviewer examined the integrated Phase 3–4 code. Findings corrected locally: a Phase 4 referral insertion into Phase 3 `enquiries`, viewer access to private lead notes, moderator conflicts of interest, absent review moderation/public display, comparison ignoring a fifth offer, closed-request referral actions, and unmoderated public seller responses. Regression tests cover these permission and workflow cases. The remaining Phase 3 contract dependency is a referral-opening RPC after both buyer and recipient consent; Phase 4 records acceptance but cannot create that enquiry under the frozen contract.
 
-## Current evidence and blockers
+## Local verification environment
 
-Independent calculation, transition and comparison tests pass (10/10); typecheck passes. No Phase 3 branch/PR appeared in the remote ref check on 2026-11-10, and no transferred contract/migrations are in this checkout. No P4 migration, UI, integrated E2E, CI or independent review is complete. No hosted change, push, merge or deployment was made.
+All database work uses `.p4-local/supabase` with project ID `mitra-phase4-isolated`, ports 55520–55529. The unexplained shared stack on 54421–54429 and hosted staging were not reset or migrated. Only synthetic test accounts and content are used. Local migration history has versions 1–16 in order. Final test counts and any failures belong in the handoff report after the full run.
 
-## Contract snapshot review (2026-11-10)
+## Deployment gate
 
-Read Claude's `platform/docs/contracts/phase3-phase4.md` version `p3p4-contract/1.0`, SHA-256 `2123C9F07F2192F1CCCA42B116C9A1FA96FF319ADAE4BE18D88053632606E1A1`, together with uncommitted migrations 000012–000014 in `MITRA-Claude`. This is an acknowledgement of the read-only working snapshot, not a Git commit SHA or final freeze. It confirms Claude owns the single `enquiries` table and P4 starts at migration 000015. My proposal's client idempotency key for enquiry opening is superseded by P3's one-open-pair unique index. P3 opens on listing contact or an invited seller's `interested`/`question` response; `declined` creates none. A business org may be the buyer. P4 owns enquiry status/version after opening. Hidden resources return 404. The contract and schema agree on the stable ID, immutable participants, status vocabulary and helper. No blocking incompatibility with the independent quote modules was found. Recheck SHA and migration diff after Claude commits its review fixes.
+Before Friday's staging deployment, reconcile the existing hosted migration-history version mismatch without reset/reapply, obtain the Phase 3-owned referral-opening interface (or explicitly defer referral handoff), review the final diff and tests, then seek the user's authorization for hosted migrations and any push or merge. Production remains untouched.

@@ -172,7 +172,7 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await expect(ap).toHaveURL(/\/enquiries\/[0-9a-f-]{36}/);
   await expect(ap.getByRole('heading', { level: 1 })).toHaveText(reqTitle);
   await expect(ap.locator('main')).toContainText('We can do this in three weeks.');
-  await expect(ap.locator('main')).toContainText(t('enq.notChatYet'));
+  await expect(ap.getByRole('heading', { name: t('p4.conversation') })).toBeVisible();
 
   const db = await sql<{ status: string; enquiry_id: string | null }>(
     `select status::text, enquiry_id from public.request_seller_matches where request_id = $1 and seller_org_id = $2`,

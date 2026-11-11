@@ -138,8 +138,8 @@ select is_empty(
 select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname in ('public', 'private') and has_function_privilege('anon', p.oid, 'EXECUTE')),
-  array['get_listing', 'search_listings'],
-  'S7.3 anon can execute only the two public directory reads (search_listings, get_listing) and nothing else in public or private');
+  array['get_listing', 'list_published_business_reviews', 'search_listings'],
+  'S7.3 anon can execute only the three public directory reads and nothing else in public or private');
 
 select is_empty(
   $$ select n.nspname || '.' || c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
@@ -155,13 +155,13 @@ select is(
   (select array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'EXECUTE')),
-  array['accept_invitation(p_token text)', 'create_invitation(p_org uuid, p_email text, p_role member_role)',
+  ARRAY(SELECT x FROM unnest(ARRAY['accept_invitation(p_token text)', 'create_invitation(p_org uuid, p_email text, p_role member_role)',
         'create_org(p_type org_type, p_name text)', 'decide_claim(p_claim uuid, p_decision text, p_reason text, p_expected_version integer)',
         'end_request(p_request uuid, p_status text, p_reason text)', 'enquiry_parties(p_enquiry uuid)', 'find_candidates(p_request uuid, p_broaden boolean)',
         'get_document_access(p_doc uuid)', 'get_listing(p_slug text)', 'get_request_for_seller(p_request uuid, p_seller_org uuid)',
         'get_verification_summary(p_org uuid)', 'grant_consent(p_purpose text, p_version text)',
         'handle_report(p_report uuid, p_action text, p_note text)', 'invite_seller(p_request uuid, p_seller_org uuid)',
-        'list_buyer_requests(p_org uuid)', 'list_request_matches(p_request uuid)',
+        'list_buyer_requests(p_org uuid)', 'list_published_business_reviews(p_slug text)', 'list_request_matches(p_request uuid)',
         'list_seller_requests(p_seller_org uuid, p_filter text)', 'mark_notification_read(p_id uuid)',
         'open_listing_enquiry(p_buyer_org uuid, p_slug text, p_topic text, p_note text)',
         'reinstate_listing(p_org uuid, p_reason text)', 'remove_document(p_doc uuid)', 'remove_member(p_org uuid, p_user uuid)',
@@ -178,8 +178,21 @@ select is(
         'start_review(p_claim uuid)', 'submit_claim(p_org uuid, p_type claim_type, p_document_ids uuid[], p_note text)',
         'submit_listing(p_org uuid, p_expected_version integer)', 'submit_request(p_request uuid, p_expected_version integer)',
         'suspend_listing(p_org uuid, p_reason text)', 'unpublish_listing(p_org uuid)', 'withdraw_claim(p_claim uuid)',
-        'withdraw_consent(p_id uuid)', 'withdraw_listing_submission(p_org uuid)'],
-  'S7.6 authenticated can execute exactly the 46 allow-listed public RPCs');
+        'withdraw_consent(p_id uuid)', 'withdraw_listing_submission(p_org uuid)',
+        'moderate_business_review(p_review uuid, p_status review_status, p_reason text)',
+        'moderate_review_response(p_review uuid, p_approve boolean, p_reason text)',
+        'post_enquiry_message(p_enquiry uuid, p_body text, p_key text)',
+        'propose_referral(p_enquiry uuid, p_proposed_seller uuid)',
+        'record_lead_activity(p_enquiry uuid, p_stage lead_stage, p_note text, p_follow_up timestamp with time zone)',
+        'respond_to_business_review(p_review uuid, p_text text)',
+        'respond_to_quote(p_quotation uuid, p_version uuid, p_action text, p_reason text, p_expected_version integer)',
+        'respond_to_referral(p_referral uuid, p_accept boolean)',
+        'save_quote_draft(p_enquiry uuid, p_draft jsonb, p_expected_version integer)',
+        'send_quote_version(p_quotation uuid, p_expected_version integer)',
+        'submit_business_review(p_enquiry uuid, p_rating integer, p_text text)',
+        'withdraw_quote(p_quotation uuid, p_expected_version integer)',
+        'seller_lead_metrics(p_seller_org uuid)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 60 allow-listed public RPCs');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -274,7 +287,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  26, 'S6.6 inventory: exactly the 26 expected public tables exist (new tables must come with RLS tests)');
+  34, 'S6.6 inventory: exactly the 34 expected public tables exist (new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

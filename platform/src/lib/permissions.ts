@@ -19,6 +19,7 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'listing:publish',
     'request:post',
     'request:respond',
+    'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
   ],
   manager: [
     'member:invite',
@@ -30,8 +31,9 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'listing:publish',
     'request:post',
     'request:respond',
+    'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
   ],
-  staff: ['business:edit', 'request:post', 'request:respond'],
+  staff: ['business:edit', 'request:post', 'request:respond', 'enquiry:write', 'quote:send', 'lead:manage', 'review:write'],
   viewer: [],
   admin_super: [
     'admin:users',
@@ -44,9 +46,10 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'verification:decide',
     'listing:review',
     'request:moderate',
+    'review:moderate',
   ],
   admin_ops: ['audit:read', 'report:view'],
-  admin_review: ['verification:review', 'verification:decide', 'listing:review'],
+  admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate'],
   admin_content: ['programme:publish'],
   admin_support: ['case:reply', 'request:moderate'],
 };

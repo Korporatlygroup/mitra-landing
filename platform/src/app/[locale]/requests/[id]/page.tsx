@@ -117,6 +117,7 @@ export default async function RequestDetailPage({
         </Link>
       </p>
       <h1>{r.title}</h1>
+      <p><Link href={`/requests/${id}/quotes`} locale={locale}>{t('p4.compareTitle')}</Link></p>
       <p>
         <StatusChip status={open ? 'approved' : r.status === 'removed' ? 'rejected' : 'none'} label={t(`req.status.${r.status}`)} />
       </p>

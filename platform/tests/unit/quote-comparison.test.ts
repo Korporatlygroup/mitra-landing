@@ -16,4 +16,7 @@ describe('quote comparison', () => {
   it('rejects an invalid comparison set', () => {
     expect(() => compareQuotes([a], now)).toThrow();
   });
+  it('checks every displayed offer, including the fifth', () => {
+    expect(compareQuotes([a,b,{...b,id:'c'},{...b,id:'d'},{...b,id:'e',unit:'box'}],now).reasons).toContain('unit');
+  });
 });

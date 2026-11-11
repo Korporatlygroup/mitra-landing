@@ -112,6 +112,11 @@ export default async function BusinessOverviewPage({ params }: { params: Promise
             {t('biz.openRequests')}
           </Link>
         ) : null}
+        {ctx.perms.has('lead:manage') ? (
+          <Link className="big-link" href={`/orgs/${id}/business/leads`} locale={locale}>
+            {t('p4.leadsTitle')}
+          </Link>
+        ) : null}
         <Link className="big-link" href={`/orgs/${id}/business/preview`} locale={locale}>
           {t('biz.openPreview')}
         </Link>
