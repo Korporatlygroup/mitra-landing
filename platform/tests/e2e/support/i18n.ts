@@ -10,7 +10,14 @@ export function msg(locale: 'en' | 'ta' | 'ms', key: string, vars: Record<string
   if (!cache[locale]) {
     const read = (f: string) => JSON.parse(fs.readFileSync(path.join(platformDir, 'messages', f), 'utf8')) as Tree;
     // main file plus the Phase 5 area files (messages/p5/<area>.<locale>.json), merged by top-level namespace like src/i18n/messages.ts
-    cache[locale] = Object.assign(read(`${locale}.json`), ...['partner', 'buyer', 'admin', 'common'].map((x) => read(`p5/${x}.${locale}.json`)));
+    const merge = (a: Tree, b: Tree): Tree => {
+      for (const [k, v] of Object.entries(b)) {
+        const cur = a[k];
+        a[k] = typeof cur === 'object' && typeof v === 'object' ? merge(cur, v) : v;
+      }
+      return a;
+    };
+    cache[locale] = ['partner', 'buyer', 'admin', 'common'].reduce((acc, x) => merge(acc, read(`p5/${x}.${locale}.json`)), read(`${locale}.json`));
   }
   let cur: string | Tree | undefined = cache[locale];
   for (const part of key.split('.')) cur = typeof cur === 'object' ? cur[part] : undefined;

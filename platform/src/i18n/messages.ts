@@ -17,7 +17,18 @@ import msCommon from '../../messages/p5/common.ms.json';
 // Phase 5 strings live in messages/p5/<area>.<locale>.json (top-level namespaces p5partner, p5buyer, p5admin, p5common) so that
 // several people can work on them at once. They are merged here, once, for the app, the unit tests and (by file read) the browser tests.
 type Tree = Record<string, unknown>;
-const merge = (...parts: Tree[]): Tree => Object.assign({}, ...parts);
+const isTree = (v: unknown): v is Tree => typeof v === 'object' && v !== null && !Array.isArray(v);
+// Deep merge: an area file may extend a shared namespace (the Phase 5 common file adds its keys to `errors`).
+const merge = (...parts: Tree[]): Tree => {
+  const out: Tree = {};
+  for (const part of parts) {
+    for (const [k, v] of Object.entries(part)) {
+      const cur = out[k];
+      out[k] = isTree(cur) && isTree(v) ? merge(cur, v) : v;
+    }
+  }
+  return out;
+};
 
 export const MESSAGES = {
   en: merge(en, enPartner, enBuyer, enAdmin, enCommon),
