@@ -620,3 +620,72 @@ main:has(.partner-shell) {
   font-weight: 700;
   line-height: 1.2;
 }
+
+/* ===== Admin catalogue UI (Phase 5, MITRA administrators). Additive only. ===== */
+.adm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 var(--space);
+}
+.adm-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.adm-nav a:hover {
+  background: var(--surface);
+}
+.adm-nav a[aria-current='page'] {
+  border-color: var(--charcoal);
+  font-weight: 700;
+}
+.adm-stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+.adm-count {
+  margin-left: 6px;
+}
+.adm-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: var(--space) 0;
+}
+.adm-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.adm-actions summary {
+  cursor: pointer;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+.adm-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.adm-diff td {
+  vertical-align: top;
+}
+.adm-preview h3 {
+  margin-top: 0;
+}
+section .card + .card {
+  margin-top: 12px;
+}
