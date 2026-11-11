@@ -4,6 +4,7 @@
 export interface MatchNeed {
   categorySlug: string;
   quantity: string;
+  unit: string;
   requiredBy?: string | null; // ISO date
   destinationCountry?: string | null;
   specificationTerms?: string[];
@@ -18,8 +19,10 @@ export interface MatchCandidate {
   partnerOrgActive: boolean;
   productStatus: 'published' | 'other';
   categorySlug: string;
+  unit: string | null;
   moq: string | null;
   leadTimeMinDays: number | null;
+  leadTimeMaxDays: number | null;
   availability: 'available' | 'made_to_order' | 'limited' | 'unavailable' | null;
   availabilityConfirmedOn: string | null;
   specificationTerms: string[];
@@ -29,10 +32,10 @@ export interface MatchCandidate {
 }
 
 export type Exclusion = 'supplier_not_approved' | 'partner_not_approved' | 'partner_inactive' |
-  'product_not_published' | 'category_mismatch' | 'below_moq' | 'unavailable' |
+  'product_not_published' | 'category_mismatch' | 'unit_unknown' | 'unit_mismatch' | 'below_moq' | 'unavailable' |
   'destination_not_supported' | 'lead_time_incompatible';
 export type Unknown = 'moq' | 'lead_time' | 'availability_recency' | 'specifications' |
-  'export_capability' | 'certifications';
+  'export_capability' | 'certifications' | 'unit';
 
 export interface MatchResult {
   supplierId: string;
@@ -44,6 +47,8 @@ export interface MatchResult {
   /** Suitability from comparable declared fields; null when evidence is too sparse. */
   score: number | null;
   matchedFactors: number;
+  /** Share of applicable declared factors with evidence, even when score is withheld. */
+  evidenceCoverage: number;
 }
 
 export interface MatchWeights {
@@ -77,6 +82,8 @@ function wholeDays(from: string, to: string): number | null {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(from) || !/^\d{4}-\d{2}-\d{2}$/.test(to)) return null;
   const a = Date.parse(from + 'T00:00:00Z'), b = Date.parse(to + 'T00:00:00Z');
   if (!Number.isFinite(a) || !Number.isFinite(b)) return null;
+  if (new Date(a).toISOString().slice(0, 10) !== from ||
+      new Date(b).toISOString().slice(0, 10) !== to) return null;
   return Math.floor((b - a) / 86_400_000);
 }
 
@@ -92,9 +99,13 @@ export function evaluateSupplierMatch(
   if (!candidate.partnerOrgActive) exclusions.push('partner_inactive');
   if (candidate.productStatus !== 'published') exclusions.push('product_not_published');
   if (candidate.categorySlug !== need.categorySlug) exclusions.push('category_mismatch');
+  const unitsComparable = candidate.unit !== null &&
+    candidate.unit.trim().toLowerCase() === need.unit.trim().toLowerCase();
+  if (candidate.unit === null) { unknown.push('unit'); exclusions.push('unit_unknown'); }
+  else if (!unitsComparable) exclusions.push('unit_mismatch');
   if (candidate.availability === 'unavailable') exclusions.push('unavailable');
 
-  const moq = candidate.moq === null ? null : quantityMilli(candidate.moq);
+  const moq = !unitsComparable || candidate.moq === null ? null : quantityMilli(candidate.moq);
   if (moq === null) unknown.push('moq');
   else if (requestedQty < moq) exclusions.push('below_moq');
   else reasons.push('Declared minimum order quantity is compatible');
@@ -109,24 +120,27 @@ export function evaluateSupplierMatch(
   if (need.requiredBy) {
     if (days === null || candidate.leadTimeMinDays === null) unknown.push('lead_time');
     else if (candidate.leadTimeMinDays > days) exclusions.push('lead_time_incompatible');
-    else reasons.push('Declared minimum lead time fits the requested date');
+    else if (candidate.leadTimeMaxDays === null || candidate.leadTimeMaxDays > days) unknown.push('lead_time');
+    else reasons.push('Declared lead-time range fits the requested date');
   }
 
   if (exclusions.length) return {
     supplierId: candidate.supplierId, productId: candidate.productId, eligible: false,
-    exclusions, unknown, reasons, score: null, matchedFactors: 0,
+    exclusions, unknown, reasons, score: null, matchedFactors: 0, evidenceCoverage: 0,
   };
 
   let earned = weights.category, possible = weights.category, matchedFactors = 1;
   reasons.unshift('Published product category matches');
   if (moq !== null) { possible += weights.moq; earned += weights.moq; matchedFactors++; }
-  if (need.requiredBy && days !== null && candidate.leadTimeMinDays !== null) {
+  if (need.requiredBy && days !== null && candidate.leadTimeMinDays !== null &&
+      candidate.leadTimeMaxDays !== null && candidate.leadTimeMaxDays <= days) {
     possible += weights.leadTime; earned += weights.leadTime; matchedFactors++;
   }
   if (destination && candidate.exportCountries !== null) {
     possible += weights.exportCapability; earned += weights.exportCapability; matchedFactors++;
   }
-  if (candidate.availabilityConfirmedOn === null || wholeDays(candidate.availabilityConfirmedOn, asOf) === null) {
+  if (candidate.availability === null || candidate.availabilityConfirmedOn === null ||
+      wholeDays(candidate.availabilityConfirmedOn, asOf) === null) {
     unknown.push('availability_recency');
   } else {
     possible += weights.availabilityRecency;
@@ -161,10 +175,17 @@ export function evaluateSupplierMatch(
       matchedFactors++;
     }
   }
+  const applicable = weights.category + weights.moq + weights.availabilityRecency +
+    (need.requiredBy ? weights.leadTime : 0) +
+    (destination ? weights.exportCapability : 0) +
+    (requestedTerms.size ? weights.specifications : 0) +
+    (certificates.size ? weights.certificates : 0);
+  const criticalUnknown = unknown.some((u) => ['unit', 'moq', 'lead_time', 'export_capability', 'certifications'].includes(u));
   return {
     supplierId: candidate.supplierId, productId: candidate.productId, eligible: true,
     exclusions, unknown, reasons, matchedFactors,
-    score: matchedFactors >= 3 && possible > 0 ? Math.round(100 * earned / possible) : null,
+    evidenceCoverage: Math.round(100 * possible / applicable),
+    score: !criticalUnknown && matchedFactors >= 3 && possible > 0 ? Math.round(100 * earned / possible) : null,
   };
 }
 
