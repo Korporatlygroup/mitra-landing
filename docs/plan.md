@@ -40,15 +40,16 @@ Structure modelled on korporatlygroup.com.
 
 ## Page structure (one component each, `src/components/sections/`)
 1. **Nav**: logo · Programme · MITRA · Results · Journey · Interviews · Gallery · Partners · Contact
-2. **Hero**: cohort photo + short muted video loop; headline, sub-line, CTAs (Partner with us / Watch highlights → Interviews)
+2. **Hero**: cohort photo + short muted video loop; headline, sub-line, CTAs (Partner with us / Watch highlights → Journey)
 3. **About**: why INOK, what happened over the 26 days, who delivered/funded/certified it; photo in a tilted frame
 3b. **MITRA** (`Mitra.astro`): "MITRA backed it. We built it." GET Academy's delivery of the MITRA-funded programme: intro + photo, numbered "What we delivered" list (verified facts only; `verify` items hidden), closing statement band + CTA
+3b2. **KPIs** (`Kpis.astro`): "The brief, and how we delivered it". Six cards: each funded output/KPI (final report section 6 KPI table), how it was delivered, and the evidence. KPI (i) (participant count) left out on purpose
 3c. **Results** (`Results.astro`): "Real shops. Real results." 4 participant-result stats, 4 win cards, photo, paid-placement band, source line
 4. **Impact**: 26-day grid (6 face-to-face + 20 online), no dates or participant count
-5. **Curriculum**: icon grid of 9 modules/tools + hands-on photos
-6. **Journey**: Day 1 … Day 6 (topics from the final report) → 20 days implementation → certification
+5. **Curriculum**: three strands, each with an intro line; 9 modules, each with a sentence on what was taught + hands-on photos
+6. **Journey**: Day 1 … Day 6 (topics and module numbers from the final report) with a paragraph, a "They left with" line and the videographer's film of that day (long films cut into parts with part buttons, `FilmPlayer.astro`) → 20 days implementation → certification
 7. **Trainer**: Ganesh Manokara and team
-8. **Interviews** (`Interviews.astro`): two INOK interview series (vertical, 7 parts each: a tour operator and a TikTok perfume seller), one player per guest with part buttons that auto-advance; then the full Day 1 film (4 min). No guest names in page copy. Hidden if no video file exists
+8. **Interviews** (`Interviews.astro`): two INOK interview series (vertical, 7 parts each: a tour operator and a TikTok perfume seller), one player per guest with part buttons that auto-advance; then "More voices from the programme": three landscape interviews (`voice-1..3`). The Day 1 film moved to Journey Day 1. No guest names in page copy. Hidden if no video file exists
 9. **Gallery**: 12–24 photos/stills, filterable by day
 10. **Partners and accreditation**: SEGi, HRDF, MDEC, TEN (+ MITRA if permitted)
 11. **Contact / CTA**: two paths (learn and grow digitally · bring INOK to your community), each a mailto to tech@korporatlygroup.com with its own subject
@@ -56,7 +57,7 @@ Structure modelled on korporatlygroup.com.
 
 ## Media status (from `content/media.json`)
 Local media covers **8 and 9 Jul only**: 13 photos + one 4-min Day 1 montage. Gaps:
-- Journey days 10–13 Jul → text-only timeline items.
+- Journey: the videographer's day films for Days 1–6 (`interview-day1`, `film-day2-1..3`, `film-day3-1..2`, `film-day4`, `film-day5-1..2`, `film-day6-1..2`) and interviews `voice-1..3`, from Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4 (uploaded by tech@ 2026-11-11; DAY 4 and DAY 5 are uploaded twice, identical). Encoded 720p with sound, cut into parts of ≤ ~4 min to stay under 25 MiB. Download that folder, rename to int-1..3.mp4 / day-1..6.mp4 and pass it as `--src` to rebuild.
 - Interviews: 14 series parts (`series-tour-1..7`, `series-perfume-1..7`) from Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl ("Yashodaran edited", "Letchumy edited"), encoded 540x960 with sound; plus the Day 1 film. To rebuild, download that folder and pass it as `--src`. Consent for guests on camera: pending.
 - Certification and placement photos: none yet.
 - Partner logos (GET Academy, SEGi, HRDF, MDEC, TEN) → need official files from the brand owners.
@@ -74,4 +75,4 @@ More footage is probably in Drive "MITRA 2026" (not accessible from the connecte
 ## Workflow
 LOCAL session = media (contact sheets → shortlist → `tools/optimize_media.py` → `media.json`).
 CLOUD session = code only, from `site.json` + `media.json` text. See `CLAUDE.md`.
-Media budget: images < 400 KB, clips < 8 MB, `public/media/` < 100 MB total (videos are preload="none", so they only download on play). Long videos → bitrate cap (`maxrate`) to stay under the host's 25 MiB per-file limit, or YouTube/Vimeo.
+Media budget: images < 400 KB, clips < 8 MB, `public/media/` < 250 MB total (raised 2026-11-11 for the day films) (videos are preload="none", so they only download on play). Long videos → bitrate cap (`maxrate`) to stay under the host's 25 MiB per-file limit, or YouTube/Vimeo.

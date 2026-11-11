@@ -1,0 +1,53 @@
+---
+// The programme's funded outputs and KPIs, each with how it was delivered and the evidence.
+// Wording mirrors the final report's KPI table (site.json → kpis._note); no participant counts.
+import site from '../../../content/site.json';
+
+const { kpis } = site;
+---
+
+<section class="section kpis" id="kpis">
+  <div class="container">
+    <div class="section__head">
+      <p class="kpis__eyebrow" data-reveal>{kpis.eyebrow}</p>
+      <h2 data-reveal style="--d:80">{kpis.heading}</h2>
+      <p class="lead" data-reveal style="--d:140">{kpis.intro}</p>
+    </div>
+
+    <ol class="kpi-list">
+      {kpis.items.map((k, i) => (
+        <li class="kpi" data-reveal style={`--d:${80 + i * 70}`}>
+          <span class="kpi__num" aria-hidden="true">{String(i + 1).padStart(2, '0')}</span>
+          <div class="kpi__body">
+            <p class="kpi__label">{kpis.labels.target}</p>
+            <h3>{k.target}</h3>
+            <p class="kpi__label kpi__label--how">{kpis.labels.how}</p>
+            <p class="kpi__how">{k.how}</p>
+            <p class="kpi__evidence"><span>{kpis.labels.evidence}</span> {k.evidence}</p>
+          </div>
+        </li>
+      ))}
+    </ol>
+  </div>
+</section>
+
+<style>
+  .kpis__eyebrow { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+  .kpi-list { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; counter-reset: none; }
+  @media (min-width: 760px) { .kpi-list { grid-template-columns: repeat(2, 1fr); } }
+  @media (min-width: 1150px) { .kpi-list { grid-template-columns: repeat(3, 1fr); } }
+  .kpi {
+    display: flex; gap: 1rem; align-items: flex-start; padding: 1.4rem 1.35rem;
+    border-radius: var(--radius-lg); background: var(--surface); border: 1px solid var(--border);
+    box-shadow: var(--shadow); border-top: 5px solid var(--brand);
+  }
+  .kpi:nth-child(even) { border-top-color: var(--accent); }
+  .kpi__num { flex: none; font: 750 1.6rem/1 var(--font-display); font-stretch: 90%; color: var(--accent-text); padding-top: 0.15rem; }
+  .kpi__body { display: grid; gap: 0.25rem; }
+  .kpi__label { margin: 0; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--text-muted); }
+  .kpi__label--how { margin-top: 0.7rem; color: var(--accent-text); }
+  .kpi h3 { margin: 0; font: 650 1.12rem/1.3 var(--font-display); }
+  .kpi__how { margin: 0; line-height: 1.55; }
+  .kpi__evidence { margin: 0.75rem 0 0; padding-top: 0.65rem; border-top: 1px dashed var(--border-strong); font-size: 0.88rem; line-height: 1.45; color: var(--text-muted); }
+  .kpi__evidence span { font-weight: 700; color: var(--text); }
+</style>

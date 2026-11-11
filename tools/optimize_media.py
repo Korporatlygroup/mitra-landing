@@ -14,7 +14,7 @@ prefix "extra:" for files supplied separately, relative to --extra):
                  optional "crop": [x, y, w, h] and "blur": [[x, y, w, h], ...], fractions of the source frame.
   type logo   -> media/logos/<id>.webp (<=600 px wide, keeps transparency)
   type video  -> media/<id>.mp4 (H.264, <=720p or "max_h", CRF 28, "start"/"duration", "mute", "maxrate") + media/<id>-poster.webp ("poster_at")
-Writes back: file, w, h, bytes (+ file_sm / poster). Budget: images <400 KB, clips <8 MB, public/media <100 MB.
+Writes back: file, w, h, bytes (+ file_sm / poster). Budget: images <400 KB, clips <8 MB, public/media <250 MB.
 
 Needs: Python 3, Pillow, ffmpeg/ffprobe on PATH.
 """
@@ -24,8 +24,8 @@ from PIL import Image, ImageFilter, ImageOps
 SKIP = ["status proof", "peserta", "official documents", "financial", "b40", "m40"]
 VID = (".mp4", ".mov", ".m4v", ".avi", ".mkv", ".wmv", ".3gp")
 IMG_MAX, IMG_SM, LOGO_MAX = 1920, 800, 600
-# Total covers on-demand video too (preload="none"); 14 interview parts take ~52 MB of it.
-IMG_BUDGET, CLIP_BUDGET, TOTAL_BUDGET = 400_000, 8_000_000, 100_000_000
+# Total covers on-demand video too (preload="none"): interview series and day films are most of it.
+IMG_BUDGET, CLIP_BUDGET, TOTAL_BUDGET = 400_000, 8_000_000, 250_000_000
 
 repo = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 ap = argparse.ArgumentParser()
@@ -156,4 +156,4 @@ with open(args.media, "w", encoding="utf-8") as fh:
 shutil.rmtree(work, ignore_errors=True)
 
 total = sum(os.path.getsize(os.path.join(d, f)) for d, _, fs in os.walk(out) for f in fs)
-print(f"\n{done} built. public/media = {total / 1e6:.1f} MB" + ("  ! over 100 MB budget" if total > TOTAL_BUDGET else ""))
+print(f"\n{done} built. public/media = {total / 1e6:.1f} MB" + ("  ! over 250 MB budget" if total > TOTAL_BUDGET else ""))

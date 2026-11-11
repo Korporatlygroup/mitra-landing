@@ -66,7 +66,7 @@
       },
       {
         "label": "Watch highlights",
-        "href": "#interviews",
+        "href": "#journey",
         "style": "secondary",
         "videoUrl": null
       }
@@ -124,7 +124,7 @@
   },
   "curriculum": {
     "heading": "What participants learned",
-    "intro": "Every module ended with participants applying it to their own business.",
+    "intro": "Three strands ran through the six days. Every lesson was taught, demonstrated, then applied to the participant's own business before the session ended, so nobody went home with theory alone.",
     "images": [
       "hands-worksheet",
       "hands-laptop",
@@ -136,54 +136,66 @@
         "modules": [
           {
             "title": "Digital marketing strategy",
-            "icon": "compass"
+            "icon": "compass",
+            "text": "How online marketing brings in customers, and how to set goals, choose the right channels and measure what works when time and budget are tight."
           },
           {
             "title": "Knowing your target customer",
-            "icon": "target"
+            "icon": "target",
+            "text": "Building a customer persona: who buys, where they spend time online, what problem the product solves for them and what makes them act."
           },
           {
             "title": "Business and product positioning",
-            "icon": "layers"
+            "icon": "layers",
+            "text": "What makes their product different, how to say it in one line, and how to present it so it stands out from the competition."
           }
-        ]
+        ],
+        "intro": "Before any posting, a plan. Participants learned to think like marketers about their own shop."
       },
       {
         "title": "Content and social",
         "modules": [
           {
             "title": "Video editing with CapCut",
-            "icon": "video"
+            "icon": "video",
+            "text": "Shooting and editing short vertical videos on a phone: cuts, captions, music and an opening that holds attention."
           },
           {
             "title": "Social media content",
-            "icon": "image"
+            "icon": "image",
+            "text": "Planning what to post and when, writing captions that sell, and recording, publishing and going live on TikTok."
           },
           {
             "title": "Facebook and Instagram marketing",
-            "icon": "share"
+            "icon": "share",
+            "text": "Setting up and naming a business page, building a following, and turning followers into customers with posts and stories."
           }
-        ]
+        ],
+        "intro": "Then the content that does the selling, made on the phone in their pocket."
       },
       {
         "title": "Ads, AI and selling",
         "modules": [
           {
             "title": "Google Ads",
-            "icon": "search"
+            "icon": "search",
+            "text": "How paid search works, how to reach people already searching for what they sell, and how to keep spending under control."
           },
           {
             "title": "ChatGPT for business",
-            "icon": "sparkles"
+            "icon": "sparkles",
+            "text": "Using AI as a daily assistant to draft captions, product descriptions, video scripts and content ideas in minutes."
           },
           {
             "title": "Selling on Shopee and Lazada",
-            "icon": "cart"
+            "icon": "cart",
+            "text": "Choosing products, finding suppliers and setting up a marketplace shop, so customers can find and buy beyond the participant's own followers."
           }
-        ]
+        ],
+        "intro": "Finally, the tools that widen the reach and close the sale."
       }
     ],
-    "_note": "Grouping is editorial (order unchanged from the programme design list). Edit titles freely."
+    "_note": "Module list from the programme design; descriptions expand the final report's schedule (section 3). Keep descriptions to what was taught; no outcome claims here (those live in results/kpis)."
   },
   "journey": {
     "heading": "The 26-day journey",
@@ -191,65 +203,104 @@
       {
         "date": "Day 1",
         "phase": "inclass",
+        "module": "Modules 1 and 2",
         "image": "hero-01",
+        "film": [
+          "interview-day1"
+        ],
         "title": "Know yourself",
-        "text": "Digital-marketing fundamentals and a business persona for each participant, built around the one business they would grow all programme. First videos edited in CapCut."
+        "text": "The programme opened with the fundamentals of digital marketing, then turned straight to the participants themselves. Each one chose the single business they would grow for the rest of the programme and built a persona for it: who runs it, what it sells and why that matters to a customer. Before the day was out, they were editing their first short videos in CapCut, step by step.",
+        "takeaway": "a clear picture of their own business, and their first edited video."
       },
       {
         "date": "Day 2",
         "phase": "inclass",
+        "module": "Module 3",
         "image": "day2-wide",
+        "film": [
+          "film-day2-1",
+          "film-day2-2",
+          "film-day2-3"
+        ],
         "title": "Know your product",
-        "text": "Facebook and Instagram pages set up, Google Ads, and ChatGPT for writing and planning content."
+        "text": "Participants set up their business pages on Facebook and Instagram, from naming the page to deciding what to post. Trainers then walked them through Google Ads: how paid search works, who sees an ad and what it costs to reach them. The day closed with ChatGPT as a working tool for captions, product descriptions and content ideas.",
+        "takeaway": "business pages ready to use, and an AI assistant for everyday content."
       },
       {
         "date": "Day 3",
         "phase": "inclass",
+        "module": "Modules 3 and 4",
         "image": null,
+        "film": [
+          "film-day3-1",
+          "film-day3-2"
+        ],
         "title": "Know your customer",
-        "text": "Hands-on video production: participants recorded and published informational videos on TikTok, in class."
+        "text": "The focus moved from the product to the people who buy it. Participants worked out who their customer is and what makes them stop scrolling, then put it into practice: they recorded informational videos and uploaded them to TikTok during the session, with trainers on hand to help.",
+        "takeaway": "videos published on their own TikTok accounts, made in class."
       },
       {
         "date": "Day 4",
         "phase": "inclass",
+        "module": "Modules 5 and 6",
         "image": null,
+        "film": [
+          "film-day4"
+        ],
         "title": "Know your place",
-        "text": "Choosing TikTok topics that sell, and running live-streams."
+        "text": "Day four was about where to show up online and what to say there. Participants learned how to choose TikTok topics that sell, filmed content out on location, and learned to run live-streams: setting up, holding an audience and turning viewers into buyers.",
+        "takeaway": "a plan for TikTok content, and the confidence to go live."
       },
       {
         "date": "Day 5",
         "phase": "inclass",
+        "module": "Module 6",
         "image": null,
+        "film": [
+          "film-day5-1",
+          "film-day5-2"
+        ],
         "title": "Know your strategy",
-        "text": "Selling on Shopee and Lazada: choosing products, finding suppliers and setting up shop."
+        "text": "Next came the marketplaces. Participants learned how Shopee and Lazada work for a small seller: choosing products that will sell, finding suppliers they can rely on, and setting up a shop that customers trust.",
+        "takeaway": "a way to sell online beyond their own followers."
       },
       {
         "date": "Day 6",
         "phase": "inclass",
+        "module": "Module 4",
         "image": null,
+        "film": [
+          "film-day6-1",
+          "film-day6-2"
+        ],
         "title": "Go viral",
-        "text": "A viral-marketing challenge, product branding, and live selling sessions on TikTok."
+        "text": "The last classroom day pulled the week together. A viral-marketing challenge put every skill to the test, a hands-on product-branding session showed how presentation sells, and participants ran live selling sessions on TikTok.",
+        "takeaway": "branding that makes a product stand out, tested live."
       },
       {
         "date": "20 days",
         "phase": "online",
         "image": null,
         "title": "Mentored implementation",
-        "text": "Back at their own shops, participants put the plan to work online with a mentor checking in."
+        "text": "Back at their own shops, participants put the plan to work online: posting content, going live and building their pages, with a mentor checking in along the way. This is when the first results came in, from new followers to first online sales.",
+        "takeaway": "a business that is already working online, not just a plan."
       },
       {
         "date": "Graduation",
         "phase": "online",
         "image": null,
         "title": "Certified",
-        "text": "Certificates issued by SEGi College Subang Jaya, GET Academy's strategic educational partner."
+        "text": "Participants who completed the programme received the Certified Professional in Digital Marketing Strategist certificate, issued by SEGi College Subang Jaya, GET Academy's strategic educational partner. Trainees then moved on to paid placements running live digital-marketing projects."
       }
     ],
-    "_note": "Day topics from the final report's delivery schedule (Laporan Akhir section 3). No calendar dates.",
+    "_note": "Day topics and module numbers from the final report's delivery schedule (Laporan Akhir section 3, Lampiran E3). Films: the videographer's day films (media film-dayN*, Day 1 = interview-day1); a step's film replaces its photo when the file exists. No calendar dates or attendance counts.",
     "phases": {
       "inclass": "In class, Ipoh",
       "online": "Online, with a mentor"
-    }
+    },
+    "intro": "Six days in the classroom in Ipoh, then twenty days putting it to work. Each day built on the one before, and every lesson was applied to the participant's own business before the session ended. Our videographer filmed every day: press play on any day to see it.",
+    "takeawayLabel": "They left with:",
+    "filmCaption": "Filmed on {day} by the programme videographer."
   },
   "trainer": {
     "heading": "Led by practitioners",
@@ -609,15 +660,25 @@
   "interviews": {
     "eyebrow": "Interviews",
     "heading": "In their own words",
-    "intro": "Sit down with the business owners of Idhu Namma Oru Kedai: what they sell, what it took to start, and what keeps them going. Each conversation runs in seven short parts.",
+    "intro": "Sit down with the business owners of Idhu Namma Oru Kedai: what they sell, what it took to start, and what keeps them going. Two conversations run as short series, and more participants speak to camera below.",
     "items": [
       {
-        "media": "interview-day1",
-        "title": "The Day 1 film",
-        "text": "Participants and trainers on the first day, in the lounge and the training room."
+        "media": "voice-1",
+        "title": "From camera-shy to making videos",
+        "text": "Facing a camera felt daunting at first. Patient, step-by-step lessons in CapCut changed that. In Tamil."
+      },
+      {
+        "media": "voice-2",
+        "title": "Not just notes: doing it from day one",
+        "text": "Other courses meant taking notes. Here, participants made and edited real videos from the first day and used ChatGPT to write their copy. In Tamil."
+      },
+      {
+        "media": "voice-3",
+        "title": "Two days in",
+        "text": "Recorded after Day 2: why the step-by-step CapCut lessons and the Facebook and Instagram session were worth it. In Tamil and English."
       }
     ],
-    "_note": "series: vertical interview episodes from Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl, one player per guest with part buttons. No guest names in page copy (handoff rule), though guests say their names on camera. Parts without a file are skipped; a series with none is hidden. items: landscape films.",
+    "_note": "Series: Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl. Voices: Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4 (files 1, 2, 3). Voice captions paraphrase machine transcripts (Whisper small, Tamil; 2026-11-11): no income or figures mentioned; voice-2 states their own name on camera. No guest names in page copy. The Day 1 film now plays in the Journey (Day 1).",
     "series": [
       {
         "key": "tour",
@@ -649,6 +710,50 @@
           "series-perfume-7"
         ]
       }
-    ]
+    ],
+    "itemsHeading": "More voices from the programme"
+  },
+  "kpis": {
+    "eyebrow": "Programme KPIs",
+    "heading": "The brief, and how we delivered it",
+    "intro": "INOK was funded against a clear set of outputs and KPIs. Here is each one, the work that delivered it, and the evidence on record.",
+    "labels": {
+      "target": "The target",
+      "how": "How we delivered it",
+      "evidence": "Evidence:"
+    },
+    "items": [
+      {
+        "target": "Plan, run and evaluate social-media strategies and marketing campaigns",
+        "how": "Six days of strategy modules covering customer personas, Facebook, Instagram, Google Ads, ChatGPT, TikTok and the marketplaces, each one applied to the participant's own business the same day.",
+        "evidence": "daily schedule, signed attendance sheets, photos and day films."
+      },
+      {
+        "target": "Hands-on coaching to develop and launch digital tools for the business",
+        "how": "Participants recorded and published their own TikTok videos and ran live sessions in class, and launched portfolio websites for their businesses. One built a complete site within the six days.",
+        "evidence": "published videos, live sessions and portfolio websites."
+      },
+      {
+        "target": "Learn entrepreneurship methods: strategy, marketing and operations",
+        "how": "Six modules took each participant from Know Yourself to Know Your Strategy: positioning the business, understanding the customer, choosing products to sell and finding suppliers.",
+        "evidence": "module schedule and participant handover reports."
+      },
+      {
+        "target": "Every participant uses e-commerce and digital tools",
+        "how": "TikTok, Shopee, Lazada, CapCut and ChatGPT were taught and practised hands-on in session, on participants' own phones and accounts, not just demonstrated.",
+        "evidence": "schedule, photos and day films."
+      },
+      {
+        "target": "Make products reachable through marketing apps",
+        "how": "Participants created or grew TikTok accounts and launched portfolio websites. One TikTok shop made its first online sales within days of the classroom phase.",
+        "evidence": "participants' account screenshots in the final report."
+      },
+      {
+        "target": "Stronger marketing skills and employability",
+        "how": "Before-and-after quizzes tracked progress in business goals, online presence, customer insight and content creation. Trainees then moved on to paid placements of about six months.",
+        "evidence": "quiz results and placement records."
+      }
+    ],
+    "_note": "Targets paraphrase the grant's outputs and KPIs (Lampiran C) as set out in the final report's KPI table (section 6); 'how' and 'evidence' follow that table's achievement column. KPI (i) (a participant-count target) is deliberately left out: no participant counts on the page (user decision 2026-11-10). The quiz result count is not shown."
   }
 }

@@ -1,0 +1,89 @@
+---
+// A 16:9 film player. Films cut into parts (to stay under the host's 25 MiB file limit) get part
+// buttons; when a part ends, the next one plays. Without JS only part 1 shows.
+import type { Part } from '../lib/content';
+
+interface Props { parts: Part[]; label: string }
+const { parts, label } = Astro.props;
+const first = parts[0];
+---
+
+{first && (
+  <div class="film" data-parts>
+    <div class="film__frame">
+      <video
+        class="film__video"
+        width={first.w}
+        height={first.h}
+        poster={first.poster}
+        preload="none"
+        playsinline
+        controls
+        aria-label={first.alt}
+        data-parts-video
+      >
+        <source src={first.src} type="video/mp4" />
+      </video>
+    </div>
+    {parts.length > 1 && (
+      <div class="film__parts" role="group" aria-label={`${label}: choose a part`}>
+        {parts.map((p, n) => (
+          <button
+            type="button"
+            class="film__part"
+            aria-pressed={n === 0 ? 'true' : 'false'}
+            data-src={p.src}
+            data-poster={p.poster}
+            data-alt={p.alt}
+            aria-label={`Part ${n + 1} of ${parts.length}`}
+          >
+            Part {n + 1}
+          </button>
+        ))}
+      </div>
+    )}
+  </div>
+)}
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-parts]').forEach((root) => {
+    const video = root.querySelector<HTMLVideoElement>('[data-parts-video]');
+    const buttons = [...root.querySelectorAll<HTMLButtonElement>('.film__part')];
+    if (!video || buttons.length === 0) return;
+    let current = 0;
+
+    const select = (i: number, play: boolean) => {
+      const b = buttons[i];
+      if (!b?.dataset.src) return;
+      current = i;
+      buttons.forEach((x, n) => x.setAttribute('aria-pressed', String(n === i)));
+      video.querySelector('source')?.remove();
+      if (b.dataset.poster) video.poster = b.dataset.poster;
+      if (b.dataset.alt) video.setAttribute('aria-label', b.dataset.alt);
+      video.src = b.dataset.src;
+      video.load();
+      if (play) video.play().catch(() => {});
+    };
+
+    buttons.forEach((b, i) => b.addEventListener('click', () => select(i, true)));
+    video.addEventListener('ended', () => {
+      if (current < buttons.length - 1) select(current + 1, true);
+    });
+  });
+</script>
+
+<style>
+  .film__frame { overflow: hidden; border-radius: var(--radius); background: #000; }
+  .film__video { display: block; width: 100%; height: auto; aspect-ratio: 16 / 9; background: #000; }
+  .film__parts { display: flex; flex-wrap: wrap; gap: 0.45rem; margin-top: 0.7rem; }
+  .film__part {
+    min-height: 40px; padding: 0 0.85rem; border-radius: 10px; cursor: pointer;
+    font: 650 0.92rem/1 var(--font-sans); color: var(--text);
+    background: var(--surface-2); border: 1.5px solid var(--border);
+    transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+  }
+  .film__part:hover { border-color: var(--accent); }
+  .film__part:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+  .film__part[aria-pressed='true'] { background: var(--accent); border-color: var(--accent); color: #fff; }
+  :global(html:not(.js)) .film__parts { display: none; }
+</style>
