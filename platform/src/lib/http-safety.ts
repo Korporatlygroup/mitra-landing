@@ -20,3 +20,45 @@ export function contentDispositionAttachment(fileName: string): string {
 }
 
 export const ALLOWED_DOWNLOAD_MIME = new Set(['application/pdf', 'image/png', 'image/jpeg']);
+
+// ---------------------------------------------------------------------------------------------------------------
+// Phase 5: guards for cookie-authenticated POST route handlers (file uploads).
+// ---------------------------------------------------------------------------------------------------------------
+
+type HeaderReader = { get(name: string): string | null };
+
+/**
+ * CSRF guard for cookie-authenticated POST routes. A browser always sends `Origin` on cross-site POSTs, and `Sec-Fetch-Site`
+ * on modern browsers; a request is accepted only when the Origin host equals the Host header (or the request URL host), or, without
+ * an Origin, when Sec-Fetch-Site says same-origin or none. Anything else (no signal at all, `Origin: null`, another site) is refused.
+ */
+export function isSameOriginRequest(headers: HeaderReader, requestUrl: string): boolean {
+  const origin = headers.get('origin');
+  if (origin) {
+    try {
+      const host = headers.get('host') ?? new URL(requestUrl).host;
+      return new URL(origin).host === host;
+    } catch {
+      return false;
+    }
+  }
+  const site = headers.get('sec-fetch-site');
+  return site === 'same-origin' || site === 'none';
+}
+
+/** Multipart overhead allowed on top of the file limit (boundaries, other fields). */
+export const MULTIPART_OVERHEAD_BYTES = 64 * 1024;
+
+/**
+ * Body-size guard decided from Content-Length BEFORE the body is read. A missing or invalid length is refused (chunked bodies
+ * cannot be bounded cheaply), as is anything above `maxFileBytes` plus the multipart overhead.
+ */
+export function contentLengthVerdict(headers: HeaderReader, maxFileBytes: number): 'ok' | 'missing' | 'too_large' {
+  const raw = headers.get('content-length');
+  const n = Number(raw);
+  if (!raw || !Number.isInteger(n) || n < 0) return 'missing';
+  return n > maxFileBytes + MULTIPART_OVERHEAD_BYTES ? 'too_large' : 'ok';
+}
+
+/** Content type for serving a stored product image. Only these are ever served inline. */
+export const ALLOWED_IMAGE_MIME = new Set(['image/png', 'image/jpeg', 'image/webp']);
