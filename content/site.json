@@ -611,6 +611,13 @@
         "text": "For agencies, associations and community organisations: run a certified programme for your members.",
         "cta": "Plan a programme with us",
         "subject": "Bringing INOK to our community"
+      },
+      {
+        "icon": "mic",
+        "title": "Tell your story with us",
+        "text": "We are calling on business owners to register with us so that we can tell their story to the world. Register your interest and our team will be in touch.",
+        "cta": "Register to share your story",
+        "subject": "I want to share my business story"
       }
     ]
   },
@@ -737,7 +744,7 @@
         "text": "Recorded after Day 2: why the step-by-step CapCut lessons and the Facebook and Instagram session were worth it. In Tamil and English."
       }
     ],
-    "_note": "Series: Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl. Voices: Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4 (files 1, 2, 3). Voice captions paraphrase machine transcripts (Whisper small, Tamil; 2026-11-11): no income or figures mentioned; voice-2 states their own name on camera. No guest names in page copy. Signed consent on file for everyone in the videos (user, 2026-11-11). The Day 1 film now plays in the Journey (Day 1).",
+    "_note": "Series: Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl. Voices: Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4 (files 1, 2, 3). Voice captions paraphrase machine transcripts (Whisper small, Tamil; 2026-11-11): no income or figures mentioned; voice-2 states their own name on camera. No guest names in page copy. Signed consent on file for everyone in the videos (user, 2026-11-11). The Day 1 film now plays in the Journey (Day 1). storyCall: the supervisor's required call for people to register their interest (2026-11-12); it links to the contact card 'Tell your story with us', which opens an email with its own subject.",
     "series": [
       {
         "key": "tour",
@@ -770,7 +777,14 @@
         ]
       }
     ],
-    "itemsHeading": "More voices from the programme"
+    "itemsHeading": "More voices from the programme",
+    "storyCall": {
+      "eyebrow": "Your story next",
+      "heading": "Have a business story worth telling?",
+      "text": "We are calling on business owners to register with us so that we can tell their story to the world.",
+      "cta": "Register your interest",
+      "href": "#contact"
+    }
   },
   "kpis": {
     "eyebrow": "Programme KPIs",

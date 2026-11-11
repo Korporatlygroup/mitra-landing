@@ -82,6 +82,17 @@ const { interviews } = site;
           ))}
         </div>
       )}
+
+      {interviews.storyCall && (
+        <aside class="story-call" data-reveal>
+          <div>
+            <p class="story-call__eyebrow">{interviews.storyCall.eyebrow}</p>
+            <h3>{interviews.storyCall.heading}</h3>
+            <p class="story-call__text">{interviews.storyCall.text}</p>
+          </div>
+          <a class="btn btn--dark story-call__btn" href={interviews.storyCall.href}>{interviews.storyCall.cta}</a>
+        </aside>
+      )}
     </div>
   </section>
 )}
@@ -157,4 +168,16 @@ const { interviews } = site;
   .interview figcaption { display: grid; gap: 0.2rem; margin-top: 0.9rem; }
   .interview__title { font: 650 1.15rem/1.25 var(--font-display); }
   .interview__text { color: var(--text-muted); }
+
+  /* The call for business owners to register so their story can be told. */
+  .story-call {
+    display: grid; gap: 1.25rem; align-items: center; margin-top: clamp(2.5rem, 5vw, 3.5rem);
+    padding: clamp(1.4rem, 3.5vw, 2.2rem); border-radius: var(--radius-lg);
+    background: var(--brand); color: var(--brand-ink); box-shadow: var(--shadow);
+  }
+  .story-call__eyebrow { margin: 0 0 0.35rem; font-size: 0.85rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-deep); }
+  .story-call h3 { margin: 0 0 0.5rem; font: 700 clamp(1.4rem, 2.8vw, 1.9rem)/1.15 var(--font-display); }
+  .story-call__text { margin: 0; max-width: 56ch; font-size: clamp(1.05rem, 1.6vw, 1.2rem); line-height: 1.5; }
+  .story-call__btn { justify-self: start; background: var(--brand-ink); color: #fff3df; }
+  @media (min-width: 800px) { .story-call { grid-template-columns: 1fr auto; gap: 2rem; } .story-call__btn { justify-self: end; } }
 </style>
