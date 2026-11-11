@@ -58,7 +58,7 @@ Structure modelled on korporatlygroup.com.
 ## Media status (from `content/media.json`)
 Local media covers **8 and 9 Jul only**: 13 photos + one 4-min Day 1 montage. Gaps:
 - Journey: the videographer's day films for Days 1–6 (`interview-day1`, `film-day2-1..3`, `film-day3-1..2`, `film-day4`, `film-day5-1..2`, `film-day6-1..2`) and interviews `voice-1..3`, from Drive folder 1tMk7W93BKjIQZ1elc30F3N7G8CJNJ6N4 (uploaded by tech@ 2026-11-11; DAY 4 and DAY 5 are uploaded twice, identical). Encoded 720p with sound, cut into parts of ≤ ~4 min to stay under 25 MiB. Download that folder, rename to int-1..3.mp4 / day-1..6.mp4 and pass it as `--src` to rebuild.
-- Interviews: 14 series parts (`series-tour-1..7`, `series-perfume-1..7`) from Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl ("Yashodaran edited", "Letchumy edited"), encoded 540x960 with sound; plus the Day 1 film. To rebuild, download that folder and pass it as `--src`. Consent for guests on camera: pending.
+- Interviews: 14 series parts (`series-tour-1..7`, `series-perfume-1..7`) from Drive folder 1EjtJtQHL1nCsv0b8_IBNT4xHsmpO4oTl ("Yashodaran edited", "Letchumy edited"), encoded 540x960 with sound. To rebuild, download that folder and pass it as `--src`. Consent for everyone in the videos: signed (user confirmed 2026-11-11).
 - Certification and placement photos: none yet.
 - Partner logos (GET Academy, SEGi, HRDF, MDEC, TEN) → need official files from the brand owners.
 - Trainer: which person is Ganesh is not yet identified.
@@ -69,7 +69,7 @@ More footage is probably in Drive "MITRA 2026" (not accessible from the connecte
 - Languages: EN only, or + BM (+ Tamil).
 - MITRA name/logo and SEGi logo permission.
 - Contact: tech@korporatlygroup.com (user decision 2026-11-10); add WhatsApp or a form later if wanted.
-- Participant consent for every photo and video (all `pending`).
+- Participant consent: signed for all videos (user confirmed 2026-11-11; `consent: confirmed` in media.json). Photos still marked `pending`.
 - Identify Ganesh in the photos. Supply logos, testimonials, certificate and intern photos.
 
 ## Workflow
