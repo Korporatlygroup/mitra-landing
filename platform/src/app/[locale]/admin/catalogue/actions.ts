@@ -1,6 +1,7 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { z } from 'zod';
 import { getSiteUrl } from '@/lib/env';
 import { formToObject, nonSecretValues, parseForm } from '@/lib/form';
@@ -40,6 +41,9 @@ import {
  */
 
 const done = () => revalidatePath('/', 'layout');
+
+/** The decision forms disappear once the item is decided, so the result is shown as a banner on the page the person lands on (?done=<key>). */
+const landOn = (locale: string, path: string, key: string): never => redirect(`/${locale}/admin/catalogue${path}?done=${key}`);
 
 /** Mails the owner invitation. The token never leaves the server: it is not returned, stored or logged. */
 async function mailOwnerInvite(args: { to: string; orgName: string; locale: string; token: string }): Promise<boolean> {
@@ -91,7 +95,7 @@ export async function partnerDecisionAction(_prev: FormState, formData: FormData
   const r = d.mode === 'approve' ? await approvePartner(supabase, d.orgId, d.reason ?? null) : await suspendPartner(supabase, d.orgId, d.reason!);
   if (!r.ok) return failure(r.errorKey, { reason: d.reason ?? '' });
   done();
-  return success(d.mode === 'approve' ? 'p5admin.messages.partnerApproved' : 'p5admin.messages.partnerSuspended');
+  return landOn(d.locale, '/partners', d.mode === 'approve' ? 'partnerApproved' : 'partnerSuspended');
 }
 
 /** `checks` is a repeated checkbox field, which formToObject would collapse: read it with getAll. */
@@ -109,7 +113,7 @@ export async function reviewSupplierAction(_prev: FormState, formData: FormData)
   const r = await reviewSupplier(supabase, d.supplierId, d.decision, d.reason ?? null, checks, d.expectedVersion);
   if (!r.ok) return failure(r.errorKey, { reason: d.reason ?? '' });
   done();
-  return success(d.decision === 'approve' ? 'p5admin.messages.supplierApproved' : d.decision === 'reject' ? 'p5admin.messages.supplierRejected' : 'p5admin.messages.supplierInfoRequested');
+  return landOn(d.locale, `/suppliers/${d.supplierId}`, d.decision === 'approve' ? 'supplierApproved' : d.decision === 'reject' ? 'supplierRejected' : 'supplierInfoRequested');
 }
 
 export async function reviewProductAction(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -121,7 +125,7 @@ export async function reviewProductAction(_prev: FormState, formData: FormData):
   const r = await reviewProduct(supabase, d.productId, d.decision, d.reason ?? null, d.expectedVersion);
   if (!r.ok) return failure(r.errorKey, { reason: d.reason ?? '' });
   done();
-  return success(d.decision === 'approve' ? 'p5admin.messages.productApproved' : d.decision === 'reject' ? 'p5admin.messages.productRejected' : 'p5admin.messages.productChangesRequested');
+  return landOn(d.locale, `/products/${d.productId}`, d.decision === 'approve' ? 'productApproved' : d.decision === 'reject' ? 'productRejected' : 'productChangesRequested');
 }
 
 /** Suspend or reinstate a supplier or a product, always with a reason. */
@@ -136,7 +140,7 @@ export async function suspendAction(_prev: FormState, formData: FormData): Promi
   const r = await fn(supabase, d.id, d.reason);
   if (!r.ok) return failure(r.errorKey, { reason: d.reason });
   done();
-  return success(`p5admin.messages.${d.target}${d.mode === 'suspend' ? 'Suspended' : 'Reinstated'}`);
+  return landOn(d.locale, `/${d.target}s/${d.id}`, `${d.target}${d.mode === 'suspend' ? 'Suspended' : 'Reinstated'}`);
 }
 
 export async function handleReportAction(_prev: FormState, formData: FormData): Promise<FormState> {
@@ -148,5 +152,5 @@ export async function handleReportAction(_prev: FormState, formData: FormData): 
   const r = await handleProductReport(supabase, d.reportId, d.action, d.note);
   if (!r.ok) return failure(r.errorKey, { note: d.note });
   done();
-  return success(d.action === 'dismiss' ? 'p5admin.messages.reportDismissed' : 'p5admin.messages.reportActioned');
+  return landOn(d.locale, '/reports', d.action === 'dismiss' ? 'reportDismissed' : 'reportActioned');
 }

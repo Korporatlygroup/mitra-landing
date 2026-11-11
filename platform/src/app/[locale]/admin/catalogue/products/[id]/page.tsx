@@ -4,6 +4,7 @@ import ActionForm from '@/components/ActionForm';
 import { TextArea } from '@/components/Field';
 import StatusChip from '@/components/StatusChip';
 import CatalogueAdminNav from '@/components/admin-catalogue/CatalogueAdminNav';
+import DoneBanner from '@/components/admin-catalogue/DoneBanner';
 import NoAccess from '@/components/admin-catalogue/NoAccess';
 import ProductDiffTable from '@/components/admin-catalogue/ProductDiffTable';
 import ProductPreview from '@/components/admin-catalogue/ProductPreview';
@@ -19,8 +20,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'p5admin.products.detail.title');
 }
 
-export default async function AdminProductPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function AdminProductPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale, id } = await params;
+  const sp = await searchParams;
   if (!uuidSchema.safeParse(id).success) notFound();
   const ctx = await requireCatalogueAdmin(locale, `/admin/catalogue/products/${id}`);
   const t = await getTranslations({ locale, namespace: 'p5admin' });
@@ -54,7 +62,7 @@ export default async function AdminProductPage({ params }: { params: Promise<{ l
   const submittedData = rev?.data ?? {};
   const rows = diffProductData(p.live_revision, rev?.data ?? null);
   const changed = countChanged(rows);
-  const awaiting = Boolean(rev && rev.status === 'submitted' && p.status !== 'suspended');
+  const awaiting = Boolean(rev && rev.status === 'submitted' && p.status !== 'suspended' && !p.conflict_of_interest);
   const name = rev?.data?.name ?? p.name ?? p.sku;
   const supplierName = p.supplier?.name ?? null;
 
@@ -72,6 +80,7 @@ export default async function AdminProductPage({ params }: { params: Promise<{ l
       {back}
       <h1>{name}</h1>
       <CatalogueAdminNav locale={locale} ctx={ctx} current="products" />
+      <DoneBanner locale={locale} value={sp.done} />
       <p>
         <StatusChip status={p.status} label={c(`status.product.${p.status}`)} /> <span className="chip">{p.live_revision_id ? t('products.isChange') : t('products.isNew')}</span>
       </p>
@@ -191,7 +200,7 @@ export default async function AdminProductPage({ params }: { params: Promise<{ l
         </section>
       ) : null}
 
-      {p.status !== 'suspended' && p.status !== 'draft' ? (
+      {!p.conflict_of_interest && p.status !== 'suspended' && p.status !== 'draft' ? (
         <section aria-labelledby="susp-h">
           <h2 id="susp-h">{t('products.detail.suspendHeading')}</h2>
           <p>{t('products.detail.suspendHint')}</p>
@@ -204,7 +213,7 @@ export default async function AdminProductPage({ params }: { params: Promise<{ l
           </ActionForm>
         </section>
       ) : null}
-      {p.status === 'suspended' ? (
+      {!p.conflict_of_interest && p.status === 'suspended' ? (
         <section aria-labelledby="reinst-h">
           <h2 id="reinst-h">{t('products.detail.reinstateHeading')}</h2>
           <p>{t('products.detail.reinstateHint')}</p>

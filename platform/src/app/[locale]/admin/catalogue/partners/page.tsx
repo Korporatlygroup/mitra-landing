@@ -3,6 +3,7 @@ import ActionForm from '@/components/ActionForm';
 import { Field, TextArea } from '@/components/Field';
 import StatusChip from '@/components/StatusChip';
 import CatalogueAdminNav from '@/components/admin-catalogue/CatalogueAdminNav';
+import DoneBanner from '@/components/admin-catalogue/DoneBanner';
 import NoAccess from '@/components/admin-catalogue/NoAccess';
 import Pager from '@/components/admin-catalogue/Pager';
 import { parseOffset } from '@/components/admin-catalogue/helpers';
@@ -45,6 +46,7 @@ export default async function AdminPartnersPage({
     <>
       <h1>{t('partners.title')}</h1>
       <CatalogueAdminNav locale={locale} ctx={ctx} current="partners" />
+      <DoneBanner locale={locale} value={sp.done} />
       <p>{t('partners.intro')}</p>
 
       <section aria-labelledby="provision-h">
@@ -116,9 +118,9 @@ export default async function AdminPartnersPage({
                 <p className="message message-error" role="note">
                   {t('common.conflict')}
                 </p>
-              ) : (
-                <div className="adm-actions">
-                  {p.status !== 'approved' ? (
+              ) : null}
+              <div className="adm-actions">
+                  {!p.conflict_of_interest && p.status !== 'approved' ? (
                     <details>
                       <summary>{p.status === 'suspended' ? t('partners.reinstateSummary') : t('partners.approveSummary')}</summary>
                       <ActionForm action={partnerDecisionAction} submitLabel={p.status === 'suspended' ? t('partners.reinstateButton') : t('partners.approveButton')}>
@@ -129,7 +131,7 @@ export default async function AdminPartnersPage({
                       </ActionForm>
                     </details>
                   ) : null}
-                  {p.status === 'approved' ? (
+                  {!p.conflict_of_interest && p.status === 'approved' ? (
                     <details>
                       <summary>{t('partners.suspendSummary')}</summary>
                       <p className="hint">{t('partners.suspendWarning')}</p>
@@ -153,8 +155,7 @@ export default async function AdminPartnersPage({
                       </ActionForm>
                     </details>
                   ) : null}
-                </div>
-              )}
+              </div>
             </li>
           ))}
         </ul>

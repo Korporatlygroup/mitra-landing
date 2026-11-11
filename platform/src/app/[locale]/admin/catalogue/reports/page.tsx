@@ -3,6 +3,7 @@ import ActionForm from '@/components/ActionForm';
 import { TextArea } from '@/components/Field';
 import StatusChip from '@/components/StatusChip';
 import CatalogueAdminNav from '@/components/admin-catalogue/CatalogueAdminNav';
+import DoneBanner from '@/components/admin-catalogue/DoneBanner';
 import NoAccess from '@/components/admin-catalogue/NoAccess';
 import Pager from '@/components/admin-catalogue/Pager';
 import { parseOffset } from '@/components/admin-catalogue/helpers';
@@ -43,6 +44,7 @@ export default async function AdminReportsPage({
     <>
       <h1>{t('reports.title')}</h1>
       <CatalogueAdminNav locale={locale} ctx={ctx} current="reports" />
+      <DoneBanner locale={locale} value={sp.done} />
       <p>{t('reports.intro')}</p>
       <nav aria-label={t('reports.filters')} className="link-row">
         {FILTERS.map((f) => (

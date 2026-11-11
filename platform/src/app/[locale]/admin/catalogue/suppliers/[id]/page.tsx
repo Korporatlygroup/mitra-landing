@@ -3,6 +3,7 @@ import ActionForm from '@/components/ActionForm';
 import { TextArea } from '@/components/Field';
 import StatusChip from '@/components/StatusChip';
 import CatalogueAdminNav from '@/components/admin-catalogue/CatalogueAdminNav';
+import DoneBanner from '@/components/admin-catalogue/DoneBanner';
 import NoAccess from '@/components/admin-catalogue/NoAccess';
 import { Link } from '@/i18n/navigation';
 import { reviewedSummary } from '@/lib/p5-format';
@@ -18,8 +19,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'p5admin.suppliers.detail.title');
 }
 
-export default async function AdminSupplierPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
+export default async function AdminSupplierPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ locale: string; id: string }>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
   const { locale, id } = await params;
+  const sp = await searchParams;
   if (!uuidSchema.safeParse(id).success) notFound();
   const ctx = await requireCatalogueAdmin(locale, `/admin/catalogue/suppliers/${id}`);
   const t = await getTranslations({ locale, namespace: 'p5admin' });
@@ -89,6 +97,7 @@ export default async function AdminSupplierPage({ params }: { params: Promise<{ 
       {back}
       <h1>{s.name ?? s.code}</h1>
       <CatalogueAdminNav locale={locale} ctx={ctx} current="suppliers" />
+      <DoneBanner locale={locale} value={sp.done} />
       <p>
         <StatusChip status={s.status} label={c(`status.supplier.${s.status}`)} />{' '}
         {pending ? <span className="chip adm-count">{t('suppliers.awaitingDecision')}</span> : null}
