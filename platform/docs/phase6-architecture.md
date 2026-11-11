@@ -12,7 +12,7 @@ Baseline: `integration/phase1-4` at `e0781e2302172f8b356dbe74f4543a33d203a75a`. 
 | Negotiation and samples | existing notifications, audit, private document/scanner pattern | Recipient assignment, attachment authorization and sample states |
 | Comparison and preferred selection | persistent RFQ/quote snapshots, exact numeric totals | Cross-currency comparisons and selection concurrency contract |
 | Administration | existing scoped admin permissions, conflict checks and audit | Case-based access to private negotiations |
-| Erasure | Phase 4 migration `000106` is under local review | Storage object cleanup and Phase 5 history anonymization |
+| Erasure | Phase 4 migration `000106` is committed locally as `2059941`; 1,062 database and 120 integration tests pass | Private Storage object cleanup and Phase 5 history anonymization remain integration requirements |
 
 ## Proposed state boundaries
 
