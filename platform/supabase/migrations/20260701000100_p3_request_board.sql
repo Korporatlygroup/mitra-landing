@@ -17,10 +17,15 @@ security definer
 set search_path = ''
 as $$
 declare
-  v_txt text := coalesce(new.title, '') || ' ' || coalesce(new.description, '') || ' ' || coalesce(new.target_district, '');
+  -- Best effort, not a guarantee: line breaks, tabs, no-break and zero-width spaces count as spaces; a full-width @ counts as @.
+  v_txt text := lower(translate(coalesce(new.title, '') || ' ' || coalesce(new.description, '') || ' ' || coalesce(new.target_district, '')
+                                 || ' ' || coalesce(new.unit, ''),
+                                E'\n\r\t\u00a0\u200b\uff20', '     @'));
 begin
   if new.visibility = 'eligible_sellers' and new.status = 'open' and old.status = 'draft' then
-    if v_txt ~* '[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}' or v_txt ~ '(\d[ ().-]?){9,}' then
+    if v_txt ~ '[a-z0-9._%+-]+\s?@\s?[a-z0-9-]+(\s?\.\s?|\s?dot\s?)[a-z]{2,}'
+       or v_txt ~ '(\d[\s().\-/_]{0,3}){9,}'
+       or v_txt ~ '(wa\.me|t\.me|whatsapp|telegram|https?://|www\.)' then
       perform private.raise_error('invalid', 'contact_in_public_text');
     end if;
   end if;
@@ -295,3 +300,48 @@ revoke all on function
   public.set_request_visibility(uuid, text), public.list_board_requests(uuid, text, text, integer)
   from public, anon, authenticated, service_role;
 grant execute on function public.set_request_visibility(uuid, text), public.list_board_requests(uuid, text, text, integer) to authenticated;
+
+-- A seller who can see a board request may report it before replying.
+create or replace function public.report_content(p_type text, p_target text, p_reason text, p_note text)
+returns void
+language plpgsql
+security definer
+set search_path = ''
+as $$
+declare
+  v_user uuid := auth.uid();
+  v_note text := private.clean_text(p_note, 1, 500, 'invalid_note');
+  v_org uuid;
+  v_req uuid;
+begin
+  if v_user is null then perform private.raise_error('unauthenticated'); end if;
+  if p_reason not in ('misleading', 'offensive', 'spam', 'scam', 'other') then perform private.raise_error('invalid', 'invalid_reason'); end if;
+  perform private.require_consent();
+  perform private.check_rate_limit('report:' || v_user, 20, interval '1 day');
+  if p_type = 'listing' then
+    select l.org_id into v_org from public.business_listings l where l.slug = p_target and l.live_status = 'published';
+    if v_org is null then perform private.raise_error('not_found'); end if;
+    if private.is_member(v_org) then perform private.raise_error('invalid', 'same_organisation'); end if;
+    insert into public.content_reports (target_type, listing_org_id, reporter_user_id, reason, note)
+    values ('listing', v_org, v_user, p_reason::public.report_reason, v_note);
+  elsif p_type = 'request' then
+    if p_target !~ '^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$' then perform private.raise_error('not_found'); end if;
+    v_req := p_target::uuid;
+    -- only a seller that was actually shown the request (invited, or eligible for the board) may report it
+    if not exists (select 1 from public.request_seller_matches m
+                   where m.request_id = v_req and m.status in ('invited', 'interested', 'question', 'declined')
+                     and private.has_permission(m.seller_org_id, 'request:respond'))
+       and not exists (select 1 from public.memberships mb
+                       where mb.user_id = v_user and mb.status = 'active' and private.has_permission(mb.org_id, 'request:respond')
+                         and private.board_eligible(v_req, mb.org_id)) then
+      perform private.raise_error('not_found');
+    end if;
+    insert into public.content_reports (target_type, request_id, reporter_user_id, reason, note)
+    values ('request', v_req, v_user, p_reason::public.report_reason, v_note);
+  else
+    perform private.raise_error('invalid', 'invalid_data');
+  end if;
+exception when unique_violation then
+  perform private.raise_error('conflict', 'already_reported');
+end;
+$$;

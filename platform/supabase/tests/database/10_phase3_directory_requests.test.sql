@@ -187,7 +187,7 @@ create function tt.cands(p_req uuid) returns text language sql stable as $$
   where request_id = p_req and status = 'candidate' and seller_org_id in (tt.oid('A'), tt.oid('B'), tt.oid('C'))
 $$;
 
-select plan(235);
+select plan(239);
 
 select tt.fresh_mitra();
 select tt.mkuser(n) from unnest(array[
@@ -773,5 +773,21 @@ select lives_ok($$ select public.save_listing_draft(tt.oid('A'), '{"portfolio":[
   (select draft_version from public.business_listings where org_id = tt.oid('A'))) $$, 'F6 the owner of a live page edits the examples as a draft');
 select tt.anon();
 select is((public.get_listing((public.search_listings('Alpha Uniforms Qx3', null, null))->'items'->0->>'slug')) -> 'portfolio' -> 0 ->> 'title', 'Wedding order', 'F7 the public page still shows the approved examples, not the draft');
+-- ============================ REVIEW FIXES (board) ============================
+select tt.pg();
+update public.buyer_requests set status = 'closed' where buyer_org_id = tt.oid('Q') and status = 'open';
+delete from public.rate_limit_events where key like 'reqsubmit:%' or key like 'report:%';
+select tt.mkboard('H1', 'tt_q_owner', 'key-brd-0011', 'Catering for a charity dinner', 'food-beverage', 'Selangor');
+select tt.act('tt_c_owner');
+select lives_ok($$ select public.report_content('request', tt.id('H1')::text, 'scam', null) $$, 'H1 an eligible seller can report a board request before replying');
+select tt.act('tt_a_owner');
+select throws_ok($$ select public.report_content('request', tt.id('H1')::text, 'scam', null) $$, 'PT404', 'not_found', 'H2 an ineligible seller cannot report it (no existence leak)');
+select tt.pg();
+select throws_ok($$ select tt.mkboard('H3', 'tt_q_owner', 'key-brd-0012', 'Catering for a launch party', 'food-beverage', 'Selangor', false,
+  E'Please text me on 012  345
+6789 about the menu.') $$, 'PT422', 'contact_in_public_text', 'H3 digits split by spaces or a line break are still caught');
+select tt.pg();
+select throws_ok($$ select tt.mkboard('H4', 'tt_q_owner', 'key-brd-0013', 'Catering for a gala dinner', 'food-beverage', 'Selangor', false,
+  'Write to boss @ example dot com or message wa.me/60123456789 please.') $$, 'PT422', 'contact_in_public_text', 'H4 spaced emails and chat links are caught');
 select * from finish();
 rollback;

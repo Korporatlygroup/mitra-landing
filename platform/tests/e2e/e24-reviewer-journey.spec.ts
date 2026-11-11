@@ -121,16 +121,16 @@ for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
     await expect(op.locator('main')).toContainText(locale === 'en' ? /Documents reviewed by MITRA on .+ for: business registration details/ : t('claimScope.business_registration'));
     await ctx.close();
 
-    // Email: fixed EN + TA subject (no reason in it), the reason only quoted in the body, in both languages.
+    // Email: fixed EN + TA + MS subject (no reason in it), the reason only quoted in the body, in every language.
     const mail = await waitForMail(sub.owner.email, { match: /auth|verification/ });
-    expect(mail.subject).toBe(`${msg('en', 'email.decision.subject')} / ${msg('ta', 'email.decision.subject')}`);
+    expect(mail.subject).toBe(`${msg('en', 'email.decision.subject')} / ${msg('ta', 'email.decision.subject')} / ${msg('ms', 'email.decision.subject')}`);
     expect(mail.subject).not.toContain(reason);
-    for (const l of ['en', 'ta'] as const) {
+    for (const l of ['en', 'ta', 'ms'] as const) {
       expect(mail.text).toContain(msg(l, 'email.decision.reason', { reason: `“${reason}”` }));
       expect(mail.text).toContain(msg(l, 'email.decision.approve'));
     }
     expect(mail.text).toContain(`/en/orgs/${sub.orgId}/business/verification`);
-    expect(mail.text.split(reason).length - 1).toBe(2); // once per language, always quoted
+    expect(mail.text.split(reason).length - 1).toBe(3); // once per language, always quoted
   });
 }
 

@@ -60,7 +60,8 @@ export async function submitRequestAction(_prev: FormState, formData: FormData):
   const { supabase, user } = await actionUser();
   if (!user) return failure('unauthenticated');
   const vis = await setRequestVisibility(supabase, p.data.requestId, p.data.visibility);
-  if (!vis.ok) return failure(vis.errorKey);
+  // A retry after the request is already open is harmless: the submit below answers with success.
+  if (!vis.ok && vis.errorKey !== 'request_not_editable') return failure(vis.errorKey);
   const r = await submitRequest(supabase, p.data.requestId, p.data.expectedVersion);
   if (!r.ok) return failure(r.errorKey);
   revalidatePath('/', 'layout');
