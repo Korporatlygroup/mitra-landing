@@ -15,7 +15,6 @@ let deadPort: number;
 let ownerA: Signed;
 let ownerB: Signed;
 let orgA: string;
-let orgB: string;
 let supplierA: string;
 let productA: string;
 
@@ -28,7 +27,7 @@ beforeAll(async () => {
   stub = await startClamdStub();
   deadPort = await closedPort();
   ({ s: ownerA, org: orgA } = await partnerOwner('p5a'));
-  ({ s: ownerB, org: orgB } = await partnerOwner('p5b'));
+  ({ s: ownerB } = await partnerOwner('p5b'));
   const sup = await ownerA.client.rpc('save_supplier_draft', {
     p_org: orgA, p_supplier: null, p_expected_version: null,
     p_data: { name: 'Chennai Textiles', country: 'India', state_city: 'Chennai', main_category: 'textiles-apparel', code: uniq('SUP').slice(0, 20) },
