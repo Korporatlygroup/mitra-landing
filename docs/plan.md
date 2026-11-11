@@ -69,7 +69,7 @@ More footage is probably in Drive "MITRA 2026" (not accessible from the connecte
 - Languages: EN only, or + BM (+ Tamil).
 - MITRA name/logo and SEGi logo permission.
 - Contact: tech@korporatlygroup.com (user decision 2026-11-10); add WhatsApp or a form later if wanted.
-- Participant consent: signed for all videos (user confirmed 2026-11-11; `consent: confirmed` in media.json). Photos still marked `pending`.
+- Participant consent: signed for all videos and photos (user confirmed 2026-11-11; `consent: confirmed` in media.json).
 - Identify Ganesh in the photos. Supply logos, testimonials, certificate and intern photos.
 
 ## Workflow
