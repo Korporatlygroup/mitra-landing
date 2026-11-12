@@ -1,6 +1,6 @@
 # Phase 5 / Phase 6 contract: India-Malaysia supplier catalogue and sourcing
 
-**Contract version:** `p5p6-contract/0.2` (DRAFT, owned by Phase 5 / Claude). Baseline: `integration/phase1-4` at `e0781e2` (contract `p3p4-contract/1.2` unchanged). Nothing here is applied to hosted staging.
+**Contract version:** `p5p6-contract/1.0` (Phase 5 implemented; owned by Phase 5 / Claude; Phase 6 may add tables and columns but not change section 4 columns). Baseline: `integration/phase1-4` at `e0781e2` (contract `p3p4-contract/1.2` unchanged). Nothing here is applied to hosted staging.
 
 ## 1. Migration allocation (one authoritative sequence)
 | Versions | Owner | Use |
