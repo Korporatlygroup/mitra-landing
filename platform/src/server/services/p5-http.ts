@@ -25,6 +25,7 @@ const STATUS: Record<string, number> = {
   document_limit_reached: 409,
   partner_not_approved: 409,
   supplier_suspended: 409,
+  import_busy: 409,
   product_suspended: 409,
   product_under_review: 409,
   supplier_under_review: 409,

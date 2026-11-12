@@ -185,6 +185,7 @@
     "invalid_website": "Sila taip alamat web yang bermula dengan http:// atau https://.",
     "items_required": "Sila tambah sekurang-kurangnya satu produk.",
     "job_not_previewed": "Import ini belum sedia untuk disahkan. Sila muat naik fail sekali lagi.",
+    "import_busy": "Fail ini sedang diproses. Sila cuba lagi sebentar lagi.",
     "media_limit_reached": "Anda boleh menambah sehingga 8 gambar bagi satu produk.",
     "mixed_suppliers": "Semua produk dalam satu permintaan mesti daripada pembekal yang sama. Sila hantar permintaan berasingan untuk setiap pembekal.",
     "no_valid_rows": "Tiada baris dalam fail yang boleh diimport. Sila betulkan masalah dan muat naik semula.",

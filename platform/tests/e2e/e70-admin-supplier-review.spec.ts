@@ -17,7 +17,7 @@ import { freshCode } from './support/totp';
 import { freshContext, loginUi, startEnrolAndReadSecret, submitCode } from './support/ui';
 
 const t = (k: string, v?: Record<string, string>) => msg('en', k, v);
-const SITE = 'http://127.0.0.1:3503';
+const SITE = process.env.E2E_BASE_URL ?? 'http://127.0.0.1:3503'; // must equal the running app's SITE_URL
 
 /**
  * Journey 1: MITRA provisions a partner, the owner accepts the invitation and signs in with two-step sign-in, creates and sends a supplier,

@@ -86,7 +86,7 @@ export async function removeSupplierDocumentAction(_prev: FormState, formData: F
   if (!user) return failure('unauthenticated');
   const r = await removeSupplierDocument(supabase, p.data.docId);
   if (!r.ok) return failure(r.errorKey);
-  // The row is already gone from the partner's view; a failed object delete is retried by the clean-up job, not shown as an error.
+  // The row is already gone from the partner's view; a failed object delete is NOT retried: there is no object sweeper (see docs/contracts/phase5-phase6.md, known limits), so an orphaned object stays private and unreachable until one is built. The partner is not shown an error.
   await priv.deleteFromBucket(priv.DOCS_BUCKET, r.data);
   revalidatePath('/', 'layout');
   return success('p5partner.docs.removed');

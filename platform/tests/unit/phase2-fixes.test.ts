@@ -103,6 +103,8 @@ describe('body guard', () => {
     expect(isOversizedNonUpload('POST', big, upload)).toBe(false);
     expect(isOversizedNonUpload('POST', big, upload.replace('onboarding', 'verification') + '/')).toBe(false);
     expect(isOversizedNonUpload('POST', big, '/en/orgs/not-an-id/business/onboarding')).toBe(true);
+    expect(isOversizedNonUpload('POST', big, '/en/orgs/' + '-'.repeat(36) + '/partner/import')).toBe(true);
+    expect(isOversizedNonUpload('POST', big, '/en/orgs/94391b75-b9c5-40ec-9cc4-cb8f2bfbac86/partner/import')).toBe(false);
   });
   it('lets normal sizes, GETs and missing lengths through', () => {
     expect(isOversizedNonUpload('POST', String(MAX_PLAIN_BODY_BYTES), '/en/login')).toBe(false);
