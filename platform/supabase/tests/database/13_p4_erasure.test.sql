@@ -210,11 +210,11 @@ select is((select count(*)::int from pg_constraint c
                                  'public.business_listings'::regclass, 'public.business_profiles'::regclass)
              ),
           0, 'E0 no foreign key from a public table to organisations, users, enquiries or requests blocks deletion (NO ACTION / RESTRICT)');
-select is((select array_agg(distinct a.attname::text order by a.attname::text) from pg_constraint c
+select ok((select coalesce(array_agg(distinct a.attname::text), '{}'::text[]) from pg_constraint c
            join pg_attribute a on a.attrelid = c.conrelid and a.attnum = any (c.conkey)
-           where c.contype = 'f' and c.confrelid = 'auth.users'::regclass and c.connamespace = 'public'::regnamespace and c.confdeltype = 'n'),
-          array['accepted_by', 'actor_user_id', 'author_user_id', 'created_by', 'invited_by', 'sender_user_id']::text[],
-          'E0b every authorship column that points at auth.users is ON DELETE SET NULL');
+           where c.contype = 'f' and c.confrelid = 'auth.users'::regclass and c.connamespace = 'public'::regnamespace and c.confdeltype = 'n')
+          @> array['accepted_by', 'actor_user_id', 'author_user_id', 'created_by', 'invited_by', 'sender_user_id']::text[],
+          'E0b the Phase 1-4 authorship columns that point at auth.users are ON DELETE SET NULL (later phases may add more)');
 select is((select bool_and(tt.all_alive(w)) from unnest(array['U', 'S', 'R', 'B', 'C']) w), true, 'E0c the synthetic worlds are fully built');
 insert into tt.n select 'auditR', count(*) from public.audit_log where org_id = tt.oid('RS1');
 insert into tt.n select 'auditB', count(*) from public.audit_log where org_id = tt.oid('BB');
