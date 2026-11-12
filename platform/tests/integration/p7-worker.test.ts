@@ -177,7 +177,7 @@ describe('Journey F: outages and bad content never touch published data', () => 
     const ag = (await sql<{ agency_id: string }>(`select agency_id from public.gov_sources where id = $1`, [sourceId]))[0]!.agency_id;
     const prog = (await sql<{ id: string }>(
       `insert into public.gov_programmes(source_id,agency_id,external_key,slug,publication_state,verification_status,application_status,name)
-       values ($1,$2,$3,$4,'published','verified','open','Synthetic') returning id`, [sourceId, ag, key, `${key}-${counter}`]))[0]!.id;
+       values ($1,$2,$3,$4,'published','verified','open','Synthetic') returning id`, [sourceId, ag, key, `${key}-${Date.now()}`]))[0]!.id;
     const pages = goodPages();
     delete pages[SCHEME_URL];
     await runWorkerOnce(makeDeps(pages));
