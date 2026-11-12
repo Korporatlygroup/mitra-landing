@@ -141,17 +141,18 @@ test('E52 import: 10 rows (7 fine, 3 wrong), rejected rows, fix and upload again
   const d = (await sql<{ draft: { unit_price: string } }>(`select draft from public.products where partner_org_id = $1 and sku = 'IMP-01'`, [p.orgId]))[0]!;
   expect(d.draft.unit_price).toBe('25.50');
 
-  // the same file again returns the same job (nothing added twice)
+  // the same file again after the commit is a new job (migration 115 M2: dedupe only while previewed); nothing is added twice
   await openImport(page, p);
   await upload(page, csv(sup.code, tenRows('IMP')));
-  await expect(page).toHaveURL(new RegExp(`/partner/import/${job2}$`));
-  await expect(main(page).getByTestId('import-result')).toBeVisible();
-  expect(await jobsOf(p.orgId)).toHaveLength(2);
+  await expect(page).toHaveURL(new RegExp(`/partner/import/[0-9a-f-]{36}$`));
+  const job3 = page.url().split('/').pop()!;
+  expect(job3).not.toBe(job2);
+  expect(await jobsOf(p.orgId)).toHaveLength(3);
   expect(await sql(`select 1 from public.products where partner_org_id = $1`, [p.orgId])).toHaveLength(10);
 
   // history: both jobs, and an earlier job with its row problems
   await openImport(page, p);
-  await expect(main(page).getByTestId('import-job')).toHaveCount(2);
+  await expect(main(page).getByTestId('import-job')).toHaveCount(3);
   await expect(main(page).getByTestId('import-history')).toContainText(t('p5common.status.import.committed'));
   await checkPage(page, 'import history');
   await main(page).getByRole('link', { name: 'catalogue.csv' }).last().click();

@@ -169,6 +169,7 @@ test('E73 statistics equal the database, reports are handled, pausing hides prod
   await rp.goto('/en/admin/catalogue/partners?status=suspended');
   const pc2 = rp.locator('[data-testid=partner-card]').filter({ hasText: partner.name });
   await pc2.locator('summary', { hasText: t('p5admin.partners.reinstateSummary') }).click();
+  await pc2.locator(`#ap-${partner.orgId}`).fill('Records checked, partner reinstated.');
   await pc2.getByRole('button', { name: t('p5admin.partners.reinstateButton'), exact: true }).click();
   await expect(rp.getByTestId('done-banner')).toContainText(t('p5admin.messages.partnerApproved'));
   expect((await publicSearch(nameA)).length).toBe(1);
