@@ -708,7 +708,8 @@ create function public.gov_list_programmes(p_funding_type text default null, p_q
 returns table (
   id uuid, slug text, name text, agency_name text, funding_type text, amount_min numeric, amount_max numeric, currency text,
   application_status text, opens_on date, closes_on date, last_checked_at timestamptz, last_verified_at timestamptz,
-  info_url text, application_url text, application_channel text, summary text, is_stale boolean
+  info_url text, application_url text, application_channel text, summary text, is_stale boolean,
+  rules jsonb, verification_status text
 )
 language sql stable security definer set search_path = '' as
 $$
@@ -717,7 +718,8 @@ $$
          then 'unknown' else p.application_status end,
     p.opens_on, p.closes_on, p.last_checked_at, p.last_verified_at,
     v.data ->> 'info_url', v.data ->> 'application_url', v.data ->> 'application_channel', left(v.data ->> 'description', 600),
-    (p.last_checked_at is null or p.last_checked_at < now() - make_interval(hours => s.freshness_hours))
+    (p.last_checked_at is null or p.last_checked_at < now() - make_interval(hours => s.freshness_hours)),
+    coalesce(v.data -> 'rules', '[]'::jsonb), p.verification_status
   from public.gov_programmes p
   join public.gov_programme_versions v on v.id = p.current_version_id
   join public.gov_sources s on s.id = p.source_id

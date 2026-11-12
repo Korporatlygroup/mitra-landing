@@ -21,7 +21,10 @@ const KNOWN_KINDS = new Set([
   'enquiry_opened',
 ]);
 
+const GOV_CATEGORIES = new Set(['new_match', 'opens', 'deadline', 'rule_change', 'unavailable', 'reminder']);
+
 function targetFor(n: NotificationRow): string | null {
+  if (n.entity_type === 'gov_programme') return '/business-help/saved';
   if (n.entity_type === 'verification_claim' && n.org_id) return `/orgs/${n.org_id}/business/verification`;
   if (n.entity_type === 'listing' && n.org_id) return `/orgs/${n.org_id}/business/listing`;
   if (n.entity_type === 'buyer_request' && n.entity_id) {
@@ -34,12 +37,14 @@ function targetFor(n: NotificationRow): string | null {
 /** Notification rows with a "Mark as read" action each (RPC mark_notification_read). */
 export default async function NotificationList({ locale, items }: { locale: string; items: NotificationRow[] }) {
   const t = await getTranslations({ locale, namespace: 'notifications' });
+  const tg = await getTranslations({ locale, namespace: 'gov' });
   const fmt = await getFormatter({ locale });
   return (
     <ul className="card-list">
       {items.map((n) => {
         const key = n.kind.replace(/\./g, '_');
-        const label = t(`kinds.${KNOWN_KINDS.has(key) ? key : 'other'}`);
+        const govCat = n.kind.startsWith('gov.') ? n.kind.slice(4) : null;
+        const label = govCat && GOV_CATEGORIES.has(govCat) ? tg(`notif.${govCat}`) : t(`kinds.${KNOWN_KINDS.has(key) ? key : 'other'}`);
         return (
           <li key={n.id} className="card">
             <p style={{ margin: 0 }}>
