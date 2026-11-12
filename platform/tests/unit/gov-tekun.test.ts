@@ -37,6 +37,7 @@ describe('TEKUN extractor (SPUMI fixtures)', () => {
     expect(fields).toContain('citizenship');
     expect(c.rules.find((x) => x.field === 'age_min')).toMatchObject({ op: 'gte', value: 18 });
     expect(c.rules.find((x) => x.field === 'age_max')).toMatchObject({ op: 'lte', value: 65 });
+    expect(c.rules.filter((x) => x.field === 'registration')).toHaveLength(1);
     expect(c.rules.find((x) => x.field === 'registration')?.quote).toMatch(/SSM/);
     expect(c.rules.every((x) => x.quote.length > 0)).toBe(true);
     expect(c.rules.some((x) => x.field === 'note' && /muflis/.test(x.quote))).toBe(true);

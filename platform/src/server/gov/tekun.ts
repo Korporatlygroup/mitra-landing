@@ -125,7 +125,8 @@ function parseRules(items: string[]): TekunRule[] {
       rules.push({ field: 'age_min', op: 'gte', value: Number(age[1]), quote }, { field: 'age_max', op: 'lte', value: Number(age[2]), quote });
       matched = true;
     }
-    if (/Lesen\s*\/\s*Permit|Daftar Perniagaan/i.test(raw)) {
+    // Only the line that states the requirement ("Mempunyai Lesen / Permit / Daftar Perniagaan ..."), not any line that mentions a register.
+    if (/^Mempunyai\s+Lesen\s*\/\s*Permit/i.test(raw)) {
       rules.push({ field: 'registration', op: 'eq', value: 'licensed_or_registered', quote });
       matched = true;
     }
