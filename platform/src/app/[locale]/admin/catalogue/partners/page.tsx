@@ -127,7 +127,11 @@ export default async function AdminPartnersPage({
                         <input type="hidden" name="locale" value={locale} />
                         <input type="hidden" name="orgId" value={p.org_id} />
                         <input type="hidden" name="mode" value="approve" />
-                        <TextArea id={`ap-${p.org_id}`} name="reason" label={t('partners.noteLabel')} hint={t('partners.noteHint')} maxLength={1000} />
+                        {p.status === 'suspended' ? (
+                          <TextArea id={`ap-${p.org_id}`} name="reason" label={t('common.reasonLabel')} hint={t('common.reasonHint')} required maxLength={1000} />
+                        ) : (
+                          <TextArea id={`ap-${p.org_id}`} name="reason" label={t('partners.noteLabel')} hint={t('partners.noteHint')} maxLength={1000} />
+                        )}
                       </ActionForm>
                     </details>
                   ) : null}

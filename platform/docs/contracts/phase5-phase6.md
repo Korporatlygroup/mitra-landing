@@ -91,3 +91,21 @@ Migration `20260701000115_p5_review_fixes.sql` implements an independent review.
 - **M3 No object sweeper.** Uploaded objects live in the private buckets `verification-docs` and `catalogue-media`. A failed object delete after `remove_supplier_document` (or media removal) is not retried, and account or organisation erasure deletes the database rows but not the bucket objects. Orphaned objects stay private and unreachable (no row, no signed URL) but remain in storage until a sweeper job is built.
 - **L2 leading minus.** A leading `-` in text is still refused everywhere (`formula_text`). Allowing it for description and spec values that are never exported was skipped: it is only safe once every export path is known.
 - **Accepted / skipped from the review (no change):** L1, L4, L6, L7, L9, L10. They were judged low impact and are accepted as limits of Phase 5; revisit with the Phase 6 review.
+
+### Second review (`000116_p5_review_fixes_2`)
+Migration `20260701000116_p5_review_fixes_2.sql` (110-115 untouched; `create or replace`, same signatures and grants).
+
+**Fixed**
+- **M1** `supplier_events_select` reviewer branch uses the same predicate as `suppliers_select`: `supplier:review`, not involved with the partner, and the supplier is not a never-submitted draft.
+- **M2** `submit_supplier` no longer blocks a documents-only resubmission: `nothing_to_submit` (approved-unchanged, `rejected`, `more_info_needed`) is skipped when a clean, non-removed document was registered after the last decision event (approved, rejected, more_info_requested, reinstated).
+- **M3** `formula_text` skips only space, NBSP, soft hyphen, ZWSP, ZWNJ, ZWJ, word joiner and BOM. Tab, CR and newline are not skipped: a leading tab or CR is a formula risk again, and a blank first line before "- bullet" behaves as before 000115 (the 000115 test L2.2 was updated accordingly).
+- **M4** `private.has_partner_involvement(p_org, p_user)` returns false unless `p_user` is the caller (`auth.uid()`), so it cannot probe another user; RLS and the RPCs always pass the caller.
+- **L5 (UI)** Reinstating a suspended partner on the admin partners page requires the reason (required field), matching the database rule from 000115 M7.
+
+**Accepted lows (no change)**
+- Failed imports accumulate (each re-upload of a failed file creates a new job row).
+- A media upload racing with a supplier suspension is harmless (the media is stored but stays hidden with the product).
+- Suspending a supplier silently discards a pending resubmission (`draft_submitted_version` is cleared; the partner can resubmit after reinstatement).
+- `reinstate_supplier` / reinstating a partner does not clear `suspended_at`; the reinstated event keeps the history.
+- RLS per-row cost: the reviewer branches call `has_partner_involvement` and `has_platform_permission` per row; acceptable at Phase 5 volumes, revisit with an index or a cached check if lists grow.
+- `clean_text` rejects hidden characters (bidi marks, ZWSP, word joiner, BOM) in more places than before 000115, including Phase 3/4 text fields (additive tightening).

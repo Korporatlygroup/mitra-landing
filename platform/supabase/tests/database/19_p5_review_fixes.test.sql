@@ -260,7 +260,9 @@ select is((select status::text from public.partner_profiles where org_id = tt.oi
 select tt.act('tt_p1_owner', 'aal2');
 select tt.ids_set('S3', public.save_supplier_draft(tt.oid('P1'), null, '{"name":"Hidden Chars Ltd"}'::jsonb, 0));
 select throws_ok($$ select public.save_supplier_draft(tt.oid('P1'), tt.jid('S3'), jsonb_build_object('name', E' =SUM(1)'), 1) $$, 'PT422', 'formula_text', 'L2.1 a formula hidden behind a leading NBSP is refused');
-select throws_ok($$ select public.save_supplier_draft(tt.oid('P1'), tt.jid('S3'), jsonb_build_object('name', E'\n=cmd|x'), 1) $$, 'PT422', 'formula_text', 'L2.2 behind a leading newline');
+select tt.pg();
+select is(private.formula_text(E'\n=cmd|x'), false, 'L2.2 a leading newline is not skipped (000116 M3: behaves as before 000115)');
+select tt.act('tt_p1_owner', 'aal2');
 select throws_ok($$ select public.save_supplier_draft(tt.oid('P1'), tt.jid('S3'), jsonb_build_object('name', E'﻿+1+1'), 1) $$, 'PT422', 'invalid_name', 'L2.3 a BOM is refused');
 select throws_ok($$ select public.save_supplier_draft(tt.oid('P1'), tt.jid('S3'), jsonb_build_object('name', E'​=cmd'), 1) $$, 'PT422', 'invalid_name', 'L2.4 a zero-width space is refused');
 select throws_ok($$ select public.save_supplier_draft(tt.oid('P1'), tt.jid('S3'), jsonb_build_object('name', E'Acme ‮td.exe'), 1) $$, 'PT422', 'invalid_name', 'L2.5 a bidi override is refused');
