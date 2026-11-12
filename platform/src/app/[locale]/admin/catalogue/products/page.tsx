@@ -67,7 +67,7 @@ export default async function AdminProductsPage({
                 <dt>{t('products.revision')}</dt>
                 <dd>{p.revision_no}</dd>
                 <dt>{t('products.submittedOn')}</dt>
-                <dd>{fmt.dateTime(new Date(p.submitted_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' })}</dd>
+                <dd>{fmt.dateTime(new Date(p.submitted_at), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' })}</dd>
               </dl>
               {p.conflict_of_interest ? (
                 <p className="message message-error" role="note">

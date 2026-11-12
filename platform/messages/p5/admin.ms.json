@@ -185,7 +185,7 @@
         "suspendHint": "Menjeda akan menyembunyikan pembekal dan semua produknya daripada pembeli serta-merta.",
         "suspendButton": "Jeda pembekal",
         "reinstateHeading": "Pulihkan pembekal ini",
-        "reinstateHint": "Pembekal menjadi diluluskan semula. Produknya kekal tersembunyi sehingga rakan kongsi menerbitkannya semula.",
+        "reinstateHint": "Pembekal menjadi diluluskan semula, dan produknya yang diterbitkan ditunjukkan kepada pembeli semula.",
         "reinstateButton": "Pulihkan pembekal"
       },
       "events": {

@@ -58,7 +58,7 @@ export default async function AdminImportsPage({ params }: { params: Promise<{ l
               </p>
             </li>
           </ul>
-          <p className="muted">{t('home.generatedAt', { when: fmt.dateTime(new Date(s.generated_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' }) })}</p>
+          <p className="muted">{t('home.generatedAt', { when: fmt.dateTime(new Date(s.generated_at), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' }) })}</p>
         </>
       )}
       <h2>{t('imports.gapHeading')}</h2>

@@ -77,7 +77,7 @@ export default async function AdminSuppliersPage({
                 <dt>{t('suppliers.code')}</dt>
                 <dd>{s.code}</dd>
                 <dt>{t('suppliers.submittedOn')}</dt>
-                <dd>{s.submitted_at ? fmt.dateTime(new Date(s.submitted_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' }) : '-'}</dd>
+                <dd>{s.submitted_at ? fmt.dateTime(new Date(s.submitted_at), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' }) : '-'}</dd>
               </dl>
               {s.conflict_of_interest ? (
                 <p className="message message-error" role="note">

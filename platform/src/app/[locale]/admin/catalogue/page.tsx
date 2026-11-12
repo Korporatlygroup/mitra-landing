@@ -97,7 +97,7 @@ export default async function AdminCatalogueHome({ params }: { params: Promise<{
       ) : (
         <>
           <p className="muted">
-            {t('home.generatedAt', { when: fmt.dateTime(new Date(s.generated_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' }) })}
+            {t('home.generatedAt', { when: fmt.dateTime(new Date(s.generated_at), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' }) })}
           </p>
           <ul className="adm-stats">
             {tiles.map((x) => (

@@ -86,7 +86,7 @@ test('E70 partner provisioning, supplier submission, more information, approval 
   const pp = await pctx.newPage();
   await loginUi(pp, owner, 'en');
   await pp.goto(link1.replace(SITE, ''));
-  await expect(pp.getByRole('alert')).toContainText(t('errors.invalid_invitation'));
+  await expect(pp.locator('main [role=alert]')).toContainText(t('errors.invalid_invitation'));
   expect(Number((await sql(`select count(*)::int n from public.memberships where org_id = $1`, [orgId]))[0]!.n)).toBe(0);
 
   await pp.goto(link2.replace(SITE, ''));

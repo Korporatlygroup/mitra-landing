@@ -91,7 +91,7 @@ export default async function AdminReportsPage({
                 <dt>{t('reports.supplier')}</dt>
                 <dd>{r.supplier_name ?? '-'}</dd>
                 <dt>{t('reports.received')}</dt>
-                <dd>{fmt.dateTime(new Date(r.created_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' })}</dd>
+                <dd>{fmt.dateTime(new Date(r.created_at), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' })}</dd>
                 {r.handler_note ? (
                   <>
                     <dt>{t('reports.handlerNote')}</dt>

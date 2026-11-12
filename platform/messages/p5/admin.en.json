@@ -185,7 +185,7 @@
         "suspendHint": "Pausing hides the supplier and all of its products from buyers at once.",
         "suspendButton": "Pause supplier",
         "reinstateHeading": "Bring this supplier back",
-        "reinstateHint": "The supplier becomes approved again. Its products stay hidden until the partner publishes them again.",
+        "reinstateHint": "The supplier becomes approved again, and its published products are shown to buyers again.",
         "reinstateButton": "Reinstate supplier"
       },
       "events": {

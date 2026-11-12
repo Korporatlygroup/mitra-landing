@@ -246,25 +246,26 @@ test('E72 every admin screen and RPC refuses the wrong people (partner, buyer, v
   // ---------------------------------------------------------------- 4. a reviewer cannot decide on a partner they were involved with
   // (a) the administrator who provisioned a partner
   const pcOwner = await createUser('e72-pc-owner', { email: uniqEmail('e72pc'), name: 'E72 PC owner' });
-  const prov = await call(sup.client, 'provision_partner', { p_name: `E72 Provisioned ${Date.now().toString(36)}`, p_owner_email: pcOwner.email, p_display_name: 'E72 Provisioned' });
+  const pcName = `E72 Provisioned ${Date.now().toString(36)}`;
+  const prov = await call(sup.client, 'provision_partner', { p_name: pcName, p_owner_email: pcOwner.email, p_display_name: pcName });
   const pcClient = await enrolClient(pcOwner);
   const acc = await pcClient.client.rpc('accept_partner_invitation', { p_token: prov.token });
   expect(acc.error).toBeNull();
-  const pc = { owner: pcClient, orgId: prov.org_id as string, name: 'E72 Provisioned' };
-  const supC = await createSupplier(pc, { submit: true, name: 'E72 provisioned supplier' });
+  const pc = { owner: pcClient, orgId: prov.org_id as string, name: pcName };
+  const supC = await createSupplier(pc, { submit: true, name: `E72 provisioned supplier ${pcName.slice(-6)}` });
   const supCrow = await supplierRow(supC.id);
   const conflict = await sup.client.rpc('review_supplier', { p_supplier: supC.id, p_decision: 'approve', p_reason: null, p_checks: ['contact_reachable'], p_expected_version: supCrow.draft_submitted_version });
   expect(conflict.error?.message).toBe('conflict_of_interest');
   expect((await supplierRow(supC.id)).status).toBe('awaiting_review');
   const sPage = await (await freshContext(browser, page)).newPage();
   await actorGoto(sPage, sup, '/en/admin/catalogue/suppliers');
-  await expect(sPage.locator('[data-testid=supplier-card]').filter({ hasText: 'E72 provisioned supplier' })).toContainText(t('p5admin.common.conflict'));
+  await expect(sPage.locator('[data-testid=supplier-card]').filter({ hasText: `E72 provisioned supplier ${pcName.slice(-6)}` })).toContainText(t('p5admin.common.conflict'));
   await sPage.goto(`/en/admin/catalogue/suppliers/${supC.id}`);
   await expect(sPage.getByTestId('supplier-unavailable')).toBeVisible();
   await expect(sPage.locator('main')).not.toContainText('Ravi Kumar');
   await expect(sPage.locator('main form')).toHaveCount(0);
   await sPage.goto('/en/admin/catalogue/partners');
-  const pcCard = sPage.locator('[data-testid=partner-card]').filter({ hasText: 'E72 Provisioned' });
+  const pcCard = sPage.locator('[data-testid=partner-card]').filter({ hasText: pcName });
   await expect(pcCard).toContainText(t('p5admin.common.conflict'));
   await expect(pcCard.getByRole('button', { name: t('p5admin.partners.suspendButton'), exact: true })).toHaveCount(0);
   expect((await sup.client.rpc('suspend_partner', { p_org: pc.orgId, p_reason: 'not allowed to' })).error?.message).toBe('conflict_of_interest');

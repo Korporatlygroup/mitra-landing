@@ -57,7 +57,7 @@ export default async function AdminSupplierPage({
     );
   }
   const s = res.data;
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' });
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' });
   const pending = s.draft_submitted_version !== null;
   const d: SupplierDraftData = s.draft ?? {};
   const live = s.live;

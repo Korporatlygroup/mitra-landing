@@ -86,6 +86,7 @@ test('E71 product review: reject with reason, revise, approve, buyer finds it; e
   await expect(rp.getByTestId('product-image')).toHaveCount(1);
   await expect(rp.getByTestId('product-image')).toContainText(t('p5common.status.scan.clean'));
   // the image is served to the reviewer even though the product is not public
+  await rp.locator('[data-testid=product-image] img').scrollIntoViewIfNeeded();
   await expect.poll(() => rp.locator('[data-testid=product-image] img').evaluate((i: HTMLImageElement) => i.complete && i.naturalWidth)).toBeGreaterThan(0);
   await audit(rp, 'product detail (first submission)');
 

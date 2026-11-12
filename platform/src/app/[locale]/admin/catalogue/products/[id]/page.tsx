@@ -57,7 +57,7 @@ export default async function AdminProductPage({
     );
   }
   const p = res.data;
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC', timeZoneName: 'short' });
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'long', timeZone: 'UTC' });
   const rev = p.revision;
   const submittedData = rev?.data ?? {};
   const rows = diffProductData(p.live_revision, rev?.data ?? null);
