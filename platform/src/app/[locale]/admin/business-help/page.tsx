@@ -1,3 +1,4 @@
+import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { setProgrammeStateAction, setSettingAction } from './actions';
 import ActionForm from '@/components/ActionForm';
@@ -21,7 +22,7 @@ export default async function GovAdminHome({ params }: { params: Promise<{ local
   const ctx = await requireGovAdmin(locale, '/admin/business-help');
   const t = await getTranslations({ locale, namespace: 'gov' });
   const fmt = await getFormatter({ locale });
-  if (!ctx.canView) return <p role="alert">{t('admin.queueEmpty')}</p>;
+  if (!ctx.canView) notFound();
   const db = ctx.session.supabase;
   const when = (d: string | null) => (d ? fmt.dateTime(new Date(d), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC' : '—');
   const since = hoursAgo(24);

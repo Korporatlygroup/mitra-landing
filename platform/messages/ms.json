@@ -1391,6 +1391,7 @@
       "reminder": "Ingatkan saya pada",
       "update": "Kemas kini",
       "updated": "Dikemas kini.",
+      "markSeen": "Saya telah membaca perubahan itu",
       "changed": "Maklumat yang diterbitkan telah berubah sejak anda melihatnya kali terakhir.",
       "unavailable": "Program ini tidak lagi disenaraikan.",
       "statusLabel": "Status saya"
@@ -1403,7 +1404,7 @@
       "opens": "Program yang disimpan dibuka untuk permohonan",
       "deadline": "Program yang disimpan hampir tarikh tutup",
       "rule_change": "Program yang disimpan mengubah terma yang diterbitkan",
-      "unavailable": "Program yang disimpan tidak lagi disenaraikan",
+      "unavailable": "Program yang disimpan telah ditutup atau tidak lagi disenaraikan",
       "reminder": "Peringatan saya sendiri",
       "channels": "Cara menerima kemas kini",
       "inApp": "Dalam aplikasi",
@@ -1425,7 +1426,7 @@
       "opens": "Program yang anda simpan mungkin kini dibuka",
       "deadline": "Program yang anda simpan hampir tarikh tutup",
       "rule_change": "Program yang anda simpan mengubah terma yang diterbitkan",
-      "unavailable": "Program yang anda simpan tidak lagi disenaraikan",
+      "unavailable": "Program yang anda simpan telah ditutup atau tidak lagi disenaraikan",
       "reminder": "Peringatan anda tentang program yang disimpan"
     },
     "admin": {

@@ -86,6 +86,12 @@ export default async function SavedPage({
                 <p className="muted">{t('card.stale')}</p>
               ) : null}
               <ActionForm action={updateGovTrackingAction} submitLabel={t('saved.update')} variant="secondary">
+                {r.rules_changed ? (
+                  <div className="field field-check">
+                    <input id={`ms-${r.slug}`} type="checkbox" name="markSeen" />
+                    <label htmlFor={`ms-${r.slug}`}>{t('saved.markSeen')}</label>
+                  </div>
+                ) : null}
                 <input type="hidden" name="orgId" value={org.org.id} />
                 <input type="hidden" name="programmeId" value={r.programme_id} />
                 <input type="hidden" name="version" value={String(r.version)} />

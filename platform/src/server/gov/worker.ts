@@ -26,6 +26,8 @@ export interface WorkerDeps {
   now: () => number;
   workerId: string;
   agentToken: string;
+  /** Longest pause between two requests inside one job (default 3 s). The per-source rate limit is enforced between jobs by the database. */
+  maxGapMs?: number;
 }
 
 export interface RunSummary {
@@ -88,7 +90,7 @@ async function processJob(deps: WorkerDeps, job: Job, summary: RunSummary, robot
     summary.rejected += 1;
     return;
   }
-  const gapMs = Math.ceil(60_000 / Math.max(1, src.rate_per_minute));
+  const gapMs = Math.min(Math.ceil(60_000 / Math.max(1, src.rate_per_minute)), deps.maxGapMs ?? 3000);
   const target = new URL(job.target_url);
   const fail = async (error: string, retryAfter?: number | null) => {
     await deps.rpc('gov_fail_job', { p_job: job.id, p_worker: deps.workerId, p_error: error, p_retry_after_seconds: retryAfter ?? null });

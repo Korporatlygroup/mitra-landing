@@ -9,7 +9,7 @@ import { decideGovProposal, setGovProgrammeState, setGovSetting } from '@/server
 
 const reason = z.string().trim().min(5).max(1000);
 
-const decisionSchema = z.object({ proposalId: z.uuid(), decision: z.enum(['approve', 'reject', 'needs_info']), reason });
+const decisionSchema = z.object({ proposalId: z.uuid(), decision: z.enum(['approve', 'reject', 'needs_info']), expectedStatus: z.enum(['pending', 'needs_info']).default('pending'), reason });
 const stateSchema = z.object({ programmeId: z.uuid(), state: z.enum(['published', 'paused', 'archived']), reason });
 const settingSchema = z.object({ key: z.enum(['monitoring_enabled', 'publishing_enabled', 'notifications_enabled']), enabled: z.enum(['true', 'false']), reason });
 
@@ -20,7 +20,7 @@ export async function decideProposalAction(_prev: FormState, formData: FormData)
   if (!p.success) return failure(p.error.issues.some((i) => i.path[0] === 'reason') ? 'reason' : 'decision', nonSecretValues(raw));
   const { supabase, user } = await actionUser();
   if (!user) return failure('unauthenticated');
-  const r = await decideGovProposal(supabase, p.data.proposalId, p.data.decision, p.data.reason);
+  const r = await decideGovProposal(supabase, p.data.proposalId, p.data.decision, p.data.reason, p.data.expectedStatus);
   if (!r.ok) return failure(r.errorKey, nonSecretValues(raw));
   revalidatePath('/', 'layout');
   return success('gov.admin.decided');

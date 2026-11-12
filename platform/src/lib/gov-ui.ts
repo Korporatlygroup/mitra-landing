@@ -47,6 +47,7 @@ export const govTrackingSchema = z.object({
   orgId: z.uuid(),
   programmeId: z.uuid(),
   version: z.coerce.number().int().min(1),
+  markSeen: z.preprocess((v) => v === 'on', z.boolean()),
   tracking_status: z.enum(['interested', 'preparing', 'applied_externally', 'awaiting_decision', 'outcome_recorded', 'not_interested']),
   note: z.string().max(500).optional(),
   applied_on: z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),

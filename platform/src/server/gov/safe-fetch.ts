@@ -40,6 +40,8 @@ export interface SafeFetchOptions {
   userAgent: string;
   maxBytes?: number;
   timeoutMs?: number;
+  /** Hard limit for the whole request including the body (default 30 s), so a slow trickle cannot hold a job. */
+  totalTimeoutMs?: number;
   maxRedirects?: number;
   accept?: readonly string[];
   transport?: Transport;
@@ -79,7 +81,8 @@ export function isPublicAddress(ip: string): boolean {
     const mapped = /^::ffff:(\d+\.\d+\.\d+\.\d+)$/.exec(v);
     if (mapped) return isPublicAddress(mapped[1]!);
     if (/^::ffff:/.test(v) || v.startsWith('64:ff9b')) return false;
-    if (/^f[cd]/.test(v) || /^fe[89ab]/.test(v) || v.startsWith('ff')) return false;
+    if (/^f[cd]/.test(v) || /^fe[89abcdef]/.test(v) || v.startsWith('ff')) return false;
+    if (v.startsWith('::') || v.startsWith('2002:')) return false; // IPv4-compatible and 6to4 forms
     if (v.startsWith('2001:db8')) return false;
     return true;
   }
@@ -133,10 +136,14 @@ const httpsTransport: Transport = (url, init) =>
     req.end();
   });
 
-async function readLimited(res: RawResponse, maxBytes: number): Promise<Buffer> {
+async function readLimited(res: RawResponse, maxBytes: number, deadline: number): Promise<Buffer> {
   const chunks: Buffer[] = [];
   let total = 0;
   for await (const chunk of res.stream) {
+    if (Date.now() > deadline) {
+      res.destroy();
+      throw new FetchRefused('timeout', 'total deadline');
+    }
     const buf = Buffer.isBuffer(chunk) ? chunk : Buffer.from(chunk as Uint8Array);
     total += buf.length;
     if (total > maxBytes) {
@@ -164,6 +171,7 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
   const maxBytes = opts.maxBytes ?? 1_500_000;
   const timeoutMs = opts.timeoutMs ?? 15_000;
   const maxRedirects = opts.maxRedirects ?? 3;
+  const deadline = Date.now() + (opts.totalTimeoutMs ?? 30_000);
   const accept = opts.accept ?? DEFAULT_ACCEPT;
   const transport = opts.transport ?? httpsTransport;
   const lookup = guardedLookup(opts.resolver);
@@ -214,7 +222,7 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
     }
     let body: Buffer;
     try {
-      body = await readLimited(res, maxBytes);
+      body = await readLimited(res, maxBytes, deadline);
     } catch (err) {
       if (err instanceof FetchRefused) throw err;
       const code = (err as NodeJS.ErrnoException).code;

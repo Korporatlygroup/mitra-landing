@@ -111,7 +111,9 @@ export function evaluateRule(rule: MatchRule, p: AssistanceProfile): RuleStatus 
 export function matchProgramme(programme: MatchProgramme, profile: AssistanceProfile): MatchResult {
   const rules = (programme.data.rules ?? []).map((r) => ({ field: r.field, status: evaluateRule(r, profile), quote: r.quote }));
   const pick = (s: RuleStatus) => rules.filter((r) => r.status === s);
-  const unconfirmed = programme.verification_status !== 'verified' || programme.is_stale;
+  // Nothing checkable (no rules, or only conditions the agency alone can assess) is not a match: we have not compared anything.
+  const checkable = rules.filter((r) => r.status !== 'agency').length;
+  const unconfirmed = programme.verification_status !== 'verified' || programme.is_stale || checkable === 0;
   const notMet = pick('not_met');
   const unknown = pick('unknown');
   const label: MatchLabel = unconfirmed

@@ -80,3 +80,12 @@ describe('TEKUN extractor failure modes', () => {
     expect(() => externalKeyFor('https://www.tekun.gov.my/')).toThrowError(ExtractionError);
   });
 });
+
+describe('untrusted text hygiene', () => {
+  it('removes NUL and lone surrogates so the database never rejects the candidate', () => {
+    const dirty = conditions.replace('Objektif pembiayaan', 'Objektif pembiayaan\u0000\ud800');
+    const r = extractTekunScheme({ schemeHtml: scheme, schemeUrl: URL_SCHEME, conditionsHtml: dirty });
+    expect(JSON.stringify(r.candidate)).not.toMatch(/\u0000|\ud800/);
+    expect(r.candidate.amount_max).toBe('100000');
+  });
+});

@@ -72,7 +72,7 @@ export async function updateGovTrackingAction(_prev: FormState, formData: FormDa
     supabase,
     d.orgId,
     d.programmeId,
-    { tracking_status: d.tracking_status, note: d.note ?? '', applied_on: d.applied_on ?? '', outcome: d.outcome ?? '', reminder_on: d.reminder_on ?? '', mark_seen: 'true' },
+    { tracking_status: d.tracking_status, note: d.note ?? '', applied_on: d.applied_on ?? '', outcome: d.outcome ?? '', reminder_on: d.reminder_on ?? '', mark_seen: d.markSeen ? 'true' : 'false' },
     d.version,
   );
   if (!r.ok) return failure(r.errorKey, nonSecretValues(raw));

@@ -1320,6 +1320,7 @@
       "reminder": "Remind me on",
       "update": "Update",
       "updated": "Updated.",
+      "markSeen": "I have read the changes",
       "changed": "The published information changed since you last looked.",
       "unavailable": "This programme is no longer listed.",
       "statusLabel": "My status"
@@ -1332,7 +1333,7 @@
       "opens": "A saved programme opens for applications",
       "deadline": "A saved programme has an approaching deadline",
       "rule_change": "A saved programme changes its published terms",
-      "unavailable": "A saved programme is no longer listed",
+      "unavailable": "A saved programme is closed or no longer listed",
       "reminder": "My own reminders",
       "channels": "How to receive updates",
       "inApp": "In the app",
@@ -1354,7 +1355,7 @@
       "opens": "A programme you saved may now be open",
       "deadline": "A programme you saved has an approaching deadline",
       "rule_change": "A programme you saved changed its published terms",
-      "unavailable": "A programme you saved is no longer listed",
+      "unavailable": "A programme you saved is closed or no longer listed",
       "reminder": "Your reminder about a saved programme"
     },
     "admin": {

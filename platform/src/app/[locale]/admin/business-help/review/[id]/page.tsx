@@ -115,6 +115,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
               <ActionForm key={d} action={decideProposalAction} submitLabel={t(d === 'approve' ? 'admin.approve' : d === 'reject' ? 'admin.reject' : 'admin.needsInfo')} variant={d === 'approve' ? 'primary' : 'secondary'}>
                 <input type="hidden" name="proposalId" value={p.id} />
                 <input type="hidden" name="decision" value={d} />
+                <input type="hidden" name="expectedStatus" value={p.status} />
                 <div className="field">
                   <label htmlFor={`rv-reason-${d}`}>{t('admin.reason')}</label>
                   <input id={`rv-reason-${d}`} name="reason" type="text" required minLength={5} maxLength={1000} />

@@ -74,12 +74,13 @@ describe('rule evaluation', () => {
 
 describe('ranking', () => {
   it('orders by label, then declared need, then open status, then nearest deadline; never by community', () => {
+    const R = [{ field: 'age_min', op: 'gte' as const, value: 18, quote: 'Umur 18+' }];
     const mk = (id: string, p: MatchProgramme, prof: AssistanceProfile) => ({ id, programme: p, match: matchProgramme(p, prof) });
-    const open = mk('open', programme({ application_status: 'open', data: { rules: [] }, closes_on: '2027-06-01' }), full);
-    const soon = mk('soon', programme({ application_status: 'open', data: { rules: [] }, closes_on: '2027-01-01' }), full);
-    const notNeeded = mk('grant', programme({ funding_type: 'grant', application_status: 'open', data: { rules: [] } }), full);
+    const open = mk('open', programme({ application_status: 'open', data: { rules: R }, closes_on: '2027-06-01' }), full);
+    const soon = mk('soon', programme({ application_status: 'open', data: { rules: R }, closes_on: '2027-01-01' }), full);
+    const notNeeded = mk('grant', programme({ funding_type: 'grant', application_status: 'open', data: { rules: R } }), full);
     const fails = mk('fails', programme({ data: { rules: spumi.rules as never } }), { ...full, owner_age: 80 });
-    const unconf = mk('unconf', programme({ verification_status: 'unconfirmed', data: { rules: [] } }), full);
+    const unconf = mk('unconf', programme({ verification_status: 'unconfirmed', data: { rules: R } }), full);
     expect(rankMatches([fails, unconf, notNeeded, open, soon], new Date('2026-11-12')).map((x) => x.id)).toEqual(['soon', 'open', 'grant', 'unconf', 'fails']);
   });
 });
@@ -89,5 +90,12 @@ describe('banned claims', () => {
     const m = matchProgramme(programme(), full);
     const r = JSON.stringify({ label: m.label, statuses: m.rules.map((x) => x.status), missing: m.missing });
     expect(r).not.toMatch(/guarantee|100%|approved by government|probability|score/i);
+  });
+});
+
+describe('nothing checkable', () => {
+  it('a programme with no rules, or only agency-assessed notes, is not a match', () => {
+    expect(matchProgramme(programme({ data: { rules: [] } }), full).label).toBe('unconfirmed_programme');
+    expect(matchProgramme(programme({ data: { rules: [{ field: 'note', op: 'note', quote: 'Syarat lain' }] } }), full).label).toBe('unconfirmed_programme');
   });
 });

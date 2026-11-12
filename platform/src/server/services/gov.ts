@@ -120,8 +120,8 @@ export const getGovPrefs = (db: Db) => rpc<GovPrefs>(db, 'gov_get_prefs');
 export const setGovPrefs = (db: Db, data: Record<string, unknown>) => rpc<null>(db, 'gov_set_prefs', { p_data: data });
 
 // Staff
-export const decideGovProposal = (db: Db, proposal: string, decision: 'approve' | 'reject' | 'needs_info', reason: string) =>
-  rpc<string | null>(db, 'gov_decide_proposal', { p_proposal: proposal, p_decision: decision, p_reason: reason });
+export const decideGovProposal = (db: Db, proposal: string, decision: 'approve' | 'reject' | 'needs_info', reason: string, expectedStatus: 'pending' | 'needs_info' = 'pending') =>
+  rpc<string | null>(db, 'gov_decide_proposal', { p_proposal: proposal, p_decision: decision, p_reason: reason, p_expected_status: expectedStatus });
 export const setGovProgrammeState = (db: Db, programme: string, state: 'published' | 'paused' | 'archived', reason: string) =>
   rpc<null>(db, 'gov_set_programme_state', { p_programme: programme, p_state: state, p_reason: reason });
 export const setGovSetting = (db: Db, key: string, enabled: boolean, reason: string) => rpc<null>(db, 'gov_set_setting', { p_key: key, p_enabled: enabled, p_reason: reason });

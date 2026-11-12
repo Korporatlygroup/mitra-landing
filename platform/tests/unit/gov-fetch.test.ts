@@ -148,3 +148,17 @@ describe('robots.txt', () => {
   });
   it('allows everything when nothing applies', () => expect(robotsAllows('', 'inok', '/x')).toBe(true));
 });
+
+describe('review hardening', () => {
+  it.each(['::7f00:1', '::127.0.0.1', '2002:7f00:1::', 'fec0::1'])('refuses %s', (ip) => expect(isPublicAddress(ip)).toBe(false));
+  it('a slow trickle is cut off by the total deadline', async () => {
+    const stream = Readable.from((async function* () {
+      for (let i = 0; i < 50; i++) {
+        await new Promise((r) => setTimeout(r, 20));
+        yield Buffer.from('x');
+      }
+    })());
+    const transport: Transport = async () => ({ status: 200, headers: { 'content-type': 'text/html' }, stream, destroy: () => stream.destroy() });
+    await expect(safeFetch('https://www.tekun.gov.my/a/', { allowedHosts: HOSTS, userAgent: UA, transport, totalTimeoutMs: 100 })).rejects.toMatchObject({ code: 'timeout' });
+  });
+});

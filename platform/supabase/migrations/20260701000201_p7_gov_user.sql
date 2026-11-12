@@ -158,6 +158,8 @@ declare cur public.gov_assistance_profiles; v_needs text[]; v_new integer;
 begin
   perform private.assert_assist_org(p_org);
   if jsonb_typeof(p_data) <> 'object' then perform private.raise_error('invalid', 'invalid_data'); end if;
+  if jsonb_typeof(coalesce(p_data -> 'needs', '[]'::jsonb)) <> 'array' then perform private.raise_error('invalid', 'invalid_data'); end if;
+  perform pg_advisory_xact_lock(hashtextextended('gov_profile:' || p_org::text, 0)); -- serialises the first save (no row to lock yet)
   select * into cur from public.gov_assistance_profiles where org_id = p_org for update;
   if coalesce(cur.version, 0) <> p_expected_version then perform private.raise_error('conflict', 'stale_version'); end if;
   v_needs := coalesce((select array_agg(distinct x) from jsonb_array_elements_text(coalesce(p_data -> 'needs', '[]'::jsonb)) x), '{}');
@@ -409,6 +411,9 @@ declare o public.gov_outbox; pr public.gov_notification_prefs; prog public.gov_p
   v_defer boolean;
 begin
   if not private.gov_setting('notifications_enabled') then return; end if;
+  -- A crash between the provider accepting a message and our report leaves a row queued: after 15 minutes it is offered again (at most 5 attempts).
+  update public.gov_outbox set email_status = case when attempts >= 5 then 'failed' else 'pending' end, last_error = 'queued_timeout'
+   where email_status = 'queued' and processed_at < now() - interval '15 minutes';
   for o in select * from public.gov_outbox where (in_app_status = 'pending' or email_status = 'pending')
            order by created_at for update skip locked limit greatest(1, least(p_limit, 200)) loop
     select * into pr from public.gov_notification_prefs where user_id = o.user_id;
@@ -460,6 +465,8 @@ begin
   if o.email_status <> 'queued' then return; end if; -- idempotent
   if p_accepted then
     update public.gov_outbox set email_status = 'sent', last_error = null, processed_at = now() where id = o.id;
+  elsif p_error = 'mailer_not_configured' then
+    update public.gov_outbox set email_status = 'pending', attempts = greatest(attempts - 1, 0), last_error = 'mailer_not_configured', processed_at = now() where id = o.id;
   else
     update public.gov_outbox set email_status = case when attempts >= 5 then 'failed' else 'pending' end,
       last_error = left(coalesce(p_error, 'send_failed'), 300), processed_at = now() where id = o.id;

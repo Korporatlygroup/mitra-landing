@@ -154,6 +154,7 @@ create table public.gov_programmes (
   closes_on date,
   last_checked_at timestamptz,
   last_verified_at timestamptz,
+  missing_count integer not null default 0,
   version integer not null default 1,
   created_at timestamptz not null default now(),
   unique (source_id, external_key)
@@ -278,6 +279,15 @@ $$ select jsonb_typeof(p_rule) = 'object'
    and (p_rule ->> 'op') in ('eq', 'in', 'gte', 'lte', 'note')
    and char_length(coalesce(p_rule ->> 'quote', '')) between 1 and 600 $$;
 
+create function private.gov_is_date(p text) returns boolean
+language plpgsql immutable set search_path = '' as
+$$ begin perform p::date; return p ~ '^\d{4}-\d{2}-\d{2}$'; exception when others then return false; end; $$;
+
+-- Host of an https URL, or null when the URL is not plainly https://host[:443]/... (userinfo, other ports and odd forms give null).
+create function private.gov_url_host(p text) returns text
+language sql immutable set search_path = '' as
+$$ select lower((regexp_match(p, '^https://([A-Za-z0-9.-]+)(:443)?(/[^@[:space:]]*)?$'))[1]) $$;
+
 -- Returns null when valid, otherwise a short reason. Unknown values stay null; nothing is invented.
 create function private.gov_candidate_problem(p_c jsonb) returns text
 language plpgsql immutable set search_path = '' as
@@ -297,8 +307,8 @@ begin
   if (p_c ->> 'amount_min') is not null and (p_c ->> 'amount_max') is not null
      and (p_c ->> 'amount_min')::numeric > (p_c ->> 'amount_max')::numeric then return 'amount_range'; end if;
   if ((p_c ->> 'amount_min') is not null or (p_c ->> 'amount_max') is not null) and (p_c ->> 'currency') is null then return 'currency_missing'; end if;
-  if (p_c ->> 'opens_on') is not null and (p_c ->> 'opens_on') !~ '^\d{4}-\d{2}-\d{2}$' then return 'opens_on'; end if;
-  if (p_c ->> 'closes_on') is not null and (p_c ->> 'closes_on') !~ '^\d{4}-\d{2}-\d{2}$' then return 'closes_on'; end if;
+  if (p_c ->> 'opens_on') is not null and not private.gov_is_date(p_c ->> 'opens_on') then return 'opens_on'; end if;
+  if (p_c ->> 'closes_on') is not null and not private.gov_is_date(p_c ->> 'closes_on') then return 'closes_on'; end if;
   if (p_c ->> 'opens_on') is not null and (p_c ->> 'closes_on') is not null
      and (p_c ->> 'opens_on')::date > (p_c ->> 'closes_on')::date then return 'dates_contradict'; end if;
   if jsonb_typeof(coalesce(p_c -> 'rules', '[]'::jsonb)) <> 'array' or jsonb_array_length(coalesce(p_c -> 'rules', '[]'::jsonb)) > 40 then return 'rules'; end if;
@@ -463,7 +473,10 @@ begin
     select * into base from public.gov_programme_versions where id = prog.current_version_id;
     if base.data_sha256 = v_sha then
       -- Unchanged. Records that the source was checked; does NOT advance last_verified_at.
-      update public.gov_programmes set last_checked_at = now() where id = prog.id;
+      update public.gov_programmes set last_checked_at = now(), missing_count = 0,
+        verification_status = case when verification_status = 'unconfirmed' and publication_state in ('published', 'paused') then 'verified' else verification_status end
+      where id = prog.id;
+      update public.gov_change_proposals set status = 'superseded' where source_id = p_source and external_key = p_external_key and status = 'pending';
       return 'unchanged';
     end if;
     foreach k in array array['name', 'description', 'funding_type', 'amount_min', 'amount_max', 'currency', 'application_channel',
@@ -478,14 +491,16 @@ begin
     v_kind := 'new';
   end if;
   if (v_canon ->> 'application_url') is not null then
-    v_host := substring(v_canon ->> 'application_url' from '^https://([^/:]+)');
-    if not (lower(v_host) = any (s.allowed_hosts)) then
+    v_host := private.gov_url_host(v_canon ->> 'application_url');
+    if v_host is null or not (v_host = any (s.allowed_hosts)) then
       v_flags := v_flags || 'url_host_not_allowed'::text;
     end if;
     if base.id is null or base.data ->> 'application_url' is distinct from v_canon ->> 'application_url' then
       v_flags := v_flags || 'new_application_url'::text;
     end if;
   end if;
+  v_host := private.gov_url_host(v_canon ->> 'info_url');
+  if v_host is null or not (v_host = any (s.allowed_hosts)) then v_flags := v_flags || 'url_host_not_allowed'::text; end if;
   if (v_canon ->> 'extraction_status') is distinct from 'complete' then v_flags := v_flags || 'incomplete_extraction'::text; end if;
   if v_diff ? 'rules' then v_flags := v_flags || 'eligibility_changed'::text; end if;
   if v_diff ?| array['amount_min', 'amount_max'] then v_flags := v_flags || 'amount_changed'::text; end if;
@@ -517,8 +532,10 @@ declare prog public.gov_programmes;
 begin
   select * into prog from public.gov_programmes where source_id = p_source and external_key = p_external_key for update;
   if prog.id is null then return; end if;
-  update public.gov_programmes set verification_status = case when verification_status = 'verified' then 'unconfirmed' else verification_status end,
-    last_checked_at = now() where id = prog.id;
+  -- One miss (a CDN or maintenance 404) changes nothing visible; three in a row make the record unconfirmed. last_checked_at is NOT advanced.
+  update public.gov_programmes set missing_count = missing_count + 1,
+    verification_status = case when missing_count + 1 >= 3 and verification_status = 'verified' then 'unconfirmed' else verification_status end
+  where id = prog.id;
   perform private.gov_event('programme.missing_from_source', p_source, prog.id, null, '{}'::jsonb);
 end;
 $$;
@@ -536,6 +553,7 @@ declare
 begin
   if v_user is null then perform private.raise_error('unauthenticated'); end if;
   if p_decision not in ('approve', 'reject', 'needs_info') then perform private.raise_error('invalid', 'decision'); end if;
+  if p_expected_status not in ('pending', 'needs_info') then perform private.raise_error('invalid', 'decision'); end if;
   if char_length(v_reason) < 5 or char_length(v_reason) > 1000 then perform private.raise_error('invalid', 'reason'); end if;
   if p_decision = 'approve' then
     if not private.has_platform_permission('gov:publish') then perform private.raise_error('forbidden'); end if;
@@ -636,6 +654,7 @@ begin
   if not private.has_platform_permission('gov:source_admin') then perform private.raise_error('forbidden'); end if;
   if not exists (select 1 from public.gov_sources where id = p_source) then perform private.raise_error('not_found'); end if;
   if jsonb_typeof(p_change) <> 'object' then perform private.raise_error('invalid', 'change'); end if;
+  if char_length(btrim(coalesce(p_reason, ''))) not between 5 and 1000 then perform private.raise_error('invalid', 'reason'); end if;
   for k in select jsonb_object_keys(p_change) loop
     if k not in ('approved_urls', 'allowed_hosts', 'enabled', 'refresh_interval_minutes', 'rate_per_minute', 'freshness_hours', 'usage_restrictions') then
       perform private.raise_error('invalid', 'field');
@@ -691,12 +710,13 @@ begin
   if auth.uid() is null then perform private.raise_error('unauthenticated'); end if;
   if not private.has_platform_permission('gov:source_admin') then perform private.raise_error('forbidden'); end if;
   insert into public.gov_agencies (code, name, domain) values (upper(p_agency_code), p_agency_name, lower(p_domain))
-  on conflict (code) do update set name = excluded.name returning id into v_agency;
+  on conflict (code) do update set code = excluded.code returning id into v_agency;
   insert into public.gov_sources (agency_id, name, source_type, adapter, allowed_hosts, approved_urls, allowed_method, usage_restrictions,
     verified_by, verified_at)
   values (v_agency, p_name, p_type, p_adapter, (select array_agg(lower(h)) from unnest(p_hosts) h), p_urls, p_method, p_restrictions,
     auth.uid(), now()) returning id into v_id;
   perform private.gov_event('source.registered', v_id, null, null, jsonb_build_object('name', p_name));
+  perform private.write_audit('gov.source.registered', null, 'gov_source', v_id::text, jsonb_build_object('name', left(p_name, 160)));
   return v_id;
 end;
 $$;
@@ -759,5 +779,6 @@ grant execute on function public.gov_list_programmes(text, text, integer, intege
 -- Private helpers are never callable from the API roles (security definer code and the table owner use them).
 revoke all on function
   private.gov_setting(text), private.gov_versions_immutable(), private.gov_events_immutable(), private.gov_event(text, uuid, uuid, uuid, jsonb),
-  private.gov_valid_rule(jsonb), private.gov_candidate_problem(jsonb), private.gov_canonical(jsonb), private.gov_all_https(text[])
+  private.gov_valid_rule(jsonb), private.gov_candidate_problem(jsonb), private.gov_canonical(jsonb), private.gov_all_https(text[]),
+  private.gov_is_date(text), private.gov_url_host(text)
   from public, anon, authenticated, service_role;

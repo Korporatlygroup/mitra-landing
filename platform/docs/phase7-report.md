@@ -86,3 +86,15 @@ Supabase (existing), an SMTP provider (existing requirement), a scheduler. No pa
 
 ## Phase 8
 `contracts/phase7-phase8.md`.
+
+## Independent review (one read-only model review, no human) and what was done
+No critical issue. Findings and outcome (fixes are in migrations 200/201 and the app; verified as listed under "Final results"):
+- High 1 (worker sleeps could outlast the 60 s route limit and burn attempts): in-job pause is now at most 3 s (the per-source rate is enforced between jobs by the database). Fixed.
+- Medium 2 (one 404 downgraded a published record and reset its freshness clock): three consecutive misses are needed, `last_checked_at` is not advanced by a miss, and the source returning with the same content restores "verified". Fixed.
+- Medium 3 and 4 (decisions on "needs more checks" proposals always failed; `p_expected_status` was free text): the review page sends the real status, the database accepts only `pending` or `needs_info`. Fixed.
+- Medium 5 (a programme with nothing checkable was labelled "Potential match"): now "Programme not confirmed". Fixed.
+- Medium 6 (host parsing could be fooled by `host:x@evil` and the information page was not host-checked): strict parser, both links checked, flagged programmes cannot be approved. Fixed.
+- Medium 7 (no-mailer runs burned email attempts; a crash after the provider accepted left a row queued forever): no-mailer no longer counts an attempt; rows queued for 15 minutes are offered again (at most 5 attempts). A crash right after acceptance can still cause one repeat email (at-least-once). Fixed, limit stated.
+- Medium 8 (impossible dates or lone surrogates raised raw errors and lost the candidate): safe date check and text sanitising. Fixed.
+- Low: total request deadline (30 s), IPv4-compatible/6to4/site-local addresses refused, older pending proposals superseded when the source returns to the published content, editing a note no longer clears the "information changed" banner (explicit checkbox), closed/removed wording, first-save race (advisory lock), reason length and audit on source registration, the card shows "Apply officially" only for an online channel, non-staff get 404 on the admin page. Fixed.
+- Accepted/not done: daily/weekly frequency defers but does not build a digest; the per-source rate counts jobs, not the up to three requests inside one job (about 3 requests within 6 s per job); the email has no one-click unsubscribe link (settings page only) and a fixed `/en/` link; the quadratic script-tag regex only matters for a hostile source; review notes and extraction status are hashed but not diffed.

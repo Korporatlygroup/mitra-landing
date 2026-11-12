@@ -30,7 +30,7 @@ export default async function ProgrammeCard({
   const fmt = await getFormatter({ locale });
   const date = (d: string) => fmt.dateTime(new Date(d), { dateStyle: 'medium', timeZone: 'UTC' });
   const amount = p.amount_max ? (p.amount_min && p.amount_min !== p.amount_max ? t('card.amountRange', { min: formatRm(p.amount_min), max: formatRm(p.amount_max) }) : t('card.upTo', { max: formatRm(p.amount_max) })) : t('card.amountUnknown');
-  const apply = safeHttpsUrl(p.application_url);
+  const apply = p.application_channel === 'online' && p.application_status !== 'closed' ? safeHttpsUrl(p.application_url) : null;
   return (
     <li className="card catalogue-card" data-programme={p.slug}>
       <h2 className="catalogue-card-title">{p.name}</h2>
