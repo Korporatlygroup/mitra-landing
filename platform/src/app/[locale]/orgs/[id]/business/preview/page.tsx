@@ -3,6 +3,7 @@ import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { getBusinessProfile, getVerificationSummary, listCategories } from '@/server/services/verification';
+import { catName } from '@/lib/category';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'preview.title');
@@ -52,7 +53,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ locale
         </h2>
         <dl className="dl">
           <dt>{t('preview.category')}</dt>
-          <dd>{category ? (locale === 'ta' ? category.name_ta : category.name_en) : '-'}</dd>
+          <dd>{category ? (catName(locale, category)) : '-'}</dd>
           <dt>{t('preview.location')}</dt>
           <dd>{place || t('preview.noLocation')}</dd>
         </dl>

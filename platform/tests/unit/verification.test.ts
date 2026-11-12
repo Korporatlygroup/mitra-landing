@@ -204,6 +204,6 @@ describe('decision email', () => {
     expect(() => buildDecisionEmail({ to: 'a@b.test\r\nBcc: x@y.test', claimType: 'business_location', decision: 'approve', reason: 'ok ok ok', siteUrl: 'http://x', orgId: uuid })).toThrow();
   });
   it('truncates very long reasons', () => {
-    expect(mail('r'.repeat(900)).text.length).toBeLessThan(1500);
+    expect(mail('r'.repeat(900)).text.length).toBeLessThan(2200);
   });
 });

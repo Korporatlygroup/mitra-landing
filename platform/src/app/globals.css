@@ -451,7 +451,22 @@ progress {
 }
 .dl dd {
   margin: 0;
-  word-break: break-word;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+.dl dt {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+/* Narrow phones: label above value, so long labels (Tamil, Bahasa Melayu) never force sideways scrolling. */
+@media (max-width: 520px) {
+  .dl {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 0;
+  }
+  .dl dd {
+    margin-bottom: 10px;
+  }
 }
 .visually-hidden {
   position: absolute;

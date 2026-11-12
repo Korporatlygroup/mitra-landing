@@ -1,5 +1,6 @@
 import en from '../../messages/en.json';
 import ta from '../../messages/ta.json';
+import ms from '../../messages/ms.json';
 import { cleanText } from './invite-email';
 import type { MailMessage } from './mailer';
 
@@ -9,10 +10,10 @@ const RECIPIENT = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{
 const fill = (s: string, v: Record<string, string>) => s.replace(/\{(\w+)\}/g, (_, k: string) => v[k] ?? '');
 const esc = (s: string) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 
-const copies = { en, ta } as const;
+const copies = { en, ta, ms } as const;
 
 /**
- * Fixed EN + TA text. The subject never contains reviewer-written or user-written text; the reason appears
+ * Fixed EN + TA + MS text. The subject never contains reviewer-written or user-written text; the reason appears
  * only in the body as quoted, sanitised data.
  */
 export function buildDecisionEmail(args: {
@@ -26,7 +27,7 @@ export function buildDecisionEmail(args: {
   if (!RECIPIENT.test(args.to)) throw new Error('invalid recipient address');
   const reason = `“${cleanText(args.reason, 300)}”`;
 
-  const parts = (['en', 'ta'] as const).map((l) => {
+  const parts = (['en', 'ta', 'ms'] as const).map((l) => {
     const c = copies[l];
     const link = `${args.siteUrl.replace(/\/+$/, '')}/${l}/orgs/${args.orgId}/business/verification`;
     return {
@@ -45,5 +46,5 @@ export function buildDecisionEmail(args: {
         `<p>${esc(p.intro)}<br>${esc(p.decisionLine)}<br>${esc(p.reasonLine)}</p><p><a href="${esc(p.link)}">${esc(p.open)}</a></p>`,
     )
     .join('<hr>');
-  return { to: args.to, subject: `${parts[0].subject} / ${parts[1].subject}`, text, html };
+  return { to: args.to, subject: `${parts[0].subject} / ${parts[1].subject} / ${parts[2].subject}`, text, html };
 }

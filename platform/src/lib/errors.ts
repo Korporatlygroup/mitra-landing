@@ -69,6 +69,13 @@ export const KNOWN_MESSAGE_KEYS = [
   'invalid_hash',
   'evidence_not_clean',
   'org_not_active',
+  'invalid_headline', 'invalid_service_name', 'service_area_required', 'invalid_min_order', 'invalid_lead_time',
+  'too_many_services', 'too_many_portfolio', 'invalid_portfolio', 'invalid_query', 'listing_incomplete', 'listing_under_review',
+  'listing_not_pending', 'listing_not_live', 'nothing_to_submit', 'invalid_title', 'invalid_quantity', 'invalid_unit',
+  'invalid_date', 'invalid_budget', 'request_incomplete', 'request_not_open', 'request_not_editable', 'duplicate_request',
+  'contact_required', 'request_limit_reached', 'draft_limit_reached', 'invite_limit_reached', 'not_a_candidate',
+  'seller_not_available', 'already_responded', 'invalid_response', 'seller_not_accepting', 'same_organisation',
+  'already_reported', 'report_not_open', 'contact_in_public_text', 'request_response_limit',
 ] as const;
 
 /** Default machine keys per PTnnn code (private.raise_error default messages). */

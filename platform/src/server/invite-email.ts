@@ -1,5 +1,6 @@
 import en from '../../messages/en.json';
 import ta from '../../messages/ta.json';
+import ms from '../../messages/ms.json';
 import type { MailMessage } from './mailer';
 
 interface InviteCopy {
@@ -11,9 +12,10 @@ interface InviteCopy {
   expires: string;
 }
 
-const copies: Record<'en' | 'ta', { copy: InviteCopy; roles: Record<string, string> }> = {
+const copies: Record<'en' | 'ta' | 'ms', { copy: InviteCopy; roles: Record<string, string> }> = {
   en: { copy: en.email.invite, roles: en.roles },
   ta: { copy: ta.email.invite, roles: ta.roles },
+  ms: { copy: ms.email.invite, roles: ms.roles },
 };
 
 const MAX_ORG_NAME = 80;
@@ -43,14 +45,14 @@ const escapeHtml = (s: string) =>
 const PLAIN_ADDRESS = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9-]+(\.[A-Za-z0-9-]+)*\.[A-Za-z]{2,}$/;
 
 /**
- * Builds the bilingual (English + Tamil) invitation email. The recipient's language is unknown, so both are included.
+ * Builds the trilingual (English, Tamil, Bahasa Melayu) invitation email. The recipient's language is unknown, so both are included.
  * The link carries the one-time token: callers must not log the returned message.
  */
 export function buildInviteEmail(args: { to: string; orgName: string; role: string; link: string }): MailMessage {
   if (!PLAIN_ADDRESS.test(args.to)) throw new Error('invalid recipient address');
   if (!/^https?:\/\/[^\s]+$/.test(args.link)) throw new Error('invalid link');
 
-  const parts = (['en', 'ta'] as const).map((l) => {
+  const parts = (['en', 'ta', 'ms'] as const).map((l) => {
     const { copy, roles } = copies[l];
     const vars = { org: quoteName(args.orgName), role: roles[args.role] ?? cleanText(args.role, 40) };
     return {

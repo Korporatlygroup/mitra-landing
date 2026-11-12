@@ -102,6 +102,21 @@ export default async function BusinessOverviewPage({ params }: { params: Promise
             {t('biz.openVerification')}
           </Link>
         ) : null}
+        {ctx.canEdit ? (
+          <Link className="big-link" href={`/orgs/${id}/business/listing`} locale={locale}>
+            {t('biz.openListing')}
+          </Link>
+        ) : null}
+        {ctx.perms.has('request:respond') ? (
+          <Link className="big-link" href={`/orgs/${id}/business/requests`} locale={locale}>
+            {t('biz.openRequests')}
+          </Link>
+        ) : null}
+        {ctx.perms.has('request:respond') ? (
+          <Link className="big-link" href={`/orgs/${id}/business/requests/board`} locale={locale}>
+            {t('biz.openBoard')}
+          </Link>
+        ) : null}
         <Link className="big-link" href={`/orgs/${id}/business/preview`} locale={locale}>
           {t('biz.openPreview')}
         </Link>

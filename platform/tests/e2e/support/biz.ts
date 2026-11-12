@@ -218,7 +218,7 @@ export async function reviewerGoto(page: Page, rv: Reviewer, path: string, opts:
   if (opts.login !== false) await loginUi(page, rv, 'en');
   await page.goto(path);
   if (/\/mfa\/enrol/.test(page.url())) {
-    rv.secret = await startEnrolAndReadSecret(page, path.startsWith('/ta/') ? 'ta' : 'en');
+    rv.secret = await startEnrolAndReadSecret(page, path.startsWith('/ta/') ? 'ta' : path.startsWith('/ms/') ? 'ms' : 'en');
     await submitCode(page, freshCode(rv.secret));
   } else if (/\/mfa\/verify/.test(page.url())) {
     if (!rv.secret) throw new Error('reviewer has a factor but no secret');

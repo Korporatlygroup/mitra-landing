@@ -68,6 +68,7 @@ export default async function AccountPage({
         <SelectField id="language" name="language" label={t('language')} defaultValue={s.profile.language}>
           <option value="en">English</option>
           <option value="ta">தமிழ்</option>
+          <option value="ms">Bahasa Melayu</option>
         </SelectField>
       </ActionForm>
 

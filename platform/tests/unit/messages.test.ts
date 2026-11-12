@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import en from '../../messages/en.json';
 import ta from '../../messages/ta.json';
+import ms from '../../messages/ms.json';
 import { KNOWN_MESSAGE_KEYS, allErrorKeys } from '@/lib/errors';
 import { MEMBER_ROLES } from '@/lib/permissions';
 import { SCHEMA_ERROR_KEYS } from '@/lib/schemas';
@@ -9,14 +10,19 @@ import { flatten } from './helpers';
 
 const fe = flatten(en);
 const ft = flatten(ta);
+const fm = flatten(ms);
 
 describe('message files', () => {
   it('EN and TA have identical key sets', () => {
     expect(Object.keys(ft).sort()).toEqual(Object.keys(fe).sort());
   });
 
+  it('EN and MS have identical key sets', () => {
+    expect(Object.keys(fm).sort()).toEqual(Object.keys(fe).sort());
+  });
+
   it('no value is empty', () => {
-    for (const [k, v] of [...Object.entries(fe), ...Object.entries(ft)]) {
+    for (const [k, v] of [...Object.entries(fe), ...Object.entries(ft), ...Object.entries(fm)]) {
       expect(typeof v === 'string' && v.trim().length > 0, k).toBe(true);
     }
   });
@@ -27,7 +33,7 @@ describe('message files', () => {
   });
 
   it('Tamil strings contain Tamil script', () => {
-    const exempt = new Set(['_meta', 'common.appName', 'common.langEn']);
+    const exempt = new Set(['_meta', 'common.appName', 'common.langEn', 'common.langMs', 'common.langMsFull']);
     for (const [k, v] of Object.entries(ft)) {
       if (exempt.has(k)) continue;
       expect(/[஀-௿]/.test(String(v)), k).toBe(true);
@@ -37,6 +43,22 @@ describe('message files', () => {
   it('placeholders match between languages', () => {
     const ph = (s: unknown) => [...String(s).matchAll(/\{(\w+)\}/g)].map((m) => m[1]).sort();
     for (const k of Object.keys(fe)) expect(ph(ft[k]), k).toEqual(ph(fe[k]));
+    for (const k of Object.keys(fe)) expect(ph(fm[k]), k).toEqual(ph(fe[k]));
+  });
+
+  it('flags Bahasa Melayu as a draft needing fluent review', () => {
+    expect(String(ms._meta)).toMatch(/draf/i);
+    expect(String(ms._meta)).toMatch(/fasih/i);
+  });
+
+  it('Bahasa Melayu has no Tamil script and is not a copy of English', () => {
+    let same = 0;
+    for (const [k, v] of Object.entries(fm)) {
+      if (k === 'common.langTa' || k === 'common.langTaFull') continue;
+      expect(/[஀-௿]/.test(String(v)), k).toBe(false);
+      if (String(v) === String(fe[k])) same++;
+    }
+    expect(same).toBeLessThan(40); // names, codes and brand words only
   });
 });
 
@@ -62,6 +84,11 @@ describe('wording lint', () => {
   const bannedTa = ['உத்தரவாத', 'அரசு சரிபார்', 'அதிகாரப்பூர்வமாகச் சரிபார்', 'எஸ்எஸ்எம் சரிபார்', 'ssm சரிபார்க்கப்பட்ட', 'ssm-ஆல் சரிபார்'];
   it.each(bannedTa)('ta.json never contains "%s"', (phrase) => {
     expect(JSON.stringify(ta).toLowerCase()).not.toContain(phrase.toLowerCase());
+  });
+
+  const bannedMs = ['dijamin', 'terjamin', 'jaminan', 'disahkan oleh ssm', 'disahkan ssm', 'disahkan kerajaan', 'disahkan secara rasmi', 'diperakui oleh mitra', 'pengesahan rasmi'];
+  it.each(bannedMs)('ms.json never contains "%s"', (phrase) => {
+    expect(JSON.stringify(ms).toLowerCase()).not.toContain(phrase);
   });
 
   it('the preview wording is "Documents reviewed by MITRA ... for:" and the unregistered label is exact', () => {

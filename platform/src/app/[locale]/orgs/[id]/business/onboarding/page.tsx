@@ -17,6 +17,7 @@ import {
   listDocuments,
 } from '@/server/services/verification';
 import { saveStep1Action, saveStep2Action, saveStep3Action, saveStep4Action } from '../actions';
+import { catName } from '@/lib/category';
 
 const TOTAL = 5;
 
@@ -90,7 +91,7 @@ export default async function OnboardingPage({
               <option value="">{t('ob.s1.categoryChoose')}</option>
               {categories.map((c) => (
                 <option key={c.id} value={c.slug}>
-                  {locale === 'ta' ? c.name_ta : c.name_en}
+                  {catName(locale, c)}
                 </option>
               ))}
             </select>

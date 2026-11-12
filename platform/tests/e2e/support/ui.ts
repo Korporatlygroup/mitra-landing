@@ -5,7 +5,7 @@ import { confirmLink, waitForMail } from './mail';
 import { msg } from './i18n';
 import { freshCode } from './totp';
 
-export type Locale = 'en' | 'ta';
+export type Locale = 'en' | 'ta' | 'ms';
 
 /** Fails if the page scrolls horizontally (checked at the project viewport). */
 export async function expectNoHorizontalScroll(page: Page): Promise<void> {

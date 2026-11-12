@@ -29,7 +29,7 @@ export const SCHEMA_ERROR_KEYS = [
   'invalid_doc_type',
 ] as const;
 
-export const LOCALES = ['en', 'ta'] as const;
+export const LOCALES = ['en', 'ta', 'ms'] as const;
 export const localeSchema = z.enum(LOCALES, 'invalid_language');
 
 export const emailSchema = z
@@ -210,3 +210,110 @@ export const claimStatusFilterSchema = z.enum([
   'stale',
   'withdrawn',
 ]);
+
+// ---------------------------------------------------------------------------------------------------------------
+// Phase 3: directory, customer requests, matching. Field-level validation is repeated in the database (RPCs);
+// these schemas only guard the shape of the form so the RPC always receives well-typed input.
+// ---------------------------------------------------------------------------------------------------------------
+
+const intField = z.coerce.number('invalid_input').int('invalid_input').min(0, 'invalid_input').max(1_000_000, 'invalid_input');
+const checkboxOrEmpty = z.preprocess((v) => v === 'on' || v === 'true', z.boolean());
+const shortText = (max: number) => optional(z.string().trim().max(max, 'invalid_input'));
+
+export const listingSaveSchema = z.object({
+  ...formBase,
+  expectedVersion: intField,
+  headline: shortText(160),
+  description: shortText(2000),
+  public_phone: shortText(20),
+  public_email: shortText(254),
+  show_phone: checkboxOrEmpty,
+  show_email: checkboxOrEmpty,
+});
+export const listingVersionSchema = z.object({ ...formBase, expectedVersion: intField });
+export const listingOrgSchema = z.object(formBase);
+export const acceptingSchema = z.object({ ...formBase, value: z.enum(['true', 'false'], 'invalid_input') });
+
+export const REQUEST_STEPS = [1, 2, 3, 4, 5] as const;
+export const requestStepSchema = z.object({
+  locale: localeSchema,
+  step: z.coerce.number('invalid_input').int('invalid_input').min(1, 'invalid_input').max(4, 'invalid_input'),
+  key: z.string('invalid_input').min(8, 'invalid_input').max(80, 'invalid_input').regex(/^[A-Za-z0-9-]+$/, 'invalid_input'),
+  requestId: optional(uuidSchema),
+  orgId: optional(uuidSchema),
+  expectedVersion: intField,
+  title: shortText(140),
+  category_slug: shortText(40),
+  target_state: shortText(40),
+  target_district: shortText(80),
+  quantity: shortText(20),
+  unit: shortText(30),
+  needed_by: shortText(10),
+  budget_min: shortText(20),
+  budget_max: shortText(20),
+  description: shortText(2000),
+  contact_phone: shortText(20),
+  contact_email: shortText(254),
+  share_contact: checkboxOrEmpty,
+});
+export const requestVersionSchema = z.object({ locale: localeSchema, requestId: uuidSchema, expectedVersion: intField });
+export const submitRequestSchema = z.object({
+  locale: localeSchema,
+  requestId: uuidSchema,
+  expectedVersion: intField,
+  visibility: z.enum(['private_invite', 'eligible_sellers'], 'invalid_input'),
+});
+export const requestIdSchema = z.object({ locale: localeSchema, requestId: uuidSchema });
+export const findMoreSchema = z.object({ locale: localeSchema, requestId: uuidSchema, broaden: z.enum(['true', 'false'], 'invalid_input') });
+export const inviteSellerSchema = z.object({ locale: localeSchema, requestId: uuidSchema, sellerOrgId: uuidSchema });
+export const endRequestSchema = z.object({
+  locale: localeSchema,
+  requestId: uuidSchema,
+  status: z.enum(['closed', 'withdrawn'], 'invalid_input'),
+  reason: shortText(500),
+});
+export const respondSchema = z.object({
+  ...formBase,
+  requestId: uuidSchema,
+  response: z.enum(['interested', 'question', 'declined'], 'invalid_input'),
+  note: shortText(500),
+});
+export const sendEnquirySchema = z.object({
+  locale: localeSchema,
+  slug: z.string('invalid_input').regex(/^[a-z0-9-]{3,80}$/, 'invalid_input'),
+  buyerOrgId: optional(uuidSchema),
+  topic: z.string('invalid_input').trim().min(3, 'invalid_input').max(200, 'invalid_input'),
+  note: z.string('invalid_input').trim().min(10, 'invalid_note').max(1000, 'invalid_note'),
+});
+export const REPORT_REASONS = ['misleading', 'offensive', 'spam', 'scam', 'other'] as const;
+export const reportSchema = z.object({
+  locale: localeSchema,
+  type: z.enum(['listing', 'request'], 'invalid_input'),
+  target: z.string('invalid_input').min(3, 'invalid_input').max(80, 'invalid_input'),
+  reason: z.enum(REPORT_REASONS, 'invalid_input'),
+  note: shortText(500),
+  back: shortText(200),
+});
+export const reviewListingSchema = z.object({
+  ...formBase,
+  decision: z.enum(['approve', 'reject', 'request_changes'], 'invalid_decision'),
+  reason: shortText(1000),
+  expectedVersion: intField,
+});
+export const suspendListingSchema = z.object({
+  ...formBase,
+  mode: z.enum(['suspend', 'reinstate'], 'invalid_decision'),
+  reason: z.string('reason_required').trim().min(5, 'reason_required').max(1000, 'reason_required'),
+});
+export const handleReportSchema = z.object({
+  locale: localeSchema,
+  reportId: uuidSchema,
+  action: z.enum(['dismiss', 'suspend', 'remove'], 'invalid_decision'),
+  note: z.string('reason_required').trim().min(5, 'reason_required').max(1000, 'reason_required'),
+});
+export const directoryFilterSchema = z.object({
+  q: shortText(80),
+  category: optional(z.string().regex(/^[a-z0-9-]{2,40}$/)),
+  state: optional(z.enum(MY_STATES)),
+  page: z.coerce.number().int().min(1).max(80).catch(1),
+});
