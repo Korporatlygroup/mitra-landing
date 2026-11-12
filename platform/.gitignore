@@ -10,3 +10,4 @@ playwright-report/
 next-env.d.ts
 supabase/.branches/
 supabase/.temp/
+.p4-local/

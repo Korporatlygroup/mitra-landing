@@ -20,6 +20,14 @@ export const AUDIT_ACTIONS = [
   'auth.mfa_verified',
   'auth.password_changed',
   'bootstrap.first_admin',
+  'business.profile_saved',
+  'business.representative_saved',
+  'verification.submitted',
+  'verification.approved',
+  'verification.rejected',
+  'verification.info_requested',
+  'verification.document_viewed',
+  'verification.upload_rejected',
 ] as const;
 
 export interface AuditRow {

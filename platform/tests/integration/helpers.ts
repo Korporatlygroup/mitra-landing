@@ -86,9 +86,10 @@ export async function userSession(prefix = 'user'): Promise<Signed> {
 
 /** Delete everything the tests created (organisations they created, then the users). Never touches audit_log. */
 export async function cleanupUsers(): Promise<void> {
+  await removeTrackedObjects();
   const ids = created.splice(0);
   if (!ids.length) return;
-  // Organisations first: deleting a creator while their org exists is blocked (see DEFECT D3 in 06_user_deletion.test.sql).
+  // Organisations first: deleting a creator while their org exists is blocked (see 06_user_deletion.test.sql).
   await sql(
     `delete from public.organisations o where o.created_by = any($1::uuid[])
        and (o.type <> 'mitra' or not exists (select 1 from public.memberships m where m.org_id = o.id and m.user_id <> all($1::uuid[])))`,
@@ -212,4 +213,76 @@ export async function openUserTx(userId: string, email: string, aal: 'aal1' | 'a
     JSON.stringify({ sub: userId, role: 'authenticated', email, aal }),
   ]);
   return c;
+}
+
+// ---------- Phase 2 helpers ----------
+export const DOCS_BUCKET = 'verification-docs';
+const objects: string[] = [];
+export const trackObject = (path: string) => objects.push(path);
+export async function removeTrackedObjects(): Promise<void> {
+  const paths = objects.splice(0);
+  if (paths.length) await serviceClient().storage.from(DOCS_BUCKET).remove(paths);
+}
+
+export const STD_PROFILE = {
+  business_name: 'Integration Foods',
+  category_slug: 'food-beverage',
+  registration_status: 'registered',
+  ssm_number: '202001012345',
+  business_type: 'sole_proprietorship',
+  state: 'Selangor',
+  district: 'Petaling',
+  address_line: '1 Jalan Satu',
+  postcode: '47500',
+  contact_phone: '+60 3 1234 5678',
+  contact_email: 'biz@example.test',
+};
+
+/** A business organisation with a complete profile and representative, owned by `owner` (RPCs over HTTP). */
+export async function createBusinessOrg(owner: Signed, name = `Org ${uniq('o')}`): Promise<string> {
+  const org = await owner.client.rpc('create_org', { p_type: 'business', p_name: name });
+  if (org.error) throw new Error(`create_org failed: ${org.error.message}`);
+  const orgId = org.data as string;
+  const p = await owner.client.rpc('save_business_profile', { p_org: orgId, p_data: STD_PROFILE });
+  if (p.error) throw new Error(`save_business_profile failed: ${p.error.message}`);
+  const r = await owner.client.rpc('save_representative', { p_org: orgId, p_name: 'Rep Person', p_role: 'owner', p_email: null, p_phone: null });
+  if (r.error) throw new Error(`save_representative failed: ${r.error.message}`);
+  return orgId;
+}
+
+/** Registers a document row directly through the service RPC (no Storage object). */
+export async function registerDoc(
+  orgId: string,
+  userId: string,
+  opts: { claimType?: string; docType?: string; status?: 'clean' | 'pending' | 'failed'; path?: string } = {},
+): Promise<string> {
+  const { data, error } = await serviceClient().rpc('service_register_document', {
+    p_org: orgId,
+    p_user: userId,
+    p_claim_type: opts.claimType ?? 'business_registration',
+    p_doc_type: opts.docType ?? 'ssm_certificate',
+    p_display_name: 'integration.pdf',
+    p_mime: 'application/pdf',
+    p_size: 1000,
+    p_sha256: randomBytes(32).toString('hex'),
+    p_storage_path: opts.path ?? `it/${randomBytes(8).toString('hex')}.pdf`,
+    p_scan_status: opts.status ?? 'clean',
+    p_scan_engine: 'integration',
+  });
+  if (error) throw new Error(`service_register_document failed: ${error.message}`);
+  return data as string;
+}
+
+/** The (single) MITRA organisation; created by SQL for the test when none exists. Reviewer setup only. */
+export async function ensureMitraOrg(createdBy: string): Promise<string> {
+  const ex = await sql<{ id: string }>(`select id from public.organisations where type = 'mitra'`);
+  if (ex[0]) return ex[0].id;
+  const r = await sql<{ id: string }>(
+    `insert into public.organisations (type, name, created_by) values ('mitra', 'MITRA Administration', $1) returning id`,
+    [createdBy],
+  );
+  return r[0]!.id;
+}
+export async function addMember(orgId: string, userId: string, role: string): Promise<void> {
+  await sql(`insert into public.memberships (org_id, user_id, role) values ($1, $2, $3)`, [orgId, userId, role]);
 }

@@ -90,7 +90,7 @@ begin
   return p_id;
 end $$;
 
-select plan(35);
+select plan(36);
 
 -- ============================ S6: RLS everywhere ============================
 select is_empty(
@@ -135,10 +135,11 @@ select is_empty(
        and not coalesce(p.proconfig @> array['search_path=""'], false) $$,
   'S7.2 every function (definer or not) in public/private pins search_path to ""');
 
-select is_empty(
-  $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
-     where n.nspname in ('public', 'private') and has_function_privilege('anon', p.oid, 'EXECUTE') $$,
-  'S7.3 anon has EXECUTE on no function in public or private');
+select is(
+  (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
+   where n.nspname in ('public', 'private') and has_function_privilege('anon', p.oid, 'EXECUTE')),
+  array['compare_items', 'get_catalogue_item', 'get_listing', 'get_product_media_access', 'list_published_business_reviews', 'search_catalogue', 'search_listings'],
+  'S7.3 anon can execute only the three public directory reads and the four public catalogue reads, nothing else in public or private');
 
 select is_empty(
   $$ select n.nspname || '.' || c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
@@ -151,30 +152,95 @@ select ok(not has_schema_privilege('anon', 'private', 'USAGE') and not has_schem
   'S7.5 anon / PUBLIC have no USAGE on schema private');
 
 select is(
-  (select array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' order by p.proname)
+  (select array_agg(p.proname || '(' || pg_get_function_identity_arguments(p.oid) || ')' order by (p.proname::text || '(' || pg_get_function_identity_arguments(p.oid) || ')') collate "default")
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('authenticated', p.oid, 'EXECUTE')),
-  array['accept_invitation(p_token text)', 'create_invitation(p_org uuid, p_email text, p_role member_role)',
-        'create_org(p_type org_type, p_name text)', 'grant_consent(p_purpose text, p_version text)', 'remove_member(p_org uuid, p_user uuid)',
-        'rename_org(p_org uuid, p_name text)', 'revoke_invitation(p_invitation uuid)',
-        'set_member_role(p_org uuid, p_user uuid, p_role member_role)',
-        'withdraw_consent(p_id uuid)'],
-  'S7.6 authenticated can execute exactly the 9 allow-listed public RPCs');
+  ARRAY(SELECT x FROM unnest(ARRAY['accept_invitation(p_token text)', 'create_invitation(p_org uuid, p_email text, p_role member_role)',
+        'create_org(p_type org_type, p_name text)', 'decide_claim(p_claim uuid, p_decision text, p_reason text, p_expected_version integer)',
+        'end_request(p_request uuid, p_status text, p_reason text)', 'enquiry_parties(p_enquiry uuid)', 'find_candidates(p_request uuid, p_broaden boolean)',
+        'get_document_access(p_doc uuid)', 'get_listing(p_slug text)', 'get_request_for_seller(p_request uuid, p_seller_org uuid)',
+        'get_verification_summary(p_org uuid)', 'grant_consent(p_purpose text, p_version text)',
+        'handle_report(p_report uuid, p_action text, p_note text)', 'invite_seller(p_request uuid, p_seller_org uuid)',
+        'list_board_requests(p_seller_org uuid, p_category text, p_state text, p_offset integer)',
+        'list_buyer_requests(p_org uuid)', 'list_published_business_reviews(p_slug text)', 'list_request_matches(p_request uuid)',
+        'list_seller_requests(p_seller_org uuid, p_filter text)', 'mark_notification_read(p_id uuid)',
+        'open_listing_enquiry(p_buyer_org uuid, p_slug text, p_topic text, p_note text)',
+        'reinstate_listing(p_org uuid, p_reason text)', 'remove_document(p_doc uuid)', 'remove_member(p_org uuid, p_user uuid)',
+        'remove_request(p_request uuid, p_reason text)', 'rename_org(p_org uuid, p_name text)',
+        'report_content(p_type text, p_target text, p_reason text, p_note text)', 'republish_listing(p_org uuid)',
+        'respond_to_invitation(p_request uuid, p_seller_org uuid, p_response text, p_note text)',
+        'review_listing(p_org uuid, p_decision text, p_reason text, p_expected_version integer)',
+        'revoke_invitation(p_invitation uuid)', 'save_business_profile(p_org uuid, p_data jsonb)',
+        'save_listing_draft(p_org uuid, p_data jsonb, p_expected_version integer)',
+        'save_representative(p_org uuid, p_name text, p_role text, p_email text, p_phone text)',
+        'save_request_draft(p_org uuid, p_request uuid, p_key text, p_data jsonb, p_expected_version integer)',
+        'search_listings(p_q text, p_category text, p_state text, p_limit integer, p_offset integer)',
+        'set_accepting_requests(p_org uuid, p_value boolean)', 'set_member_role(p_org uuid, p_user uuid, p_role member_role)', 'set_request_visibility(p_request uuid, p_visibility text)',
+        'start_review(p_claim uuid)', 'submit_claim(p_org uuid, p_type claim_type, p_document_ids uuid[], p_note text)',
+        'submit_listing(p_org uuid, p_expected_version integer)', 'submit_request(p_request uuid, p_expected_version integer)',
+        'suspend_listing(p_org uuid, p_reason text)', 'unpublish_listing(p_org uuid)', 'withdraw_claim(p_claim uuid)',
+        'withdraw_consent(p_id uuid)', 'withdraw_listing_submission(p_org uuid)',
+        'open_referral_enquiry(p_referral uuid)',
+        'moderate_business_review(p_review uuid, p_status review_status, p_reason text)',
+        'moderate_review_response(p_review uuid, p_approve boolean, p_reason text)',
+        'post_enquiry_message(p_enquiry uuid, p_body text, p_key text)',
+        'propose_referral(p_enquiry uuid, p_proposed_seller uuid)',
+        'record_lead_activity(p_enquiry uuid, p_stage lead_stage, p_note text, p_follow_up timestamp with time zone)',
+        'respond_to_business_review(p_review uuid, p_text text)',
+        'respond_to_quote(p_quotation uuid, p_version uuid, p_action text, p_reason text, p_expected_version integer)',
+        'respond_to_referral(p_referral uuid, p_accept boolean)',
+        'save_quote_draft(p_enquiry uuid, p_draft jsonb, p_expected_version integer)',
+        'send_quote_version(p_quotation uuid, p_expected_version integer)',
+        'submit_business_review(p_enquiry uuid, p_rating integer, p_text text)',
+        'withdraw_quote(p_quotation uuid, p_expected_version integer)',
+        'accept_partner_invitation(p_token text)', 'approve_partner(p_org uuid, p_reason text)',
+        'cancel_import(p_job uuid)', 'catalogue_stats()',
+        'close_sourcing_request(p_request uuid, p_note text)', 'commit_import(p_job uuid, p_confirm_overwrite boolean)',
+        'compare_items(p_ids uuid[])', 'get_catalogue_item(p_id uuid)',
+        'get_import(p_org uuid, p_job uuid, p_kind text, p_offset integer)', 'get_my_product(p_org uuid, p_product uuid)',
+        'get_product_for_review(p_product uuid)', 'get_product_media_access(p_media uuid)',
+        'get_sourcing_request(p_request uuid)', 'get_supplier(p_supplier uuid)',
+        'get_supplier_document_access(p_doc uuid)', 'handle_product_report(p_report uuid, p_action text, p_note text)',
+        'list_imports(p_org uuid, p_supplier uuid, p_offset integer)', 'list_my_products(p_org uuid, p_supplier uuid, p_status text, p_offset integer, p_limit integer)',
+        'list_my_sourcing_requests(p_buyer_org uuid, p_offset integer)', 'list_my_suppliers(p_org uuid)',
+        'list_partner_orgs(p_status text, p_offset integer)', 'list_partner_requests(p_org uuid, p_status text, p_offset integer)',
+        'list_product_reports(p_status text, p_offset integer)', 'list_product_reviews(p_offset integer)',
+        'list_saved_products(p_offset integer)', 'list_supplier_reviews(p_scope text, p_offset integer)',
+        'provision_partner(p_name text, p_owner_email text, p_display_name text)', 'publish_product(p_org uuid, p_product uuid, p_expected_version integer)',
+        'reinstate_product(p_product uuid, p_reason text)', 'reinstate_supplier(p_supplier uuid, p_reason text)',
+        'remove_product_media(p_media uuid)', 'remove_supplier_document(p_doc uuid)',
+        'reply_sourcing_request(p_request uuid, p_note text)', 'report_product(p_product uuid, p_reason text, p_note text)',
+        'resend_partner_invitation(p_org uuid, p_owner_email text)', 'respond_sourcing_request(p_request uuid, p_action text, p_note text, p_expected_version integer)',
+        'review_product(p_product uuid, p_decision text, p_reason text, p_expected_version integer)', 'review_supplier(p_supplier uuid, p_decision text, p_reason text, p_checks text[], p_expected_version integer)',
+        'save_partner_profile(p_org uuid, p_display_name text, p_contact_email text)', 'save_product(p_product uuid)',
+        'save_product_draft(p_org uuid, p_supplier uuid, p_product uuid, p_data jsonb, p_expected_version integer)', 'save_supplier_draft(p_org uuid, p_supplier uuid, p_data jsonb, p_expected_version integer)',
+        'search_catalogue(p_q text, p_category text, p_supplier uuid, p_moq_max numeric, p_price_min numeric, p_price_max numeric, p_currency text, p_offset integer, p_limit integer)', 'stage_import(p_partner_org uuid, p_supplier uuid, p_mode text, p_file_name text, p_sha256 text, p_rows jsonb)',
+        'submit_product(p_org uuid, p_product uuid, p_expected_version integer)', 'submit_sourcing_request(p_buyer_org uuid, p_key text, p_items jsonb, p_destination_state text, p_destination_city text, p_needed_by date, p_notes text)',
+        'submit_supplier(p_org uuid, p_supplier uuid, p_expected_version integer)', 'suspend_partner(p_org uuid, p_reason text)',
+        'suspend_product(p_product uuid, p_reason text)', 'suspend_supplier(p_supplier uuid, p_reason text)',
+        'unpublish_product(p_org uuid, p_product uuid)', 'unsave_product(p_product uuid)',
+        'update_product_media(p_media uuid, p_alt text, p_sort integer)', 'withdraw_sourcing_request(p_request uuid)',
+        'withdraw_supplier_submission(p_org uuid, p_supplier uuid)',
+        'seller_lead_metrics(p_seller_org uuid)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 117 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'private' and has_function_privilege('authenticated', p.oid, 'EXECUTE')),
-  array['can_manage_members', 'current_aal', 'current_consent_version', 'has_permission', 'has_platform_permission', 'invalid_invitation', 'is_admin_role', 'is_member',
-        'requires_mfa', 'role_rank', 'shares_org'],
-  'S7.7 authenticated can execute exactly the 11 allow-listed private helpers (not write_audit / check_rate_limit / raise_error / triggers)');
+  array['can_manage_members', 'current_aal', 'current_consent_version', 'has_partner_involvement', 'has_permission', 'has_platform_permission', 'invalid_invitation', 'is_admin_role', 'is_enquiry_member', 'is_member',
+        'request_buyer_org', 'request_has_open_report', 'requires_mfa', 'role_rank', 'shares_org'],
+  'S7.7 authenticated can execute exactly the 15 allow-listed private helpers (14 + has_partner_involvement for the reviewer RLS branches, 000115) (not write_audit / check_rate_limit / raise_error / triggers)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'service_auth_attempt', 'service_record_auth_event'],
-  'S7.8 service_role executes only service_record_auth_event, service_auth_attempt and bootstrap_first_admin from public');
+  array['bootstrap_first_admin', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_list_unscanned_product_media',
+        'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_record_auth_event', 'service_record_rejected_upload',
+        'service_register_document', 'service_register_product_media', 'service_register_supplier_document', 'service_set_product_media_scan',
+        'service_set_scan_result', 'service_set_supplier_document_scan'],
+  'S7.8 service_role executes exactly the 14 allow-listed service_* / bootstrap functions from public (8 up to Phase 4, 6 from Phase 5)');
 
 select is_empty(
   $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -217,6 +283,11 @@ select is(
   array['display_name', 'language'],
   'S7.15 authenticated may update only profiles.display_name and profiles.language');
 
+select ok(not has_function_privilege('authenticated', 'private.has_org_involvement(uuid, uuid)', 'EXECUTE')
+      and not has_function_privilege('anon', 'private.has_org_involvement(uuid, uuid)', 'EXECUTE')
+      and not has_function_privilege('service_role', 'private.has_org_involvement(uuid, uuid)', 'EXECUTE'),
+  'S7.30 private.has_org_involvement is not executable by authenticated, anon or service_role');
+
 -- anon behaves as expected over real statements
 select tt.anon();
 select throws_ok($$ select * from public.organisations $$, '42501', null, 'S7.16 anon select on organisations denied');
@@ -248,7 +319,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  8, 'S6.6 inventory: exactly the 8 expected public tables exist (new tables must come with RLS tests)');
+  54, 'S6.6 inventory: exactly the 54 expected public tables exist (35 up to Phase 4, 19 from Phase 5; new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

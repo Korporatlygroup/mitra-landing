@@ -1,6 +1,7 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr';
 import createIntlMiddleware from 'next-intl/middleware';
 import { NextRequest } from 'next/server';
+import { isOversizedNonUpload } from './lib/body-guard';
 import { buildCsp, newNonce, supabaseOriginFromEnv } from './lib/csp';
 import { routing } from './i18n/routing';
 import { sessionCookieOptions } from './lib/supabase/config';
@@ -17,6 +18,11 @@ type PendingCookie = { name: string; value: string; options: CookieOptions };
  * GET/HEAD. Mutations (server actions, POST) skip the rebuild: they return RSC payloads, not HTML documents.
  */
 export default async function proxy(request: NextRequest) {
+  // Refuse big bodies on everything except the upload pages (see src/lib/body-guard.ts).
+  if (isOversizedNonUpload(request.method, request.headers.get('content-length'), request.nextUrl.pathname)) {
+    return new Response(null, { status: 413 });
+  }
+
   const nonce = newNonce();
   const csp = buildCsp({ nonce, isDev: process.env.NODE_ENV === 'development', supabaseOrigin: supabaseOriginFromEnv() });
   const headers = new Headers(request.headers);

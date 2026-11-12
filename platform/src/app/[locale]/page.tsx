@@ -25,7 +25,10 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <h1>{t('titleSignedOut')}</h1>
         <p>{t('introSignedOut')}</p>
         <p className="link-row">
-          <Link href="/login" locale={locale} className="btn btn-primary">
+          <Link href="/directory" locale={locale} className="btn btn-primary">
+            {t('findBusiness')}
+          </Link>
+          <Link href="/login" locale={locale} className="btn btn-secondary">
             {nav('signIn')}
           </Link>
           <Link href="/signup" locale={locale} className="btn btn-secondary">
@@ -69,6 +72,12 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
         <Link href="/orgs" locale={locale} className="btn btn-secondary">
           {t('openOrgs')}
         </Link>
+        <Link href="/directory" locale={locale} className="btn btn-secondary">
+          {t('findBusiness')}
+        </Link>
+        <Link href="/requests/new" locale={locale} className="btn btn-secondary">
+          {t('postRequest')}
+        </Link>
       </p>
       {isAdmin || hasAudit ? (
         <>
@@ -77,6 +86,26 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             {isAdmin ? (
               <Link href="/admin/users" locale={locale}>
                 {t('adminUsers')}
+              </Link>
+            ) : null}
+            {isAdmin ? (
+              <Link href="/admin/verification" locale={locale}>
+                {t('adminVerification')}
+              </Link>
+            ) : null}
+            {isAdmin ? (
+              <Link href="/admin/listings" locale={locale}>
+                {t('adminListings')}
+              </Link>
+            ) : null}
+            {isAdmin ? (
+              <Link href="/admin/reports" locale={locale}>
+                {t('adminReports')}
+              </Link>
+            ) : null}
+            {isAdmin ? (
+              <Link href="/admin/catalogue" locale={locale}>
+                {all('p5admin.nav.catalogue')}
               </Link>
             ) : null}
             <Link href="/admin/audit" locale={locale}>

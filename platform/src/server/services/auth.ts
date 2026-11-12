@@ -2,14 +2,14 @@ import { fail, failFrom, ok, type Db, type Result } from './result';
 
 export interface Profile {
   display_name: string;
-  language: 'en' | 'ta';
+  language: 'en' | 'ta' | 'ms';
 }
 
 interface SignUpArgs {
   email: string;
   password: string;
   displayName: string;
-  language: 'en' | 'ta';
+  language: 'en' | 'ta' | 'ms';
   redirectTo: string;
   consentVersion: string;
 }
@@ -55,13 +55,13 @@ export async function signOut(supabase: Db): Promise<void> {
 export async function getProfile(supabase: Db, userId: string): Promise<Profile> {
   const { data } = await supabase.from('profiles').select('display_name, language').eq('id', userId).maybeSingle();
   const row = data as Profile | null;
-  return { display_name: row?.display_name ?? '', language: row?.language === 'ta' ? 'ta' : 'en' };
+  return { display_name: row?.display_name ?? '', language: row?.language === 'ta' || row?.language === 'ms' ? row.language : 'en' };
 }
 
 export async function updateProfile(
   supabase: Db,
   userId: string,
-  p: { displayName: string; language: 'en' | 'ta' },
+  p: { displayName: string; language: 'en' | 'ta' | 'ms' },
 ): Promise<Result<null>> {
   const { error } = await supabase
     .from('profiles')

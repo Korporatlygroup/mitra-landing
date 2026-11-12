@@ -65,7 +65,7 @@ export default async function AuditPage({
         <p>{t('empty')}</p>
       ) : (
         <div className="table-wrap">
-          <table>
+          <table className="stack">
             <thead>
               <tr>
                 <th scope="col">{t('when')}</th>
@@ -77,10 +77,10 @@ export default async function AuditPage({
             <tbody>
               {rows.map((r) => (
                 <tr key={r.id}>
-                  <td>{fmt.dateTime(new Date(r.at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</td>
-                  <td>{r.action}</td>
-                  <td>{r.actor_user_id ? r.actor_user_id.slice(0, 8) : '-'}</td>
-                  <td>
+                  <td data-label={t('when')}>{fmt.dateTime(new Date(r.at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</td>
+                  <td data-label={t('action')}>{r.action}</td>
+                  <td data-label={t('who')}>{r.actor_user_id ? r.actor_user_id.slice(0, 8) : '-'}</td>
+                  <td data-label={t('details')}>
                     <pre className="details">{JSON.stringify(r.details)}</pre>
                   </td>
                 </tr>

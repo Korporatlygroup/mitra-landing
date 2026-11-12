@@ -14,7 +14,7 @@ export function safeRedirectPath(candidate: string | null | undefined, fallback 
   return candidate;
 }
 
-/** Rewrites a leading "/en/" or "/ta/" segment of an (already safe) path to `locale`. Other paths are unchanged. */
+/** Rewrites a leading "/en/", "/ta/" or "/ms/" segment of an (already safe) path to `locale`. Other paths are unchanged. */
 export function retargetLocale(path: string, locale: string): string {
-  return path.replace(/^\/(en|ta)(?=\/|$|\?)/, `/${locale}`);
+  return path.replace(/^\/(en|ta|ms)(?=\/|$|\?)/, `/${locale}`);
 }

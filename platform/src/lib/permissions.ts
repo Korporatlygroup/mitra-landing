@@ -7,9 +7,38 @@ export type MemberRole = (typeof MEMBER_ROLES)[number];
 export type OrgType = 'business' | 'buyer' | 'partner' | 'mitra';
 
 export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
-  owner: ['org:manage', 'member:invite', 'member:remove', 'member:set_role', 'audit:read'],
-  manager: ['member:invite', 'member:remove', 'member:set_role'],
-  staff: [],
+  owner: [
+    'org:manage',
+    'member:invite',
+    'member:remove',
+    'member:set_role',
+    'audit:read',
+    'business:edit',
+    'verification:submit',
+    'verification:read',
+    'listing:publish',
+    'request:post',
+    'request:respond',
+    'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
+    'supplier:manage', 'catalogue:manage', 'sourcing:respond',
+  ],
+  manager: [
+    'member:invite',
+    'member:remove',
+    'member:set_role',
+    'business:edit',
+    'verification:submit',
+    'verification:read',
+    'listing:publish',
+    'request:post',
+    'request:respond',
+    'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
+    'supplier:manage', 'catalogue:manage', 'sourcing:respond',
+  ],
+  staff: [
+    'business:edit', 'request:post', 'request:respond', 'enquiry:write', 'quote:send', 'lead:manage', 'review:write',
+    'supplier:manage', 'catalogue:manage', 'sourcing:respond',
+  ],
   viewer: [],
   admin_super: [
     'admin:users',
@@ -19,11 +48,19 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'programme:publish',
     'case:reply',
     'report:view',
+    'verification:decide',
+    'listing:review',
+    'request:moderate',
+    'review:moderate',
+    'supplier:review',
+    'catalogue:review',
+    'partner:manage',
+    'catalogue:moderate',
   ],
   admin_ops: ['audit:read', 'report:view'],
-  admin_review: ['verification:review'],
+  admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate', 'supplier:review', 'catalogue:review', 'partner:manage'],
   admin_content: ['programme:publish'],
-  admin_support: ['case:reply'],
+  admin_support: ['case:reply', 'request:moderate', 'catalogue:moderate'],
 };
 
 /** Mirrors private.role_rank. */
@@ -58,3 +95,22 @@ export function roleHas(role: MemberRole, permission: string): boolean {
 export function isMemberRole(v: string): v is MemberRole {
   return (MEMBER_ROLES as readonly string[]).includes(v);
 }
+
+// ---- Phase 5 helpers (UI hints only: the database enforces every permission) ---------------------------------------
+
+/** A permission set as returned by getRolePermissions(). */
+export type PermissionSet = ReadonlySet<string> | readonly string[];
+const has = (perms: PermissionSet, p: string) => (Array.isArray(perms) ? (perms as readonly string[]).includes(p) : (perms as ReadonlySet<string>).has(p));
+
+/** Add or edit suppliers and their documents, submit them for review (partner owner, manager, staff). */
+export const canManageSuppliers = (perms: PermissionSet) => has(perms, 'supplier:manage');
+/** Add or edit products, upload images, import catalogues, publish or unpublish. */
+export const canManageCatalogue = (perms: PermissionSet) => has(perms, 'catalogue:manage');
+/** Respond to buyer requests. */
+export const canRespondToSourcing = (perms: PermissionSet) => has(perms, 'sourcing:respond');
+/** MITRA reviewer: decide on suppliers and products. */
+export const canReviewCatalogue = (perms: PermissionSet) => has(perms, 'supplier:review') || has(perms, 'catalogue:review');
+/** MITRA moderator: pause suppliers or products, handle product reports. */
+export const canModerateCatalogue = (perms: PermissionSet) => has(perms, 'catalogue:moderate');
+/** MITRA: approve, pause or provision partner organisations. */
+export const canManagePartners = (perms: PermissionSet) => has(perms, 'partner:manage');

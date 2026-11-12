@@ -5,11 +5,22 @@ import { migrations } from './helpers';
 const sql = migrations();
 const seedFile = sql.find((m) => m.file.includes('permissions'))!.text;
 
+/** Role/permission pairs inserted by ANY migration (the seed is spread across several files). */
 function sqlSeedPairs(): string[] {
-  const start = seedFile.indexOf('insert into public.role_permissions');
-  expect(start).toBeGreaterThan(-1);
-  const block = seedFile.slice(start, seedFile.indexOf(';', start));
-  return [...block.matchAll(/\('([a-z_]+)',\s*'([a-z_:]+)'\)/g)].map((m) => `${m[1]}|${m[2]}`).sort();
+  const pairs: string[] = [];
+  for (const { text } of sql) {
+    let from = 0;
+    for (;;) {
+      const start = text.indexOf('insert into public.role_permissions', from);
+      if (start === -1) break;
+      const end = text.indexOf(';', start);
+      const block = text.slice(start, end);
+      pairs.push(...[...block.matchAll(/\('([a-z_]+)',\s*'([a-z_:]+)'\)/g)].map((m) => `${m[1]}|${m[2]}`));
+      from = end;
+    }
+  }
+  expect(pairs.length).toBeGreaterThan(20);
+  return pairs.sort();
 }
 
 describe('permissions map', () => {
