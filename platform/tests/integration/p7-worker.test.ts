@@ -183,7 +183,7 @@ describe('Journey F: outages and bad content never touch published data', () => 
     await runWorkerOnce(makeDeps(pages));
     const p = (await sql<{ verification_status: string; publication_state: string; application_status: string }>(
       `select verification_status, publication_state, application_status from public.gov_programmes where id = $1`, [prog]))[0]!;
-    expect(p).toEqual({ verification_status: 'unconfirmed', publication_state: 'published', application_status: 'open' });
+    expect(p).toEqual({ verification_status: 'verified', publication_state: 'published', application_status: 'open' }); // one miss changes nothing visible (three in a row are needed)
   });
 });
 
