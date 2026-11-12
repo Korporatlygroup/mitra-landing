@@ -50,6 +50,7 @@ export default async function AdminListingsPage({
         <Link href="/admin/reports" locale={locale}>
           {t('adminList.reportsLink')}
         </Link>
+        <Link href="/admin/reviews" locale={locale}>{t('p4.moderateReviews')}</Link>
       </nav>
       {items.length === 0 ? (
         <p>{t('adminList.empty')}</p>

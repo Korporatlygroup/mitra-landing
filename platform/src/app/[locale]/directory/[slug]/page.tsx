@@ -27,6 +27,7 @@ export default async function ListingPage({ params }: { params: Promise<{ locale
   const r = await getListing(supabase, slug);
   if (!r.ok) notFound();
   const b = r.data;
+  const { data: publishedReviews } = await supabase.rpc('list_published_business_reviews', { p_slug: slug });
 
   const memberships = user ? await listMyMemberships(supabase, user.id) : [];
   const orgs = eligibleBuyerOrgs(memberships);
@@ -40,6 +41,12 @@ export default async function ListingPage({ params }: { params: Promise<{ locale
         </Link>
       </p>
       <ListingView data={b} locale={locale} />
+      {(publishedReviews?.length ?? 0) > 0 ? <section aria-labelledby="reviews-h" className="card">
+        <h2 id="reviews-h">{t('p4.publishedReviews')}</h2>
+        <ul>{publishedReviews!.map((review: { rating: number; review_text: string; seller_response: string | null; created_at: string }, index: number) =>
+          <li key={`${review.created_at}-${index}`}><strong>{review.rating}/5</strong> · <time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString(locale)}</time>
+            <p>{review.review_text}</p>{review.seller_response ? <p>{t('p4.sellerResponse')}: {review.seller_response}</p> : null}</li>)}</ul>
+      </section> : null}
 
       <section aria-labelledby="enq-h">
         <h2 id="enq-h">{t('dir.enquiryTitle')}</h2>

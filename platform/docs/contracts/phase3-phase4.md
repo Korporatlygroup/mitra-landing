@@ -1,9 +1,9 @@
 # Phase 3 / Phase 4 shared contract
 
-**Contract version:** `p3p4-contract/1.1` (1.0 plus section 10, additive only; nothing in sections 1 to 9 changed meaning) (reconciled against the real Phase 1/2 schema at `adc8c96` and against the implemented Phase 3 migrations; this supersedes the *proposed* contract in `02_Phase3_Phase4_Shared_Contract.md` where they differ)
+**Contract version:** `p3p4-contract/1.2` (1.0 plus sections 10 and 11, additive only; nothing in sections 1 to 9 changed meaning) (reconciled against the real Phase 1/2 schema at `adc8c96` and against the implemented Phase 3 migrations; this supersedes the *proposed* contract in `02_Phase3_Phase4_Shared_Contract.md` where they differ)
 **Status:** Implemented locally and tested (see `phase3-report.md`). **Not yet acknowledged by Codex** and not applied to hosted staging. Codex should acknowledge by writing the version above and the commit SHA of this file into its own plan.
 **Migration owner (shared entities):** Claude (Phase 3). Codex writes P4 migrations only after the P3 migrations below exist locally, as separate files with later version prefixes.
-**Migration files:** `20260701000012_p3_directory_schema.sql`, `…013_p3_listing_rpcs.sql`, `…014_p3_request_rpcs.sql`, and (1.1) `20260701000100_p3_request_board.sql`.
+**Migration files:** `20260701000012_p3_directory_schema.sql`, `…013_p3_listing_rpcs.sql`, `…014_p3_request_rpcs.sql`, (1.1) `…000100_p3_request_board.sql`, `…000101_p3_ms_language.sql`, `…000102_p3_portfolio_fields.sql`, and (1.2) `…000105_p3p4_referral_handoff.sql`. **Phase 4 migrations are numbered `…000103_p4_schema.sql` and `…000104_p4_workflows.sql`** (this supersedes the earlier `000015`-`000099` range; see section 11).
 
 ## 1. What P3 owns and what P4 may rely on
 
@@ -116,3 +116,18 @@ Standard `PT401/403/404/409/422/429`. P3 adds keys: `listing_incomplete`, `listi
 - The audit entry for a reply has `details.via` = `board` or `invitation`.
 - Submitting a board request whose title, description or district contains an email address or a run of nine or more digits is refused with `422 contact_in_public_text` (trigger). Buyer name, phone and email are never part of a board response and follow section 9 after a reply.
 - Withdraw, close, expiry and moderator removal take the request off the board at once (the list only returns `open`); sellers that already replied keep their restricted view as before.
+
+## 11. Version 1.2: migration order and the referral hand-off (additive)
+
+**Order (final).** `000012`-`000014` (P3), `000100`-`000102` (P3 addenda), `000103`-`000104` (P4, renamed from `000015`-`000016`; content unchanged), `000105` (P3 integration). Reason: hosted staging must receive versions above every version it already holds, and `000105` reads P4's `referral_suggestions`, so it must come after P4. P4 changes after this point use the next free number above `000105`. P4 still must not redefine `get_request_for_seller`, `respond_to_invitation`, `invite_seller` (section 10).
+
+**New: `public.open_referral_enquiry(p_referral uuid)` returns `{ id, created }`.** This is the only way an accepted P4 referral becomes an `enquiries` row; P4 still never inserts into `enquiries`.
+- Caller: an active member of the *proposed* (recipient) organisation with `request:respond` (owner, manager, staff). A non-member, the buyer, the referring business, and any recipient member (viewer included) **before the buyer has consented** get `404 not_found`; after consent a recipient viewer gets `403`.
+- Precondition: `referral_suggestions.status = 'recipient_accepted'` with both `buyer_consented_at` and `recipient_accepted_at` set (P4 enforces buyer-first order). Otherwise `409 invalid_referral`.
+- Also required: the source enquiry is neither `blocked` nor `closed`, and a reused existing enquiry with the recipient is not `blocked` (`409 invalid_referral`); if it belongs to a request, that request is `open` and not expired (`409 request_not_open`); the buyer organisation is active; the recipient has a `published` listing that is `accepting_requests` in an active organisation (`409 seller_not_available`).
+- Effect: opens (or returns) the one open enquiry for (buyer org, recipient, original request or none) through `private.open_enquiry`, `origin = 'referral'`, `opened_by_org_id` = recipient, `topic` = source topic, `opening_note` = null. Nothing else from the source conversation is copied (no messages, quotes, notes, or referrer identity). Buyer name and contact follow section 9 (`share_contact`).
+- Idempotency: table `public.referral_handoffs(referral_id pk, enquiry_id, opened_by, created_at)` records one enquiry per referral for ever; a retry, a colleague's click, or a call after the enquiry or request has closed returns the same enquiry with `created = false`. Rows are readable only by participants of that enquiry (RLS); no direct writes.
+- Side effects: audit `referral.enquiry_opened` whenever the hand-off row is first written (details: enquiry id and `reused`), notification `enquiry.opened` to the buyer organisation only when a new enquiry was created, rate limit 20 per user per day (`refopen:`).
+- Lock order: referral row, then request row (`for share`). It never takes the match row.
+
+**Accepted limits (independent review, medium/low, 2026-11-11).** (1) Buyer consent in P4 has no expiry and no withdrawal; the hand-off is blocked only if the source enquiry is closed or blocked, the request closed, or the recipient unavailable. Needs a P4 withdraw RPC and a consent age limit later. (2) The new enquiry's `topic` is copied from the source enquiry (for a listing enquiry that is the buyer's own words), which the recipient can read; the consent screen should say the topic is shared. (3) `referral_handoffs.opened_by` has no foreign key (survives account erasure). (4) Before the buyer consents, a recipient gets `404` for the referral, including viewers. (5) `referral_handoffs` rows cascade away with their enquiry or referral so that organisation and account erasure keep working; if an enquiry were deleted, a retry could then open a new one (enquiries are only deleted by erasure cascades).

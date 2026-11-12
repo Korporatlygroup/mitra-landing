@@ -386,6 +386,10 @@ export const respondToInvitation = (db: Db, requestId: string, orgId: string, re
 export const openListingEnquiry = (db: Db, buyerOrgId: string, slug: string, topic: string, note: string) =>
   rpc<{ id: string; created: boolean }>(db, 'open_listing_enquiry', { p_buyer_org: buyerOrgId, p_slug: slug, p_topic: topic, p_note: note });
 
+/** Phase 3 seam for Phase 4 referrals: the accepted recipient opens the enquiry with the customer (idempotent). */
+export const openReferralEnquiry = (db: Db, referralId: string) =>
+  rpc<{ id: string; created: boolean }>(db, 'open_referral_enquiry', { p_referral: referralId });
+
 export async function getEnquiry(db: Db, id: string): Promise<EnquiryRow | null> {
   const { data } = await db
     .from('enquiries')

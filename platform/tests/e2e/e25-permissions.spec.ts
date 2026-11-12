@@ -173,7 +173,7 @@ test('E25 another organisation cannot open this business or its documents; anony
   const claims = await rp.evaluate(async ({ url, key, token, org }) => {
     const r = await fetch(`${url}/rest/v1/verification_claims?org_id=eq.${org}&select=id`, { headers: { apikey: key, authorization: `Bearer ${token}` } });
     return r.json();
-  }, { url: process.env.TEST_API_URL ?? 'http://127.0.0.1:54421', key: (await import('./support/env')).PUBLISHABLE_KEY, token: tok, org: sub.orgId });
+  }, { url: (await import('./support/env')).API_URL, key: (await import('./support/env')).PUBLISHABLE_KEY, token: tok, org: sub.orgId });
   expect(claims).toEqual([]);
   await ctx.close();
 
