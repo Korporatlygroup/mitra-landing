@@ -306,6 +306,8 @@ begin
     if not private.gov_valid_rule(r) then return 'rule'; end if;
   end loop;
   if char_length(coalesce(p_c ->> 'description', '')) > 4000 then return 'description'; end if;
+  if jsonb_typeof(coalesce(p_c -> 'terms', '[]'::jsonb)) <> 'array' or jsonb_array_length(coalesce(p_c -> 'terms', '[]'::jsonb)) > 15 then return 'terms'; end if;
+  if jsonb_typeof(coalesce(p_c -> 'review_notes', '[]'::jsonb)) <> 'array' or jsonb_array_length(coalesce(p_c -> 'review_notes', '[]'::jsonb)) > 5 then return 'review_notes'; end if;
   return null;
 end;
 $$;
@@ -319,7 +321,7 @@ $$
         then (select coalesce(jsonb_agg(x order by x::text), '[]'::jsonb) from jsonb_array_elements(p_c -> 'rules') x)
         else p_c -> k end as v
     from unnest(array['name', 'description', 'funding_type', 'amount_min', 'amount_max', 'currency', 'application_channel',
-      'application_url', 'info_url', 'opens_on', 'closes_on', 'application_status', 'documents', 'rules', 'extraction_status']) k
+      'application_url', 'info_url', 'opens_on', 'closes_on', 'application_status', 'documents', 'terms', 'rules', 'review_notes', 'extraction_status']) k
     where p_c ? k and jsonb_typeof(p_c -> k) <> 'null'
   ) t
 $$;
@@ -375,6 +377,13 @@ begin
   end loop;
 end;
 $$;
+
+-- What the worker needs to know about a claimed job's source (adapter, exact hosts, rate). No secrets live here.
+create function public.gov_job_source(p_job uuid)
+returns table (source_id uuid, adapter text, allowed_hosts text[], rate_per_minute integer, parser_version text)
+language sql stable security definer set search_path = '' as
+$$ select s.id, s.adapter, s.allowed_hosts, s.rate_per_minute, s.parser_version
+   from public.gov_fetch_jobs j join public.gov_sources s on s.id = j.source_id where j.id = p_job $$;
 
 -- Mark a job finished and store the result. Source becomes healthy. Published data is not touched here.
 create function public.gov_complete_job(p_job uuid, p_worker text, p_result jsonb) returns uuid
@@ -458,7 +467,7 @@ begin
       return 'unchanged';
     end if;
     foreach k in array array['name', 'description', 'funding_type', 'amount_min', 'amount_max', 'currency', 'application_channel',
-      'application_url', 'info_url', 'opens_on', 'closes_on', 'application_status', 'documents', 'rules'] loop
+      'application_url', 'info_url', 'opens_on', 'closes_on', 'application_status', 'documents', 'terms', 'rules'] loop
       if base.data -> k is distinct from v_canon -> k then
         v_diff := v_diff || jsonb_build_object(k, jsonb_build_object('old', base.data -> k, 'new', v_canon -> k));
       end if;
@@ -720,7 +729,7 @@ $$;
 revoke all on function
   public.gov_enqueue_due_jobs(), public.gov_claim_jobs(text, integer, integer), public.gov_complete_job(uuid, text, jsonb),
   public.gov_fail_job(uuid, text, text, integer), public.gov_submit_candidate(uuid, uuid, text, jsonb), public.gov_mark_missing(uuid, text),
-  public.gov_decide_proposal(uuid, text, text, text), public.gov_set_programme_state(uuid, text, text),
+  public.gov_job_source(uuid), public.gov_decide_proposal(uuid, text, text, text), public.gov_set_programme_state(uuid, text, text),
   public.gov_set_setting(text, boolean, text), public.gov_propose_source_change(uuid, jsonb, text),
   public.gov_decide_source_change(uuid, boolean, text),
   public.gov_register_source(text, text, text, text, text, text, text[], text[], text, text),
@@ -728,7 +737,8 @@ revoke all on function
 from public, anon, authenticated;
 grant execute on function
   public.gov_enqueue_due_jobs(), public.gov_claim_jobs(text, integer, integer), public.gov_complete_job(uuid, text, jsonb),
-  public.gov_fail_job(uuid, text, text, integer), public.gov_submit_candidate(uuid, uuid, text, jsonb), public.gov_mark_missing(uuid, text)
+  public.gov_fail_job(uuid, text, text, integer), public.gov_submit_candidate(uuid, uuid, text, jsonb), public.gov_mark_missing(uuid, text),
+  public.gov_job_source(uuid)
 to service_role;
 grant execute on function
   public.gov_decide_proposal(uuid, text, text, text), public.gov_set_programme_state(uuid, text, text),
@@ -737,3 +747,9 @@ grant execute on function
   public.gov_register_source(text, text, text, text, text, text, text[], text[], text, text)
 to authenticated;
 grant execute on function public.gov_list_programmes(text, text, integer, integer) to anon, authenticated;
+
+-- Private helpers are never callable from the API roles (security definer code and the table owner use them).
+revoke all on function
+  private.gov_setting(text), private.gov_versions_immutable(), private.gov_events_immutable(), private.gov_event(text, uuid, uuid, uuid, jsonb),
+  private.gov_valid_rule(jsonb), private.gov_candidate_problem(jsonb), private.gov_canonical(jsonb), private.gov_all_https(text[])
+  from public, anon, authenticated, service_role;

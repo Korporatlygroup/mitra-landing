@@ -56,10 +56,14 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'catalogue:review',
     'partner:manage',
     'catalogue:moderate',
+    'gov:source_admin',
+    'gov:review',
+    'gov:publish',
+    'gov:view',
   ],
-  admin_ops: ['audit:read', 'report:view'],
-  admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate', 'supplier:review', 'catalogue:review', 'partner:manage'],
-  admin_content: ['programme:publish'],
+  admin_ops: ['audit:read', 'report:view', 'gov:source_admin', 'gov:view'],
+  admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate', 'supplier:review', 'catalogue:review', 'partner:manage', 'gov:review', 'gov:view'],
+  admin_content: ['programme:publish', 'gov:publish', 'gov:view'],
   admin_support: ['case:reply', 'request:moderate', 'catalogue:moderate'],
 };
 

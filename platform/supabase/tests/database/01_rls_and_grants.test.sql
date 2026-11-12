@@ -138,8 +138,8 @@ select is_empty(
 select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname in ('public', 'private') and has_function_privilege('anon', p.oid, 'EXECUTE')),
-  array['compare_items', 'get_catalogue_item', 'get_listing', 'get_product_media_access', 'list_published_business_reviews', 'search_catalogue', 'search_listings'],
-  'S7.3 anon can execute only the three public directory reads and the four public catalogue reads, nothing else in public or private');
+  array['compare_items', 'get_catalogue_item', 'get_listing', 'get_product_media_access', 'gov_list_programmes', 'list_published_business_reviews', 'search_catalogue', 'search_listings'],
+  'S7.3 anon can execute only the three public directory reads, the four public catalogue reads and the Phase 7 public programme list, nothing else in public or private');
 
 select is_empty(
   $$ select n.nspname || '.' || c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
@@ -221,8 +221,12 @@ select is(
         'unpublish_product(p_org uuid, p_product uuid)', 'unsave_product(p_product uuid)',
         'update_product_media(p_media uuid, p_alt text, p_sort integer)', 'withdraw_sourcing_request(p_request uuid)',
         'withdraw_supplier_submission(p_org uuid, p_supplier uuid)',
-        'seller_lead_metrics(p_seller_org uuid)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 117 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5)');
+        'seller_lead_metrics(p_seller_org uuid)',
+        'gov_decide_proposal(p_proposal uuid, p_decision text, p_reason text, p_expected_status text)', 'gov_decide_source_change(p_change uuid, p_approve boolean, p_reason text)',
+        'gov_list_programmes(p_funding_type text, p_query text, p_limit integer, p_offset integer)', 'gov_propose_source_change(p_source uuid, p_change jsonb, p_reason text)',
+        'gov_register_source(p_agency_code text, p_agency_name text, p_domain text, p_name text, p_type text, p_adapter text, p_hosts text[], p_urls text[], p_method text, p_restrictions text)',
+        'gov_set_programme_state(p_programme uuid, p_state text, p_reason text)', 'gov_set_setting(p_key text, p_enabled boolean, p_reason text)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 124 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 7 added by Phase 7)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -236,11 +240,11 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_list_unscanned_product_media',
+  array['bootstrap_first_admin', 'gov_claim_jobs', 'gov_complete_job', 'gov_enqueue_due_jobs', 'gov_fail_job', 'gov_job_source', 'gov_mark_missing', 'gov_submit_candidate', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_list_unscanned_product_media',
         'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_record_auth_event', 'service_record_rejected_upload',
         'service_register_document', 'service_register_product_media', 'service_register_supplier_document', 'service_set_product_media_scan',
         'service_set_scan_result', 'service_set_supplier_document_scan'],
-  'S7.8 service_role executes exactly the 14 allow-listed service_* / bootstrap functions from public (8 up to Phase 4, 6 from Phase 5)');
+  'S7.8 service_role executes exactly the 21 allow-listed service_* / bootstrap / worker functions from public (8 up to Phase 4, 6 from Phase 5, 7 Phase 7 worker RPCs)');
 
 select is_empty(
   $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -319,7 +323,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  54, 'S6.6 inventory: exactly the 54 expected public tables exist (35 up to Phase 4, 19 from Phase 5; new tables must come with RLS tests)');
+  64, 'S6.6 inventory: exactly the 64 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 10 from Phase 7; new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

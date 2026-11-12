@@ -332,3 +332,24 @@ export async function listUnscannedProductMedia(limit: number): Promise<{ id: st
     return [];
   }
 }
+
+// ---------------------------------------------------------------------------------------------------------------
+// Phase 7: government-assistance monitoring worker. Only the audited worker RPCs can be called through this.
+// ---------------------------------------------------------------------------------------------------------------
+
+const GOV_WORKER_RPCS = [
+  'gov_enqueue_due_jobs', 'gov_claim_jobs', 'gov_job_source', 'gov_complete_job', 'gov_fail_job', 'gov_submit_candidate', 'gov_mark_missing',
+] as const;
+
+export async function govWorkerRpc(
+  name: (typeof GOV_WORKER_RPCS)[number],
+  args: Record<string, unknown> = {},
+): Promise<{ data: unknown; error: { code?: string; message: string } | null }> {
+  if (!GOV_WORKER_RPCS.includes(name)) return { data: null, error: { message: 'rpc_not_allowed' } };
+  try {
+    const { data, error } = await serviceClient().rpc(name, args);
+    return { data, error: error ? { code: error.code, message: error.message } : null };
+  } catch {
+    return { data: null, error: { message: 'worker_unavailable' } };
+  }
+}
