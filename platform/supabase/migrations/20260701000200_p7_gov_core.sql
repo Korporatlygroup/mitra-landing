@@ -580,6 +580,11 @@ begin
     programme_id = prog.id where id = p.id;
   perform private.gov_event('proposal.approve', p.source_id, prog.id, p.id, jsonb_build_object('version', v_ver, 'reason', v_reason, 'kind', p.kind));
   perform private.write_audit('gov.programme.published', null, 'gov_programme', prog.id::text, jsonb_build_object('version', v_ver, 'proposal', p.id));
+  perform private.gov_emit_events(prog.id, v_ver, case p.kind when 'new' then 'programme_verified' when 'closure' then 'programme_closed' else 'programme_updated' end, p.flags);
+  if p.kind = 'change' and 'dates_changed' = any (p.flags) then perform private.gov_emit_events(prog.id, v_ver, 'deadline_changed', p.flags); end if;
+  if p.kind <> 'new' and c ->> 'application_status' = 'open' and p.diff #>> '{application_status,old}' is distinct from 'open' and p.diff ? 'application_status' then
+    perform private.gov_emit_events(prog.id, v_ver, 'programme_opened', p.flags);
+  end if;
   return prog.id;
 end;
 $$;
@@ -602,6 +607,7 @@ begin
     verification_status = case when p_state = 'archived' then 'archived' else verification_status end, version = version + 1
   where id = prog.id;
   perform private.gov_event('programme.' || p_state, prog.source_id, prog.id, null, jsonb_build_object('reason', v_reason));
+  if p_state = 'archived' then perform private.gov_emit_events(prog.id, null, 'programme_closed', '{}'::text[]); end if;
   perform private.write_audit('gov.programme.' || p_state, null, 'gov_programme', prog.id::text, jsonb_build_object('reason', v_reason));
 end;
 $$;
