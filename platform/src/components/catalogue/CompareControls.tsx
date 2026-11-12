@@ -39,7 +39,8 @@ export function CompareTray() {
   const t = useTranslations('p5buyer.compare');
   const { entries, remove, clear } = useCompareSelection();
   const pathname = usePathname();
-  if (entries.length === 0 || /^\/catalogue\/compare\/?$/.test(pathname)) return null;
+  // not on the comparison page itself, and not on the request form (the bar would cover the submit button on a phone)
+  if (entries.length === 0 || /^\/catalogue\/compare\/?$/.test(pathname) || /^\/catalogue\/[^/]+\/request\/?$/.test(pathname)) return null;
   const ids = entries.map((e) => e.id);
   return (
     <aside className="compare-tray" aria-label={t('trayLabel')}>

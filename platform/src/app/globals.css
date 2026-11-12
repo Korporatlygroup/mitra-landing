@@ -828,7 +828,7 @@ main:has(.catalogue-wide) {
   margin-top: 6px;
 }
 body:has(.compare-tray) main {
-  padding-bottom: 14rem;
+  padding-bottom: min(50vh, 18rem);
 }
 @media (max-width: 720px) {
   .compare-table {
