@@ -8,7 +8,7 @@
  */
 export const MAX_PLAIN_BODY_BYTES = 1024 * 1024;
 
-const UPLOAD_PAGE = /^\/(en|ta|ms)\/orgs\/[0-9a-f-]{36}\/business\/(onboarding|verification)\/?$/i;
+const UPLOAD_PAGE = /^\/(en|ta|ms)\/orgs\/[0-9a-f-]{36}\/(business\/(onboarding|verification)|partner\/import)\/?$/i;
 
 export function isOversizedNonUpload(method: string, contentLength: string | null, pathname: string): boolean {
   if (method !== 'POST' && method !== 'PUT' && method !== 'PATCH') return false;

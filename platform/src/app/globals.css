@@ -620,3 +620,95 @@ main:has(.partner-shell) {
   font-weight: 700;
   line-height: 1.2;
 }
+
+/* ===== Partner UI (partner agent). Additive only; keep other blocks untouched. ===== */
+.form-wide {
+  max-width: 40rem;
+}
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.form-section {
+  display: grid;
+  gap: var(--space);
+  padding-top: 4px;
+}
+.form-section h2 {
+  margin-top: 1.5rem;
+}
+input[type='number'],
+input[type='tel'],
+input[type='url'],
+input[type='date'],
+input[type='file'],
+textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: var(--tap);
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+}
+.field input[type='radio'],
+.field input[type='checkbox'] {
+  width: auto;
+  min-height: 0;
+}
+.steps {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 0;
+}
+.steps li[aria-current='step'] {
+  font-weight: 700;
+}
+.steps li[aria-current='step'] a,
+.steps li[aria-current='step'] span {
+  border-bottom: 3px solid var(--charcoal);
+}
+.repeat {
+  display: grid;
+  gap: var(--space);
+}
+.repeat-row {
+  display: grid;
+  gap: 12px;
+}
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  padding: 8px;
+  border: 2px dashed var(--border);
+  color: var(--text-muted);
+}
+.filters {
+  max-width: 40rem;
+}
+.uploader progress,
+.steps + h2 + progress {
+  width: 100%;
+}
+@media (min-width: 721px) {
+  .repeat-row {
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    align-items: end;
+  }
+  .repeat-row legend {
+    grid-column: 1 / -1;
+  }
+  .steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
