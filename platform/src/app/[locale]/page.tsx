@@ -103,6 +103,11 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
                 {t('adminReports')}
               </Link>
             ) : null}
+            {isAdmin ? (
+              <Link href="/admin/catalogue" locale={locale}>
+                {all('p5admin.nav.catalogue')}
+              </Link>
+            ) : null}
             <Link href="/admin/audit" locale={locale}>
               {t('adminAudit')}
             </Link>
