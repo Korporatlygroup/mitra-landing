@@ -65,7 +65,7 @@ const icons: Record<string, string> = {
       </div>
     </div>
 
-    <p class="results__source">{results.sourceNote}</p>
+    <p class="results__source">{results.sourceNote}{results.evidenceLink && <> <a href={results.evidenceLink.href}>{results.evidenceLink.label}</a></>}</p>
   </div>
 </section>
 

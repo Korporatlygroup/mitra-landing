@@ -684,8 +684,8 @@
         "label": "views on a single live-stream selling session"
       },
       {
-        "value": "~100",
-        "label": "new TikTok followers for one participant's shop, with first online sales within days"
+        "value": "12.4K",
+        "label": "likes on one participant's live-selling sessions, with first online orders within days"
       },
       {
         "value": "6 days",
@@ -721,7 +721,11 @@
       "text": "The programme kept going after graduation: trainees moved on to paid work placements of about six months, running live digital-marketing projects."
     },
     "sourceNote": "Results from participants' own account screenshots, compiled in the programme's final report.",
-    "_note": "Every figure is from the final report (Laporan Akhir, section 6, Lampiran G4) and must match it. Placement: GET-run internships with monthly allowances (vault Research #8); the user asked not to say \"intern\" or name GET Academy (2026-11-10). No placement count (sources conflict)."
+    "_note": "Every figure is from the final report (Laporan Akhir, section 6, Lampiran G4) and must match it. Placement: GET-run internships with monthly allowances (vault Research #8); the user asked not to say \"intern\" or name GET Academy (2026-11-10). No placement count (sources conflict). 2026-11-13: '~100 new followers' replaced by 12.4K likes: the report's own screenshot (Lampiran G4, Lalis) shows 4 new followers; the 100 was read off a graph.",
+    "evidenceLink": {
+      "label": "See the evidence",
+      "href": "#evidence"
+    }
   },
   "interviews": {
     "eyebrow": "Interviews",
@@ -828,5 +832,84 @@
       }
     ],
     "_note": "Targets paraphrase the grant's outputs and KPIs (Lampiran C) as set out in the final report's KPI table (section 6); 'how' and 'evidence' follow that table's achievement column. KPI (i) (a participant-count target) is deliberately left out: no participant counts on the page (user decision 2026-11-10). The quiz result count is not shown."
+  },
+  "evidence": {
+    "eyebrow": "The evidence",
+    "heading": "Don't take our word for it",
+    "intro": "These are the participants' own screenshots, as submitted in the programme's final report. Real accounts, real numbers, from the weeks of the programme.",
+    "items": [
+      {
+        "name": "Sharmila",
+        "business": "Sharmila Beauty Centre",
+        "channel": "TikTok: PINKY MUA",
+        "media": [
+          "ev-pinky-live",
+          "ev-pinky-videos"
+        ],
+        "points": [
+          "9,020 views on the videos she posted during the programme",
+          "2.7K viewers on a single live session: more views than 100% of LIVE creators with a similar following, by TikTok’s own count",
+          "12 new followers from that one live"
+        ],
+        "layout": "side"
+      },
+      {
+        "name": "Letchumy",
+        "business": "Lalis Smart Enterprise",
+        "channel": "TikTok perfume shop",
+        "media": [
+          "ev-lalis-live",
+          "ev-lalis-recording"
+        ],
+        "points": [
+          "2 hours of live selling, 607 views and 12.4K likes",
+          "108 viewers on one live session of 1 hour 19 minutes",
+          "Her first 3 online orders, within days of the classroom phase"
+        ],
+        "layout": "stack"
+      },
+      {
+        "name": "Kavitha",
+        "business": "A brand-new TikTok account",
+        "channel": "Started from zero in class",
+        "media": [
+          "ev-kavitha-account"
+        ],
+        "points": [
+          "Set up her TikTok account during the programme",
+          "Six videos posted; five passed 100 views each",
+          "Her first 8 followers and 82 likes"
+        ],
+        "layout": "side"
+      },
+      {
+        "name": "Mugilan",
+        "business": "Cynosure Network",
+        "channel": "CCTV and security systems",
+        "media": [
+          "ev-mugilan-site"
+        ],
+        "points": [
+          "Built a complete business website from scratch",
+          "Finished within the six classroom days"
+        ],
+        "layout": "side"
+      }
+    ],
+    "quiz": {
+      "title": "Before and after: the same questions",
+      "text": "Participants answered the same quiz before and after the classroom days. Questions they answered “No” to on day one, they answered “Yes” to at the end: from the fundamentals of entrepreneurship to using ChatGPT, Google Ads and TikTok Shop.",
+      "areas": [
+        "Business goals and challenges",
+        "Knowledge and skills",
+        "Current marketing strategies",
+        "Online presence and e-commerce",
+        "Customer insights",
+        "Content creation"
+      ],
+      "media": "ev-quiz"
+    },
+    "sourceNote": "Screenshots from the final report submitted to MITRA (evidence annex). Dates, earnings and other users’ names cropped out.",
+    "_note": "From the final report's Lampiran G4, read with the user's permission (results sections only, 2026-11-13). Names and shop handles shown as-is by the user's choice. Left out: TikTok earnings and the RM sales value (no income data), order screenshots (buyers' names and addresses), the placement offer letter, programme dates, and any participant count."
   }
 }
