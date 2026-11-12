@@ -398,7 +398,7 @@ select throws_ok($$ select public.submit_supplier(tt.oid('P1'), tt.jid('S1'), 99
 
 -- ===================== T7: reads, isolation, RLS =====================
 select tt.act('tt_p1_view');
-select is((select count(*)::int from public.supplier_private where supplier_id = tt.jid('S1')), 1, 'T7.1 a partner viewer can read the private contact row');
+select is((select count(*)::int from public.supplier_private where supplier_id = tt.jid('S1')), 0, 'T7.1 a partner viewer (no supplier:manage) cannot read the private contact row (000115, M4)');
 select is(jsonb_array_length(public.list_my_suppliers(tt.oid('P1')) -> 'items'), 2, 'T7.2 list_my_suppliers returns both suppliers to a partner member');
 select tt.act('tt_p2_owner', 'aal2');
 select is((select count(*)::int from public.supplier_private where supplier_id = tt.jid('S1')), 0, 'T7.3 partner B sees no contact details of partner A');

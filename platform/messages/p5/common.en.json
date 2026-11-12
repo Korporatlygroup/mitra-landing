@@ -185,6 +185,7 @@
     "invalid_website": "Please type a web address that starts with http:// or https://.",
     "items_required": "Please add at least one product.",
     "job_not_previewed": "This import is not ready to be confirmed. Please upload the file again.",
+    "import_busy": "This file is being processed. Please try again in a moment.",
     "media_limit_reached": "You can add up to 8 pictures to one product.",
     "mixed_suppliers": "All products in one request must be from the same supplier. Please send a separate request for each supplier.",
     "no_valid_rows": "No row in the file can be imported. Please fix the problems and upload again.",

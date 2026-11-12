@@ -586,7 +586,7 @@ export const sourcingRequestSchema = z.object({
     z.array(sourcingLineSchema, 'items_required').min(1, 'items_required').max(20, 'too_many_items'),
   ),
   destinationState: z.enum(MY_STATES, 'invalid_state'),
-  destinationCity: optional(z.string('invalid_input').trim().max(100, 'invalid_input')),
+  destinationCity: optional(z.string('invalid_input').trim().max(80, 'invalid_input')),
   neededBy: dateOnly('invalid_date'),
   notes: optional(z.string('invalid_note').trim().max(1000, 'invalid_note')),
 });

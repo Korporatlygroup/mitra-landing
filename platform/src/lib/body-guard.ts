@@ -8,7 +8,8 @@
  */
 export const MAX_PLAIN_BODY_BYTES = 1024 * 1024;
 
-const UPLOAD_PAGE = /^\/(en|ta|ms)\/orgs\/[0-9a-f-]{36}\/(business\/(onboarding|verification)|partner\/import)\/?$/i;
+const UUID = '[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}';
+const UPLOAD_PAGE = new RegExp(`^/(en|ta|ms)/orgs/${UUID}/(business/(onboarding|verification)|partner/import)/?$`, 'i');
 
 export function isOversizedNonUpload(method: string, contentLength: string | null, pathname: string): boolean {
   if (method !== 'POST' && method !== 'PUT' && method !== 'PATCH') return false;
