@@ -528,3 +528,519 @@ main {
     font-weight: 600;
   }
 }
+
+/* ===== Phase 5 additions (foundation). Additive only; keep other blocks untouched. ===== */
+/* Partner section shell: sidebar + content. Wider main only on pages that contain the shell. */
+main:has(.partner-shell) {
+  max-width: 72rem;
+}
+.partner-shell {
+  display: grid;
+  gap: var(--space);
+  grid-template-columns: minmax(0, 1fr);
+}
+.partner-side {
+  min-width: 0;
+}
+.partner-content {
+  min-width: 0;
+}
+.partner-org {
+  margin: 0 0 8px;
+  font-weight: 700;
+}
+.partner-nav-toggle {
+  width: 100%;
+  justify-content: space-between;
+}
+.partner-nav-list {
+  list-style: none;
+  margin: 8px 0 0;
+  padding: 0;
+  display: grid;
+  gap: 4px;
+}
+.partner-nav-list[hidden] {
+  display: none;
+}
+.partner-nav-list a {
+  display: flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 2px solid transparent;
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.partner-nav-list a:hover {
+  background: var(--surface);
+}
+.partner-nav-list a[aria-current='page'] {
+  border-color: var(--charcoal);
+  font-weight: 700;
+}
+@media (min-width: 721px) {
+  .partner-shell {
+    grid-template-columns: 14rem minmax(0, 1fr);
+    align-items: start;
+  }
+  .partner-nav-toggle {
+    display: none;
+  }
+  .partner-nav-list {
+    margin-top: 0;
+  }
+  .partner-nav-list[hidden] {
+    display: grid;
+  }
+}
+/* Catalogue helpers shared by the partner, catalogue and admin screens. */
+.p5-grid {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 16rem), 1fr));
+}
+.p5-thumb {
+  display: block;
+  width: 100%;
+  height: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+  background: var(--surface);
+  border-radius: var(--radius);
+}
+.p5-price {
+  font-weight: 700;
+}
+.p5-stat {
+  font-size: 1.6rem;
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+/* ===== Buyer catalogue UI (Products from India). Additive block owned by the buyer-UI work; keep other blocks untouched. ===== */
+main:has(.catalogue-wide) {
+  max-width: 72rem;
+}
+.p5b-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+  border: 0;
+}
+.message-warn {
+  color: var(--text);
+  background: var(--surface);
+  border-color: var(--charcoal);
+}
+.p5b-diff {
+  font-weight: 400;
+  color: var(--text-muted);
+}
+.catalogue-filters {
+  margin-bottom: var(--space);
+}
+.catalogue-filter-grid {
+  display: grid;
+  gap: var(--space);
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 12rem), 1fr));
+}
+.catalogue-price-filter {
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px var(--space) var(--space);
+  min-width: 0;
+}
+.catalogue-price-filter legend {
+  font-weight: 600;
+  padding: 0 6px;
+}
+.catalogue-count {
+  font-weight: 600;
+}
+.catalogue-grid {
+  align-items: start;
+}
+.catalogue-card {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+  align-content: start;
+}
+.catalogue-card-title {
+  margin: 4px 0 0;
+  font-size: 1.15rem;
+  overflow-wrap: anywhere;
+}
+.catalogue-card .catalogue-facts {
+  margin: 4px 0;
+}
+.catalogue-noimage {
+  display: block;
+}
+.catalogue-card-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.catalogue-action-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: flex-start;
+}
+.catalogue-action-row .quick-form,
+.catalogue-action-row form {
+  margin: 0;
+}
+.quick-form {
+  display: grid;
+  gap: 6px;
+}
+.catalogue-compare-toggle {
+  margin: 0;
+}
+.catalogue-active-filter {
+  margin: 8px 0;
+}
+.catalogue-pages {
+  align-items: center;
+  margin: var(--space) 0;
+}
+.catalogue-detail-top {
+  display: grid;
+  gap: var(--space);
+  grid-template-columns: minmax(0, 1fr);
+}
+@media (min-width: 800px) {
+  .catalogue-detail-top {
+    grid-template-columns: minmax(0, 1.2fr) minmax(0, 1fr);
+    align-items: start;
+  }
+}
+.catalogue-gallery-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 9rem), 1fr));
+}
+.catalogue-gallery-list li:first-child {
+  grid-column: 1 / -1;
+}
+.catalogue-buy {
+  min-width: 0;
+}
+.price-summary,
+.availability-note {
+  display: grid;
+  gap: 2px;
+}
+.price-tier-table caption {
+  text-align: left;
+  font-weight: 600;
+  padding: 4px 0;
+}
+.tier-list ul {
+  margin: 2px 0 6px;
+  padding-left: 18px;
+}
+.verification-note {
+  margin: 8px 0;
+}
+.compare-products {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space);
+  display: grid;
+  gap: 8px;
+}
+.compare-products .card {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  align-items: center;
+}
+.compare-table {
+  min-width: 36rem;
+}
+.compare-table th,
+.compare-table td {
+  min-width: 9rem;
+  overflow-wrap: anywhere;
+}
+.compare-table tbody th {
+  position: sticky;
+  left: 0;
+  background: var(--bg);
+}
+.compare-differs th,
+.compare-differs td {
+  background: var(--surface);
+}
+.compare-tray {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 30;
+  max-height: 50vh;
+  overflow: auto;
+  background: var(--bg);
+  border-top: 2px solid var(--charcoal);
+  padding: 8px var(--space);
+}
+.compare-tray-title {
+  margin: 0 0 4px;
+  font-weight: 700;
+}
+.compare-tray-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 16px;
+}
+.compare-tray-list li {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-width: 0;
+}
+.compare-tray-name {
+  overflow-wrap: anywhere;
+}
+.compare-tray-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+  margin-top: 6px;
+}
+body:has(.compare-tray) main {
+  padding-bottom: min(50vh, 18rem);
+}
+@media (max-width: 720px) {
+  .compare-table {
+    min-width: 0;
+  }
+  .compare-table,
+  .compare-table tbody,
+  .compare-table tr,
+  .compare-table th,
+  .compare-table td {
+    display: block;
+    width: 100%;
+    min-width: 0;
+  }
+  .compare-table thead {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+  }
+  .compare-table tr {
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 8px;
+    margin-bottom: 12px;
+  }
+  .compare-table tbody th {
+    position: static;
+    border: 0;
+    padding: 0 0 4px;
+    font-size: 1.05rem;
+  }
+  .compare-table td {
+    border: 0;
+    padding: 4px 0;
+  }
+  .compare-table td[data-label]::before {
+    content: attr(data-label) ': ';
+    font-weight: 600;
+  }
+}
+.catalogue-filters input[type='search'],
+.catalogue-filters input[type='number'],
+.field input[type='date'] {
+  width: 100%;
+  min-height: var(--tap);
+  padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+}
+
+/* ===== Partner UI (partner agent). Additive only; keep other blocks untouched. ===== */
+.form-wide {
+  max-width: 40rem;
+}
+.btn-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+.form-section {
+  display: grid;
+  gap: var(--space);
+  padding-top: 4px;
+}
+.form-section h2 {
+  margin-top: 1.5rem;
+}
+input[type='number'],
+input[type='tel'],
+input[type='url'],
+input[type='date'],
+input[type='file'],
+textarea {
+  width: 100%;
+  max-width: 100%;
+  min-height: var(--tap);
+  padding: 8px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+}
+.field input[type='radio'],
+.field input[type='checkbox'] {
+  width: auto;
+  min-height: 0;
+}
+.steps {
+  list-style: none;
+  display: grid;
+  gap: 6px;
+  margin: 8px 0;
+  padding: 0;
+}
+.steps li[aria-current='step'] {
+  font-weight: 700;
+}
+.steps li[aria-current='step'] a,
+.steps li[aria-current='step'] span {
+  border-bottom: 3px solid var(--charcoal);
+}
+.repeat {
+  display: grid;
+  gap: var(--space);
+}
+.repeat-row {
+  display: grid;
+  gap: 12px;
+}
+.placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  margin: 0;
+  padding: 8px;
+  border: 2px dashed var(--border);
+  color: var(--text-muted);
+}
+.filters {
+  max-width: 40rem;
+}
+.uploader progress,
+.steps + h2 + progress {
+  width: 100%;
+}
+@media (min-width: 721px) {
+  .repeat-row {
+    grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+    align-items: end;
+  }
+  .repeat-row legend {
+    grid-column: 1 / -1;
+  }
+  .steps {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+}
+
+/* ===== Admin catalogue UI (Phase 5, MITRA administrators). Additive only. ===== */
+.adm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 var(--space);
+}
+.adm-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.adm-nav a:hover {
+  background: var(--surface);
+}
+.adm-nav a[aria-current='page'] {
+  border-color: var(--charcoal);
+  font-weight: 700;
+}
+.adm-stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space);
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
+}
+.adm-count {
+  margin-left: 6px;
+}
+.adm-pager {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  margin: var(--space) 0;
+}
+.adm-actions {
+  display: grid;
+  gap: 8px;
+  margin-top: 8px;
+}
+.adm-actions summary {
+  cursor: pointer;
+  min-height: var(--tap);
+  display: flex;
+  align-items: center;
+  font-weight: 600;
+}
+.adm-lines {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-wrap: anywhere;
+}
+.adm-diff td {
+  vertical-align: top;
+}
+.adm-preview h3 {
+  margin-top: 0;
+}
+section .card + .card {
+  margin-top: 12px;
+}

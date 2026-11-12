@@ -1,10 +1,20 @@
 import { z } from 'zod';
+import { CATEGORY_SLUGS, CURRENCIES, UNITS } from '@/server/import/rules';
+import { parseDecimal } from '@/server/import/decimal';
 import { MEMBER_ROLES } from './permissions';
 
 /**
  * All input schemas. Issue messages are KEYS in the `errors` namespace of messages/*.json,
  * never display text. See SCHEMA_ERROR_KEYS.
  */
+/** Phase 5 message keys the schemas above can emit (all have messages under `errors.*`). Part of SCHEMA_ERROR_KEYS. */
+export const P5_SCHEMA_ERROR_KEYS = [
+  'invalid_description', 'invalid_sku', 'invalid_price', 'invalid_moq', 'invalid_currency', 'invalid_price_mode', 'invalid_availability',
+  'invalid_tier', 'invalid_tier_qty', 'invalid_variant', 'invalid_variant_moq', 'invalid_lead_time', 'invalid_spec', 'too_many_specs',
+  'too_many_tiers', 'too_many_variants', 'unit_required', 'invalid_capabilities', 'invalid_website', 'invalid_alt', 'invalid_mode',
+  'invalid_action', 'invalid_checks', 'invalid_quantity', 'items_required', 'too_many_items', 'invalid_date', 'invalid_description',
+] as const;
+
 export const SCHEMA_ERROR_KEYS = [
   'invalid_input',
   'invalid_email',
@@ -27,6 +37,7 @@ export const SCHEMA_ERROR_KEYS = [
   'reason_required',
   'invalid_decision',
   'invalid_doc_type',
+  ...P5_SCHEMA_ERROR_KEYS,
 ] as const;
 
 export const LOCALES = ['en', 'ta', 'ms'] as const;
@@ -317,3 +328,372 @@ export const directoryFilterSchema = z.object({
   state: optional(z.enum(MY_STATES)),
   page: z.coerce.number().int().min(1).max(80).catch(1),
 });
+
+// ---------------------------------------------------------------------------------------------------------------
+// Phase 5: partner suppliers, products, sourcing requests, reports. Shared by the partner, catalogue and admin UIs.
+// Field-level validation is repeated in the database (the authority); these schemas guard the shape and normalise input.
+// Money is ALWAYS a decimal string (never a float): `moneySchema` returns a canonical string with at most 2 decimals.
+// ---------------------------------------------------------------------------------------------------------------
+
+export const PRODUCT_CATEGORY_SLUGS = CATEGORY_SLUGS;
+export const PRODUCT_CURRENCIES = CURRENCIES;
+export const PRODUCT_PRICE_MODES = ['tiers', 'fixed', 'request'] as const;
+export const PRODUCT_AVAILABILITY = ['available', 'made_to_order', 'limited', 'unavailable'] as const;
+export const PRODUCT_UNITS = UNITS;
+export const SUPPLIER_DOC_TYPE_LIST = ['business_registration', 'tax_registration', 'export_licence', 'trade_reference', 'catalogue', 'other'] as const;
+export const REPORT_PRODUCT_REASON_LIST = ['misleading', 'counterfeit', 'prohibited', 'wrong_price', 'offensive', 'spam', 'other'] as const;
+export const SUPPLIER_CHECK_LIST = [
+  'contact_reachable',
+  'registration_document_seen',
+  'address_consistent',
+  'catalogue_consistent',
+  'trade_reference',
+  'identity_document_seen',
+] as const;
+
+const dropBlank = (v: unknown) => (typeof v === 'string' && v.trim() === '' ? undefined : v);
+const sku = z.string('invalid_sku').trim().regex(/^[A-Za-z0-9][A-Za-z0-9._/-]{0,39}$/, 'invalid_sku');
+const intFrom = (key: string, min: number, max: number) => z.preprocess(dropBlank, z.coerce.number(key).int(key).min(min, key).max(max, key));
+
+/**
+ * Money as a decimal string: "250", "250.5", "1,250.50" (thousands grouping accepted), at most 2 decimals, greater than 0,
+ * at most 11 integer digits (the database limit). The output is the canonical plain string without grouping.
+ */
+export const moneySchema = (key = 'invalid_price') =>
+  z.string(key).transform((v, ctx) => {
+    const r = parseDecimal(v, { maxScale: 2, maxIntDigits: 11, fixedScale: true });
+    if (!r.ok || r.scaled <= BigInt(0)) {
+      ctx.addIssue({ code: 'custom', message: key });
+      return z.NEVER;
+    }
+    return r.text;
+  });
+
+/** Blank means "not set" (and "not sure" where the form offers it). */
+const optionalMoney = z.preprocess(dropBlank, moneySchema().optional());
+
+const dateOnly = (key: string) =>
+  z.preprocess(
+    dropBlank,
+    z
+      .string(key)
+      .regex(/^\d{4}-\d{2}-\d{2}$/, key)
+      .refine((s) => !Number.isNaN(Date.parse(`${s}T00:00:00Z`)) && new Date(`${s}T00:00:00Z`).toISOString().slice(0, 10) === s, key)
+      .optional(),
+  );
+
+/** Accepts an array/object or a JSON string (a hidden form field). Bad JSON becomes null, which the inner schema rejects. */
+const jsonField = <T extends z.ZodType>(schema: T) =>
+  z.preprocess((v) => {
+    if (typeof v !== 'string') return v;
+    if (v.trim() === '') return undefined;
+    try {
+      return JSON.parse(v);
+    } catch {
+      return null;
+    }
+  }, schema.optional());
+
+/** Textarea lines or a comma list -> string[] (each 2-60 characters, at most `max`). */
+const lineList = (max: number, key: string) =>
+  z.preprocess(
+    (v) => {
+      if (Array.isArray(v)) return v;
+      if (typeof v !== 'string' || v.trim() === '') return undefined;
+      return v
+        .split(/[\n,;]/)
+        .map((s) => s.trim())
+        .filter(Boolean);
+    },
+    z.array(z.string().min(2, key).max(60, key), key).max(max, key).optional(),
+  );
+
+// ---- supplier (steps 1-4: Basics, Business details, Contact and registration, Documents and submit)
+
+const supplierRef = { orgId: uuidSchema, locale: localeSchema, supplierId: optional(uuidSchema) };
+const categorySlug = z.string('category_required').trim().min(1, 'category_required').regex(/^[a-z0-9-]{2,40}$/, 'invalid_category');
+
+export const supplierStep1Schema = z.object({
+  ...supplierRef,
+  /** Only on create. Letters, digits, . _ - (2-30). */
+  code: optional(z.string('invalid_code').trim().regex(/^[A-Za-z0-9._-]{2,30}$/, 'invalid_code')),
+  name: z.string('invalid_name').trim().min(2, 'invalid_name').max(160, 'invalid_name'),
+  country: z.string('invalid_input').trim().min(2, 'invalid_input').max(60, 'invalid_input'),
+  state_city: optional(z.string('invalid_input').trim().max(100, 'invalid_input')),
+  main_category: categorySlug,
+  /** The supplier's draft_version when editing; ignored on create. */
+  expectedVersion: optional(intField),
+});
+export const supplierStep2Schema = z.object({
+  ...supplierRef,
+  description: z.string('invalid_description').trim().min(20, 'invalid_description').max(2000, 'invalid_description'),
+  capabilities: lineList(10, 'invalid_capabilities'),
+  expectedVersion: intField,
+});
+export const supplierStep3Schema = z.object({
+  ...supplierRef,
+  contact_name: optional(z.string('invalid_name').trim().min(2, 'invalid_name').max(120, 'invalid_name')),
+  contact_email: optional(emailSchema),
+  contact_phone: optional(phoneSchema),
+  /** Registration number. Blank, or the "not sure" checkbox, is allowed (see supplierDraftData). */
+  registration_id: optional(z.string('invalid_input').trim().max(60, 'invalid_input')),
+  registration_not_sure: checkboxOrEmpty,
+  website: optional(z.string('invalid_website').trim().max(200, 'invalid_website').regex(/^https?:\/\/\S+$/, 'invalid_website')),
+  expectedVersion: intField,
+});
+export const supplierSubmitSchema = z.object({ orgId: uuidSchema, locale: localeSchema, supplierId: uuidSchema, expectedVersion: intField });
+export const supplierWithdrawSchema = z.object({ orgId: uuidSchema, locale: localeSchema, supplierId: uuidSchema });
+export const supplierDocUploadMetaSchema = z.object({
+  docType: z.enum(SUPPLIER_DOC_TYPE_LIST, 'invalid_doc_type'),
+});
+
+/**
+ * Maps a validated supplier step to the keys of save_supplier_draft's p_data. Form-only fields are dropped and undefined keys omitted
+ * (so they stay untouched). "Not sure" about the registration number sends an empty string, which removes a stored value.
+ */
+export function supplierDraftData(d: Record<string, unknown>): Record<string, unknown> {
+  const keys = ['code', 'name', 'country', 'state_city', 'main_category', 'description', 'capabilities', 'contact_name', 'contact_email', 'contact_phone', 'registration_id', 'website'];
+  const out: Record<string, unknown> = {};
+  for (const k of keys) if (d[k] !== undefined) out[k] = d[k];
+  if (d.registration_not_sure === true) out.registration_id = '';
+  return out;
+}
+
+// ---- product (draft form). Strict checks run in the database on submit; this keeps the shape and money format right.
+
+const tierSchema = z.object({
+  min_qty: z.coerce.number('invalid_tier').int('invalid_tier_qty').min(1, 'invalid_tier_qty').max(1_000_000_000, 'invalid_tier_qty'),
+  max_qty: z
+    .preprocess(dropBlank, z.coerce.number('invalid_tier_qty').int('invalid_tier_qty').min(1, 'invalid_tier_qty').max(1_000_000_000, 'invalid_tier_qty').nullable().optional())
+    .transform((v) => v ?? null),
+  unit_price: moneySchema('invalid_price'),
+  variant_sku: optional(sku),
+});
+const variantSchema = z.object({
+  sku,
+  label: z.string('invalid_variant').trim().min(1, 'invalid_variant').max(80, 'invalid_variant'),
+  attributes: z.record(z.string(), z.string().max(80, 'invalid_variant'), 'invalid_variant').default({}),
+  moq: z.preprocess(dropBlank, z.coerce.number('invalid_variant_moq').int('invalid_variant_moq').min(1, 'invalid_variant_moq').max(1_000_000_000, 'invalid_variant_moq').optional()),
+});
+
+/** "key: value" per line (or a JSON object) -> Record<string,string>, at most 20 entries. */
+const specsField = z.preprocess(
+  (v) => {
+    if (typeof v !== 'string') return v;
+    const t = v.trim();
+    if (t === '') return undefined;
+    if (t.startsWith('{')) {
+      try {
+        return JSON.parse(t);
+      } catch {
+        return null;
+      }
+    }
+    const out: Record<string, string> = {};
+    for (const line of t.split(/\n|;/)) {
+      if (line.trim() === '') continue;
+      const i = line.indexOf(':');
+      if (i <= 0) return null;
+      out[line.slice(0, i).trim()] = line.slice(i + 1).trim();
+    }
+    return out;
+  },
+  z
+    .record(z.string().min(1).max(60), z.string().max(200), 'invalid_spec')
+    .refine((o) => Object.keys(o).length <= 20, 'too_many_specs')
+    .optional(),
+);
+
+const productFields = {
+  name: optional(z.string('invalid_name').trim().min(2, 'invalid_name').max(160, 'invalid_name')),
+  description: optional(z.string('invalid_description').trim().max(2000, 'invalid_description')),
+  category_slug: optional(categorySlug),
+  unit: optional(z.string('unit_required').trim().min(1, 'unit_required').max(30, 'unit_required')),
+  moq: optional(z.coerce.number('invalid_moq').int('invalid_moq').min(1, 'invalid_moq').max(1_000_000_000, 'invalid_moq')),
+  currency: optional(z.enum(PRODUCT_CURRENCIES, 'invalid_currency')),
+  price_mode: optional(z.enum(PRODUCT_PRICE_MODES, 'invalid_price_mode')),
+  /** Fixed price (price_mode = fixed). Decimal string. */
+  unit_price: optionalMoney,
+  tiers: jsonField(z.array(tierSchema, 'invalid_tier').max(60, 'too_many_tiers')),
+  variants: jsonField(z.array(variantSchema, 'invalid_variant').max(50, 'too_many_variants')),
+  lead_time_min_days: optional(intFrom('invalid_lead_time', 0, 3650)),
+  lead_time_max_days: optional(intFrom('invalid_lead_time', 0, 3650)),
+  availability_status: optional(z.enum(PRODUCT_AVAILABILITY, 'invalid_availability')),
+  availability_confirmed_on: dateOnly('invalid_date'),
+  price_confirmed_on: dateOnly('invalid_date'),
+  specs: specsField,
+  packaging: optional(z.string('invalid_input').trim().max(300, 'invalid_input')),
+};
+
+const productRef = { orgId: uuidSchema, locale: localeSchema, supplierId: uuidSchema };
+
+/** Create: SKU required (immutable afterwards). */
+export const productCreateSchema = z.object({ ...productRef, sku, ...productFields });
+/** Update a draft: SKU is not editable. `expectedVersion` is the product's draft_version. */
+export const productUpdateSchema = z.object({ ...productRef, productId: uuidSchema, expectedVersion: intField, ...productFields });
+/** `expectedVersion` is the product's draft_version. */
+export const productSubmitSchema = z.object({ orgId: uuidSchema, locale: localeSchema, productId: uuidSchema, expectedVersion: intField });
+/** `expectedVersion` is products.version. */
+export const productPublishSchema = z.object({ orgId: uuidSchema, locale: localeSchema, productId: uuidSchema, expectedVersion: intField });
+export const productUnpublishSchema = z.object({ orgId: uuidSchema, locale: localeSchema, productId: uuidSchema });
+export const productMediaUpdateSchema = z.object({
+  orgId: uuidSchema,
+  locale: localeSchema,
+  mediaId: uuidSchema,
+  alt: z.string('invalid_alt').trim().min(1, 'invalid_alt').max(200, 'invalid_alt'),
+  sort: intField,
+});
+export const productMediaRemoveSchema = z.object({ orgId: uuidSchema, locale: localeSchema, mediaId: uuidSchema });
+
+/** The p_data part of a validated product form (routing fields and undefined values removed). */
+export function productDraftData(d: Record<string, unknown>): Record<string, unknown> {
+  const skip = new Set(['orgId', 'locale', 'supplierId', 'productId', 'expectedVersion']);
+  const out: Record<string, unknown> = {};
+  for (const [k, v] of Object.entries(d)) if (!skip.has(k) && v !== undefined) out[k] = v;
+  return out;
+}
+
+// ---- import
+
+export const importModeSchema = z.enum(['create_only', 'create_or_update'], 'invalid_mode');
+export const importStageMetaSchema = z.object({ orgId: uuidSchema, locale: localeSchema, supplierId: uuidSchema, mode: importModeSchema });
+export const importCommitSchema = z.object({ orgId: uuidSchema, locale: localeSchema, jobId: uuidSchema, confirmOverwrite: checkboxOrEmpty });
+export const importCancelSchema = z.object({ orgId: uuidSchema, locale: localeSchema, jobId: uuidSchema });
+
+// ---- sourcing request (buyer) and partner response
+
+const requestKey = z.string('invalid_input').min(8, 'invalid_input').max(80, 'invalid_input').regex(/^[A-Za-z0-9-]+$/, 'invalid_input');
+export const sourcingLineSchema = z.object({
+  product_id: uuidSchema,
+  variant_sku: optional(sku),
+  quantity: z.coerce.number('invalid_quantity').int('invalid_quantity').min(1, 'invalid_quantity').max(1_000_000_000, 'invalid_quantity'),
+});
+export const sourcingRequestSchema = z.object({
+  locale: localeSchema,
+  buyerOrgId: uuidSchema,
+  /** Generated once per form instance (idempotency key). */
+  key: requestKey,
+  /** JSON array of lines (hidden field) or an array: 1-20 lines. */
+  items: z.preprocess(
+    (v) => {
+      if (typeof v !== 'string') return v;
+      try {
+        return JSON.parse(v);
+      } catch {
+        return null;
+      }
+    },
+    z.array(sourcingLineSchema, 'items_required').min(1, 'items_required').max(20, 'too_many_items'),
+  ),
+  destinationState: z.enum(MY_STATES, 'invalid_state'),
+  destinationCity: optional(z.string('invalid_input').trim().max(80, 'invalid_input')),
+  neededBy: dateOnly('invalid_date'),
+  notes: optional(z.string('invalid_note').trim().max(1000, 'invalid_note')),
+});
+export const sourcingReplySchema = z.object({
+  locale: localeSchema,
+  requestId: uuidSchema,
+  note: z.string('invalid_note').trim().min(5, 'invalid_note').max(1000, 'invalid_note'),
+});
+export const sourcingWithdrawSchema = z.object({ locale: localeSchema, requestId: uuidSchema });
+export const sourcingRespondSchema = z.object({
+  locale: localeSchema,
+  orgId: uuidSchema,
+  requestId: uuidSchema,
+  action: z.enum(['acknowledge', 'clarify'], 'invalid_action'),
+  note: optional(z.string('invalid_note').trim().max(1000, 'invalid_note')),
+  expectedVersion: optional(intField),
+});
+export const sourcingCloseSchema = z.object({
+  locale: localeSchema,
+  orgId: uuidSchema,
+  requestId: uuidSchema,
+  note: optional(z.string('invalid_note').trim().max(1000, 'invalid_note')),
+});
+
+// ---- saved products, product reports, search
+
+export const savedProductSchema = z.object({ locale: localeSchema, productId: uuidSchema, back: shortText(200) });
+export const productReportSchema = z.object({
+  locale: localeSchema,
+  productId: uuidSchema,
+  reason: z.enum(REPORT_PRODUCT_REASON_LIST, 'invalid_reason'),
+  note: shortText(500),
+});
+
+/** Catalogue search query string (tolerant: bad values are dropped, never an error page). Prices are decimal strings. */
+export const catalogueSearchSchema = z.object({
+  q: optional(z.string().trim().max(80)).catch(undefined),
+  category: optional(z.enum(CATEGORY_SLUGS)).catch(undefined),
+  supplier: optional(z.uuid()).catch(undefined),
+  currency: optional(z.enum(CURRENCIES)).catch(undefined),
+  price_min: optionalMoney.catch(undefined),
+  price_max: optionalMoney.catch(undefined),
+  moq_max: z.preprocess(dropBlank, z.coerce.number().int().min(1).max(1_000_000_000).optional()).catch(undefined),
+  page: z.coerce.number().int().min(1).max(500).catch(1),
+});
+
+// ---- admin decisions
+
+export const supplierDecisionSchema = z
+  .object({
+    locale: localeSchema,
+    supplierId: uuidSchema,
+    decision: z.enum(['approve', 'reject', 'request_info'], 'invalid_decision'),
+    reason: optional(z.string('reason_required').trim().max(1000, 'reason_required')),
+    /** Read repeated `checks` checkbox fields with formData.getAll('checks') and pass the array. 1-6 distinct checks to approve. */
+    checks: z.array(z.enum(SUPPLIER_CHECK_LIST, 'invalid_checks'), 'invalid_checks').max(6, 'invalid_checks').default([]),
+    /** The supplier's draft_submitted_version. */
+    expectedVersion: intField,
+  })
+  .superRefine((d, ctx) => {
+    if (d.decision === 'approve') {
+      if (new Set(d.checks).size !== d.checks.length || d.checks.length < 1) ctx.addIssue({ code: 'custom', message: 'invalid_checks', path: ['checks'] });
+    } else if (!d.reason || d.reason.length < 5) {
+      ctx.addIssue({ code: 'custom', message: 'reason_required', path: ['reason'] });
+    }
+  });
+export const productDecisionSchema = z
+  .object({
+    locale: localeSchema,
+    productId: uuidSchema,
+    decision: z.enum(['approve', 'reject', 'request_changes'], 'invalid_decision'),
+    reason: optional(z.string('reason_required').trim().max(1000, 'reason_required')),
+    /** products.version */
+    expectedVersion: intField,
+  })
+  .superRefine((d, ctx) => {
+    if (d.decision !== 'approve' && (!d.reason || d.reason.length < 5)) ctx.addIssue({ code: 'custom', message: 'reason_required', path: ['reason'] });
+  });
+export const catalogueSuspendSchema = z.object({
+  locale: localeSchema,
+  target: z.enum(['supplier', 'product'], 'invalid_decision'),
+  id: uuidSchema,
+  mode: z.enum(['suspend', 'reinstate'], 'invalid_decision'),
+  reason: z.string('reason_required').trim().min(5, 'reason_required').max(1000, 'reason_required'),
+});
+export const productReportDecisionSchema = z.object({
+  locale: localeSchema,
+  reportId: uuidSchema,
+  action: z.enum(['dismiss', 'suspend_product'], 'invalid_decision'),
+  note: z.string('reason_required').trim().min(5, 'reason_required').max(1000, 'reason_required'),
+});
+export const partnerProvisionSchema = z.object({
+  locale: localeSchema,
+  name: orgNameSchema,
+  displayName: z.string('invalid_name').trim().min(2, 'invalid_name').max(120, 'invalid_name'),
+  ownerEmail: emailSchema,
+});
+export const partnerDecisionSchema = z.object({
+  locale: localeSchema,
+  orgId: uuidSchema,
+  mode: z.enum(['approve', 'suspend'], 'invalid_decision'),
+  reason: optional(z.string('reason_required').trim().max(1000, 'reason_required')),
+});
+export const partnerProfileSchema = z.object({
+  locale: localeSchema,
+  orgId: uuidSchema,
+  displayName: z.string('invalid_name').trim().min(2, 'invalid_name').max(120, 'invalid_name'),
+  contactEmail: emailSchema,
+});
+

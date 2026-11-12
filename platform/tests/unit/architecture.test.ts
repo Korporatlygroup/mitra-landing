@@ -37,6 +37,17 @@ describe('privileged (service-role) boundary', () => {
       'listUnscanned',
       'recipientEmails',
       'recordRejectedUpload',
+      // Phase 5: supplier evidence and product images
+      'MEDIA_BUCKET',
+      'uploadToBucket',
+      'downloadFromBucket',
+      'deleteFromBucket',
+      'registerSupplierDocument',
+      'setSupplierDocumentScan',
+      'listUnscannedSupplierDocuments',
+      'registerProductMedia',
+      'setProductMediaScan',
+      'listUnscannedProductMedia',
     ]);
   });
 

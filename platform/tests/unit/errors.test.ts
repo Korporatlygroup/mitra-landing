@@ -1,9 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import en from '../../messages/en.json';
+import { messagesFor } from '@/i18n/messages';
 import { CODE_KEYS, FALLBACK_KEY, KNOWN_MESSAGE_KEYS, mapRpcError } from '@/lib/errors';
 import { flatten, migrations } from './helpers';
 
-const fe = flatten(en);
+// Merged messages (main file plus the Phase 5 area files), as the app loads them.
+const fe = flatten(messagesFor('en'));
 const exists = (k: string) => `errors.${k}` in fe;
 
 describe('mapRpcError', () => {

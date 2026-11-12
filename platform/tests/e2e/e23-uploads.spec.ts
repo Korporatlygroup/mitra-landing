@@ -174,7 +174,7 @@ test('E23 scanner down: upload is quarantined, not downloadable, not sendable; r
     const stillDown = await request.post('/api/v1/jobs/rescan', { headers: { authorization: `Bearer ${CRON_SECRET}` } });
     expect(stillDown.status()).toBe(200);
     const downSummary = (await stillDown.json()) as Record<string, number | boolean>;
-    expect(Object.keys(downSummary).sort()).toEqual(['checked', 'clean', 'infected', 'ok', 'remaining', 'waiting']);
+    expect(Object.keys(downSummary).sort()).toEqual(['checked', 'clean', 'infected', 'ok', 'product_media', 'remaining', 'supplier_documents', 'waiting']);
     expect(downSummary).toMatchObject({ ok: true, clean: 0, infected: 0 });
     expect(downSummary.checked).toBeGreaterThanOrEqual(1);
     expect(downSummary.waiting).toBeGreaterThanOrEqual(1);

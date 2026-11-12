@@ -34,6 +34,11 @@ export default async function OrgsPage({ params }: { params: Promise<{ locale: s
                     {t('orgs.businessLink')}
                   </Link>
                 ) : null}
+                {m.org.type === 'partner' ? (
+                  <Link href={`/orgs/${m.org.id}/partner`} locale={locale}>
+                    {t('p5common.nav.partnerDashboard')}
+                  </Link>
+                ) : null}
               </p>
             </li>
           ))}

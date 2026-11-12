@@ -1,0 +1,11 @@
+supplier_code,sku,name,category,description,unit,moq,currency,price,specifications,lead_time_days,availability_date,status,price_mode
+SUP-A,A-001,Cotton kurta (synthetic),textiles-apparel,Synthetic cotton kurta for testing only.,piece,100,INR,250.50,Material: cotton; Size: M,21,2026-06-01,draft,
+SUP-A,A-002,Silk saree (synthetic),Textiles & Apparel,Synthetic silk saree for testing only.,piece,20,INR,"1,250.50",Material: silk,30,2026-06-15,submit,
+SUP-A,A-003,Brass lamp (synthetic),home-kitchen,Synthetic brass lamp for testing only.,piece,10,INR,1.2.3,Material: brass,14,2026-06-01,draft,
+SUP-A,A-004,Turmeric powder (synthetic),spices-condiments,Synthetic turmeric powder for testing only.,kg,50,INR,180,Purity: 99%,10,2026-05-20,draft,
+SUP-A,A-005,Incense sticks (synthetic),religious-items-puja,Synthetic incense sticks for testing only.,box,2.5,USD,,Scent: sandalwood,12,2026-06-10,draft,request
+SUP-A,A-006,Steel tiffin (synthetic),gadgets,Synthetic steel tiffin for testing only.,piece,30,EUR,300,Material: steel,18,2026-06-01,draft,
+SUP-A,A-007,Notebook (synthetic),stationery-books,Synthetic notebook for testing only.,dozen,5,MYR,45.00,Pages: 200,7,2026-06-01,draft,
+SUP-A,A-008,Rice bag (synthetic),food-groceries,Synthetic rice bag for testing only.,bag,40,INR,950,Weight: 25 kg,9,15/06/2026,draft,
+OTHER,A-009,Spanner set (synthetic),hardware-tools,Synthetic spanner set for testing only.,set,15,INR,700,Pieces: 12,11,2026-06-01,draft,
+SUP-A,A-010,Face cream (synthetic),cosmetics-personal-care,Synthetic face cream for testing only.,piece,60,INR,120,Volume: 50 ml,15,2026-06-01,draft,

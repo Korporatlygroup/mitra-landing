@@ -19,10 +19,19 @@ export default async function SiteHeader({ locale, signedIn }: { locale: string;
           <Link href="/directory" locale={locale}>
             {t('nav.find')}
           </Link>
+          <Link href="/catalogue" locale={locale}>
+            {t('p5common.nav.catalogue')}
+          </Link>
           {signedIn ? (
             <>
               <Link href="/requests" locale={locale}>
                 {t('nav.requests')}
+              </Link>
+              <Link href="/catalogue/saved" locale={locale}>
+                {t('p5buyer.nav.saved')}
+              </Link>
+              <Link href="/catalogue/requests" locale={locale}>
+                {t('p5buyer.nav.requests')}
               </Link>
               <Link href="/orgs" locale={locale}>
                 {t('nav.organisations')}
