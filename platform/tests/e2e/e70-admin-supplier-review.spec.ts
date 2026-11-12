@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { BASE_URL } from './support/env';
 import { smallPdf } from './support/biz';
 import { createUser, sql, uniqEmail } from './support/db';
 import { msg } from './support/i18n';
@@ -17,7 +18,7 @@ import { freshCode } from './support/totp';
 import { freshContext, loginUi, startEnrolAndReadSecret, submitCode } from './support/ui';
 
 const t = (k: string, v?: Record<string, string>) => msg('en', k, v);
-const SITE = 'http://127.0.0.1:3503';
+const SITE = BASE_URL;
 
 /**
  * Journey 1: MITRA provisions a partner, the owner accepts the invitation and signs in with two-step sign-in, creates and sends a supplier,
