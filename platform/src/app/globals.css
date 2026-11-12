@@ -758,30 +758,6 @@ main:has(.catalogue-wide) {
   margin: 8px 0;
 }
 .compare-products {
-/* ===== Admin catalogue UI (Phase 5, MITRA administrators). Additive only. ===== */
-.adm-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  margin: 0 0 var(--space);
-}
-.adm-nav a {
-  display: inline-flex;
-  align-items: center;
-  min-height: var(--tap);
-  padding: 0 12px;
-  border: 2px solid var(--border);
-  border-radius: var(--radius);
-  text-decoration: none;
-}
-.adm-nav a:hover {
-  background: var(--surface);
-}
-.adm-nav a[aria-current='page'] {
-  border-color: var(--charcoal);
-  font-weight: 700;
-}
-.adm-stats {
   list-style: none;
   padding: 0;
   margin: 0 0 var(--space);
@@ -901,6 +877,13 @@ body:has(.compare-tray) main {
   width: 100%;
   min-height: var(--tap);
   padding: 10px 12px;
+  font: inherit;
+  color: var(--text);
+  background: var(--bg);
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+}
+
 /* ===== Partner UI (partner agent). Additive only; keep other blocks untouched. ===== */
 .form-wide {
   max-width: 40rem;
@@ -991,6 +974,36 @@ textarea {
     flex-wrap: wrap;
     gap: 16px;
   }
+}
+
+/* ===== Admin catalogue UI (Phase 5, MITRA administrators). Additive only. ===== */
+.adm-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0 0 var(--space);
+}
+.adm-nav a {
+  display: inline-flex;
+  align-items: center;
+  min-height: var(--tap);
+  padding: 0 12px;
+  border: 2px solid var(--border);
+  border-radius: var(--radius);
+  text-decoration: none;
+}
+.adm-nav a:hover {
+  background: var(--surface);
+}
+.adm-nav a[aria-current='page'] {
+  border-color: var(--charcoal);
+  font-weight: 700;
+}
+.adm-stats {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space);
+  display: grid;
   gap: 12px;
   grid-template-columns: repeat(auto-fill, minmax(min(100%, 14rem), 1fr));
 }
