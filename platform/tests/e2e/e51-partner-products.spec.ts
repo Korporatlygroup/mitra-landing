@@ -18,7 +18,7 @@ test('E51 create a product with price ranges (live checks), options and specific
   test.setTimeout(300_000);
   const p = await createPartner('e51a');
   const reviewer = await createReviewer('e51a-rev');
-  const sup = await seedSupplier(p, reviewer, { name: 'Tier Supplier' });
+  await seedSupplier(p, reviewer, { name: 'Tier Supplier' });
   await loginPartner(page, p, 'en', '/products');
   await expect(main(page).getByRole('heading', { name: t('p5partner.products.emptyTitle') })).toBeVisible();
   await checkPage(page, 'products (empty)');
@@ -296,7 +296,7 @@ for (const locale of ['ta', 'ms'] as Locale[]) {
     const T = (k: string, v?: Record<string, string>) => msg(locale, k, v);
     await loginPartner(page, p, locale, '/products');
     await expect(main(page).getByRole('heading', { name: T('p5partner.products.title'), level: 1 })).toBeVisible();
-    await expect(main(page).getByText(T('p5common.status.product.published'), { exact: true }).first()).toBeVisible();
+    await expect(main(page).locator('[data-testid=product-row]').getByText(T('p5common.status.product.published'), { exact: true })).toBeVisible();
     await checkPage(page, `products ${locale}`);
     await page.goto(partnerPath(locale, p.orgId, `/products/${prod.id}`));
     await expect(main(page).getByText(T('p5partner.products.explain.published'))).toBeVisible();

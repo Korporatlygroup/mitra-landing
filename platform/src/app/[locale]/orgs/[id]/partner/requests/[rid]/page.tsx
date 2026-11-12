@@ -20,8 +20,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 const KNOWN_EVENTS = new Set(['submitted', 'acknowledged', 'clarification_requested', 'buyer_replied', 'withdrawn', 'closed']);
 
-export default async function RequestDetailPage({ params }: { params: Promise<{ locale: string; id: string; rid: string }> }) {
+export default async function RequestDetailPage({ params, searchParams }: { params: Promise<{ locale: string; id: string; rid: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale, id, rid } = await params;
+  const sp = await searchParams;
   if (!uuidSchema.safeParse(rid).success) notFound();
   const ctx = await requirePartnerContext(locale, id, `/requests/${rid}`);
   if (!ctx.approved) return <PartnerGate ctx={ctx} locale={locale} />;
@@ -55,6 +56,11 @@ export default async function RequestDetailPage({ params }: { params: Promise<{ 
       <p>
         <StatusChip status={statusTone(q.status === 'submitted' ? 'previewed' : q.status)} label={q.status === 'submitted' ? t('statusNew') : tc(`status.sourcing.${q.status}`)} />
       </p>
+      {sp.done === 'acknowledge' || sp.done === 'clarify' ? (
+        <p className="message message-ok" role="status" data-testid="done-banner">
+          {sp.done === 'clarify' ? t('clarifySent') : t('acknowledged')}
+        </p>
+      ) : null}
       <p className="next-step" data-testid="status-explain">
         {t(`explain.${q.status}`)}
       </p>

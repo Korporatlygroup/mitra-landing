@@ -1,7 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { smallPdf } from './support/biz';
 import { EICAR, scanner } from './support/clamd-stub';
-import { sql } from './support/db';
+import { addMember, createUser, sql } from './support/db';
 import { msg } from './support/i18n';
 import { checkPage, createPartner, createReviewer, loginPartner, partnerPath, reviewSupplier, seedSupplier, seedSupplierDocument, supplierRow } from './support/p5';
 import type { Locale } from './support/ui';
@@ -225,9 +225,12 @@ test('E50 a paused partner sees why and what to do', async ({ page }) => {
 });
 
 test('E50 viewer role: suppliers are readable but cannot be added or changed', async ({ page }) => {
-  const p = await createPartner('e50e', { managerRole: 'viewer' });
+  const owner = await createPartner('e50e');
   const reviewer = await createReviewer('e50e-rev');
-  const s = await seedSupplier(p, reviewer, { name: 'Viewer Supplier' });
+  const s = await seedSupplier(owner, reviewer, { name: 'Viewer Supplier' });
+  const viewer = await createUser('e50e-view');
+  await addMember(owner.orgId, viewer.id, 'viewer');
+  const p = { ...owner, manager: viewer };
   await loginPartner(page, p, 'en', '/suppliers');
   await expect(main(page).getByText('Viewer Supplier')).toBeVisible();
   await expect(main(page).getByRole('link', { name: t('p5common.buttons.addSupplier'), exact: true })).toHaveCount(0);

@@ -1,8 +1,9 @@
 'use server';
 
 import { revalidatePath } from 'next/cache';
+import { redirect } from 'next/navigation';
 import { formToObject } from '@/lib/form';
-import { failure, success, type FormState } from '@/lib/form-state';
+import { failure, type FormState } from '@/lib/form-state';
 import { sourcingRespondSchema } from '@/lib/schemas';
 import { actionUser } from '@/server/action-user';
 import { respondSourcingRequest } from '@/server/services/p5-partner';
@@ -20,5 +21,5 @@ export async function respondRequestAction(_prev: FormState, formData: FormData)
   const r = await respondSourcingRequest(supabase, d.requestId, action, d.note ?? null, d.expectedVersion ?? null);
   if (!r.ok) return failure(r.errorKey, { note: raw.note ?? '' });
   revalidatePath('/', 'layout');
-  return success(action === 'clarify' ? 'p5partner.requests.clarifySent' : 'p5partner.requests.acknowledged');
+  redirect(`/${d.locale}/orgs/${d.orgId}/partner/requests/${d.requestId}?done=${action}`);
 }

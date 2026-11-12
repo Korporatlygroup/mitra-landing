@@ -1,7 +1,7 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { createProductAction, updateProductAction } from '@/app/[locale]/orgs/[id]/partner/products/actions';
 import { validateTiers } from '@/lib/partner-ui';
 import { PRODUCT_AVAILABILITY, PRODUCT_CATEGORY_SLUGS, PRODUCT_CURRENCIES, PRODUCT_PRICE_MODES, PRODUCT_UNITS } from '@/lib/schemas';
@@ -24,6 +24,10 @@ interface Props {
   reloadHref?: string;
 }
 
+/** Row ids only need to be unique in this browser tab. */
+let rowId = 1;
+const nextId = () => rowId++;
+
 const attrsToText = (a: Record<string, string> | undefined) => Object.entries(a ?? {}).map(([k, v]) => `${k}: ${v}`).join('\n');
 const textToAttrs = (s: string): Record<string, string> => {
   const out: Record<string, string> = {};
@@ -42,8 +46,6 @@ export default function ProductForm({ mode, locale, orgId, suppliers, supplierId
   const t = useTranslations('p5partner.productForm');
   const tc = useTranslations('p5common');
   const tt = useTranslations('p5partner.common');
-  const counter = useRef(1);
-  const nextId = () => counter.current++;
 
   const [priceMode, setPriceMode] = useState<string>(draft.price_mode ?? 'fixed');
   const [currency, setCurrency] = useState<string>(draft.currency ?? 'INR');

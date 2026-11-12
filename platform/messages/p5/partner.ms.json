@@ -530,6 +530,7 @@
       },
       "errors": {
         "unknown": "Nilai ini bermasalah. Sila semak.",
+        "client_validation_failed": "Baris ini bermasalah dalam fail, contohnya kod pembekal yang bukan milik anda, atau teks bermula dengan = + - atau @. Sila semak baris itu.",
         "required": "Ini diperlukan.",
         "too_short": "Ini terlalu pendek.",
         "too_long": "Ini terlalu panjang.",

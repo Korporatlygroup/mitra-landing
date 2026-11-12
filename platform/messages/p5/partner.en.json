@@ -530,6 +530,7 @@
       },
       "errors": {
         "unknown": "This value has a problem. Please check it.",
+        "client_validation_failed": "This row has a problem in the file, for example a supplier code that is not yours, or text starting with = + - or @. Please check the row.",
         "required": "This is needed.",
         "too_short": "This is too short.",
         "too_long": "This is too long.",
