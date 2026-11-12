@@ -29,7 +29,7 @@ export interface NotifySummary {
 interface EmailJob { outbox_id: string; email: string; category: string; programme_name: string; programme_slug: string }
 
 const BODY: Record<string, string> = {
-  new_match: 'A newly verified programme may suit your business',
+  new_match: 'A newly confirmed programme may suit your business',
   opens: 'A programme you saved may now be open for applications',
   deadline: 'A programme you saved has an approaching deadline',
   rule_change: 'A programme you saved has changed its published terms',
