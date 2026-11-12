@@ -312,7 +312,7 @@ select throws_ok($$ select public.stage_import(tt.oid('P1'), tt.id('SA'), 'creat
 select throws_ok($$ select public.stage_import(tt.oid('P1'), tt.id('SA'), 'overwrite_all', 'x.csv', repeat('f', 64), '[{}]'::jsonb) $$, 'PT422', 'invalid_mode', 'D4 only the two modes exist');
 select throws_ok($$ select public.stage_import(tt.oid('P1'), tt.id('SA'), 'create_only', 'x.csv', repeat('f', 64), '{"a":1}'::jsonb) $$, 'PT422', 'invalid_data', 'D5 rows must be an array');
 select throws_ok($$ select public.stage_import(tt.oid('P1'), tt.id('SA'), 'create_only', E'bad\nname.csv', repeat('f', 64), '[{}]'::jsonb) $$, 'PT422', 'invalid_file_name', 'D6 control characters in the file name are refused');
-select throws_ok($$ select tt.stage('P1', 'SA', 'create_only', 'f', jsonb_build_array(tt.row(1, 'ORD-1'), tt.row(1, 'ORD-2'))) $$, '23505', null, 'D7 duplicated explicit row numbers are refused (primary key)');
+select throws_ok($$ select tt.stage('P1', 'SA', 'create_only', 'f', jsonb_build_array(tt.row(1, 'ORD-1'), tt.row(1, 'ORD-2'))) $$, 'PT422', 'invalid_row_number', 'D7 duplicated explicit row numbers are refused (invalid_row_number)');
 select is((tt.stage('P1', 'SA', 'create_only', '0', jsonb_build_array(tt.row(2, 'BAD-A', '{"moq":"-1"}'), tt.row(3, 'BAD-B', '{"currency":"JPY"}')))) ->> 'status', 'failed', 'D8 a file with no valid row is marked failed');
 select throws_ok($$ select public.commit_import((select id from public.import_jobs where file_sha256 = repeat('0', 64)), false) $$, 'PT409', 'job_not_previewed', 'D9 a failed job cannot be committed');
 select tt.ids_set('J9', tt.stage('P1', 'SA', 'create_only', 'a0', jsonb_build_array(tt.row(2, 'CAN-1'))));
@@ -340,7 +340,7 @@ select tt.act('tt_adm_rev', 'aal2');
 select public.suspend_partner(tt.oid('P1'), 'Partner under review for tests.');
 select tt.act('tt_p1_staff');
 select throws_ok($$ select tt.stage('P1', 'SA', 'create_only', 'a3', jsonb_build_array(tt.row(2, 'SUSP-P-1'))) $$, 'PT409', 'partner_not_approved', 'D19 a suspended partner cannot stage');
-select tt.ids_set('J11', (select jsonb_build_object('job_id', id) from public.import_jobs where file_sha256 = repeat('a0', 32) and supplier_id = tt.id('SA')));
+select tt.ids_set('J11', (select jsonb_build_object('job_id', id) from public.import_jobs where file_sha256 = repeat('a0', 32) and supplier_id = tt.id('SA') order by created_at desc, id limit 1));
 select throws_ok($$ select public.commit_import((tt.idj('J11') ->> 'job_id')::uuid, false) $$, 'PT409', 'partner_not_approved', 'D20 nor commit');
 select * from finish();
 rollback;

@@ -228,9 +228,9 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'private' and has_function_privilege('authenticated', p.oid, 'EXECUTE')),
-  array['can_manage_members', 'current_aal', 'current_consent_version', 'has_permission', 'has_platform_permission', 'invalid_invitation', 'is_admin_role', 'is_enquiry_member', 'is_member',
+  array['can_manage_members', 'current_aal', 'current_consent_version', 'has_partner_involvement', 'has_permission', 'has_platform_permission', 'invalid_invitation', 'is_admin_role', 'is_enquiry_member', 'is_member',
         'request_buyer_org', 'request_has_open_report', 'requires_mfa', 'role_rank', 'shares_org'],
-  'S7.7 authenticated can execute exactly the 14 allow-listed private helpers (not write_audit / check_rate_limit / raise_error / triggers)');
+  'S7.7 authenticated can execute exactly the 15 allow-listed private helpers (14 + has_partner_involvement for the reviewer RLS branches, 000115) (not write_audit / check_rate_limit / raise_error / triggers)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)

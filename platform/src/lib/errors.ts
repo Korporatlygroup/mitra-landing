@@ -82,7 +82,7 @@ export const KNOWN_MESSAGE_KEYS = [
   'below_moq', 'code_exists', 'currency_required', 'duplicate_item', 'empty_file', 'file_too_large', 'formula_text',
   'idempotency_key_reused', 'invalid_action', 'invalid_alt', 'invalid_capabilities', 'invalid_checks', 'invalid_code', 'invalid_currency',
   'invalid_file_hash', 'invalid_file_name', 'invalid_mode', 'invalid_moq', 'invalid_path', 'invalid_price', 'invalid_row_number',
-  'invalid_sku', 'invalid_sort', 'invalid_variant', 'invalid_website', 'items_required', 'job_not_previewed', 'media_limit_reached',
+  'import_busy', 'invalid_sku', 'invalid_sort', 'invalid_variant', 'invalid_website', 'items_required', 'job_not_previewed', 'media_limit_reached',
   'mixed_suppliers', 'no_valid_rows', 'org_not_partner', 'overwrite_confirmation_required', 'partner_not_approved',
   'product_limit_reached', 'product_not_pending', 'product_not_publishable', 'product_not_published', 'product_not_suspendable',
   'product_not_suspended', 'product_suspended', 'product_under_review', 'reference_unavailable', 'saved_limit_reached', 'sku_exists',
