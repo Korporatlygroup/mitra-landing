@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
 import { Field } from '@/components/Field';
+import WorkspaceShell from '@/components/workspace/WorkspaceShell';
 import { requireSession } from '@/server/session';
 import { createOrgAction } from './actions';
 import { pageTitle } from '@/lib/metadata';
@@ -15,7 +16,7 @@ export default async function NewOrgPage({ params }: { params: Promise<{ locale:
   const t = await getTranslations({ locale, namespace: 'orgs' });
 
   return (
-    <>
+    <WorkspaceShell locale={locale}>
       <h1>{t('newTitle')}</h1>
       <ActionForm action={createOrgAction} submitLabel={t('submit')}>
         <input type="hidden" name="locale" value={locale} />
@@ -39,6 +40,6 @@ export default async function NewOrgPage({ params }: { params: Promise<{ locale:
         </fieldset>
         <Field id="name" name="name" label={t('nameLabel')} hint={t('nameHint')} required minLength={2} maxLength={160} />
       </ActionForm>
-    </>
+    </WorkspaceShell>
   );
 }

@@ -13,6 +13,7 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId }: {
   db: Db; enquiryId: string; side: 'buyer' | 'seller'; buyerOrgId: string;
 }) {
   const t = await getTranslations('p4');
+  const tc = await getTranslations('enq');
   const w = await getEnquiryWorkspace(db, enquiryId);
   const latest = w.versions.find((version) => version.id === w.quote?.current_version_id);
   const draft = w.draft;
@@ -26,16 +27,25 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId }: {
   }
 
   return <>
-    <section aria-labelledby="conversation-title" className="card">
-      <h2 id="conversation-title">{t('conversation')}</h2>
-      {w.messages.length ? <ol>{w.messages.map((m) => <li key={m.id}>
-        <strong>{m.sender_org_id === buyerOrgId ? 'Buyer' : 'Seller'}</strong> · <time dateTime={m.created_at}>{new Date(m.created_at).toLocaleString()}</time>
-        <p style={{ whiteSpace: 'pre-wrap' }}>{m.body}</p>
-      </li>)}</ol> : <p>{t('noMessages')}</p>}
-      <ActionForm action={messageAction} submitLabel={t('sendReply')}>
-        <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="key" value={randomUUID()} />
-        <label htmlFor="reply-body">{t('reply')}</label><textarea id="reply-body" name="body" maxLength={4000} required rows={4} />
-      </ActionForm>
+    <section aria-labelledby="conversation-title" className="conv">
+      <h2 id="conversation-title" className="conv-h">{t('conversation')}</h2>
+      <div className="msg-body" data-testid="conversation">
+        {w.messages.length ? w.messages.map((m) => {
+          const fromBuyer = m.sender_org_id === buyerOrgId;
+          const mine = fromBuyer === (side === 'buyer');
+          return <div key={m.id} className={mine ? 'bub me' : 'bub them'}>
+            {m.body}
+            <time className="bub-meta" dateTime={m.created_at}>{fromBuyer ? tc('buyer') : tc('seller')} · {new Date(m.created_at).toLocaleString()}</time>
+          </div>;
+        }) : <p className="mut">{t('noMessages')}</p>}
+      </div>
+      <div className="msg-composer">
+        <ActionForm action={messageAction} submitLabel={t('sendReply')}>
+          <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="key" value={randomUUID()} />
+          <label htmlFor="reply-body">{t('reply')}</label><textarea id="reply-body" name="body" maxLength={4000} required rows={3} />
+        </ActionForm>
+        <p style={{ margin: '8px 0 0' }}><a href="#quote-title" className="btn btn-secondary btn-sm">{t('quote')}</a></p>
+      </div>
     </section>
 
     <section aria-labelledby="quote-title" className="card">

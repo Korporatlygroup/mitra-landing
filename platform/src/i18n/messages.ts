@@ -10,6 +10,9 @@ import msBuyer from '../../messages/p5/buyer.ms.json';
 import enAdmin from '../../messages/p5/admin.en.json';
 import taAdmin from '../../messages/p5/admin.ta.json';
 import msAdmin from '../../messages/p5/admin.ms.json';
+import enRd from '../../messages/rd/rd.en.json';
+import taRd from '../../messages/rd/rd.ta.json';
+import msRd from '../../messages/rd/rd.ms.json';
 import enCommon from '../../messages/p5/common.en.json';
 import taCommon from '../../messages/p5/common.ta.json';
 import msCommon from '../../messages/p5/common.ms.json';
@@ -31,9 +34,9 @@ const merge = (...parts: Tree[]): Tree => {
 };
 
 export const MESSAGES = {
-  en: merge(en, enPartner, enBuyer, enAdmin, enCommon),
-  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon),
-  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon),
+  en: merge(en, enPartner, enBuyer, enAdmin, enCommon, enRd),
+  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon, taRd),
+  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon, msRd),
 } as const;
 
 export type Locale = keyof typeof MESSAGES;

@@ -73,6 +73,7 @@ export const KNOWN_MESSAGE_KEYS = [
   'change',
   'field',
   'second_person_required',
+  'limit_reached',
   'invalid_description',
   'invalid_registration_status',
   'invalid_business_type',

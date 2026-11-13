@@ -1,4 +1,6 @@
 import { getTranslations } from 'next-intl/server';
+import { initialsOf, paletteFor } from '@/components/ui/Tag';
+import WorkspaceShell from '@/components/workspace/WorkspaceShell';
 import { Link } from '@/i18n/navigation';
 import { requireSession } from '@/server/session';
 import { pageTitle } from '@/lib/metadata';
@@ -13,42 +15,54 @@ export default async function OrgsPage({ params }: { params: Promise<{ locale: s
   const t = await getTranslations({ locale });
 
   return (
-    <>
-      <h1>{t('orgs.title')}</h1>
-      {s.memberships.length === 0 ? (
-        <p>{t('orgs.none')}</p>
-      ) : (
-        <ul className="card-list">
-          {s.memberships.map((m) => (
-            <li key={m.org.id} className="card">
-              <h2 style={{ margin: 0, fontSize: '1.1rem' }}>{m.org.name}</h2>
-              <p className="muted">
-                {t(`orgTypes.${m.org.type}`)} &middot; {t('orgs.role')}: {t(`roles.${m.role}`)}
-              </p>
-              <p className="link-row">
-                <Link href={`/orgs/${m.org.id}/members`} locale={locale}>
-                  {t('orgs.members')}
-                </Link>
-                {m.org.type === 'business' ? (
-                  <Link href={`/orgs/${m.org.id}/business`} locale={locale}>
-                    {t('orgs.businessLink')}
-                  </Link>
-                ) : null}
-                {m.org.type === 'partner' ? (
-                  <Link href={`/orgs/${m.org.id}/partner`} locale={locale}>
-                    {t('p5common.nav.partnerDashboard')}
-                  </Link>
-                ) : null}
-              </p>
-            </li>
-          ))}
-        </ul>
-      )}
-      <p>
-        <Link href="/orgs/new" locale={locale} className="btn btn-primary">
+    <WorkspaceShell locale={locale}>
+      <div className="page-head">
+        <h1>{t('orgs.title')}</h1>
+        <Link href="/orgs/new" className="btn btn-primary">
           {t('orgs.create')}
         </Link>
-      </p>
-    </>
+      </div>
+      {s.memberships.length === 0 ? (
+        <div className="empty">
+          <strong>{t('orgs.none')}</strong>
+        </div>
+      ) : (
+        <ul className="card-list" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 20rem), 1fr))' }}>
+          {s.memberships.map((m) => {
+            const pal = paletteFor(m.org.id);
+            return (
+              <li key={m.org.id} className="card" style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+                <span style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+                  <span className="org-init" style={{ width: 44, height: 44, background: pal.tint, color: pal.c1 }} aria-hidden="true">
+                    {initialsOf(m.org.name)}
+                  </span>
+                  <span>
+                    <h2 style={{ margin: 0, fontSize: '1.05rem' }}>{m.org.name}</h2>
+                    <span className="muted" style={{ fontSize: '0.875rem' }}>
+                      {t(`orgTypes.${m.org.type}`)} &middot; {t('orgs.role')}: {t(`roles.${m.role}`)}
+                    </span>
+                  </span>
+                </span>
+                <p className="link-row" style={{ margin: 0 }}>
+                  <Link href={`/orgs/${m.org.id}/members`} locale={locale}>
+                    {t('orgs.members')}
+                  </Link>
+                  {m.org.type === 'business' ? (
+                    <Link href={`/orgs/${m.org.id}/business`} locale={locale}>
+                      {t('orgs.businessLink')}
+                    </Link>
+                  ) : null}
+                  {m.org.type === 'partner' ? (
+                    <Link href={`/orgs/${m.org.id}/partner`} locale={locale}>
+                      {t('p5common.nav.partnerDashboard')}
+                    </Link>
+                  ) : null}
+                </p>
+              </li>
+            );
+          })}
+        </ul>
+      )}
+    </WorkspaceShell>
   );
 }

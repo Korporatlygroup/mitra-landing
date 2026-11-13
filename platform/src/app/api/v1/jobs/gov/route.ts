@@ -2,6 +2,7 @@ import type { NextRequest } from 'next/server';
 import { bearerMatches } from '@/lib/http-safety';
 import { getMailer, MailConfigError } from '@/server/mailer';
 import { runNotificationsOnce, type MailerLike } from '@/server/gov/notify';
+import { runNewsDigestOnce } from '@/server/news-digest';
 import { safeFetch } from '@/server/gov/safe-fetch';
 import { runWorkerOnce } from '@/server/gov/worker';
 import * as priv from '@/server/privileged';
@@ -47,7 +48,9 @@ export async function POST(request: NextRequest) {
       mailer,
       siteUrl: process.env.SITE_URL ?? 'http://127.0.0.1:3000',
     });
-    return new Response(JSON.stringify({ ok: true, ...summary, notifications }), { status: 200, headers });
+    // The weekly news digest rides on the same bounded call (at most one email per person per ISO week).
+    const digest = await runNewsDigestOnce({ rpc: priv.govWorkerRpc, mailer, siteUrl: process.env.SITE_URL ?? 'http://127.0.0.1:3000' });
+    return new Response(JSON.stringify({ ok: true, ...summary, notifications, digest }), { status: 200, headers });
   } catch (err) {
     console.error('gov worker run failed', { name: (err as Error).name });
     return new Response(JSON.stringify({ ok: false }), { status: 500, headers });
