@@ -52,7 +52,10 @@ async function prepare(): Promise<void> {
   const bootstrapped = Number((await sql(`select count(*)::int as n from public.memberships where role = 'admin_super'`))[0]!.n) > 0;
   const st = readState();
   if (bootstrapped) {
-    if (!st.admin) console.warn('[e2e] DB already bootstrapped and no admin state file: admin specs will fail. Run without E2E_NO_RESET.');
+    if (!st.admin) throw new Error(
+      'The local E2E database already has an administrator, but this worktree has no matching E2E admin state. ' +
+      'Use a fresh isolated local stack or restore its state file before running with E2E_NO_RESET=1.',
+    );
     return;
   }
 

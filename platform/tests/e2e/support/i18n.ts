@@ -18,6 +18,7 @@ export function msg(locale: 'en' | 'ta' | 'ms', key: string, vars: Record<string
       return a;
     };
     cache[locale] = ['partner', 'buyer', 'admin', 'common'].reduce((acc, x) => merge(acc, read(`p5/${x}.${locale}.json`)), read(`${locale}.json`));
+    merge(cache[locale], read(`p6/${locale}.json`));
   }
   let cur: string | Tree | undefined = cache[locale];
   for (const part of key.split('.')) cur = typeof cur === 'object' ? cur[part] : undefined;

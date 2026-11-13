@@ -17,6 +17,7 @@ export default async function PartnerHomePage({ params }: { params: Promise<{ lo
 
   const t = await getTranslations({ locale, namespace: 'p5partner.home' });
   const tc = await getTranslations({ locale, namespace: 'p5common' });
+  const t6 = await getTranslations({ locale, namespace: 'p6' });
   const db = ctx.session.supabase;
   const [suppliers, published, awaiting, correction, requests] = await Promise.all([
     listMySuppliers(db, id),
@@ -73,6 +74,11 @@ export default async function PartnerHomePage({ params }: { params: Promise<{ lo
         <li>
           <Link className="big-link" href={`/orgs/${id}/partner/requests`} locale={locale}>
             {tc('buttons.viewRequests')}
+          </Link>
+        </li>
+        <li>
+          <Link className="big-link" href={`/orgs/${id}/partner/sourcing`} locale={locale}>
+            {t6('partnerRequests')}
           </Link>
         </li>
       </ul>

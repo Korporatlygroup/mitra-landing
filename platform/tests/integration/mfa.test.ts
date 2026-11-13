@@ -102,10 +102,10 @@ describe('(c) MFA: admin RPCs and audit_log require aal2', () => {
     expect(inv.error).toBeNull();
     expect(inv.data.token).toMatch(/^[0-9a-f]{64}$/);
 
-    const audit = await admin.client.from('audit_log').select('id, action, org_id').eq('org_id', mitraOrg).limit(50);
+    const audit = await admin.client.from('audit_log').select('id, action, org_id')
+      .eq('org_id', mitraOrg).eq('entity_id', inv.data.invitation_id).eq('action', 'invitation.created');
     expect(audit.error).toBeNull();
-    expect(audit.data!.length).toBeGreaterThan(0);
-    expect(audit.data!.map((r) => r.action)).toContain('invitation.created');
+    expect(audit.data).toHaveLength(1);
 
     // revoke the invitation we just made (cleanup of pending state; audit rows stay)
     const rv = await admin.client.rpc('revoke_invitation', { p_invitation: inv.data.invitation_id });

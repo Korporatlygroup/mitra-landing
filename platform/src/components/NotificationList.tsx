@@ -19,6 +19,10 @@ const KNOWN_KINDS = new Set([
   'request_declined',
   'request_removed',
   'enquiry_opened',
+  'sourcing_rfq_received', 'sourcing_partner_response', 'sourcing_message',
+  'sourcing_quote_received', 'sourcing_selected', 'sourcing_counter',
+  'sourcing_counter_response', 'sourcing_sample_requested', 'sourcing_document_uploaded',
+  'sourcing_quote_reminder',
 ]);
 
 function targetFor(n: NotificationRow): string | null {
@@ -28,6 +32,8 @@ function targetFor(n: NotificationRow): string | null {
     return n.kind === 'request.invited' && n.org_id ? `/orgs/${n.org_id}/business/requests/${n.entity_id}` : `/requests/${n.entity_id}`;
   }
   if (n.entity_type === 'enquiry' && n.entity_id) return `/enquiries/${n.entity_id}`;
+  if (n.entity_type === 'sourcing_rfq' && n.entity_id && n.org_id)
+    return `/sourcing/${n.entity_id}?partner=${n.org_id}`;
   return null;
 }
 

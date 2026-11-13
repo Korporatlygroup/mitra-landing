@@ -285,7 +285,7 @@ update public.memberships set role = 'admin_super' where org_id = tt.oid('M') an
 select lives_ok($$ delete from auth.users where id = tt.uid('tt_s2') $$, 'M4.4 with a second admin_super present the first can be deleted');
 select tt.reg('S', tt.mkorg('business', 'Sole Owner Org', 'tt_sole'));
 select lives_ok($$ delete from auth.users where id = tt.uid('tt_sole') $$, 'M4.5 deleting the sole owner of an ordinary organisation succeeds');
-select is((select count(*)::int from public.audit_log where action = 'membership.deleted' and org_id = tt.oid('S') and details ->> 'user_id' = tt.uid('tt_sole')::text), 1, 'M4.6 the deletion wrote a membership.deleted audit row');
+select is((select count(*)::int from public.audit_log where action = 'membership.deleted' and org_id = tt.oid('S') and actor_user_id is null and not (details ? 'user_id')), 1, 'M4.6 the deletion retained a redacted membership.deleted audit row');
 select is((select count(*)::int from public.organisations where id = tt.oid('S')), 1, 'M4.7 the organisation survives (ownerless) after its sole owner is deleted');
 select tt.reg('C', tt.mkorg('business', 'Cascade Org', 'tt_del'));
 select tt.addm(tt.oid('C'), 'tt_cap1', 'manager');

@@ -81,7 +81,8 @@ accepted. Without it every upload stays in quarantine and no reviewer can open i
   quarantine as `pending`: nobody, including reviewers, can open it and no claim can be submitted with it. Nothing is ever marked clean without a scan.
 - **A scheduler must call the rescan route.** Run `POST /api/v1/jobs/rescan` with `Authorization: Bearer $CRON_SECRET` (for example every 5 minutes).
   Each call scans at most 10 documents (`RESCAN_BATCH`) and reports `{checked, clean, infected, waiting, remaining}`; `remaining` is the number still
-  unscanned (capped at 100). Without `CRON_SECRET` the route answers 404.
+  unscanned (capped at 100). The same authorized job also cleans abandoned Phase 6 sourcing uploads and sends due sourcing reminders.
+  Without `CRON_SECRET` the route answers 404.
 - **Upload pipeline order:** validate type and size, strip image metadata (EXIF, XMP, comments, text chunks), hash, scan, store, register. The scanned
   buffer is exactly the stored buffer and the sha256 is of the stored bytes. At most 4 clamd connections are open per process.
 - **Upload throttling:** 30 uploads per user and 120 per organisation per hour, counting rejected files too (fails closed).

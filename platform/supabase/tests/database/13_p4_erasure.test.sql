@@ -218,6 +218,9 @@ select ok((select coalesce(array_agg(distinct a.attname::text), '{}'::text[]) fr
 select is((select bool_and(tt.all_alive(w)) from unnest(array['U', 'S', 'R', 'B', 'C']) w), true, 'E0c the synthetic worlds are fully built');
 insert into tt.n select 'auditR', count(*) from public.audit_log where org_id = tt.oid('RS1');
 insert into tt.n select 'auditB', count(*) from public.audit_log where org_id = tt.oid('BB');
+create table tt.audit_before (label text not null, id bigint not null, action text not null, at timestamptz not null);
+insert into tt.audit_before select 'auditR', id, action, at from public.audit_log where org_id = tt.oid('RS1');
+insert into tt.audit_before select 'auditB', id, action, at from public.audit_log where org_id = tt.oid('BB');
 select is((select count(*)::int from tt.n where n > 0), 2, 'E0d the organisations have audit history before erasure');
 
 -- A. Users who created things are deleted (organisations stay).
@@ -260,8 +263,11 @@ select is(tt.alive_sum('R', array['business_profiles', 'business_listings', 'bus
 select is(tt.alive_sum('R', array['organisations', 'buyer_requests', 'buyer_request_private']), 2 + 1 + 1, 'EC5 the buyer and the referred seller, and the buyer''s request, are intact');
 select is(tt.alive('R', 'request_seller_matches'), 1, 'EC6 only the match for the erased organisation is removed');
 select is(tt.alive('R', 'content_reports'), 1, 'EC7 the report on the erased listing is removed, the report on the buyer''s request stays');
-select is((select count(*)::int from public.audit_log where org_id = tt.oid('RS1')), (select n from tt.n where label = 'auditR'),
-  'EC8 the erased organisation''s audit history is kept in full');
+select is((select count(*)::int from tt.audit_before b join public.audit_log a using (id)
+           where b.label = 'auditR' and a.action = b.action and a.at = b.at
+             and a.org_id is null and a.details = '{}'::jsonb),
+          (select n from tt.n where label = 'auditR'),
+  'EC8 the erased organisation''s audit actions and times survive without its identifier or details');
 
 -- D. A buyer organisation is erased: its requests and every enquiry, quote, review and referral on them go; the sellers stay.
 select lives_ok($$ delete from public.organisations where id = tt.oid('BB') $$, 'ED1 deleting a buyer organisation with requests, enquiries, quotes and reviews succeeds');
@@ -272,8 +278,11 @@ select is(tt.alive_sum('B', array['organisations', 'business_listings', 'busines
   'verification_documents', 'verification_claim_documents', 'business_private', 'business_representatives']), 2 + 2 + 2 + 1 + 1 + 1 + 1 + 1 + 1 + 1,
   'ED3 the two sellers, their listings and verification records are intact');
 select is(tt.alive('B', 'content_reports'), 1, 'ED4 the report on the seller''s listing stays, the report on the buyer''s request is gone');
-select is((select count(*)::int from public.audit_log where org_id = tt.oid('BB')), (select n from tt.n where label = 'auditB'),
-  'ED5 the buyer organisation''s audit history is kept in full');
+select is((select count(*)::int from tt.audit_before b join public.audit_log a using (id)
+           where b.label = 'auditB' and a.action = b.action and a.at = b.at
+             and a.org_id is null and a.details = '{}'::jsonb),
+          (select n from tt.n where label = 'auditB'),
+  'ED5 the buyer organisation''s audit actions and times survive without its identifier or details');
 
 -- E. Unrelated organisations are untouched by all of the above.
 select is(tt.all_alive('C'), true, 'EE1 an unrelated world (buyer, two sellers, quote, referral, review) is completely intact');
