@@ -44,7 +44,8 @@
   align-items: center;
   justify-content: center;
   font-weight: 800;
-  font-size: 0.875rem;
+  font-size: 1.2rem; /* 19px bold counts as large text: gold on green needs 3:1 and has 4.2:1 */
+  letter-spacing: -0.02em;
 }
 .logo-word {
   font-weight: 800;
@@ -892,4 +893,9 @@ body:has(.focus-shell) > .pub-chrome {
   font-size: 1.75rem;
   letter-spacing: -0.03em;
   line-height: 1.1;
+}
+
+/* Avatar initials are drawn by CSS so the button's accessible name ("Account menu") is the only text a screen reader gets. */
+.av[data-i]::before {
+  content: attr(data-i);
 }

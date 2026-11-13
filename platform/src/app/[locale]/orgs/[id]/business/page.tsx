@@ -166,7 +166,7 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ l
               </span>
             </div>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, minWidth: 180 }}>
-              <div className="bar" style={{ flex: 1 }} role="progressbar" aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={doneCount}>
+              <div className="bar" style={{ flex: 1 }} role="progressbar" aria-label={t('biz2.home.setupTitle')} aria-valuemin={0} aria-valuemax={steps.length} aria-valuenow={doneCount}>
                 <div style={{ width: `${(doneCount / steps.length) * 100}%` }} />
               </div>
               <strong style={{ fontSize: '0.875rem', whiteSpace: 'nowrap' }}>{t('biz2.home.setupOf', { done: doneCount, total: steps.length })}</strong>

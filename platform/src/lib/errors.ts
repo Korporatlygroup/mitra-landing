@@ -74,6 +74,7 @@ export const KNOWN_MESSAGE_KEYS = [
   'field',
   'second_person_required',
   'limit_reached',
+  'price_required',
   'invalid_description',
   'invalid_registration_status',
   'invalid_business_type',

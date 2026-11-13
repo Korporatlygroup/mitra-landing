@@ -9,7 +9,7 @@ import { FormMessage } from '@/components/ActionForm';
 import Icon from '@/components/ui/Icon';
 import { Drawer } from '@/components/ui/Overlay';
 import { Link } from '@/i18n/navigation';
-import { idle } from '@/lib/form-state';
+import { idle, type FormState } from '@/lib/form-state';
 import type { LeadCard, LeadColumn, LeadDetail, LeadTag } from '@/lib/leads';
 
 const COLS: { key: Exclude<LeadColumn, 'lost'>; dot: string; label: string }[] = [
@@ -68,16 +68,19 @@ function AnswerButtons({ card, orgId, onDone }: { card: LeadCard; orgId: string;
 
 function MarkButtons({ card, onDone }: { card: LeadCard; onDone: () => void }) {
   const t = useTranslations('biz2.board');
-  const [state, action] = useActionState(markLeadAction, idle);
-  useEffect(() => {
-    if (state.status === 'success') onDone();
-  }, [state, onDone]);
+  const [error, setError] = useState<FormState>(idle);
+  // The refreshed card no longer offers these buttons, so close from the action's own result rather than from state that unmounts.
+  const run = async (fd: FormData) => {
+    const r = await markLeadAction(idle, fd);
+    if (r.status === 'success') onDone();
+    else setError(r);
+  };
   return (
     <>
-      <FormMessage state={state} />
+      <FormMessage state={error} />
       <div className="btn-row">
         {(['reported_lost', 'reported_won'] as const).map((stage) => (
-          <form key={stage} action={action}>
+          <form key={stage} action={run}>
             <input type="hidden" name="enquiryId" value={card.enquiryId ?? ''} />
             <input type="hidden" name="stage" value={stage} />
             <Pending kind={stage === 'reported_won' ? 'primary' : 'secondary'}>{stage === 'reported_won' ? t('markWon') : t('markLost')}</Pending>

@@ -25,7 +25,7 @@ module.exports = {
     floatPill: ['Potential match: government financing', 'Padanan berpotensi: pembiayaan kerajaan', 'சாத்தியமான பொருத்தம்: அரசு நிதியுதவி'],
     browse: ['Browse by category', 'Layari mengikut kategori', 'வகையின்படி உலாவுங்கள்'],
     allBusinesses: ['All businesses', 'Semua perniagaan', 'அனைத்து வணிகங்கள்'],
-    count: ['{n, plural, one {# business} other {# businesses}}', '{n} perniagaan', '{n, plural, one {# வணிகம்} other {# வணிகங்கள்}}'],
+    count: ['{n, plural, one {# business} other {# businesses}}', '{n, plural, other {# perniagaan}}', '{n, plural, one {# வணிகம்} other {# வணிகங்கள்}}'],
     recent: ['Recently reviewed', 'Baru disemak', 'சமீபத்தில் மதிப்பாய்வு செய்யப்பட்டவை'],
     seeMore: ['See more', 'Lihat lagi', 'மேலும் பார்க்க'],
     noneYet: ['No businesses are listed yet.', 'Belum ada perniagaan disenaraikan.', 'இன்னும் வணிகங்கள் பட்டியலிடப்படவில்லை.'],
@@ -47,7 +47,7 @@ module.exports = {
     noOrg: ['Create your first organisation to start.', 'Buat organisasi pertama anda untuk bermula.', 'தொடங்க உங்கள் முதல் அமைப்பை உருவாக்குங்கள்.'],
   },
   dir2: {
-    results: ['{n, plural, one {# result} other {# results}}', '{n} keputusan', '{n, plural, one {# முடிவு} other {# முடிவுகள்}}'],
+    results: ['{n, plural, one {# result} other {# results}}', '{n, plural, other {# keputusan}}', '{n, plural, one {# முடிவு} other {# முடிவுகள்}}'],
     inCategory: [' in {category}', ' dalam {category}', ' {category} பிரிவில்'],
     all: ['All', 'Semua', 'அனைத்தும்'],
     reviewedOnly: ['Reviewed only', 'Disemak sahaja', 'மதிப்பாய்வு செய்தவை மட்டும்'],

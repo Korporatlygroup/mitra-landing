@@ -16,9 +16,7 @@ export default function AccountMenu({ initials, name, language }: { initials: st
   return (
     <div className="pop-anchor" ref={ref}>
       <button type="button" className="ib" style={{ width: 'auto', padding: '0 4px' }} aria-label={t('ws.accountMenu')} aria-expanded={open} aria-haspopup="menu" onClick={() => setOpen((v) => !v)}>
-        <span className="av" style={{ width: 38, height: 38 }}>
-          {initials}
-        </span>
+        <span className="av" style={{ width: 38, height: 38 }} data-i={initials} aria-hidden="true" />
       </button>
       {open ? (
         <div className="pop" style={{ width: 260 }} role="menu">

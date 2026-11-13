@@ -224,7 +224,7 @@ export default function WorkspaceChrome(p: ChromeProps) {
         <aside className={`ws-side${collapsed ? ' mini' : ''}${mobileOpen ? ' open' : ''}`} aria-label={t('ws.workspace')}>
           {p.orgName ? (
             <div className="pop-anchor" ref={orgRef}>
-              <button type="button" className="sl org-btn" aria-expanded={orgOpen} aria-haspopup="true" aria-label={`${p.orgName}. ${t('ws.orgSwitch')}`} onClick={() => setOrgOpen((v) => !v)}>
+              <button type="button" className="sl org-btn" aria-expanded={orgOpen} aria-haspopup="true" onClick={() => setOrgOpen((v) => !v)}>
                 <span className="org-init" aria-hidden="true">
                   {p.orgInitials}
                 </span>

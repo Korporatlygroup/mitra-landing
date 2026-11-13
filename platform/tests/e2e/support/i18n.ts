@@ -17,7 +17,9 @@ export function msg(locale: 'en' | 'ta' | 'ms', key: string, vars: Record<string
       }
       return a;
     };
-    cache[locale] = ['partner', 'buyer', 'admin', 'common'].reduce((acc, x) => merge(acc, read(`p5/${x}.${locale}.json`)), read(`${locale}.json`));
+    const withP5 = ['partner', 'buyer', 'admin', 'common'].reduce((acc, x) => merge(acc, read(`p5/${x}.${locale}.json`)), read(`${locale}.json`));
+    // redesign strings (messages/rd/rd.<locale>.json, built by scripts/rd/build-messages.cjs)
+    cache[locale] = merge(withP5, read(`rd/rd.${locale}.json`));
   }
   let cur: string | Tree | undefined = cache[locale];
   for (const part of key.split('.')) cur = typeof cur === 'object' ? cur[part] : undefined;

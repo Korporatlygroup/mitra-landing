@@ -55,7 +55,9 @@ export async function loginUi(page: Page, u: { email: string; password: string }
 
 export async function logoutUi(page: Page, locale: Locale = 'en'): Promise<void> {
   await page.goto(`/${locale}`);
-  await page.getByRole('button', { name: msg(locale, 'nav.signOut'), exact: true }).first().click();
+  // The sign-out button lives in the account menu (avatar button) in both the public bar and the workspace bar.
+  await page.getByRole('button', { name: msg(locale, 'ws.accountMenu'), exact: true }).first().click();
+  await page.getByRole('menuitem', { name: msg(locale, 'nav.signOut'), exact: true }).first().click();
   await expect(page.getByRole('link', { name: msg(locale, 'nav.signIn'), exact: true }).first()).toBeVisible();
 }
 

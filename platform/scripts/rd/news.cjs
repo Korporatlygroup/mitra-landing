@@ -29,7 +29,7 @@ module.exports = {
     published: ['Published {date}', 'Diterbitkan {date}', '{date} அன்று வெளியிடப்பட்டது'],
     langTag: ['Written in {lang}', 'Ditulis dalam {lang}', '{lang} மொழியில் எழுதப்பட்டது'],
     bulletin: ['Your bulletin', 'Buletin anda', 'உங்கள் அறிவிப்பு மடல்'],
-    weeklyOn: ['Weekly email · {n, plural, one {# topic} other {# topics}} on', 'E-mel mingguan · {n} topik dihidupkan', 'வாராந்திர மின்னஞ்சல் · {n, plural, one {# தலைப்பு} other {# தலைப்புகள்}} இயக்கத்தில்'],
+    weeklyOn: ['Weekly email · {n, plural, one {# topic} other {# topics}} on', 'E-mel mingguan · {n, plural, other {# topik}} dihidupkan', 'வாராந்திர மின்னஞ்சல் · {n, plural, one {# தலைப்பு} other {# தலைப்புகள்}} இயக்கத்தில்'],
     weeklyOff: ['Weekly email is off', 'E-mel mingguan dimatikan', 'வாராந்திர மின்னஞ்சல் அணைக்கப்பட்டுள்ளது'],
     weeklySwitch: ['Send me a weekly email', 'Hantar e-mel mingguan kepada saya', 'எனக்கு வாராந்திர மின்னஞ்சல் அனுப்பு'],
     topicGrants: ['Grants & financing', 'Geran & pembiayaan', 'மானியங்கள் & நிதியுதவி'],
