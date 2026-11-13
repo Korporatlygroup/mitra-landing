@@ -902,13 +902,13 @@
       "media": "ev-quiz"
     },
     "sourceNote": "Screenshots from the final report submitted to MITRA (evidence annex). Dates, earnings and other users’ names cropped out.",
-    "_note": "From the final report's Lampiran G4, read with the user's permission (results sections only, 2026-11-13). Names and shop handles shown as-is by the user's choice. Left out: TikTok earnings and the RM sales value (no income data), order screenshots (buyers' names and addresses), the placement offer letter, programme dates, and any participant count. 2026-11-13: 'measure' block answers the boss's ask (knowledge before/after + business tracked on many aspects). The quiz is described as a self-assessment (Yes/No/I don't know questions). No per-person quiz scores: in the report, four participants' quiz pages are one identical image and a fifth shows the same answers; only Letchumy's and Mugilan's are clearly individual.",
+    "_note": "From the final report's Lampiran G4, read with the user's permission (results sections only, 2026-11-13). Names and shop handles shown as-is by the user's choice. Left out: TikTok earnings and the RM sales value (no income data), order screenshots (buyers' names and addresses), the placement offer letter, programme dates, and any participant count. 2026-11-13: 'measure' block answers the boss's ask (knowledge before/after + business tracked on many aspects). The quiz is described as a self-assessment (Yes/No/I don't know questions). No per-person quiz scores: in the report, four participants' quiz pages are one identical image and a fifth shows the same answers; only Letchumy's and Mugilan's are clearly individual. 2026-11-13: websites from the 10 participant handover reports (Oct 2024; all five checked live). Handover-report scores and business tables NOT used: scores are identical across several reports, three 'buddy' reports copy another participant's business figures, and some figures contradict the screenshots.",
     "measure": {
       "heading": "How we measured progress",
       "knowledge": {
         "label": "01 · Knowledge",
         "title": "The same questions, before and after",
-        "text": "Before joining and again after the classroom days, participants answered the same self-assessment: “Do you know how to…?” across six areas of running a business online. Questions answered “No” or “I don’t know” at the start were answered “Yes” at the end.",
+        "text": "Before joining and again after the classroom days, participants answered the same self-assessment: “Do you know how to…?” across six areas of running a business online. Questions answered “No” or “I don’t know” at the start were answered “Yes” at the end. Each participant’s progress was then written up in an individual handover report, covering ten skills from setting clear objectives to social media analytics.",
         "areas": [
           "Business goals and challenges",
           "Knowledge and skills",
@@ -925,7 +925,7 @@
       "business": {
         "label": "02 · Business",
         "title": "What their businesses did online",
-        "text": "We tracked participants' own accounts during the programme, across every stage of selling online:",
+        "text": "Each participant's handover report tracked their own accounts and channels, across every stage of selling online:",
         "aspects": [
           {
             "aspect": "Reach",
@@ -954,11 +954,47 @@
           },
           {
             "aspect": "Web presence",
-            "value": "6 days",
-            "text": "to build a complete business website from scratch"
+            "value": "6",
+            "text": "businesses with their own website made through the programme, one built from scratch in six days"
           }
         ]
       }
+    },
+    "websites": {
+      "title": "Websites made in the programme",
+      "text": "Five of the businesses' websites, still live today. Click through and see them for yourself.",
+      "items": [
+        {
+          "name": "Sharmila",
+          "business": "PINKY MUA",
+          "media": "site-sharmila",
+          "url": "https://sites.google.com/view/sharmilamua/home"
+        },
+        {
+          "name": "Letchumy",
+          "business": "Lali's Smart Collection",
+          "media": "site-letchumy",
+          "url": "https://sites.google.com/view/lali-smart-collection/home"
+        },
+        {
+          "name": "Kogilavani",
+          "business": "Kogilavani's Coway",
+          "media": "site-kogilavani",
+          "url": "https://sites.google.com/view/kogilavanisite/home"
+        },
+        {
+          "name": "Sivakumar",
+          "business": "Transportation service",
+          "media": "site-sivakumar",
+          "url": "https://sites.google.com/view/sivak-kumar/home"
+        },
+        {
+          "name": "Yeshodaran",
+          "business": "Tour director",
+          "media": "site-yeshodaran",
+          "url": "https://sites.google.com/view/yeshodaran-tour-director/home"
+        }
+      ]
     }
   }
 }
