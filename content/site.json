@@ -82,7 +82,15 @@
     ],
     "image": "gal-v4",
     "_note": "Paragraph 4 names MITRA (funder) and SEGi College Subang Jaya (certifier) factually. No programme dates or participant counts anywhere on the page (user decision 2026-11-10).",
-    "imageCaption": "Working through a plan together, Ipoh"
+    "imageCaption": "Working through a plan together, Ipoh",
+    "formula": {
+      "eyebrow": "One of our winning formulas",
+      "heading": "Our strategy is different",
+      "text": "We paired an educated Gen Z with an entrepreneur who wasn't yet digitally savvy. One brought the product, the customers and years of running a business; the other brought digital fluency. Working side by side, they took the business online together.",
+      "pair": ["An educated Gen Z", "An entrepreneur new to digital"],
+      "result": "A business that sells online",
+      "_note": "Wording from the boss (2026-11-13): 'Our strategy is different. We combined one educated Gen Z with a non digitally savvy entrepreneur. That was one of our winning formula.' Softened 'non digitally savvy' for the public page. Do not say 'intern'."
+    }
   },
   "impact": {
     "heading": "The programme in numbers",
