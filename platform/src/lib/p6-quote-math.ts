@@ -23,7 +23,7 @@ export interface WholesaleTotal {
   total: string;
 }
 
-const MAX_CENTS = 99_999_999_999_999n; // numeric(14,2)
+const MAX_CENTS = 9_999_999_999_999_999n; // numeric(16,2), matching persisted quotations
 
 function moneyCents(value: string): bigint {
   const m = /^(0|[1-9]\d{0,11})\.(\d{2})$/.exec(value);
@@ -52,7 +52,7 @@ function formatted(cents: bigint): string {
 }
 
 export function computeWholesaleQuote(lines: WholesaleLine[], charges: WholesaleCharges = {}): WholesaleTotal {
-  if (lines.length < 1 || lines.length > 50) throw new Error('invalid_lines');
+  if (lines.length < 1 || lines.length > 20) throw new Error('invalid_lines');
   const currency = lines[0]!.currency;
   if (!['INR', 'MYR', 'USD'].includes(currency)) throw new Error('invalid_currency');
   const totals = lines.map((line) => {

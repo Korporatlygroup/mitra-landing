@@ -225,6 +225,47 @@ export async function deleteFromBucket(bucket: StorageBucket, path: string): Pro
   }
 }
 
+export async function registerSourcingDocument(input: {
+  rfq: string; partner: string; user: string; name: string; mime: string; size: number; sha256: string; path: string;
+}): Promise<{ ok: true; id: string } | { ok: false; error: { code?: string; message?: string } }> {
+  try {
+    const { data, error } = await serviceClient().rpc('service_register_sourcing_document', {
+      p_rfq: input.rfq, p_partner: input.partner, p_user: input.user, p_name: input.name,
+      p_mime: input.mime, p_size: input.size, p_sha256: input.sha256, p_path: input.path,
+    });
+    return error ? { ok: false, error: { code: error.code, message: error.message } } : { ok: true, id: String(data) };
+  } catch { return { ok: false, error: {} }; }
+}
+
+export async function cleanupSourcingDocuments(limit: number): Promise<{ removed: number; failed: number }> {
+  const { data, error } = await serviceClient().rpc('service_list_sourcing_cleanup', { p_limit: limit });
+  if (error) return { removed: 0, failed: limit };
+  let removed = 0; let failed = 0;
+  for (const row of (data ?? []) as Array<{ storage_path: string }>) {
+    const path = row.storage_path;
+    if (!/^sourcing\/[0-9a-f-]{36}\.(pdf|png|jpg)$/.test(path)) { failed++; continue; }
+    if (await deleteFromBucket(DOCS_BUCKET, path)) {
+      const { error: doneError } = await serviceClient().rpc('service_complete_sourcing_cleanup', { p_path: path });
+      if (doneError) failed++; else removed++;
+    } else failed++;
+  }
+  return { removed, failed };
+}
+
+export async function queueSourcingCleanup(path: string): Promise<boolean> {
+  try {
+    const { error } = await serviceClient().rpc('service_queue_sourcing_cleanup', { p_path: path });
+    return !error;
+  } catch { return false; }
+}
+
+export async function sendSourcingReminders(limit = 20): Promise<number> {
+  try {
+    const { data, error } = await serviceClient().rpc('service_send_sourcing_reminders', { p_limit: limit });
+    return error ? 0 : Number(data ?? 0);
+  } catch { return 0; }
+}
+
 type RegisterResult = { ok: true; id: string } | { ok: false; error: { code?: string; message?: string } };
 
 export interface RegisterSupplierDocumentInput {

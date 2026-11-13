@@ -1,7 +1,7 @@
 {
   "_meta": "Bahasa Melayu (ms) ialah draf mesin dan perlu disemak oleh penutur fasih sebelum dilancarkan kepada orang ramai.",
   "common": {
-    "appName": "MITRA",
+    "appName": "INOK",
     "skipToContent": "Langkau ke kandungan utama",
     "languageLabel": "Bahasa",
     "langEn": "EN",
@@ -328,6 +328,8 @@
     "invalid_budget": "Sila semak bajet. Jumlah tertinggi tidak boleh kurang daripada jumlah terendah.",
     "request_incomplete": "Sila isi apa yang anda perlukan, kategori, negeri dan penerangan sekurang-kurangnya 20 aksara.",
     "request_not_open": "Permintaan ini tidak lagi dibuka.",
+    "invitation_not_accepted": "Terima permintaan ini sebelum membalas.",
+    "invalid_file": "Sila pilih fail PDF, JPEG atau PNG yang sah.",
     "request_not_editable": "Permintaan ini sudah dihantar dan tidak boleh diubah. Tarik balik dan hantar yang baharu.",
     "duplicate_request": "Anda sudah mempunyai permintaan terbuka yang serupa.",
     "contact_required": "Sila tambah nombor telefon atau alamat e-mel supaya perniagaan boleh menghubungi anda.",
@@ -577,7 +579,17 @@
       "request_question": "Sebuah perniagaan ada soalan tentang permintaan anda",
       "request_declined": "Sebuah perniagaan tidak dapat menerima permintaan anda",
       "request_removed": "Permintaan anda dibuang oleh MITRA",
-      "enquiry_opened": "Seorang pelanggan menghantar pertanyaan kepada anda"
+      "enquiry_opened": "Seorang pelanggan menghantar pertanyaan kepada anda",
+      "sourcing_rfq_received": "Pembeli meminta harga",
+      "sourcing_partner_response": "Rakan menjawab permintaan harga anda",
+      "sourcing_message": "Anda menerima mesej sumber produk baharu",
+      "sourcing_quote_received": "Tawaran harga baharu tersedia",
+      "sourcing_selected": "Pembeli memilih tawaran anda",
+      "sourcing_counter": "Pembeli mencadangkan harga lain",
+      "sourcing_counter_response": "Rakan menjawab cadangan harga anda",
+      "sourcing_sample_requested": "Pembeli meminta sampel",
+      "sourcing_document_uploaded": "Dokumen peribadi telah dikongsi",
+      "sourcing_quote_reminder": "Sila hantar tawaran untuk permintaan yang diterima"
     }
   },
   "adminVer": {

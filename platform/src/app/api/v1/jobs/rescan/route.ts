@@ -34,5 +34,7 @@ export async function POST(request: NextRequest) {
   });
   const supplier_documents = await rescanPending(p5(priv.DOCS_BUCKET, priv.listUnscannedSupplierDocuments, priv.setSupplierDocumentScan), RESCAN_BATCH);
   const product_media = await rescanPending(p5(priv.MEDIA_BUCKET, priv.listUnscannedProductMedia, priv.setProductMediaScan), RESCAN_BATCH);
+  await priv.cleanupSourcingDocuments(10);
+  await priv.sendSourcingReminders(20);
   return new Response(JSON.stringify({ ok: true, ...summary, supplier_documents, product_media }), { status: 200, headers });
 }

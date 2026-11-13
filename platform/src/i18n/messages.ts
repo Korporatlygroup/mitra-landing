@@ -13,6 +13,9 @@ import msAdmin from '../../messages/p5/admin.ms.json';
 import enCommon from '../../messages/p5/common.en.json';
 import taCommon from '../../messages/p5/common.ta.json';
 import msCommon from '../../messages/p5/common.ms.json';
+import enSourcing from '../../messages/p6/en.json';
+import taSourcing from '../../messages/p6/ta.json';
+import msSourcing from '../../messages/p6/ms.json';
 
 // Phase 5 strings live in messages/p5/<area>.<locale>.json (top-level namespaces p5partner, p5buyer, p5admin, p5common) so that
 // several people can work on them at once. They are merged here, once, for the app, the unit tests and (by file read) the browser tests.
@@ -31,9 +34,9 @@ const merge = (...parts: Tree[]): Tree => {
 };
 
 export const MESSAGES = {
-  en: merge(en, enPartner, enBuyer, enAdmin, enCommon),
-  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon),
-  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon),
+  en: merge(en, enPartner, enBuyer, enAdmin, enCommon, enSourcing),
+  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon, taSourcing),
+  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon, msSourcing),
 } as const;
 
 export type Locale = keyof typeof MESSAGES;

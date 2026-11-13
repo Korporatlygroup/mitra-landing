@@ -221,8 +221,27 @@ select is(
         'unpublish_product(p_org uuid, p_product uuid)', 'unsave_product(p_product uuid)',
         'update_product_media(p_media uuid, p_alt text, p_sort integer)', 'withdraw_sourcing_request(p_request uuid)',
         'withdraw_supplier_submission(p_org uuid, p_supplier uuid)',
-        'seller_lead_metrics(p_seller_org uuid)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 117 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5)');
+        'seller_lead_metrics(p_seller_org uuid)',
+        'create_sourcing_rfq(p_buyer_org uuid, p_key text, p_items jsonb, p_partner_orgs uuid[], p_state text, p_city text, p_needed_by date, p_note text, p_source_request uuid)',
+        'list_sourcing_rfqs(p_org uuid, p_offset integer)', 'get_sourcing_rfq(p_rfq uuid, p_partner uuid)',
+        'send_sourcing_message(p_rfq uuid, p_partner uuid, p_body text)',
+        'submit_sourcing_quote(p_rfq uuid, p_partner uuid, p_supplier uuid, p_currency text, p_lines jsonb, p_charges numeric, p_discount numeric, p_lead_days integer, p_terms text, p_valid_until date, p_expected_version integer)',
+        'select_sourcing_quote(p_rfq uuid, p_quote uuid, p_expected_version integer)',
+        'propose_sourcing_counter(p_quote uuid, p_total numeric, p_note text, p_expected_rfq_version integer)',
+        'respond_sourcing_counter(p_counter uuid, p_action text)',
+        'request_sourcing_sample(p_rfq uuid, p_partner uuid, p_item uuid, p_note text)',
+        'update_sourcing_sample(p_sample uuid, p_status text, p_expected_version integer)',
+        'save_sourcing_template(p_org uuid, p_title text, p_items jsonb)',
+        'list_sourcing_templates(p_org uuid)', 'repeat_sourcing_rfq(p_rfq uuid)',
+        'sourcing_timeline(p_rfq uuid, p_partner uuid)', 'sourcing_operations(p_offset integer)',
+        'list_sourcing_partners()', 'list_sourcing_counters(p_rfq uuid, p_partner uuid)',
+        'match_sourcing_rfq(p_rfq uuid, p_partner uuid)',
+        'respond_sourcing_invitation(p_rfq uuid, p_partner uuid, p_accept boolean)',
+        'change_sourcing_status(p_rfq uuid, p_action text, p_expected_version integer)',
+        'authorize_sourcing_document_upload(p_rfq uuid, p_partner uuid)',
+        'list_sourcing_documents(p_rfq uuid, p_partner uuid)', 'get_sourcing_document_access(p_doc uuid)',
+        'remove_sourcing_document(p_doc uuid)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 141 allow-listed public RPCs');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -236,11 +255,13 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_list_unscanned_product_media',
-        'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_record_auth_event', 'service_record_rejected_upload',
-        'service_register_document', 'service_register_product_media', 'service_register_supplier_document', 'service_set_product_media_scan',
+  array['bootstrap_first_admin', 'service_auth_attempt', 'service_complete_sourcing_cleanup', 'service_list_sourcing_cleanup',
+        'service_list_unscanned_documents', 'service_list_unscanned_product_media', 'service_list_unscanned_supplier_documents',
+        'service_org_recipient_emails', 'service_queue_sourcing_cleanup', 'service_record_auth_event', 'service_record_rejected_upload',
+        'service_register_document', 'service_register_product_media', 'service_register_sourcing_document',
+        'service_register_supplier_document', 'service_send_sourcing_reminders', 'service_set_product_media_scan',
         'service_set_scan_result', 'service_set_supplier_document_scan'],
-  'S7.8 service_role executes exactly the 14 allow-listed service_* / bootstrap functions from public (8 up to Phase 4, 6 from Phase 5)');
+  'S7.8 service_role executes exactly the 19 allow-listed service_* / bootstrap functions from public');
 
 select is_empty(
   $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -319,7 +340,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  54, 'S6.6 inventory: exactly the 54 expected public tables exist (35 up to Phase 4, 19 from Phase 5; new tables must come with RLS tests)');
+  65, 'S6.6 inventory: exactly the 65 expected public tables exist (54 through Phase 5, 11 in Phase 6)');
 
 select * from finish();
 rollback;

@@ -26,6 +26,7 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
   if (!item) notFound();
   const t = await getTranslations({ locale, namespace: 'p5buyer' });
   const tc = await getTranslations({ locale, namespace: 'p5common' });
+  const t6 = await getTranslations({ locale, namespace: 'p6' });
   const { supabase, user } = await getOptionalUser();
   const saved = (await savedIdSet(supabase, Boolean(user))).has(id);
   const place = [item.supplier.state_city, item.supplier.country].filter(Boolean).join(', ');
@@ -77,6 +78,7 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
           <AvailabilityNote status={item.availability_status} confirmedOn={item.availability_confirmed_on} outdated={item.availability_outdated} locale={locale} />
           <div className="catalogue-card-actions">
             <CardActions id={item.id} name={item.name} locale={locale} signedIn={Boolean(user)} saved={saved} nextPath={`/${locale}/catalogue/${id}`} />
+            <Link href={`/sourcing/new?product=${item.id}`} locale={locale} className="btn btn-secondary">{t6('send')}</Link>
           </div>
         </section>
       </div>

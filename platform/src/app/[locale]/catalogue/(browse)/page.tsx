@@ -28,6 +28,7 @@ export default async function CataloguePage({
   const f = parseSearchFilters(await searchParams);
   const t = await getTranslations({ locale, namespace: 'p5buyer' });
   const tc = await getTranslations({ locale, namespace: 'p5common' });
+  const t6 = await getTranslations({ locale, namespace: 'p6' });
   const { supabase, user } = await getOptionalUser();
 
   const result = supabase ? await searchCatalogue(supabase, toServiceParams(f, CATALOGUE_PAGE_SIZE)) : null;
@@ -46,6 +47,7 @@ export default async function CataloguePage({
     <>
       <h1>{t('title')}</h1>
       <p>{t('intro')}</p>
+      <p><Link href="/sourcing/new" locale={locale} className="btn btn-primary">{t6('new')}</Link></p>
       <p className="muted">{tc('price.note')}</p>
 
       <form method="get" className="form catalogue-filters" role="search" aria-label={t('search.label')}>

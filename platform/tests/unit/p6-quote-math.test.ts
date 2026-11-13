@@ -26,7 +26,9 @@ describe('Phase 6 exact wholesale quotation calculations', () => {
     ])).toThrow('mixed_currencies');
     expect(() => computeWholesaleQuote([{ quantity: '1', unitPrice: '1.00', currency: 'USD' }],
       { discount: '2.00' })).toThrow('discount_exceeds_amount');
-    expect(() => computeWholesaleQuote([{ quantity: '2', unitPrice: '999999999999.99', currency: 'USD' }]))
+    expect(() => computeWholesaleQuote([{ quantity: '101', unitPrice: '999999999999.99', currency: 'USD' }]))
       .toThrow('amount_too_large');
+    expect(() => computeWholesaleQuote([{ quantity: '1', unitPrice: '1.00', currency: 'USD' }],
+      { packaging: '1000000000000.00' })).toThrow('invalid_money');
   });
 });

@@ -1,7 +1,7 @@
 {
   "_meta": "Tamil (ta) and Bahasa Melayu (ms) text are first drafts and need native-speaker review before public launch.",
   "common": {
-    "appName": "MITRA",
+    "appName": "INOK",
     "skipToContent": "Skip to main content",
     "languageLabel": "Language",
     "langEn": "EN",
@@ -30,7 +30,7 @@
     "requests": "My requests"
   },
   "home": {
-    "titleSignedOut": "Welcome to MITRA",
+    "titleSignedOut": "Welcome to INOK",
     "introSignedOut": "Sign in or create an account to manage your organisation and your team.",
     "titleSignedIn": "Hello, {name}",
     "yourOrgs": "Your organisations",
@@ -337,6 +337,8 @@
     "invalid_budget": "Please check the budget. The highest amount cannot be below the lowest.",
     "request_incomplete": "Please fill in what you need, the category, the state and a description of at least 20 characters.",
     "request_not_open": "This request is no longer open.",
+    "invitation_not_accepted": "Accept the request before replying.",
+    "invalid_file": "Please choose a valid PDF, JPEG or PNG file.",
     "request_not_editable": "This request has already been sent and cannot be changed. Withdraw it and post a new one.",
     "duplicate_request": "You already have an open request like this one.",
     "contact_required": "Please add a phone number or an email address so businesses can reach you.",
@@ -577,7 +579,17 @@
       "request_question": "A business has a question about your request",
       "request_declined": "A business cannot take your request",
       "request_removed": "Your request was removed by MITRA",
-      "enquiry_opened": "A customer sent you an enquiry"
+      "enquiry_opened": "A customer sent you an enquiry",
+      "sourcing_rfq_received": "A buyer requested a price",
+      "sourcing_partner_response": "A partner answered your price request",
+      "sourcing_message": "You have a new sourcing message",
+      "sourcing_quote_received": "A new offer is ready",
+      "sourcing_selected": "The buyer chose your offer",
+      "sourcing_counter": "The buyer suggested a price",
+      "sourcing_counter_response": "A partner answered your price suggestion",
+      "sourcing_sample_requested": "The buyer asked for a sample",
+      "sourcing_document_uploaded": "A private sourcing document was shared",
+      "sourcing_quote_reminder": "Please send an offer for your accepted request"
     }
   },
   "adminVer": {
