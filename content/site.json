@@ -836,7 +836,7 @@
   "evidence": {
     "eyebrow": "The evidence",
     "heading": "Don't take our word for it",
-    "intro": "These are the participants' own screenshots, as submitted in the programme's final report. Real accounts, real numbers, from the weeks of the programme.",
+    "intro": "We measured progress two ways: what participants knew before and after the classroom days, and what their businesses actually did online. Below is how we measured it, then the participants' own screenshots as submitted in the programme's final report.",
     "items": [
       {
         "name": "Sharmila",
@@ -897,19 +897,68 @@
       }
     ],
     "quiz": {
-      "title": "Before and after: the same questions",
-      "text": "Participants answered the same quiz before and after the classroom days. Questions they answered “No” to on day one, they answered “Yes” to at the end: from the fundamentals of entrepreneurship to using ChatGPT, Google Ads and TikTok Shop.",
-      "areas": [
-        "Business goals and challenges",
-        "Knowledge and skills",
-        "Current marketing strategies",
-        "Online presence and e-commerce",
-        "Customer insights",
-        "Content creation"
-      ],
+      "title": "A sample answer sheet",
+      "text": "One participant's answers, before joining (left) and after (right). It is a self-assessment: it shows how confident participants felt doing each task, from the fundamentals of entrepreneurship to using ChatGPT, Google Ads and TikTok Shop.",
       "media": "ev-quiz"
     },
     "sourceNote": "Screenshots from the final report submitted to MITRA (evidence annex). Dates, earnings and other users’ names cropped out.",
-    "_note": "From the final report's Lampiran G4, read with the user's permission (results sections only, 2026-11-13). Names and shop handles shown as-is by the user's choice. Left out: TikTok earnings and the RM sales value (no income data), order screenshots (buyers' names and addresses), the placement offer letter, programme dates, and any participant count."
+    "_note": "From the final report's Lampiran G4, read with the user's permission (results sections only, 2026-11-13). Names and shop handles shown as-is by the user's choice. Left out: TikTok earnings and the RM sales value (no income data), order screenshots (buyers' names and addresses), the placement offer letter, programme dates, and any participant count. 2026-11-13: 'measure' block answers the boss's ask (knowledge before/after + business tracked on many aspects). The quiz is described as a self-assessment (Yes/No/I don't know questions). No per-person quiz scores: in the report, four participants' quiz pages are one identical image and a fifth shows the same answers; only Letchumy's and Mugilan's are clearly individual.",
+    "measure": {
+      "heading": "How we measured progress",
+      "knowledge": {
+        "label": "01 · Knowledge",
+        "title": "The same questions, before and after",
+        "text": "Before joining and again after the classroom days, participants answered the same self-assessment: “Do you know how to…?” across six areas of running a business online. Questions answered “No” or “I don’t know” at the start were answered “Yes” at the end.",
+        "areas": [
+          "Business goals and challenges",
+          "Knowledge and skills",
+          "Current marketing strategies",
+          "Online presence and e-commerce",
+          "Customer insights",
+          "Content creation"
+        ],
+        "link": {
+          "label": "See a sample answer sheet",
+          "href": "#quiz"
+        }
+      },
+      "business": {
+        "label": "02 · Business",
+        "title": "What their businesses did online",
+        "text": "We tracked participants' own accounts during the programme, across every stage of selling online:",
+        "aspects": [
+          {
+            "aspect": "Reach",
+            "value": "9,020",
+            "text": "views on videos one participant posted during the programme"
+          },
+          {
+            "aspect": "Live selling",
+            "value": "2.7K",
+            "text": "viewers on a single live session, and 2 hours of live selling by another participant"
+          },
+          {
+            "aspect": "Engagement",
+            "value": "12.4K",
+            "text": "likes on one participant's live-selling sessions"
+          },
+          {
+            "aspect": "Audience",
+            "value": "12",
+            "text": "new followers from one live session; a brand-new account reached its first 8"
+          },
+          {
+            "aspect": "Sales",
+            "value": "3",
+            "text": "first online orders for one shop, within days of the classroom phase"
+          },
+          {
+            "aspect": "Web presence",
+            "value": "6 days",
+            "text": "to build a complete business website from scratch"
+          }
+        ]
+      }
+    }
   }
 }

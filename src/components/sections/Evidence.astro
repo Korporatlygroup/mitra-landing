@@ -21,6 +21,36 @@ const quizReady = ready(evidence.quiz.media);
         <p class="lead" data-reveal style="--d:140">{evidence.intro}</p>
       </div>
 
+      {evidence.measure && (
+        <div class="measure">
+          <h3 class="measure__heading" data-reveal>{evidence.measure.heading}</h3>
+          <div class="measure__grid">
+            <article class="measure__card" data-reveal style="--d:80">
+              <p class="measure__label">{evidence.measure.knowledge.label}</p>
+              <h4>{evidence.measure.knowledge.title}</h4>
+              <p>{evidence.measure.knowledge.text}</p>
+              <ul class="quiz__areas">
+                {evidence.measure.knowledge.areas.map((a) => <li>{a}</li>)}
+              </ul>
+              {quizReady && <a class="measure__link" href={evidence.measure.knowledge.link.href}>{evidence.measure.knowledge.link.label}</a>}
+            </article>
+            <article class="measure__card" data-reveal style="--d:160">
+              <p class="measure__label">{evidence.measure.business.label}</p>
+              <h4>{evidence.measure.business.title}</h4>
+              <p>{evidence.measure.business.text}</p>
+              <dl class="aspects">
+                {evidence.measure.business.aspects.map((a) => (
+                  <div class="aspect">
+                    <dt>{a.aspect}</dt>
+                    <dd><strong>{a.value}</strong> {a.text}</dd>
+                  </div>
+                ))}
+              </dl>
+            </article>
+          </div>
+        </div>
+      )}
+
       <ul class="proofs">
         {items.map((it, i) => (
           <li class="proof" data-reveal style={`--d:${80 + i * 80}`}>
@@ -48,13 +78,10 @@ const quizReady = ready(evidence.quiz.media);
         ))}
       </ul>
 
-      <div class="quiz" data-reveal>
+      <div class="quiz" id="quiz" data-reveal>
         <div class="quiz__text">
           <h3>{evidence.quiz.title}</h3>
           <p>{evidence.quiz.text}</p>
-          <ul class="quiz__areas">
-            {evidence.quiz.areas.map((a) => <li>{a}</li>)}
-          </ul>
         </div>
         {quizReady && (
           <div class="quiz__shot">
@@ -70,6 +97,28 @@ const quizReady = ready(evidence.quiz.media);
 
 <style>
   .evidence__eyebrow { margin: 0 0 0.5rem; font-weight: 650; color: var(--accent-text); }
+
+  /* How we measured: knowledge (self-assessment) beside business aspects tracked. */
+  .measure { margin-bottom: clamp(2.5rem, 5vw, 3.5rem); }
+  .measure__heading { margin: 0 0 1rem; font: 700 clamp(1.3rem, 2.4vw, 1.6rem)/1.2 var(--font-display); }
+  .measure__grid { display: grid; gap: clamp(1.25rem, 3vw, 1.75rem); }
+  @media (min-width: 1000px) { .measure__grid { grid-template-columns: 1fr 1.25fr; } }
+  .measure__card {
+    padding: clamp(1.2rem, 3vw, 1.7rem); border-radius: var(--radius-lg);
+    background: var(--surface); border: 1px solid var(--border); border-top: 5px solid var(--brand); box-shadow: var(--shadow);
+  }
+  .measure__card:nth-child(2) { border-top-color: var(--accent); }
+  .measure__label { margin: 0 0 0.3rem; font-size: 0.82rem; font-weight: 700; letter-spacing: 0.04em; text-transform: uppercase; color: var(--accent-text); }
+  .measure__card h4 { margin: 0 0 0.5rem; font: 700 clamp(1.2rem, 2.1vw, 1.4rem)/1.2 var(--font-display); }
+  .measure__card > p:not(.measure__label) { margin: 0 0 1rem; line-height: 1.6; color: var(--text-muted); }
+  .measure__link { display: inline-block; margin-top: 1rem; font-weight: 650; color: var(--accent-text); text-underline-offset: 4px; }
+  .aspects { margin: 0; display: grid; gap: 0.6rem; }
+  .aspect { display: grid; grid-template-columns: 7.5rem 1fr; gap: 0.75rem; align-items: baseline; padding: 0.6rem 0; border-top: 1px solid var(--border); }
+  .aspect:first-child { border-top: 0; padding-top: 0; }
+  .aspect dt { font-weight: 700; font-size: 0.92rem; }
+  .aspect dd { margin: 0; line-height: 1.45; color: var(--text-muted); }
+  .aspect strong { font: 700 1.2rem/1 var(--font-display); color: var(--text); margin-right: 0.15rem; }
+  @media (max-width: 420px) { .aspect { grid-template-columns: 1fr; gap: 0.2rem; } }
 
   .proofs { list-style: none; margin: 0; padding: 0; display: grid; gap: clamp(1.25rem, 3vw, 1.75rem); }
   @media (min-width: 1000px) { .proofs { grid-template-columns: repeat(2, 1fr); } }
