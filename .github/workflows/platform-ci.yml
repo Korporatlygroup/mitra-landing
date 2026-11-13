@@ -1,0 +1,134 @@
+name: platform-ci
+
+# Runs only when the MITRA platform (or this workflow) changes.
+# Everything runs against a LOCAL Supabase stack started inside the job: no secrets, no hosted services.
+on:
+  pull_request:
+    paths:
+      - 'platform/**'
+      - '.github/workflows/platform-ci.yml'
+  push:
+    branches:
+      - '**'
+    paths:
+      - 'platform/**'
+      - '.github/workflows/platform-ci.yml'
+
+concurrency:
+  group: platform-ci-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  platform:
+    name: Platform (lint, types, unit, database, integration, build, E2E)
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    defaults:
+      run:
+        working-directory: platform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: platform/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Lint
+        run: npm run lint
+
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npx vitest run --project unit
+
+      # Local Supabase via the CLI version pinned in package-lock.json. Unneeded services are
+      # disabled in supabase/config.toml (only db, auth, rest and mailpit are started).
+      - name: Start local Supabase
+        run: npx supabase start
+
+      - name: Apply migrations from scratch
+        run: npx supabase db reset
+
+      - name: Database tests (pgTAP)
+        run: |
+          mkdir -p reports
+          npx supabase test db 2>&1 | tee reports/pgtap.txt
+
+      - name: Write local env file (local demo keys only)
+        run: node scripts/write-local-env.mjs
+
+      - name: Integration tests
+        run: npx vitest run --project integration --reporter=default --reporter=junit --outputFile.junit=reports/integration-junit.xml
+
+      - name: Build
+        run: npm run build
+
+      - name: Secret scan (tracked files and client bundle)
+        run: |
+          set -euo pipefail
+          fail=0
+          # 1. No secret-looking Supabase key committed anywhere in the repository (placeholders in .env.example are fine).
+          if git grep -nIE 'sb_secret_[A-Za-z0-9_-]{20,}' -- ':!.env.example' ':!tests' ':!supabase/tests'; then
+            echo "::error::A Supabase secret key pattern is committed"; fail=1
+          fi
+          # 2. The secret key must never reach the browser bundle.
+          secret="$(grep -E '^SUPABASE_SECRET_KEY=' .env.local | cut -d= -f2- | tr -d '"')"
+          if [ -n "$secret" ] && grep -rIlF -- "$secret" .next/static; then
+            echo "::error::The Supabase secret key value is present in .next/static"; fail=1
+          fi
+          if grep -rIl -e 'sb_secret_' -e 'SUPABASE_SECRET_KEY' .next/static; then
+            echo "::error::Secret-key marker found in .next/static"; fail=1
+          fi
+          exit $fail
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests
+        run: npm run test:e2e
+
+      - name: Dependency audit (fails on high or critical)
+        run: npm audit --audit-level=high
+
+      - name: Stop local Supabase
+        if: always()
+        run: npx supabase stop --no-backup
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-test-reports
+          path: |
+            platform/reports/
+            platform/playwright-report/
+            platform/test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  landing:
+    name: Astro landing page still builds
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: package-lock.json
+
+      - name: Install and build the landing page (repository root)
+        run: |
+          npm ci
+          npm run build

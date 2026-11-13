@@ -43,3 +43,6 @@ Thumbs.db
 desktop.ini
 .vscode/
 .idea/
+/.p6-*/
+.erasure-local/
+.erasure-final/

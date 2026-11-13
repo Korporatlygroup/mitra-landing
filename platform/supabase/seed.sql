@@ -1,0 +1,1 @@
+-- Intentionally empty: tests create synthetic users through the Auth API.
