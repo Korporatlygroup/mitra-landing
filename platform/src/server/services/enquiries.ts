@@ -6,7 +6,7 @@ async function rpc<T>(db: Db, name: string, args: Record<string, unknown>): Prom
 }
 
 export interface MessageRow {
-  id: string; enquiry_id: string; sender_user_id: string; sender_org_id: string; body: string; created_at: string;
+  id: string; enquiry_id: string; sender_user_id: string | null; sender_org_id: string; body: string; created_at: string;
 }
 export interface QuoteRow {
   id: string; enquiry_id: string; seller_org_id: string; buyer_org_id: string; status: string;
