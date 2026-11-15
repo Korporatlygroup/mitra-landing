@@ -7,7 +7,7 @@
  * rule is evaluated only from what the business owner voluntarily declared, and only because the agency published it.
  */
 
-export type MatchLabel = 'potential_match' | 'more_information_needed' | 'known_requirement_not_met' | 'unconfirmed_programme';
+export type MatchLabel = 'potential_match' | 'more_information_needed' | 'known_requirement_not_met' | 'unconfirmed_programme' | 'for_organisations';
 export type RuleStatus = 'met' | 'not_met' | 'unknown' | 'agency';
 
 export interface MatchRule {
@@ -36,6 +36,10 @@ export interface MatchProgramme {
   is_stale: boolean;
   funding_type: string | null;
   closes_on?: string | null;
+  /** Who the programme is for. Programmes meant for associations, NGOs or training providers are never matched to a shop owner. */
+  beneficiary_type?: string | null;
+  /** The official page the rules were read from (shown as the source of every conclusion). */
+  info_url?: string | null;
   data: { rules?: MatchRule[] };
 }
 
@@ -43,6 +47,14 @@ export interface RuleResult {
   field: string;
   status: RuleStatus;
   quote: string;
+  /** The profile field that was compared (never a value for community or citizenship, which are voluntary declarations). */
+  used: string | null;
+  /** The profile value that was compared, when it is not sensitive. */
+  usedValue: string | number | null;
+  /** Why: the comparison in words the interface can translate. */
+  reason: 'meets' | 'does_not_meet' | 'not_answered' | 'agency_only';
+  /** The official page this requirement was read from. */
+  sourceUrl: string | null;
 }
 
 export interface MatchResult {
@@ -108,15 +120,39 @@ export function evaluateRule(rule: MatchRule, p: AssistanceProfile): RuleStatus 
   }
 }
 
+const PROFILE_FIELD: Record<string, keyof AssistanceProfile> = {
+  age_min: 'owner_age', age_max: 'owner_age', employees_min: 'employees', employees_max: 'employees', years_operating_min: 'years_operating',
+  registration: 'registration', community: 'community', citizenship: 'citizenship', business_size: 'business_size', sector: 'sector', state: 'state',
+};
+const VOLUNTARY = new Set(['community', 'citizenship']);
+
+function describe(rule: MatchRule, status: RuleStatus, p: AssistanceProfile, sourceUrl: string | null): RuleResult {
+  const key = PROFILE_FIELD[rule.field];
+  const raw = key ? p[key] : null;
+  const present = key !== undefined && raw !== null && raw !== undefined && String(raw).trim() !== '' && norm(raw) !== 'prefer_not';
+  return {
+    field: rule.field,
+    status,
+    quote: rule.quote,
+    used: key && present ? String(key) : null,
+    usedValue: key && present && !VOLUNTARY.has(rule.field) ? (raw as string | number) : null,
+    reason: status === 'met' ? 'meets' : status === 'not_met' ? 'does_not_meet' : status === 'unknown' ? 'not_answered' : 'agency_only',
+    sourceUrl,
+  };
+}
+
 export function matchProgramme(programme: MatchProgramme, profile: AssistanceProfile): MatchResult {
-  const rules = (programme.data.rules ?? []).map((r) => ({ field: r.field, status: evaluateRule(r, profile), quote: r.quote }));
+  const sourceUrl = programme.info_url ?? null;
+  const rules = (programme.data.rules ?? []).map((r) => describe(r, evaluateRule(r, profile), profile, sourceUrl));
   const pick = (s: RuleStatus) => rules.filter((r) => r.status === s);
   // Nothing checkable (no rules, or only conditions the agency alone can assess) is not a match: we have not compared anything.
   const checkable = rules.filter((r) => r.status !== 'agency').length;
   const unconfirmed = programme.verification_status !== 'verified' || programme.is_stale || checkable === 0;
   const notMet = pick('not_met');
   const unknown = pick('unknown');
-  const label: MatchLabel = unconfirmed
+  const label: MatchLabel = programme.beneficiary_type === 'organisation'
+    ? 'for_organisations'
+    : unconfirmed
     ? 'unconfirmed_programme'
     : notMet.length > 0
       ? 'known_requirement_not_met'
@@ -135,7 +171,7 @@ export function matchProgramme(programme: MatchProgramme, profile: AssistancePro
   };
 }
 
-const LABEL_RANK: Record<MatchLabel, number> = { potential_match: 0, more_information_needed: 1, unconfirmed_programme: 2, known_requirement_not_met: 3 };
+const LABEL_RANK: Record<MatchLabel, number> = { potential_match: 0, more_information_needed: 1, unconfirmed_programme: 2, known_requirement_not_met: 3, for_organisations: 4 };
 
 /** Sort key: label, then relevance to the declared need, then open before others, then nearest published deadline. */
 export function rankMatches<T extends { match: MatchResult; programme: MatchProgramme }>(items: T[], today = new Date()): T[] {

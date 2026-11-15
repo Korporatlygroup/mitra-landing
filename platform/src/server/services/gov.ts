@@ -24,6 +24,10 @@ export interface GovProgrammeRow {
   is_stale: boolean;
   rules: MatchRule[];
   verification_status: string;
+  category: string | null;
+  beneficiary_type: 'entrepreneur' | 'organisation' | 'both' | null;
+  sectors: string[];
+  states: string[];
 }
 
 export interface GovProgrammeDetail {
@@ -53,6 +57,10 @@ export interface GovProgrammeDetail {
     documents?: string[];
     terms?: { label: string; text: string }[];
     rules?: MatchRule[];
+    category?: string;
+    beneficiary_type?: 'entrepreneur' | 'organisation' | 'both';
+    sectors?: string[];
+    states?: string[];
   };
 }
 
@@ -90,6 +98,7 @@ export interface GovPrefs {
   channel_email: boolean;
   paused_until: string | null;
   frequency: 'immediate' | 'daily' | 'weekly';
+  reminder_days: number[];
 }
 
 async function rpc<T>(db: Db, fn: string, args: Record<string, unknown> = {}): Promise<Result<T>> {
@@ -99,12 +108,13 @@ async function rpc<T>(db: Db, fn: string, args: Record<string, unknown> = {}): P
 
 export const GOV_PAGE_SIZE = 30;
 
-export const listGovProgrammes = (db: Db, p: { fundingType?: string | null; q?: string; offset?: number; limit?: number } = {}) =>
+export const listGovProgrammes = (db: Db, p: { fundingType?: string | null; category?: string | null; q?: string; offset?: number; limit?: number } = {}) =>
   rpc<GovProgrammeRow[]>(db, 'gov_list_programmes', {
     p_funding_type: p.fundingType || null,
     p_query: p.q?.trim() || null,
     p_limit: p.limit ?? GOV_PAGE_SIZE,
     p_offset: p.offset ?? 0,
+    p_category: p.category || null,
   });
 
 export const getGovProgramme = (db: Db, slug: string) => rpc<GovProgrammeDetail>(db, 'gov_get_programme', { p_slug: slug });
@@ -125,3 +135,13 @@ export const decideGovProposal = (db: Db, proposal: string, decision: 'approve' 
 export const setGovProgrammeState = (db: Db, programme: string, state: 'published' | 'paused' | 'archived', reason: string) =>
   rpc<null>(db, 'gov_set_programme_state', { p_programme: programme, p_state: state, p_reason: reason });
 export const setGovSetting = (db: Db, key: string, enabled: boolean, reason: string) => rpc<null>(db, 'gov_set_setting', { p_key: key, p_enabled: enabled, p_reason: reason });
+export const proposeGovManual = (db: Db, source: string, programme: string | null, candidate: Record<string, unknown>, reason: string) =>
+  rpc<string>(db, 'gov_propose_manual', { p_source: source, p_programme: programme, p_candidate: candidate, p_reason: reason });
+export const reviewGovPageChange = (db: Db, change: string, status: 'reviewed' | 'dismissed', note: string) =>
+  rpc<null>(db, 'gov_review_page_change', { p_change: change, p_status: status, p_note: note });
+export const proposeGovSourceChange = (db: Db, source: string, change: Record<string, unknown>, reason: string) =>
+  rpc<string>(db, 'gov_propose_source_change', { p_source: source, p_change: change, p_reason: reason });
+export const decideGovSourceChange = (db: Db, change: string, approve: boolean, reason: string) =>
+  rpc<null>(db, 'gov_decide_source_change', { p_change: change, p_approve: approve, p_reason: reason });
+export const registerGovSource = (db: Db, a: { agencyCode: string; agencyName: string; domain: string; name: string; type: string; adapter: string; hosts: string[]; urls: string[]; method: string; restrictions: string | null }) =>
+  rpc<string>(db, 'gov_register_source', { p_agency_code: a.agencyCode, p_agency_name: a.agencyName, p_domain: a.domain, p_name: a.name, p_type: a.type, p_adapter: a.adapter, p_hosts: a.hosts, p_urls: a.urls, p_method: a.method, p_restrictions: a.restrictions });

@@ -13,6 +13,12 @@ import msAdmin from '../../messages/p5/admin.ms.json';
 import enRd from '../../messages/rd/rd.en.json';
 import taRd from '../../messages/rd/rd.ta.json';
 import msRd from '../../messages/rd/rd.ms.json';
+import enP7User from '../../messages/p7/user.en.json';
+import taP7User from '../../messages/p7/user.ta.json';
+import msP7User from '../../messages/p7/user.ms.json';
+import enP7Admin from '../../messages/p7/admin.en.json';
+import taP7Admin from '../../messages/p7/admin.ta.json';
+import msP7Admin from '../../messages/p7/admin.ms.json';
 import enCommon from '../../messages/p5/common.en.json';
 import taCommon from '../../messages/p5/common.ta.json';
 import msCommon from '../../messages/p5/common.ms.json';
@@ -34,9 +40,9 @@ const merge = (...parts: Tree[]): Tree => {
 };
 
 export const MESSAGES = {
-  en: merge(en, enPartner, enBuyer, enAdmin, enCommon, enRd),
-  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon, taRd),
-  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon, msRd),
+  en: merge(en, enPartner, enBuyer, enAdmin, enCommon, enRd, enP7User, enP7Admin),
+  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon, taRd, taP7User, taP7Admin),
+  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon, msRd, msP7User, msP7Admin),
 } as const;
 
 export type Locale = keyof typeof MESSAGES;
