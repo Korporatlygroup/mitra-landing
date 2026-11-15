@@ -86,15 +86,19 @@ export default function WorkspaceChrome(p: ChromeProps) {
   const orgRef = usePopover(orgOpen, () => setOrgOpen(false));
 
   useEffect(() => {
+    // The stored choice can only be read in the browser, after hydration, so the server and first client render agree.
     try {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCollapsed(localStorage.getItem(STORE) === '1');
     } catch {
       /* storage can be blocked; the menu stays open */
     }
   }, []);
-  useEffect(() => {
+  const [seenPath, setSeenPath] = useState(path);
+  if (seenPath !== path) {
+    setSeenPath(path);
     setMobileOpen(false);
-  }, [path]);
+  }
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const el = e.target as HTMLElement | null;

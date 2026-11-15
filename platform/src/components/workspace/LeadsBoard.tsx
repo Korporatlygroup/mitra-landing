@@ -208,6 +208,8 @@ export default function LeadsBoard({ cards, orgId, browseHref }: { cards: LeadCa
   useEffect(() => {
     try {
       const v = localStorage.getItem('inok.board.view');
+      // Stored choice is only readable in the browser after hydration.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       if (v === 'list') setView('list');
     } catch {
       /* storage can be blocked */

@@ -9,7 +9,7 @@ import { FormMessage, useRestoringAction } from '@/components/ActionForm';
 import Icon from '@/components/ui/Icon';
 import { Dialog, Drawer, Switch } from '@/components/ui/Overlay';
 import { Link } from '@/i18n/navigation';
-import { idle } from '@/lib/form-state';
+import { idle, type FormState } from '@/lib/form-state';
 import { PRODUCT_UNITS, type BizProduct, type ProductStatus } from '@/server/services/biz-products-types';
 
 const STATUS_TONE: Record<ProductStatus, string> = { draft: 'gray', in_review: 'gold', live: 'green', changes_requested: 'coral', rejected: 'coral', archived: 'gray' };
@@ -104,13 +104,14 @@ function Remove({ orgId, product, onDone }: { orgId: string; product: BizProduct
   const tw = useTranslations('ws');
   const locale = useLocale();
   const [open, setOpen] = useState(false);
-  const [state, action] = useActionState(archiveProductAction, idle);
-  useEffect(() => {
-    if (state.status === 'success') {
+  const [state, action] = useActionState(async (prev: FormState, fd: FormData) => {
+    const result = await archiveProductAction(prev, fd);
+    if (result.status === 'success') {
       setOpen(false);
       onDone();
     }
-  }, [state, onDone]);
+    return result;
+  }, idle);
   return (
     <>
       <button type="button" className="btn btn-danger btn-sm" onClick={() => setOpen(true)}>
@@ -142,12 +143,15 @@ export default function ProductsView({ orgId, products, importHref, canEdit }: {
   const sp = useSearchParams();
   const [tab, setTab] = useState<'product' | 'service'>('product');
   const [view, setView] = useState<'grid' | 'table'>('grid');
-  const [editing, setEditing] = useState<BizProduct | 'new' | null>(null);
+  const wantsNew = sp.get('new') === '1' && canEdit;
+  const [editing, setEditing] = useState<BizProduct | 'new' | null>(wantsNew ? 'new' : null);
   const [formKey, setFormKey] = useState(0);
-
-  useEffect(() => {
-    if (sp.get('new') === '1' && canEdit) setEditing('new');
-  }, [sp, canEdit]);
+  // A link to ?new=1 while this page is already open must open the form too (adjusted during render, not in an effect).
+  const [sawNew, setSawNew] = useState(wantsNew);
+  if (wantsNew !== sawNew) {
+    setSawNew(wantsNew);
+    if (wantsNew) setEditing('new');
+  }
 
   const items = products.filter((p) => p.kind === tab);
   const counts = { product: products.filter((p) => p.kind === 'product').length, service: products.filter((p) => p.kind === 'service').length };

@@ -10,7 +10,9 @@ const FOCUSABLE = 'a[href],button:not([disabled]),input:not([disabled]):not([typ
 function useOverlay(open: boolean, onClose: () => void) {
   const ref = useRef<HTMLDivElement>(null);
   const closeRef = useRef(onClose);
-  closeRef.current = onClose;
+  useEffect(() => {
+    closeRef.current = onClose;
+  });
   useEffect(() => {
     if (!open) return;
     const trigger = document.activeElement as HTMLElement | null;
@@ -94,7 +96,9 @@ export function Dialog({ open, onClose, title, closeLabel, children }: { open: b
 export function usePopover(open: boolean, close: () => void) {
   const ref = useRef<HTMLDivElement>(null);
   const closeRef = useRef(close);
-  closeRef.current = close;
+  useEffect(() => {
+    closeRef.current = close;
+  });
   useEffect(() => {
     if (!open) return;
     const onDown = (e: MouseEvent) => {
