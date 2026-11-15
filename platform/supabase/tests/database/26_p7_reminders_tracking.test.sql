@@ -139,7 +139,7 @@ select public.gov_save_programme(tt.oid('A'), tt.id('Closing Soon Grant'));
 select public.gov_save_programme(tt.oid('A'), tt.id('No Date Grant'));
 select public.gov_save_programme(tt.oid('A'), tt.id('Stale Grant'));
 
-select plan(26);
+select plan(31);
 
 -- ============ tracking: seven self-reported stages ============
 select tt.act('own', 'aal1');
@@ -201,6 +201,20 @@ select is(public.gov_record_page(tt.id('r2')), 'changed', 'W1 a changed page cre
 select is(public.gov_record_page(tt.id('r2')), 'changed', 'W2 recording the same result twice does not create a second item');
 select tt.pg();
 select is((select count(*)::int from public.gov_page_changes), 1, 'W3 exactly one review item');
+
+-- ============ check-now requests ============
+-- ============ check-now requests ============
+select tt.act('own', 'aal1');
+select throws_ok($q$select public.gov_request_recheck(tt.id('src'), 'asking as a shop owner')$q$, 'PT403', null, 'Q1 a shop owner cannot request a source check');
+select tt.act('su1', 'aal2');
+select throws_ok($q$select public.gov_request_recheck(tt.id('src'), 'source is switched off')$q$, 'PT409', 'not_enabled', 'Q2 a switched-off source cannot be checked');
+select tt.pg();
+update public.gov_sources set enabled = true, approved_urls = array['https://www.mitra.gov.my/ms/modal-insan'] where id = tt.id('src');
+select tt.act('su1', 'aal2');
+select is(public.gov_request_recheck(tt.id('src'), 'announcement on the page today'), 1, 'Q3 an enabled source gets a check queued');
+select is(public.gov_request_recheck(tt.id('src'), 'asking again straight away'), 0, 'Q4 asking again within ten minutes queues nothing');
+select tt.act('own', 'aal1');
+select is((select verification_status from public.gov_list_saved(tt.oid('A')) where slug like 'no-date-grant%'), 'verified', 'Q5 the saved list reports the verification status');
 
 select * from finish();
 rollback;

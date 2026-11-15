@@ -444,6 +444,38 @@ $$
 $$;
 
 ------------------------------------------------------------------------------------------------
+-- 5b. Saved list also reports the verification status (so a saved card never assumes 'verified')
+------------------------------------------------------------------------------------------------
+drop function public.gov_list_saved(uuid);
+create function public.gov_list_saved(p_org uuid)
+returns table (programme_id uuid, slug text, name text, agency_name text, funding_type text, application_status text, closes_on date,
+  last_checked_at timestamptz, last_verified_at timestamptz, publication_state text, tracking_status text, note text, applied_on date,
+  outcome text, reminder_on date, version integer, rules_changed boolean, is_stale boolean, verification_status text)
+language plpgsql stable security definer set search_path = '' as
+$$
+begin
+  perform private.assert_assist_org(p_org);
+  return query
+  select p.id, p.slug, p.name, a.name, p.funding_type,
+    case when p.publication_state <> 'published' then 'unknown'
+         when p.application_status in ('open', 'upcoming') and (p.last_checked_at is null or p.last_checked_at < now() - make_interval(hours => so.freshness_hours)) then 'unknown'
+         else p.application_status end,
+    p.closes_on, p.last_checked_at, p.last_verified_at, p.publication_state, s.tracking_status, s.note, s.applied_on, s.outcome, s.reminder_on,
+    s.version, coalesce(v.version_no, 0) > s.seen_version_no,
+    (p.last_checked_at is null or p.last_checked_at < now() - make_interval(hours => so.freshness_hours)), p.verification_status
+  from public.gov_saved s
+  join public.gov_programmes p on p.id = s.programme_id
+  join public.gov_agencies a on a.id = p.agency_id
+  join public.gov_sources so on so.id = p.source_id
+  left join public.gov_programme_versions v on v.id = p.current_version_id
+  where s.org_id = p_org
+  order by s.created_at desc;
+end;
+$$;
+revoke all on function public.gov_list_saved(uuid) from public, anon, authenticated;
+grant execute on function public.gov_list_saved(uuid) to authenticated;
+
+------------------------------------------------------------------------------------------------
 -- 6. Conditional requests and page monitoring
 ------------------------------------------------------------------------------------------------
 alter table public.gov_fetch_results add column etag text check (char_length(etag) <= 200), add column last_modified text check (char_length(last_modified) <= 100);
@@ -555,6 +587,29 @@ begin
 end;
 $$;
 
+-- Ask for a check now (source administrators). One request per source per 10 minutes; the worker still honours rate limits and robots.
+create function public.gov_request_recheck(p_source uuid, p_reason text) returns integer
+language plpgsql security definer set search_path = '' as
+$$
+declare s public.gov_sources; u text; n integer := 0; v_rows integer; v_reason text := btrim(coalesce(p_reason, ''));
+begin
+  if auth.uid() is null then perform private.raise_error('unauthenticated'); end if;
+  if not private.has_platform_permission('gov:source_admin') then perform private.raise_error('forbidden'); end if;
+  if char_length(v_reason) not between 5 and 1000 then perform private.raise_error('invalid', 'reason'); end if;
+  select * into s from public.gov_sources where id = p_source for update;
+  if s.id is null then perform private.raise_error('not_found'); end if;
+  if not s.enabled then perform private.raise_error('conflict', 'not_enabled'); end if;
+  foreach u in array s.approved_urls loop
+    insert into public.gov_fetch_jobs (source_id, target_url, idempotency_key)
+    values (s.id, u, s.id::text || ':' || md5(u) || ':recheck:' || floor(extract(epoch from now()) / 600)::bigint) on conflict (idempotency_key) do nothing;
+    get diagnostics v_rows = row_count;
+    n := n + v_rows;
+  end loop;
+  perform private.gov_event('source.recheck_requested', s.id, null, null, jsonb_build_object('reason', left(v_reason, 500), 'queued', n));
+  return n;
+end;
+$$;
+
 ------------------------------------------------------------------------------------------------
 -- Grants
 ------------------------------------------------------------------------------------------------
@@ -562,9 +617,9 @@ revoke all on function
   private.gov_valid_days(integer[]),
   public.gov_propose_manual(uuid, uuid, jsonb, text), public.gov_list_programmes(text, text, integer, integer, text),
   public.gov_last_validators(uuid, text), public.gov_record_page(uuid), public.gov_review_page_change(uuid, text, text),
-  public.gov_mark_unchanged(uuid, text)
+  public.gov_mark_unchanged(uuid, text), public.gov_request_recheck(uuid, text)
 from public, anon, authenticated;
-grant execute on function public.gov_propose_manual(uuid, uuid, jsonb, text), public.gov_review_page_change(uuid, text, text) to authenticated;
+grant execute on function public.gov_propose_manual(uuid, uuid, jsonb, text), public.gov_review_page_change(uuid, text, text), public.gov_request_recheck(uuid, text) to authenticated;
 grant execute on function public.gov_list_programmes(text, text, integer, integer, text) to anon, authenticated;
 grant execute on function public.gov_last_validators(uuid, text), public.gov_record_page(uuid), public.gov_mark_unchanged(uuid, text) to service_role;
 -- Re-assert grants of the functions replaced above (create or replace keeps them, restated for clarity).

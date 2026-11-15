@@ -3,6 +3,7 @@ import ProfileForm from '@/components/gov/ProfileForm';
 import ProgrammeCard from '@/components/gov/ProgrammeCard';
 import { Link } from '@/i18n/navigation';
 import { matchProgramme, rankMatches, type AssistanceProfile } from '@/lib/gov-matching';
+import { CATEGORIES } from '@/lib/gov-status';
 import { eligibleAssistOrgs, GOV_NEEDS, NEED_TO_FUNDING, parseNeed } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
 import { getGovProfile, listGovProgrammes, listGovSaved } from '@/server/services/gov';
@@ -30,6 +31,7 @@ export default async function FindPage({
   const sp = await searchParams;
   const one = (k: string) => (typeof sp[k] === 'string' ? (sp[k] as string) : undefined);
   const need = parseNeed(one('need'));
+  const category = (CATEGORIES as readonly string[]).includes(one('category') ?? '') ? (one('category') as string) : null;
   const t = await getTranslations({ locale, namespace: 'gov' });
   const { supabase, user } = await getOptionalUser();
 
@@ -43,7 +45,7 @@ export default async function FindPage({
   const savedRes = supabase && org ? await listGovSaved(supabase, org.org.id) : null;
   const savedIds = new Set(savedRes?.ok ? savedRes.data.map((s) => s.programme_id) : []);
 
-  const listRes = supabase ? await listGovProgrammes(supabase, { limit: 100 }) : null;
+  const listRes = supabase ? await listGovProgrammes(supabase, { limit: 100, category }) : null;
   const all = listRes?.ok ? listRes.data : [];
   const types = need ? NEED_TO_FUNDING[need] : null;
   const rows = types ? all.filter((p) => p.funding_type && types.includes(p.funding_type)) : all;
@@ -51,10 +53,21 @@ export default async function FindPage({
   const ranked = rankMatches(
     rows.map((p) => ({
       p,
-      programme: { verification_status: p.verification_status, application_status: p.application_status, is_stale: p.is_stale, funding_type: p.funding_type, closes_on: p.closes_on, data: { rules: p.rules } },
-      match: matchProgramme({ verification_status: p.verification_status, application_status: p.application_status, is_stale: p.is_stale, funding_type: p.funding_type, data: { rules: p.rules } }, { ...prof, needs: need ? [need] : prof.needs }),
+      programme: { verification_status: p.verification_status, application_status: p.application_status, is_stale: p.is_stale, funding_type: p.funding_type, closes_on: p.closes_on, beneficiary_type: p.beneficiary_type, info_url: p.info_url, data: { rules: p.rules } },
+      match: matchProgramme({ verification_status: p.verification_status, application_status: p.application_status, is_stale: p.is_stale, funding_type: p.funding_type, beneficiary_type: p.beneficiary_type, info_url: p.info_url, data: { rules: p.rules } }, { ...prof, needs: need ? [need] : prof.needs }),
     })),
   );
+
+  const href = (over: { need?: string | null; category?: string | null }) => {
+    const q = new URLSearchParams();
+    const n = over.need === undefined ? need : over.need;
+    const c = over.category === undefined ? category : over.category;
+    if (n) q.set('need', n);
+    if (c) q.set('category', c);
+    if (org) q.set('org', org.org.id);
+    const qs = q.toString();
+    return `/business-help/find${qs ? `?${qs}` : ''}`;
+  };
 
   return (
     <>
@@ -65,19 +78,30 @@ export default async function FindPage({
         </p>
       ) : null}
       <nav aria-label={t('find.step1')} className="link-row">
-        <Link href="/business-help/find" locale={locale} className={need ? 'btn btn-secondary' : 'btn btn-primary'} aria-current={need ? undefined : 'page'}>
+        <Link href={href({ need: null })} locale={locale} className={need ? 'btn btn-secondary' : 'btn btn-primary'} aria-current={need ? undefined : 'page'}>
           {t('find.anyNeed')}
         </Link>
         {GOV_NEEDS.map((n) => (
-          <Link key={n} href={`/business-help/find?need=${n}${org ? `&org=${org.org.id}` : ''}`} locale={locale} className={need === n ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={need === n ? 'page' : undefined}>
+          <Link key={n} href={href({ need: n })} locale={locale} className={need === n ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={need === n ? 'page' : undefined}>
             {t(`need.${n}`)}
+          </Link>
+        ))}
+      </nav>
+
+      <nav aria-label={t('find.categoryLabel')} className="link-row">
+        <Link href={href({ category: null })} locale={locale} className={category ? 'btn btn-secondary' : 'btn btn-primary'} aria-current={category ? undefined : 'page'}>
+          {t('find.anyCategory')}
+        </Link>
+        {CATEGORIES.map((c) => (
+          <Link key={c} href={href({ category: c })} locale={locale} className={category === c ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={category === c ? 'page' : undefined}>
+            {t(`category.${c}`)}
           </Link>
         ))}
       </nav>
 
       {!user ? (
         <p>
-          <Link href={`/login?next=${encodeURIComponent(`/${locale}/business-help/find${need ? `?need=${need}` : ''}`)}`} locale={locale}>
+          <Link href={`/login?next=${encodeURIComponent(`/${locale}${href({})}`)}`} locale={locale}>
             {t('find.signIn')}
           </Link>
         </p>

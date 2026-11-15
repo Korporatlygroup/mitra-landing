@@ -30,7 +30,7 @@ export async function POST(request: NextRequest) {
   try {
     const summary = await runWorkerOnce({
       rpc: priv.govWorkerRpc,
-      fetchPage: (url, allowedHosts) => safeFetch(url, { allowedHosts, userAgent }),
+      fetchPage: (url, allowedHosts, validators) => safeFetch(url, { allowedHosts, userAgent, validators }),
       sleep: (ms) => new Promise((r) => setTimeout(r, ms)),
       now: () => Date.now(),
       workerId: `route-${crypto.randomUUID().slice(0, 8)}`,

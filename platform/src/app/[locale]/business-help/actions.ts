@@ -4,7 +4,7 @@ import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { formToObject, nonSecretValues } from '@/lib/form';
 import { failure, success, type FormState } from '@/lib/form-state';
-import { govPrefsSchema, govProfileSchema, govSaveSchema, govTrackingSchema } from '@/lib/gov-ui';
+import { REMINDER_DAY_CHOICES, govPrefsSchema, govProfileSchema, govSaveSchema, govTrackingSchema } from '@/lib/gov-ui';
 import { actionUser } from '@/server/action-user';
 import { saveGovProfile, saveGovProgramme, setGovPrefs, unsaveGovProgramme, updateGovTracking } from '@/server/services/gov';
 
@@ -95,6 +95,10 @@ export async function setGovPrefsAction(_prev: FormState, formData: FormData): P
     paused_until: p.data.paused_until ? `${p.data.paused_until}T00:00:00Z` : '',
   };
   for (const f of CATEGORY_FIELDS) data[f] = raw[f] === 'on';
+  // One checkbox per offset (rd_14, rd_7, ...). At least one is needed while deadline notices are on; the database stores them largest first.
+  const days = REMINDER_DAY_CHOICES.filter((d) => raw[`rd_${d}`] === 'on');
+  if (days.length === 0 && raw.deadline === 'on') return { status: 'error', messageKey: 'gov.settings.daysRequired', values: nonSecretValues(raw) };
+  if (days.length > 0) data.reminder_days = days;
   const r = await setGovPrefs(supabase, data);
   if (!r.ok) return failure(r.errorKey, nonSecretValues(raw));
   revalidatePath('/', 'layout');

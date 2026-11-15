@@ -11,7 +11,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-const show = (v: unknown) => (v === undefined || v === null ? '—' : typeof v === 'string' ? v : JSON.stringify(v, null, 1));
+// Text, a plain list of strings (one per line) or the JSON of anything else. React escapes all of it.
+const show = (v: unknown) =>
+  v === undefined || v === null
+    ? '—'
+    : typeof v === 'string'
+      ? v
+      : Array.isArray(v) && v.every((x) => typeof x === 'string')
+        ? v.join('\n')
+        : JSON.stringify(v, null, 1);
 
 /**
  * One proposed change: the extracted information, a before/after comparison against the published version, the evidence
@@ -27,7 +35,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
   const db = ctx.session.supabase;
   const { data: p } = await db
     .from('gov_change_proposals')
-    .select('id, kind, status, flags, diff, candidate, result_id, decision_reason')
+    .select('id, kind, status, flags, diff, candidate, result_id, decision_reason, proposed_by')
     .eq('id', id)
     .maybeSingle();
   if (!p) notFound();
@@ -35,6 +43,10 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
   const c = p.candidate as Record<string, unknown> & { review_notes?: string[]; name?: string };
   const diff = (p.diff ?? {}) as Record<string, { old: unknown; new: unknown }>;
   const open = p.status === 'pending' || p.status === 'needs_info';
+  const manual = Boolean(p.proposed_by);
+  // The database refuses approval by the person who entered a manual change; the button is hidden so nobody is invited to try.
+  const ownEntry = manual && p.proposed_by === ctx.session.user.id;
+  const fieldLabel = (k: string) => (t.has(`admin.fields.${k}`) ? t(`admin.fields.${k}`) : k);
 
   return (
     <>
@@ -52,6 +64,11 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           </span>
         ))}
       </p>
+      {manual ? (
+        <p role="note" className="card" data-testid="gov-manual-note">
+          {t('admin.rv.manualNote')}
+        </p>
+      ) : null}
       {c.review_notes?.length ? (
         <section aria-labelledby="rv-notes-h" className="card">
           <h2 id="rv-notes-h">{t('admin.notes')}</h2>
@@ -67,7 +84,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           <table>
             <thead>
               <tr>
-                <th scope="col">{t('admin.kind')}</th>
+                <th scope="col">{t('admin.rv.field')}</th>
                 <th scope="col">{t('admin.oldValue')}</th>
                 <th scope="col">{t('admin.newValue')}</th>
               </tr>
@@ -75,7 +92,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
             <tbody>
               {Object.entries(diff).map(([k, v]) => (
                 <tr key={k}>
-                  <th scope="row">{k}</th>
+                  <th scope="row">{fieldLabel(k)}</th>
                   <td lang="ms">
                     <pre style={{ whiteSpace: 'pre-wrap', margin: 0 }}>{show(v.old)}</pre>
                   </td>
@@ -108,8 +125,13 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
       {open ? (
         <section aria-labelledby="rv-dec-h" className="card">
           <h2 id="rv-dec-h">{t('admin.review')}</h2>
+          {ownEntry ? (
+            <p role="note" data-testid="gov-own-entry">
+              {t('admin.rv.proposedByYou')}
+            </p>
+          ) : null}
           {(['approve', 'reject', 'needs_info'] as const).map((d) => {
-            if (d === 'approve' && !ctx.canPublish) return null;
+            if (d === 'approve' && (!ctx.canPublish || ownEntry)) return null;
             if (d !== 'approve' && !ctx.canReview) return null;
             return (
               <ActionForm key={d} action={decideProposalAction} submitLabel={t(d === 'approve' ? 'admin.approve' : d === 'reject' ? 'admin.reject' : 'admin.needsInfo')} variant={d === 'approve' ? 'primary' : 'secondary'}>

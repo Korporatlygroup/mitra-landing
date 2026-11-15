@@ -16,7 +16,7 @@ const COND_URL = 'https://www.tekun.gov.my/?page_id=339';
 type Page = Partial<SafeFetchResult> & { text?: string };
 const sha = (s: string) => crypto.createHash('sha256').update(s).digest('hex');
 
-function makeDeps(pages: Record<string, Page | Error>, calls: string[] = []): WorkerDeps {
+function makeDeps(pages: Record<string, Page | Error>, calls: string[] = [], validatorLog: (Parameters<WorkerDeps['fetchPage']>[2])[] = []): WorkerDeps {
   const svc = serviceClient();
   const rpc: GovRpc = async (name, args) => {
     const { data, error } = await svc.rpc(name, args ?? {});
@@ -28,13 +28,14 @@ function makeDeps(pages: Record<string, Page | Error>, calls: string[] = []): Wo
     agentToken: 'inok-govnavigator',
     now: () => Date.now(),
     sleep: async () => {},
-    fetchPage: async (url) => {
+    fetchPage: async (url, _hosts, validators) => {
       calls.push(url);
+      if (url.startsWith('https://www.mitra.gov.my/ms/')) validatorLog.push(validators);
       const p = pages[url];
       if (p instanceof Error) throw p;
-      if (!p) return { status: 404, finalUrl: url, contentType: 'text/html', text: '', bytes: 0, sha256: '', retryAfterSeconds: null };
+      if (!p) return { status: 404, finalUrl: url, contentType: 'text/html', text: '', bytes: 0, sha256: '', retryAfterSeconds: null, etag: null, lastModified: null };
       const text = p.text ?? '';
-      return { status: 200, finalUrl: url === COND_URL ? 'https://www.tekun.gov.my/skim-pembangunan-usahawan-masyarakat-india-spumi-syarat-syarat/' : url, contentType: 'text/html', bytes: text.length, sha256: sha(text), retryAfterSeconds: null, ...p, text };
+      return { status: 200, finalUrl: url === COND_URL ? 'https://www.tekun.gov.my/skim-pembangunan-usahawan-masyarakat-india-spumi-syarat-syarat/' : url, contentType: 'text/html', bytes: text.length, sha256: sha(text), retryAfterSeconds: null, etag: null, lastModified: null, ...p, text };
     },
   };
 }
@@ -233,5 +234,121 @@ describe('switches and access', () => {
     } finally {
       await sql(`update public.gov_settings set enabled = true where key = 'monitoring_enabled'`);
     }
+  });
+});
+
+// ---------------------------------------------------------------------------------------------------------------
+// Page monitor (sources without an API or feed): changes wait for a person, nothing is ever published or proposed.
+// ---------------------------------------------------------------------------------------------------------------
+const MITRA_URL = 'https://www.mitra.gov.my/ms/modal-insan';
+const MITRA_ROBOTS = 'User-agent: *\nDisallow: /administrator/\nDisallow: /api/\n';
+const mitraPage = (updated: string, link = 'https://forms.gle/abc') =>
+  `<html><body><nav><a href="/menu">Menu</a></nav><h1>Modal Insan MADANI</h1><p>Tarikh Kemaskini: ${updated}</p><ul><li>Program Uyarvu Startup Accelerator Grant Fasa 2</li><li><a href="${link}">Borang permohonan</a></li></ul></body></html>`;
+
+async function newPageSource(): Promise<string> {
+  counter += 1;
+  const code = `M${Date.now().toString(36).toUpperCase()}${counter}`;
+  const agency = (await sql<{ id: string }>(`insert into public.gov_agencies(code,name,domain) values ($1,'Test agency','mitra.gov.my') returning id`, [code]))[0]!.id;
+  return (await sql<{ id: string }>(
+    `insert into public.gov_sources(agency_id,name,source_type,adapter,allowed_hosts,approved_urls,enabled,rate_per_minute,refresh_interval_minutes)
+     values ($1,'Worker test','website','page_monitor','{www.mitra.gov.my}',$2,true,60,60) returning id`, [agency, [MITRA_URL]]))[0]!.id;
+}
+const again = async () => {
+  await sql(`update public.gov_sources set next_check_at = null, last_request_at = null where id = $1`, [sourceId]);
+  await sql(`update public.gov_fetch_jobs set idempotency_key = idempotency_key || 'x' where source_id = $1`, [sourceId]);
+};
+const changes = () => sql<{ status: string; old_result_id: string; new_result_id: string }>(`select status, old_result_id, new_result_id from public.gov_page_changes where source_id = $1`, [sourceId]);
+
+describe('Journey P: page monitor', () => {
+  beforeEach(async () => {
+    sourceId = await newPageSource();
+  });
+  const pages = (html: string, extra: Page = {}): Record<string, Page | Error> => ({
+    'https://www.mitra.gov.my/robots.txt': { text: MITRA_ROBOTS },
+    [MITRA_URL]: { text: html, ...extra },
+  });
+
+  it('first look is a baseline: no review item, no proposal, no programme', async () => {
+    const r = await runWorkerOnce(makeDeps(pages(mitraPage('22 Oktober 2026'))));
+    expect(r).toMatchObject({ succeeded: 1, pageChanged: 0, errors: [] });
+    expect(await changes()).toHaveLength(0);
+    expect((await sql(`select 1 from public.gov_change_proposals where source_id = $1`, [sourceId])).length).toBe(0);
+    expect((await sql(`select 1 from public.gov_programmes where source_id = $1`, [sourceId])).length).toBe(0);
+    const res = await sql<{ outcome: string; evidence_excerpt: string }>(`select outcome, evidence_excerpt from public.gov_fetch_results where source_id = $1`, [sourceId]);
+    expect(res[0]!.outcome).toBe('ok');
+    expect(res[0]!.evidence_excerpt).toContain('Uyarvu');
+  });
+
+  it('the same page again is unchanged; a changed date or link creates exactly one pending review item', async () => {
+    await runWorkerOnce(makeDeps(pages(mitraPage('22 Oktober 2026'))));
+    await again();
+    expect((await runWorkerOnce(makeDeps(pages(mitraPage('22 Oktober 2026'))))).pageChanged).toBe(0);
+    expect(await changes()).toHaveLength(0);
+    await again();
+    expect((await runWorkerOnce(makeDeps(pages(mitraPage('30 November 2026', 'https://forms.gle/new'))))).pageChanged).toBe(1);
+    const c = await changes();
+    expect(c).toHaveLength(1);
+    expect(c[0]!.status).toBe('pending');
+    const ev = await sql<{ evidence_excerpt: string }>(`select evidence_excerpt from public.gov_fetch_results where id = $1`, [c[0]!.new_result_id]);
+    expect(ev[0]!.evidence_excerpt).toContain('30 November 2026');
+    expect(ev[0]!.evidence_excerpt).toContain('https://forms.gle/new');
+  });
+
+  it('keeps ETag / Last-Modified and sends them next time; 304 is a healthy, unchanged check', async () => {
+    await runWorkerOnce(makeDeps(pages(mitraPage('22 Oktober 2026'), { etag: '"v1"', lastModified: 'Thu, 22 Oct 2026 00:00:00 GMT' })));
+    const stored = await sql<{ etag: string; last_modified: string }>(`select etag, last_modified from public.gov_fetch_results where source_id = $1`, [sourceId]);
+    expect(stored[0]).toEqual({ etag: '"v1"', last_modified: 'Thu, 22 Oct 2026 00:00:00 GMT' });
+    await again();
+    const seen: (Parameters<WorkerDeps['fetchPage']>[2])[] = [];
+    const notModified: Record<string, Page | Error> = { 'https://www.mitra.gov.my/robots.txt': { text: MITRA_ROBOTS }, [MITRA_URL]: { status: 304, text: '' } };
+    const r = await runWorkerOnce(makeDeps(notModified, [], seen));
+    expect(seen).toEqual([{ etag: '"v1"', lastModified: 'Thu, 22 Oct 2026 00:00:00 GMT' }]);
+    expect(r).toMatchObject({ notModified: 1, pageChanged: 0, errors: [] });
+    const res = await sql<{ outcome: string; http_status: number }>(`select outcome, http_status from public.gov_fetch_results where source_id = $1 order by fetched_at desc limit 1`, [sourceId]);
+    expect(res[0]).toEqual({ outcome: 'unchanged', http_status: 304 });
+    expect((await src()).health).toBe('healthy');
+    expect(await changes()).toHaveLength(0);
+  });
+
+  it('a 304 refreshes the freshness of the programme whose information page this is, but changes nothing else', async () => {
+    await runWorkerOnce(makeDeps(pages(mitraPage('22 Oktober 2026'), { etag: '"v1"' })));
+    const ag = (await sql<{ agency_id: string }>(`select agency_id from public.gov_sources where id = $1`, [sourceId]))[0]!.agency_id;
+    const prog = (await sql<{ id: string }>(
+      `insert into public.gov_programmes(source_id,agency_id,external_key,slug,publication_state,verification_status,application_status,name,last_checked_at)
+       values ($1,$2,'pm-key',$3,'published','verified','open','Synthetic', now() - interval '10 days') returning id`, [sourceId, ag, `pm-${Date.now()}`]))[0]!.id;
+    const ver = (await sql<{ id: string }>(
+      `insert into public.gov_programme_versions(programme_id,version_no,data,data_sha256,detection_method) values ($1,1,$2,$3,'manual') returning id`,
+      [prog, JSON.stringify({ name: 'Synthetic', info_url: MITRA_URL }), '0'.repeat(64)]))[0]!.id;
+    await sql(`update public.gov_programmes set current_version_id = $2 where id = $1`, [prog, ver]);
+    await again();
+    await runWorkerOnce(makeDeps({ 'https://www.mitra.gov.my/robots.txt': { text: MITRA_ROBOTS }, [MITRA_URL]: { status: 304, text: '' } }));
+    const p = (await sql<{ fresh: boolean; publication_state: string; application_status: string }>(
+      `select last_checked_at > now() - interval '1 minute' as fresh, publication_state, application_status from public.gov_programmes where id = $1`, [prog]))[0]!;
+    expect(p).toEqual({ fresh: true, publication_state: 'published', application_status: 'open' });
+  });
+
+  it('an outage keeps the last good evidence and changes no published data', async () => {
+    await runWorkerOnce(makeDeps(pages(mitraPage('22 Oktober 2026'))));
+    await again();
+    const r = await runWorkerOnce(makeDeps(pages('', { status: 503 })));
+    expect(r.retried).toBe(1);
+    expect((await jobs()).some((j) => j.status === 'queued' && j.last_error === 'http_503')).toBe(true);
+    expect(await changes()).toHaveLength(0);
+    expect((await sql(`select 1 from public.gov_fetch_results where source_id = $1 and outcome = 'ok'`, [sourceId])).length).toBe(1);
+  });
+
+  it('robots disallow: the page is never requested', async () => {
+    const calls: string[] = [];
+    const p = pages(mitraPage('22 Oktober 2026'));
+    p['https://www.mitra.gov.my/robots.txt'] = { text: 'User-agent: *\nDisallow: /ms/' };
+    const r = await runWorkerOnce(makeDeps(p, calls));
+    expect(r.rejected).toBe(1);
+    expect(calls).toEqual(['https://www.mitra.gov.my/robots.txt']);
+  });
+
+  it('a private-address refusal is recorded as rejected content and not retried', async () => {
+    const r = await runWorkerOnce(makeDeps({ 'https://www.mitra.gov.my/robots.txt': { text: MITRA_ROBOTS }, [MITRA_URL]: new FetchRefused('private_address') }));
+    expect(r.rejected).toBe(1);
+    expect(r.retried).toBe(0);
   });
 });

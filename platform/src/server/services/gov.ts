@@ -83,6 +83,7 @@ export interface GovSavedRow {
   version: number;
   rules_changed: boolean;
   is_stale: boolean;
+  verification_status: string;
 }
 
 export type GovProfile = AssistanceProfile & { org_id: string; version: number };
@@ -145,3 +146,4 @@ export const decideGovSourceChange = (db: Db, change: string, approve: boolean, 
   rpc<null>(db, 'gov_decide_source_change', { p_change: change, p_approve: approve, p_reason: reason });
 export const registerGovSource = (db: Db, a: { agencyCode: string; agencyName: string; domain: string; name: string; type: string; adapter: string; hosts: string[]; urls: string[]; method: string; restrictions: string | null }) =>
   rpc<string>(db, 'gov_register_source', { p_agency_code: a.agencyCode, p_agency_name: a.agencyName, p_domain: a.domain, p_name: a.name, p_type: a.type, p_adapter: a.adapter, p_hosts: a.hosts, p_urls: a.urls, p_method: a.method, p_restrictions: a.restrictions });
+export const requestGovRecheck = (db: Db, source: string, reason: string) => rpc<number>(db, 'gov_request_recheck', { p_source: source, p_reason: reason });

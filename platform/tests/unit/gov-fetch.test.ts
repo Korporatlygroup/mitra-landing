@@ -162,3 +162,47 @@ describe('review hardening', () => {
     await expect(safeFetch('https://www.tekun.gov.my/a/', { allowedHosts: HOSTS, userAgent: UA, transport, totalTimeoutMs: 100 })).rejects.toMatchObject({ code: 'timeout' });
   });
 });
+
+describe('conditional requests', () => {
+  const capture = (response: { status?: number; headers?: Record<string, string>; body?: string }) => {
+    const sent: Record<string, string>[] = [];
+    const transport: Transport = async (_url, init) => {
+      sent.push(init.headers);
+      const stream = Readable.from([Buffer.from(response.body ?? '')]);
+      return { status: response.status ?? 200, headers: response.headers ?? { 'content-type': 'text/html; charset=UTF-8' }, stream, destroy: () => stream.destroy() };
+    };
+    return { transport, sent };
+  };
+
+  it('sends If-None-Match and If-Modified-Since from the stored validators', async () => {
+    const { transport, sent } = capture({ status: 304 });
+    const r = await safeFetch('https://www.tekun.gov.my/a/', opts(transport, { validators: { etag: '"abc"', lastModified: 'Thu, 22 Oct 2026 00:00:00 GMT' } }));
+    expect(sent[0]).toMatchObject({ 'If-None-Match': '"abc"', 'If-Modified-Since': 'Thu, 22 Oct 2026 00:00:00 GMT' });
+    expect(r).toMatchObject({ status: 304, text: '', bytes: 0 });
+  });
+
+  it('sends nothing conditional when there are no validators', async () => {
+    const { transport, sent } = capture({ body: '<p>x</p>' });
+    await safeFetch('https://www.tekun.gov.my/a/', opts(transport));
+    expect(Object.keys(sent[0]!)).not.toContain('If-None-Match');
+    expect(Object.keys(sent[0]!)).not.toContain('If-Modified-Since');
+  });
+
+  it('refuses to put unprintable validator text on the wire', async () => {
+    const { transport, sent } = capture({ body: '<p>x</p>' });
+    await safeFetch('https://www.tekun.gov.my/a/', opts(transport, { validators: { etag: '"a"\r\nX-Evil: 1', lastModified: null } }));
+    expect(Object.keys(sent[0]!)).not.toContain('If-None-Match');
+  });
+
+  it('returns the validators the server sent', async () => {
+    const { transport } = capture({ headers: { 'content-type': 'text/html; charset=UTF-8', etag: '"v2"', 'last-modified': 'Fri, 23 Oct 2026 00:00:00 GMT' }, body: '<p>x</p>' });
+    const r = await safeFetch('https://www.tekun.gov.my/a/', opts(transport));
+    expect(r).toMatchObject({ status: 200, etag: '"v2"', lastModified: 'Fri, 23 Oct 2026 00:00:00 GMT' });
+  });
+
+  it('a conditional request to a foreign host is still refused before any request', async () => {
+    const { transport, sent } = capture({ status: 304 });
+    await expect(safeFetch('https://evil.example/a/', opts(transport, { validators: { etag: '"x"' } }))).rejects.toMatchObject({ code: 'host_not_allowed' });
+    expect(sent).toHaveLength(0);
+  });
+});

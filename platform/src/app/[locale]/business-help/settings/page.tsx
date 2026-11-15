@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { setGovPrefsAction } from '../actions';
 import ActionForm from '@/components/ActionForm';
+import { REMINDER_DAY_CHOICES } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
 import { getGovPrefs } from '@/server/services/gov';
 import { requireSession } from '@/server/session';
@@ -18,6 +19,7 @@ export default async function GovSettingsPage({ params }: { params: Promise<{ lo
   const t = await getTranslations({ locale, namespace: 'gov' });
   const r = await getGovPrefs(session.supabase);
   const prefs = r.ok ? r.data : null;
+  const chosenDays = prefs?.reminder_days ?? [14, 3];
   const paused = prefs?.paused_until && new Date(prefs.paused_until) > new Date() ? prefs.paused_until.slice(0, 10) : '';
   return (
     <>
@@ -30,6 +32,16 @@ export default async function GovSettingsPage({ params }: { params: Promise<{ lo
             <div className="field field-check" key={c}>
               <input id={`gs-${c}`} type="checkbox" name={c} defaultChecked={prefs ? prefs[c] : true} />
               <label htmlFor={`gs-${c}`}>{t(`settings.${c}`)}</label>
+            </div>
+          ))}
+        </fieldset>
+        <fieldset>
+          <legend>{t('settings.reminderDays')}</legend>
+          <p className="muted">{t('settings.reminderDaysHint')}</p>
+          {REMINDER_DAY_CHOICES.map((d) => (
+            <div className="field field-check" key={d}>
+              <input id={`gs-rd-${d}`} type="checkbox" name={`rd_${d}`} defaultChecked={chosenDays.includes(d)} />
+              <label htmlFor={`gs-rd-${d}`}>{t('settings.daysBefore', { n: d })}</label>
             </div>
           ))}
         </fieldset>

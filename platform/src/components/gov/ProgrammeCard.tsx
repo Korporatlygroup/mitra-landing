@@ -3,10 +3,10 @@ import { saveGovProgrammeAction, unsaveGovProgrammeAction } from '@/app/[locale]
 import QuickForm from '@/components/catalogue/QuickForm';
 import { Link } from '@/i18n/navigation';
 import type { MatchResult } from '@/lib/gov-matching';
+import { categoryOf, displayStatus } from '@/lib/gov-status';
 import { formatRm, safeHttpsUrl } from '@/lib/gov-ui';
+import StatusBadge from './StatusBadge';
 import type { GovProgrammeRow } from '@/server/services/gov';
-
-const STATUS_CHIP: Record<string, string> = { open: 'chip chip-good', closed: 'chip chip-bad', upcoming: 'chip', unknown: 'chip' };
 
 /**
  * One programme in a list. Shows what the agency published (name, agency, amount, dates), when INOK last checked it, and
@@ -30,7 +30,9 @@ export default async function ProgrammeCard({
   const fmt = await getFormatter({ locale });
   const date = (d: string) => fmt.dateTime(new Date(d), { dateStyle: 'medium', timeZone: 'UTC' });
   const amount = p.amount_max ? (p.amount_min && p.amount_min !== p.amount_max ? t('card.amountRange', { min: formatRm(p.amount_min), max: formatRm(p.amount_max) }) : t('card.upTo', { max: formatRm(p.amount_max) })) : t('card.amountUnknown');
-  const apply = p.application_channel === 'online' && p.application_status !== 'closed' ? safeHttpsUrl(p.application_url) : null;
+  const statusInput = { publication_state: 'published', verification_status: p.verification_status, application_status: p.application_status, closes_on: p.closes_on, is_stale: p.is_stale };
+  const shown = displayStatus(statusInput);
+  const apply = p.application_channel === 'online' && p.application_status !== 'closed' && shown !== 'closed' ? safeHttpsUrl(p.application_url) : null;
   return (
     <li className="card catalogue-card" data-programme={p.slug}>
       <h2 className="catalogue-card-title">{p.name}</h2>
@@ -38,10 +40,14 @@ export default async function ProgrammeCard({
         {t('card.agency')}: {p.agency_name}
       </p>
       <p style={{ margin: '4px 0' }}>
-        {p.funding_type ? <span className="chip">{t(`type.${p.funding_type}`)}</span> : null}{' '}
-        <span className={STATUS_CHIP[p.application_status] ?? 'chip'}>
-          {t('card.status')}: {t(`status.${p.application_status}`)}
-        </span>
+        <span className="chip">{t(`category.${categoryOf(p)}`)}</span>{' '}
+        <StatusBadge locale={locale} input={statusInput} />
+        {p.beneficiary_type === 'organisation' ? (
+          <>
+            {' '}
+            <span className="chip chip-warn">{t('match.for_organisations')}</span>
+          </>
+        ) : null}
       </p>
       {match ? (
         <p style={{ margin: '4px 0' }}>

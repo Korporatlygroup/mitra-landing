@@ -17,7 +17,7 @@ export const KNOWN_KINDS = new Set([
   'enquiry_opened',
 ]);
 
-export const GOV_CATEGORIES = new Set(['new_match', 'opens', 'deadline', 'rule_change', 'unavailable', 'reminder']);
+export const GOV_CATEGORIES = new Set(['new_match', 'opens', 'deadline', 'rule_change', 'unavailable', 'reminder', 'recheck']);
 
 /** Locale-less path a notification points at (null when there is nothing to open). */
 export function notificationTarget(n: NotificationRow): string | null {

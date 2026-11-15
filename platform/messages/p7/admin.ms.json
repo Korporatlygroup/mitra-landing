@@ -1,1 +1,307 @@
-{ "gov": {} }
+{
+  "gov": {
+    "admin": {
+      "nav": {
+        "label": "Pentadbiran bantuan perniagaan",
+        "home": "Gambaran keseluruhan",
+        "sources": "Sumber",
+        "pageChanges": "Perubahan halaman",
+        "newProgramme": "Tambah program"
+      },
+      "attention": {
+        "title": "Perlu perhatian",
+        "none": "Tiada yang memerlukan perhatian buat masa ini.",
+        "sources": "Sumber yang bermasalah",
+        "dead": "Semakan yang berhenti selepas gagal berulang kali",
+        "stale": "Program diterbitkan yang tidak disemak semula tepat pada masanya",
+        "pages": "Perubahan halaman menunggu semakan",
+        "proposals": "Cadangan perubahan menunggu keputusan",
+        "open": "Buka"
+      },
+      "edit": "Sunting",
+      "archiveHelp": "Pengarkiban mengeluarkan program daripada paparan awam dan tidak boleh dibatalkan. Sebab diperlukan.",
+      "archiveConfirm": "Arkibkan program ini",
+      "manageSources": "Urus sumber",
+      "kinds": {
+        "manual": "Dimasukkan oleh pentadbir"
+      },
+      "flags": {
+        "manual": "Dimasukkan secara manual",
+        "documents_changed": "Senarai dokumen berubah"
+      },
+      "rv": {
+        "manualNote": "Perubahan ini dimasukkan oleh pentadbir daripada laman rasmi, bukan ditemui oleh semakan automatik.",
+        "proposedByYou": "Anda memasukkan perubahan ini, jadi pentadbir lain mesti meluluskannya. Anda masih boleh menolaknya.",
+        "field": "Medan"
+      },
+      "fields": {
+        "name": "Nama",
+        "description": "Penerangan",
+        "funding_type": "Jenis bantuan",
+        "amount_min": "Jumlah terkecil (RM)",
+        "amount_max": "Jumlah terbesar (RM)",
+        "currency": "Mata wang",
+        "application_channel": "Cara memohon",
+        "application_url": "Pautan permohonan",
+        "info_url": "Laman maklumat rasmi",
+        "opens_on": "Dibuka pada",
+        "closes_on": "Ditutup pada",
+        "application_status": "Status yang dinyatakan agensi",
+        "documents": "Dokumen untuk disediakan",
+        "terms": "Terma",
+        "rules": "Syarat yang diterbitkan agensi",
+        "category": "Kategori",
+        "beneficiary_type": "Untuk siapa",
+        "sectors": "Sektor perniagaan",
+        "states": "Negeri"
+      },
+      "manual": {
+        "title": "Tambah program",
+        "titleEdit": "Sunting program",
+        "intro": "Masukkan hanya apa yang dinyatakan oleh laman rasmi. Biarkan yang lain kosong: ia akan dipaparkan sebagai \"Belum disahkan\" kepada orang ramai. Tiada apa diterbitkan sehingga pentadbir lain meluluskannya.",
+        "notice": "Pentadbir lain yang mempunyai hak penerbitan mesti meluluskannya. Anda tidak boleh meluluskan entri anda sendiri.",
+        "noSource": "Belum ada sumber untuk program yang dimasukkan secara manual. Daftarkan satu dahulu.",
+        "source": "Sumber",
+        "sourceHint": "Pautan mesti berada di salah satu laman yang diluluskan bagi sumber ini: {hosts}",
+        "name": "Nama program",
+        "category": "Kategori",
+        "cat": {
+          "grants_funding": "Geran dan pembiayaan",
+          "business_financing": "Pembiayaan perniagaan",
+          "training": "Latihan dan peningkatan kemahiran",
+          "advisory": "Nasihat perniagaan",
+          "entrepreneurship": "Pembangunan keusahawanan",
+          "digital": "Bantuan pendigitalan dan teknologi",
+          "other": "Sokongan perniagaan lain"
+        },
+        "beneficiary": "Untuk siapa",
+        "ben": {
+          "unknown": "Belum disahkan",
+          "entrepreneur": "Usahawan individu dan perniagaan kecil",
+          "organisation": "Organisasi sahaja (persatuan, NGO, penyedia latihan)",
+          "both": "Kedua-duanya"
+        },
+        "benHint": "Program untuk organisasi tidak akan dicadangkan kepada pemilik kedai individu.",
+        "description": "Penerangan",
+        "descriptionHint": "Ringkaskan apa yang dinyatakan laman rasmi. Jangan tambah apa yang tidak dinyatakan.",
+        "fundingType": "Jenis bantuan",
+        "ft": {
+          "unknown": "Belum disahkan",
+          "grant": "Geran",
+          "financing": "Pembiayaan",
+          "subsidy": "Subsidi",
+          "training": "Latihan",
+          "other": "Lain-lain"
+        },
+        "amountMin": "Jumlah terkecil (RM)",
+        "amountMax": "Jumlah terbesar (RM)",
+        "amountHint": "Biarkan kosong melainkan laman menyatakan jumlah.",
+        "channel": "Cara memohon",
+        "ch": {
+          "unknown": "Belum disahkan",
+          "online": "Dalam talian",
+          "branch": "Di cawangan atau pejabat",
+          "form": "Melalui borang",
+          "enquiry": "Melalui pertanyaan kepada agensi"
+        },
+        "applicationUrl": "Pautan permohonan (pilihan)",
+        "infoUrl": "Laman maklumat rasmi",
+        "infoHint": "Laman rasmi yang menyatakan fakta ini. Ia mesti bermula dengan https://",
+        "appStatus": "Status yang dinyatakan agensi",
+        "st": {
+          "unknown": "Belum disahkan",
+          "open": "Dibuka",
+          "upcoming": "Akan dibuka",
+          "closed": "Ditutup"
+        },
+        "statusHint": "Pilih Dibuka hanya jika laman rasmi menyatakannya sekarang.",
+        "opens": "Dibuka pada",
+        "closes": "Ditutup pada",
+        "dateHint": "Biarkan kosong jika laman tidak memberi tarikh. Tarikh kosong dipaparkan sebagai \"Belum disahkan\" dan tidak mencetuskan peringatan tarikh akhir.",
+        "documents": "Dokumen untuk disediakan",
+        "documentsHint": "Satu setiap baris, seperti yang disenaraikan laman.",
+        "sectors": "Sektor perniagaan (pilihan)",
+        "states": "Negeri (pilihan)",
+        "listHint": "Asingkan dengan koma. Biarkan kosong jika laman tidak menghadkannya.",
+        "rulesTitle": "Syarat yang diterbitkan agensi",
+        "rulesHint": "Tambah setiap syarat yang dinyatakan laman. Perkataan tepat dimasukkan dalam \"Petikan\". Gunakan \"Nota\" untuk syarat yang hanya boleh dinilai agensi.",
+        "rule": "Syarat {n}",
+        "ruleField": "Mengenai",
+        "ruleOp": "Perbandingan",
+        "ruleValue": "Nilai",
+        "ruleQuote": "Petikan daripada laman",
+        "rf": {
+          "note": "Nota (hanya agensi boleh menilai)",
+          "business_size": "Saiz perniagaan",
+          "sector": "Sektor",
+          "state": "Negeri",
+          "registration": "Pendaftaran",
+          "employees_min": "Pekerja, sekurang-kurangnya",
+          "employees_max": "Pekerja, paling banyak",
+          "years_operating_min": "Tahun beroperasi, sekurang-kurangnya",
+          "citizenship": "Kewarganegaraan",
+          "community": "Komuniti",
+          "age_min": "Umur pemilik, sekurang-kurangnya",
+          "age_max": "Umur pemilik, paling tinggi"
+        },
+        "op": {
+          "eq": "ialah",
+          "in": "ialah salah satu (asingkan dengan koma)",
+          "gte": "sekurang-kurangnya",
+          "lte": "paling banyak",
+          "note": "nota"
+        },
+        "reason": "Sebab entri atau perubahan ini (apa yang anda baca dan di mana)",
+        "submit": "Hantar untuk diluluskan oleh orang kedua",
+        "proposed": "Dihantar. Pentadbir lain kini mesti meluluskannya dalam baris gilir semakan.",
+        "back": "Kembali ke gambaran keseluruhan",
+        "current": "Anda menyunting versi diterbitkan {version}. Versi diterbitkan kekal seperti sedia ada sehingga perubahan diluluskan.",
+        "noProgramme": "Program ini tiada versi diterbitkan untuk disunting."
+      },
+      "err": {
+        "programme_exists": "Program dengan nama ini sudah wujud untuk sumber ini. Sunting program itu.",
+        "no_change": "Tiada apa yang diubah.",
+        "duplicate": "Perubahan yang sama sudah menunggu semakan.",
+        "field": "Sila semak \"{field}\".",
+        "dates_contradict": "Tarikh dibuka selepas tarikh ditutup.",
+        "amount_range": "Jumlah terkecil lebih besar daripada jumlah terbesar.",
+        "rule": "Setiap syarat memerlukan petikan daripada laman, dan nilai melainkan ia nota.",
+        "source": "Pilih sumber.",
+        "no_source_change": "Ubah sekurang-kurangnya satu tetapan.",
+        "hosts": "Berikan satu hingga lima nama laman seperti www.example.gov.my.",
+        "agency": "Semak kod agensi (huruf besar, nombor atau sengkang), nama dan laman web."
+      },
+      "pc": {
+        "title": "Perubahan halaman",
+        "intro": "Semakan automatik mendapati laman rasmi telah berubah. Baca perbezaannya, kemudian putuskan maksudnya. Tiada apa di sini mengubah program yang diterbitkan: untuk mengemas kini, masukkan perubahan secara manual.",
+        "empty": "Tiada perubahan halaman yang menunggu.",
+        "detected": "Dikesan {when}",
+        "page": "Laman",
+        "removed": "Baris yang tiada lagi pada laman",
+        "added": "Baris baharu pada laman",
+        "noDiff": "Teks nampak sama; hanya salinan yang disimpan berbeza.",
+        "noEvidence": "Salinan laman ini yang disimpan tidak lagi tersedia.",
+        "note": "Apa yang anda dapati (diperlukan)",
+        "reviewed": "Tandakan sebagai disemak",
+        "dismiss": "Abaikan (tidak berkaitan)",
+        "createUpdate": "Tambah kemas kini program",
+        "history": "Baru diputuskan",
+        "historyEmpty": "Belum ada yang diputuskan.",
+        "st": {
+          "reviewed": "Disemak",
+          "dismissed": "Diabaikan"
+        },
+        "saved": "Disimpan."
+      },
+      "src": {
+        "title": "Sumber",
+        "intro": "Hanya sumber rasmi yang didaftarkan di sini akan dibaca. Setiap perubahan pada sumber memerlukan pentadbir kedua. Semakan yang gagal tidak pernah mengubah program yang diterbitkan.",
+        "registerTitle": "Daftar sumber",
+        "registerHint": "Sumber baharu bermula dalam keadaan tutup. Ia dihidupkan kemudian dengan mencadangkan perubahan yang diluluskan pentadbir kedua.",
+        "agencyCode": "Kod agensi",
+        "agencyName": "Nama agensi",
+        "domain": "Laman web agensi",
+        "name": "Nama sumber",
+        "typeLabel": "Jenis sumber",
+        "type": {
+          "website": "Laman web",
+          "api": "API rasmi",
+          "feed": "Suapan rasmi",
+          "manual": "Dimasukkan secara manual"
+        },
+        "adapterLabel": "Cara ia dibaca",
+        "adapter": {
+          "page_monitor": "Pantau perubahan pada laman",
+          "tekun": "Laman skim TEKUN",
+          "manual": "Dimasukkan secara manual sahaja"
+        },
+        "hosts": "Laman yang diluluskan",
+        "hostsHint": "Satu hingga lima nama laman, satu setiap baris, contohnya www.mitra.gov.my",
+        "urls": "Laman untuk disemak",
+        "urlsHint": "Satu alamat setiap baris, setiap satu bermula dengan https:// dan pada laman yang diluluskan. Biarkan kosong untuk sumber manual.",
+        "methodLabel": "Kebenaran untuk membaca",
+        "method": {
+          "public_pages": "Laman awam (robots.txt dihormati)",
+          "official_api": "API rasmi",
+          "official_feed": "Suapan rasmi",
+          "manual_entry": "Kemasukan manual sahaja"
+        },
+        "restrictions": "Had penggunaan yang dinyatakan sumber (pilihan)",
+        "register": "Daftar sumber",
+        "registered": "Sumber telah didaftarkan. Ia dalam keadaan tutup.",
+        "listTitle": "Sumber berdaftar",
+        "facts": {
+          "adapter": "Dibaca melalui",
+          "hosts": "Laman yang diluluskan",
+          "pages": "Laman disemak",
+          "refresh": "Disemak setiap",
+          "rate": "Had permintaan",
+          "freshness": "Dianggap lapuk selepas",
+          "lastFailure": "Kegagalan terakhir",
+          "lastError": "Masalah terakhir"
+        },
+        "minutes": "{n} minit",
+        "perMinute": "{n} seteminit",
+        "hours": "{n} jam",
+        "scheduleTitle": "Ubah jadual",
+        "refresh": "Semak setiap (minit, 15 hingga 43200)",
+        "rate": "Permintaan seminit (1 hingga 60)",
+        "freshness": "Lapuk selepas (jam, 1 hingga 8760)",
+        "enableLabel": "Pemantauan",
+        "enable": {
+          "keep": "Biarkan seperti sedia ada",
+          "on": "Hidupkan",
+          "off": "Matikan"
+        },
+        "propose": "Cadangkan perubahan ini",
+        "proposeNote": "Pentadbir lain mesti meluluskannya sebelum ia berkuat kuasa.",
+        "proposed": "Perubahan telah dicadangkan. Pentadbir lain mesti meluluskannya.",
+        "pendingTitle": "Perubahan sumber menunggu pentadbir kedua",
+        "pendingEmpty": "Tiada perubahan sumber yang menunggu.",
+        "approveChange": "Luluskan perubahan",
+        "rejectChange": "Tolak perubahan",
+        "ownChange": "Anda mencadangkan perubahan ini. Pentadbir lain mesti memutuskannya.",
+        "decided": "Keputusan anda telah disimpan.",
+        "changeFields": {
+          "approved_urls": "Laman untuk disemak",
+          "allowed_hosts": "Laman yang diluluskan",
+          "enabled": "Pemantauan",
+          "refresh_interval_minutes": "Semak setiap (minit)",
+          "rate_per_minute": "Permintaan seminit",
+          "freshness_hours": "Lapuk selepas (jam)",
+          "usage_restrictions": "Had penggunaan"
+        },
+        "historyTitle": "Sejarah terkini",
+        "historyEmpty": "Belum ada sejarah.",
+        "errorsTitle": "Masalah terkini membaca sumber ini",
+        "errorsEmpty": "Tiada masalah membaca baru-baru ini.",
+        "outcome": {
+          "parse_failed": "Susun atur laman berubah",
+          "rejected_content": "Laman ditolak",
+          "gone": "Laman tidak ditemui"
+        },
+        "events": {
+          "source_registered": "Sumber didaftarkan",
+          "source_change_proposed": "Perubahan dicadangkan",
+          "source_change_approved": "Perubahan diluluskan",
+          "source_change_rejected": "Perubahan ditolak",
+          "source_page_changed": "Perubahan halaman dikesan",
+          "source_page_change_reviewed": "Perubahan halaman disemak",
+          "source_page_change_dismissed": "Perubahan halaman diabaikan",
+          "candidate_queued": "Perubahan ditemui dan dibaris gilir untuk semakan",
+          "candidate_invalid": "Data yang diekstrak tidak sah",
+          "programme_missing_from_source": "Program tidak ditemui pada laman sumber",
+          "proposal_approve": "Perubahan diluluskan dan diterbitkan",
+          "proposal_reject": "Perubahan ditolak",
+          "proposal_needs_info": "Semakan lanjut diminta",
+          "proposal_manual_proposed": "Perubahan dimasukkan secara manual"
+        },
+        "noRecheck": "Untuk menyemak sumber lebih awal daripada jadualnya, pendekkan sela melalui perubahan yang dicadangkan.",
+        "recheckTitle": "Semak sumber ini sekarang",
+        "recheck": "Minta semakan sekarang",
+        "recheckQueued": "Semakan telah dimasukkan ke dalam baris gilir. Larian pemantauan seterusnya akan mengambilnya.",
+        "recheckNone": "Tiada semakan baharu dimasukkan (satu telah diminta dalam 10 minit lepas)."
+      }
+    }
+  }
+}

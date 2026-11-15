@@ -29,6 +29,8 @@ const optInt = (min: number, max: number) =>
   z.preprocess((v) => (v === '' || v == null ? undefined : Number(v)), z.number().int().min(min).max(max).optional());
 const optEnum = <T extends [string, ...string[]]>(vals: T) => z.preprocess((v) => (v === '' || v == null ? undefined : v), z.enum(vals).optional());
 
+export const TRACKING_STATUSES = ['interested', 'preparing', 'ready_to_apply', 'applied_externally', 'awaiting_decision', 'outcome_recorded', 'not_interested'] as const;
+
 export const govProfileSchema = z.object({
   orgId: z.uuid(),
   version: z.coerce.number().int().min(0),
@@ -48,12 +50,14 @@ export const govTrackingSchema = z.object({
   programmeId: z.uuid(),
   version: z.coerce.number().int().min(1),
   markSeen: z.preprocess((v) => v === 'on', z.boolean()),
-  tracking_status: z.enum(['interested', 'preparing', 'applied_externally', 'awaiting_decision', 'outcome_recorded', 'not_interested']),
+  tracking_status: z.enum(TRACKING_STATUSES),
   note: z.string().max(500).optional(),
   applied_on: z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
   outcome: optEnum(['approved', 'declined', 'withdrawn', 'other']),
   reminder_on: z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
 });
+
+export const REMINDER_DAY_CHOICES = [14, 7, 3, 1] as const;
 
 export const govSaveSchema = z.object({ orgId: z.uuid(), programmeId: z.uuid() });
 
@@ -72,3 +76,18 @@ export function safeHttpsUrl(u: string | null | undefined): string | null {
     return null;
   }
 }
+
+/** The text's language, guessed from common function words, so original agency wording is marked with the right lang attribute and label. */
+export function textLang(text: string | null | undefined): 'ms' | 'en' {
+  const words = (text ?? '').toLowerCase().match(/[a-z]+/g) ?? [];
+  const ms = new Set(['dan', 'yang', 'untuk', 'atau', 'dengan', 'adalah', 'bagi', 'dalam', 'kepada', 'perniagaan', 'syarat', 'pinjaman', 'warganegara']);
+  const hits = words.filter((w) => ms.has(w)).length;
+  return hits >= 2 || (words.length > 0 && hits / words.length > 0.08) ? 'ms' : 'en';
+}
+
+/** True when the timestamp lies within the last N days. */
+export const isRecent = (iso: string | null | undefined, days: number, now: Date = new Date()): boolean => {
+  if (!iso) return false;
+  const t = Date.parse(iso);
+  return Number.isFinite(t) && now.getTime() - t >= 0 && now.getTime() - t <= days * 86_400_000;
+};

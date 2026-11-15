@@ -340,6 +340,7 @@ export async function listUnscannedProductMedia(limit: number): Promise<{ id: st
 const GOV_WORKER_RPCS = [
   'gov_enqueue_due_jobs', 'gov_claim_jobs', 'gov_job_source', 'gov_complete_job', 'gov_fail_job', 'gov_submit_candidate', 'gov_mark_missing',
   'gov_enqueue_reminders', 'gov_dispatch_outbox', 'gov_mark_email',
+  'gov_last_validators', 'gov_record_page', 'gov_mark_unchanged',
   'news_digest_candidates', 'news_digest_posts', 'news_digest_claim', 'news_digest_release',
 ] as const;
 

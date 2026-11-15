@@ -3,7 +3,8 @@ import { updateGovTrackingAction, unsaveGovProgrammeAction } from '../actions';
 import ActionForm from '@/components/ActionForm';
 import QuickForm from '@/components/catalogue/QuickForm';
 import { Link } from '@/i18n/navigation';
-import { eligibleAssistOrgs } from '@/lib/gov-ui';
+import StatusBadge from '@/components/gov/StatusBadge';
+import { eligibleAssistOrgs, TRACKING_STATUSES } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
 import { listGovSaved } from '@/server/services/gov';
 import { requireSession } from '@/server/session';
@@ -12,7 +13,6 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'gov.saved.title');
 }
 
-const STATUSES = ['interested', 'preparing', 'applied_externally', 'awaiting_decision', 'outcome_recorded', 'not_interested'] as const;
 const OUTCOMES = ['approved', 'declined', 'withdrawn', 'other'] as const;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
@@ -68,9 +68,10 @@ export default async function SavedPage({
                 {t('card.agency')}: {r.agency_name}
               </p>
               <p>
-                <span className="chip">
-                  {t('card.status')}: {t(`status.${r.application_status}`)}
-                </span>{' '}
+                <StatusBadge
+                  locale={locale}
+                  input={{ publication_state: r.publication_state, verification_status: 'verified', application_status: r.application_status, closes_on: r.closes_on, is_stale: r.is_stale }}
+                />{' '}
                 {r.closes_on ? <span className="chip">{t('card.closes', { date: fmt.dateTime(new Date(r.closes_on), { dateStyle: 'medium', timeZone: 'UTC' }) })}</span> : null}
               </p>
               {r.rules_changed ? (
@@ -85,6 +86,9 @@ export default async function SavedPage({
               ) : r.is_stale ? (
                 <p className="muted">{t('card.stale')}</p>
               ) : null}
+              <p className="muted" style={{ margin: 0 }}>
+                {t('saved.reportedNote')}
+              </p>
               <ActionForm action={updateGovTrackingAction} submitLabel={t('saved.update')} variant="secondary">
                 {r.rules_changed ? (
                   <div className="field field-check">
@@ -98,7 +102,7 @@ export default async function SavedPage({
                 <div className="field">
                   <label htmlFor={`st-${r.slug}`}>{t('saved.statusLabel')}</label>
                   <select id={`st-${r.slug}`} name="tracking_status" defaultValue={r.tracking_status}>
-                    {STATUSES.map((s) => (
+                    {TRACKING_STATUSES.map((s) => (
                       <option key={s} value={s}>
                         {t(`saved.status.${s}`)}
                       </option>
@@ -129,6 +133,12 @@ export default async function SavedPage({
                   <textarea id={`nt-${r.slug}`} name="note" maxLength={500} rows={2} defaultValue={r.note ?? ''} />
                 </div>
               </ActionForm>
+              <p>
+                <Link href={`/business-help/${r.slug}?org=${org.org.id}#gov-app-h`} locale={locale}>
+                  {t('saved.officialInstructions')}
+                  <span className="p5b-sr">: {r.name}</span>
+                </Link>
+              </p>
               <QuickForm action={unsaveGovProgrammeAction} fields={{ orgId: org.org.id, programmeId: r.programme_id }} label={t('card.remove')} srName={r.name} />
             </li>
           ))}
