@@ -99,3 +99,51 @@ describe('nothing checkable', () => {
     expect(matchProgramme(programme({ data: { rules: [{ field: 'note', op: 'note', quote: 'Syarat lain' }] } }), full).label).toBe('unconfirmed_programme');
   });
 });
+
+describe('Phase 7 completion: explanations the owner can read', () => {
+  it('every requirement says what was compared, why, and where the rule was published', () => {
+    const r = matchProgramme(programme({ info_url: 'https://www.tekun.gov.my/spumi/' }), { ...full, employees: 3 });
+    expect(r.rules.length).toBeGreaterThan(0);
+    for (const rule of r.rules) {
+      expect(rule.sourceUrl).toBe('https://www.tekun.gov.my/spumi/');
+      expect(['meets', 'does_not_meet', 'not_answered', 'agency_only']).toContain(rule.reason);
+    }
+    const age = r.rules.find((x) => x.field === 'age_min');
+    expect(age).toMatchObject({ status: 'met', used: 'owner_age', usedValue: 40, reason: 'meets' });
+  });
+  it('voluntary declarations are used but their values are never echoed', () => {
+    const r = matchProgramme(programme(), full);
+    const community = r.rules.find((x) => x.field === 'community');
+    expect(community?.used).toBe('community');
+    expect(community?.usedValue).toBeNull();
+    expect(JSON.stringify(r)).not.toContain('"indian"');
+  });
+  it('a question the owner has not answered is reported as not answered, with nothing used', () => {
+    const r = matchProgramme(programme(), { needs: ['financing'] });
+    const age = r.rules.find((x) => x.field === 'age_min');
+    expect(age).toMatchObject({ status: 'unknown', reason: 'not_answered', used: null, usedValue: null });
+  });
+  it('conditions only the agency can assess are labelled as such', () => {
+    const rules = [{ field: 'note', op: 'note' as const, quote: 'Tidak muflis' }, { field: 'state', op: 'in' as const, value: ['selangor'], quote: 'Selangor sahaja' }];
+    const r = matchProgramme(programme({ data: { rules } }), { state: 'Selangor' });
+    expect(r.rules.find((x) => x.field === 'note')).toMatchObject({ status: 'agency', reason: 'agency_only' });
+    expect(r.label).toBe('potential_match');
+  });
+  it('programmes for associations or training providers are never matched to a shop owner', () => {
+    const r = matchProgramme(programme({ beneficiary_type: 'organisation' }), full);
+    expect(r.label).toBe('for_organisations');
+    const ranked = rankMatches([
+      { programme: programme({ beneficiary_type: 'organisation' }), match: r },
+      { programme: programme(), match: matchProgramme(programme(), full) },
+    ]);
+    expect(ranked[0]!.match.label).toBe('potential_match');
+    expect(ranked[1]!.match.label).toBe('for_organisations');
+  });
+  it('a programme meant for both individuals and organisations is still matched', () => {
+    expect(matchProgramme(programme({ beneficiary_type: 'both' }), full).label).toBe('potential_match');
+  });
+  it('no verdict wording is ever produced', () => {
+    const text = JSON.stringify(matchProgramme(programme(), full)).toLowerCase();
+    for (const banned of ['officially eligible', 'approved', 'guaranteed']) expect(text).not.toContain(banned);
+  });
+});
