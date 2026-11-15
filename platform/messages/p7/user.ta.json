@@ -20,7 +20,10 @@
     },
     "find": {
       "categoryLabel": "உதவியின் வகை",
-      "anyCategory": "அனைத்து வகைகள்"
+      "anyCategory": "அனைத்து வகைகள்",
+      "searchLabel": "திட்டங்களைத் தேடுக",
+      "searchPlaceholder": "திட்டத்தின் பெயர், எ.கா. SPUMI",
+      "searchButton": "தேடு"
     },
     "dash": {
       "recommended": "உங்கள் வணிகத்துக்குப் பரிந்துரைக்கப்பட்டவை",

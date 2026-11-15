@@ -20,7 +20,10 @@
     },
     "find": {
       "categoryLabel": "Type of help",
-      "anyCategory": "All types"
+      "anyCategory": "All types",
+      "searchLabel": "Search programmes",
+      "searchPlaceholder": "Programme name, for example SPUMI",
+      "searchButton": "Search"
     },
     "dash": {
       "recommended": "Recommended for your business",

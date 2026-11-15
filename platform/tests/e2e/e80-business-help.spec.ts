@@ -108,7 +108,7 @@ for (const L of ['ta', 'ms'] as const) {
     await expect(card(page, slug)).toContainText(t(L, 'card.agency'));
     await axeClean(page, `${L} find`);
     await page.goto(`/${L}/business-help/${slug}`);
-    await expect(page.locator('main')).toContainText(t(L, 'detail.official'));
+    await expect(page.locator('main')).toContainText(t(L, 'detail.offers'));
     await expect(page.locator('main')).toContainText('Berumur 18'); // the agency text is never re-translated
     await axeClean(page, `${L} detail`);
   });
@@ -145,7 +145,7 @@ test('E80 business owner: answers, explained match, save, self-reported tracking
 
   // Save and track.
   await card(page, slug).getByRole('button', { name: new RegExp(t('en', 'card.save')) }).click();
-  await expect(page.getByText(t('en', 'ok.saved')).first()).toBeVisible();
+  await expect(card(page, slug).locator('.form-message-slot')).toContainText(t('en', 'ok.saved'));
   await page.goto('/en/business-help/saved');
   const saved = page.locator(`[data-programme="${slug}"]`);
   await expect(saved).toContainText(`SPUMI ${tag}`);

@@ -20,7 +20,10 @@
     },
     "find": {
       "categoryLabel": "Jenis bantuan",
-      "anyCategory": "Semua jenis"
+      "anyCategory": "Semua jenis",
+      "searchLabel": "Cari program",
+      "searchPlaceholder": "Nama program, contohnya SPUMI",
+      "searchButton": "Cari"
     },
     "dash": {
       "recommended": "Disyorkan untuk perniagaan anda",

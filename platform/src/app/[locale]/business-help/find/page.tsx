@@ -32,6 +32,7 @@ export default async function FindPage({
   const one = (k: string) => (typeof sp[k] === 'string' ? (sp[k] as string) : undefined);
   const need = parseNeed(one('need'));
   const category = (CATEGORIES as readonly string[]).includes(one('category') ?? '') ? (one('category') as string) : null;
+  const q = (one('q') ?? '').trim().slice(0, 80);
   const t = await getTranslations({ locale, namespace: 'gov' });
   const { supabase, user } = await getOptionalUser();
 
@@ -45,7 +46,7 @@ export default async function FindPage({
   const savedRes = supabase && org ? await listGovSaved(supabase, org.org.id) : null;
   const savedIds = new Set(savedRes?.ok ? savedRes.data.map((s) => s.programme_id) : []);
 
-  const listRes = supabase ? await listGovProgrammes(supabase, { limit: 100, category }) : null;
+  const listRes = supabase ? await listGovProgrammes(supabase, { limit: 100, category, q }) : null;
   const all = listRes?.ok ? listRes.data : [];
   const types = need ? NEED_TO_FUNDING[need] : null;
   const rows = types ? all.filter((p) => p.funding_type && types.includes(p.funding_type)) : all;
@@ -59,13 +60,14 @@ export default async function FindPage({
   );
 
   const href = (over: { need?: string | null; category?: string | null }) => {
-    const q = new URLSearchParams();
+    const qs0 = new URLSearchParams();
     const n = over.need === undefined ? need : over.need;
     const c = over.category === undefined ? category : over.category;
-    if (n) q.set('need', n);
-    if (c) q.set('category', c);
-    if (org) q.set('org', org.org.id);
-    const qs = q.toString();
+    if (n) qs0.set('need', n);
+    if (c) qs0.set('category', c);
+    if (q) qs0.set('q', q);
+    if (org) qs0.set('org', org.org.id);
+    const qs = qs0.toString();
     return `/business-help/find${qs ? `?${qs}` : ''}`;
   };
 
@@ -77,6 +79,15 @@ export default async function FindPage({
           {t('find.saved')}
         </p>
       ) : null}
+      <form action={`/${locale}/business-help/find`} method="get" role="search" aria-label={t('find.searchLabel')} className="link-row">
+        {need ? <input type="hidden" name="need" value={need} /> : null}
+        {category ? <input type="hidden" name="category" value={category} /> : null}
+        {org ? <input type="hidden" name="org" value={org.org.id} /> : null}
+        <label htmlFor="gov-q" className="p5b-sr">{t('find.searchLabel')}</label>
+        <input id="gov-q" name="q" type="search" maxLength={80} defaultValue={q} placeholder={t('find.searchPlaceholder')} />
+        <button type="submit" className="btn btn-secondary">{t('find.searchButton')}</button>
+      </form>
+
       <nav aria-label={t('find.step1')} className="link-row">
         <Link href={href({ need: null })} locale={locale} className={need ? 'btn btn-secondary' : 'btn btn-primary'} aria-current={need ? undefined : 'page'}>
           {t('find.anyNeed')}
