@@ -91,11 +91,11 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await ap.goto('/en/directory');
   await ap.locator('#q').fill(tag);
   await ap.getByRole('button', { name: t('dir.search'), exact: true }).click();
-  const card = ap.locator('li.card').filter({ hasText: bizName });
+  const card = ap.locator('a.biz').filter({ hasText: bizName });
   await expect(card).toBeVisible();
-  await expect(card).toContainText(t('dir.notReviewed'));
+  await expect(card).toContainText(t('dir2.inReview'));
   await expectNoHorizontalScroll(ap);
-  await card.getByRole('link', { name: bizName }).click();
+  await card.click();
   await expect(ap.getByRole('heading', { level: 1 })).toHaveText(bizName);
   await expect(ap.locator('main')).toContainText(phone);
   await expect(ap.locator('main')).toContainText(t('dir.reviewLimit'));
@@ -150,7 +150,8 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await expect(row).toBeVisible();
   await expect(row).toContainText(t('inbox.status.invited'));
   await axe(sp, 'seller inbox');
-  await row.getByRole('link', { name: reqTitle }).click();
+  await row.click(); // the redesigned inbox opens a detail drawer; its full-page link leads to the request
+  await sp.getByRole('link', { name: t('biz2.board.fullPage') }).click();
   await expect(sp.locator('main')).toContainText('embroidered logo');
   await expect(sp.locator('main')).not.toContainText('0123456789'); // contact only after the seller replies
   await sp.locator('#note-i').fill('We can do this in three weeks.');
@@ -220,7 +221,7 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await expect(ap.locator('main')).toContainText(tt('match.status.interested'));
   await axe(ap, 'request detail (ta)');
   await sp.goto(orgPath('ta', seller.orgId, '/requests'));
-  await expect(sp.getByRole('heading', { level: 1 })).toHaveText(tt('inbox.title'));
+  await expect(sp.getByRole('heading', { level: 1 })).toHaveText(tt('biz2.board.title'));
   await axe(sp, 'seller inbox (ta)');
   await sp.goto(orgPath('ta', seller.orgId, '/listing'));
   await expect(sp.getByRole('heading', { level: 1 })).toHaveText(tt('listing.title'));
@@ -283,14 +284,14 @@ test('E41 moderation: changes requested, resubmitted, approved, then suspended a
   const pub = await freshContext(browser, page);
   const pp = await pub.newPage();
   await pp.goto(`/en/directory?q=${encodeURIComponent(bizName)}`);
-  await expect(pp.locator('li.card').filter({ hasText: bizName })).toBeVisible();
+  await expect(pp.locator('a.biz').filter({ hasText: bizName })).toBeVisible();
 
   // Editing the live page keeps the approved version public until re-approved.
   const v2 = Number((await sql(`select draft_version from public.business_listings where org_id = $1`, [seller.orgId]))[0]!.draft_version);
   expect((await sc.client.rpc('save_listing_draft', { p_org: seller.orgId, p_data: { headline: 'A brand new headline that is not reviewed' }, p_expected_version: v2 })).error).toBeNull();
   await pp.reload();
-  await expect(pp.locator('li.card').filter({ hasText: bizName })).toContainText('Catering for small events');
-  await expect(pp.locator('li.card').filter({ hasText: bizName })).not.toContainText('A brand new headline');
+  await expect(pp.locator('a.biz').filter({ hasText: bizName })).toContainText('Catering for small events');
+  await expect(pp.locator('a.biz').filter({ hasText: bizName })).not.toContainText('A brand new headline');
 
   // Suspend from the admin page; the public listing disappears and the seller is told.
   await page.goto(`/en/admin/listings/${seller.orgId}`);

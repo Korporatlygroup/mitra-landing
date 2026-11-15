@@ -1,5 +1,6 @@
 'use server';
 
+import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
 import { getSiteUrl } from '@/lib/env';
 import { parseForm } from '@/lib/form';
@@ -34,6 +35,12 @@ export async function startReviewAction(_prev: FormState, formData: FormData): P
 
 /** Saves the decision (the database enforces permission, conflict of interest and the expected version). */
 export async function decideAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  // Checklist ticks from the review drawer are written into the reason, so they end up in the audit trail.
+  const checks = formData.getAll('checks').map(String).filter(Boolean);
+  if (checks.length > 0) {
+    const tt = await getTranslations({ locale: String(formData.get('locale') ?? 'en') });
+    formData.set('reason', `${String(formData.get('reason') ?? '').trim()}\n${tt('adm2.checkedPrefix')}: ${checks.join('; ')}`.slice(0, 1000));
+  }
   const p = parseForm(decisionSchema, formData);
   if (!p.ok) return failure(p.errorKey, p.values);
   const { supabase, user } = await currentUser();

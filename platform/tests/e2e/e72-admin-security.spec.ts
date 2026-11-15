@@ -119,7 +119,8 @@ test('E72 every admin screen and RPC refuses the wrong people (partner, buyer, v
         await expect(p.locator('main')).not.toContainText('E72 waiting supplier');
         await expect(p.locator('main')).not.toContainText('E72 secret lamp');
         await expect(p.locator('main')).not.toContainText('Ravi Kumar');
-        await expect(p.locator('main form')).toHaveCount(0);
+        // Scoped to the page content, not the admin shell's own sidebar (which carries its own sign-out form).
+        await expect(p.locator('.ad-main form')).toHaveCount(0);
       }
     }
     await ctx.close();
@@ -263,7 +264,7 @@ test('E72 every admin screen and RPC refuses the wrong people (partner, buyer, v
   await sPage.goto(`/en/admin/catalogue/suppliers/${supC.id}`);
   await expect(sPage.getByTestId('supplier-unavailable')).toBeVisible();
   await expect(sPage.locator('main')).not.toContainText('Ravi Kumar');
-  await expect(sPage.locator('main form')).toHaveCount(0);
+  await expect(sPage.locator('.ad-main form')).toHaveCount(0);
   await sPage.goto('/en/admin/catalogue/partners');
   const pcCard = sPage.locator('[data-testid=partner-card]').filter({ hasText: pcName });
   await expect(pcCard).toContainText(t('p5admin.common.conflict'));

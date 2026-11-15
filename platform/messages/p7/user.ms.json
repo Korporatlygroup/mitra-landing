@@ -1,0 +1,141 @@
+{
+  "gov": {
+    "dstatus": {
+      "open": "Dibuka",
+      "upcoming": "Akan dibuka",
+      "dates_not_confirmed": "Belum disahkan (tarikh tidak diterbitkan)",
+      "under_review": "Sedang disemak oleh INOK",
+      "stale": "Belum disahkan (perlu disemak semula)",
+      "closed": "Ditutup",
+      "archived": "Tidak lagi disenaraikan"
+    },
+    "category": {
+      "grants_funding": "Geran dan pembiayaan",
+      "business_financing": "Pembiayaan perniagaan",
+      "training": "Latihan dan peningkatan kemahiran",
+      "advisory": "Khidmat nasihat perniagaan",
+      "entrepreneurship": "Pembangunan keusahawanan",
+      "digital": "Bantuan digital dan teknologi",
+      "other": "Sokongan perniagaan lain"
+    },
+    "find": {
+      "categoryLabel": "Jenis bantuan",
+      "anyCategory": "Semua jenis",
+      "searchLabel": "Cari program",
+      "searchPlaceholder": "Nama program, contohnya SPUMI",
+      "searchButton": "Cari"
+    },
+    "dash": {
+      "recommended": "Disyorkan untuk perniagaan anda",
+      "recommendedHint": "Program yang syarat terbitannya sepadan dengan maklumat anda, atau yang memerlukan sedikit maklumat lagi. Ini hanya panduan.",
+      "recommendedEmpty": "Belum ada cadangan. Jawab beberapa soalan di halaman cari dan kami akan membandingkan perniagaan anda dengan setiap program.",
+      "needOrg": "Cipta profil perniagaan untuk melihat bahagian ini.",
+      "needSignIn": "Log masuk untuk melihat bahagian ini.",
+      "fresh": "Peluang baharu",
+      "freshEmpty": "Tiada program disahkan dalam 30 hari lalu.",
+      "closing": "Hampir tutup",
+      "closingHint": "Hanya program dengan tarikh tutup yang disahkan dalam 30 hari akan datang.",
+      "closingEmpty": "Tiada tarikh tutup yang disahkan dalam 30 hari akan datang.",
+      "saved": "Program disimpan",
+      "savedEmpty": "Anda belum menyimpan sebarang program.",
+      "applications": "Permohonan saya",
+      "applicationsEmpty": "Belum ada permohonan direkodkan. Tukar status program yang disimpan apabila anda mula membuat persediaan.",
+      "training": "Latihan dan sokongan perniagaan",
+      "trainingEmpty": "Belum ada program latihan atau sokongan perniagaan yang disahkan."
+    },
+    "match": {
+      "potential_match": "Berkemungkinan memenuhi semua syarat yang disenaraikan",
+      "more_information_needed": "Tidak dapat dinilai dengan maklumat yang ada",
+      "known_requirement_not_met": "Mungkin tidak memenuhi sesetengah syarat",
+      "unconfirmed_programme": "Tidak dapat dinilai: program belum disahkan",
+      "for_organisations": "Untuk organisasi, bukan untuk pemilik kedai individu",
+      "explain": {
+        "potential_match": "Jawapan anda sepadan dengan syarat yang dapat kami semak. Agensi membuat keputusan akhir.",
+        "more_information_needed": "Kami perlukan sedikit maklumat lagi untuk membandingkan perniagaan anda dengan program ini.",
+        "known_requirement_not_met": "Berdasarkan jawapan anda, sekurang-kurangnya satu syarat yang diterbitkan nampaknya tidak dipenuhi.",
+        "unconfirmed_programme": "Status atau syarat semasa program ini tidak dapat disahkan. Sila semak dengan agensi.",
+        "for_organisations": "Program ini ditujukan kepada persatuan, NGO atau penyedia latihan, jadi kami tidak membandingkannya dengan perniagaan individu."
+      },
+      "rule": {
+        "met": "Dipenuhi",
+        "not_met": "Nampaknya tidak dipenuhi",
+        "unknown": "Perlukan maklumat",
+        "agency": "Perlu pengesahan secara manual"
+      },
+      "reason": {
+        "meets": "Jawapan anda memenuhi syarat ini.",
+        "does_not_meet": "Jawapan anda tidak memenuhi syarat ini.",
+        "not_answered": "Anda belum menjawab soalan ini.",
+        "agency_only": "Hanya agensi boleh menyemak perkara ini. INOK tidak dapat menilainya."
+      },
+      "usedLabel": "Maklumat yang digunakan",
+      "usedNone": "tiada daripada jawapan anda",
+      "usedVoluntary": "jawapan pilihan anda (dirahsiakan)",
+      "usedValue": "{field}: {value}",
+      "source": "Sumber rasmi",
+      "counts": "{met} dipenuhi, {notMet} tidak dipenuhi, {unknown} perlukan maklumat, {agency} perlu pengesahan manual.",
+      "disclaimer": "Penilaian awal sahaja. Agensi rasmi menentukan kelayakan dan kelulusan.",
+      "signInButton": "Log masuk untuk menyemak"
+    },
+    "detail": {
+      "notConfirmed": "Belum disahkan",
+      "closedNote": "Program ini telah ditutup atau tarikh tutupnya telah lepas. Jangan merancang berdasarkannya melainkan agensi mengumumkannya semula.",
+      "checkButton": "Semak sama ada ini sesuai untuk saya",
+      "applyOfficial": "Mohon di laman web rasmi",
+      "offers": "Apa yang ditawarkan",
+      "type": "Jenis bantuan",
+      "originalWording": "Perkataan asal daripada agensi ({language})",
+      "fallbackNote": "Agensi menerbitkan teks ini dalam {language} sahaja. INOK tidak menterjemahkannya. Fakta ringkas di atas ditulis oleh INOK dan bukan terjemahan rasmi.",
+      "lang": {
+        "ms": "Bahasa Melayu",
+        "en": "Bahasa Inggeris"
+      },
+      "whoFor": "Untuk siapa",
+      "beneficiaryLabel": "Ditujukan kepada",
+      "beneficiary": {
+        "entrepreneur": "Usahawan individu dan perniagaan kecil",
+        "organisation": "Organisasi (persatuan, NGO, penyedia latihan)",
+        "both": "Kedua-dua perniagaan individu dan organisasi"
+      },
+      "sectors": "Sektor perniagaan",
+      "states": "Kawasan yang terpakai",
+      "organisationNote": "Program ini bukan geran yang boleh dimohon terus oleh pemilik kedai.",
+      "documentsToPrepare": "Dokumen untuk disediakan",
+      "dates": "Tarikh berkaitan",
+      "opensLabel": "Dibuka",
+      "closesLabel": "Ditutup",
+      "sourceTitle": "Sumber maklumat ini",
+      "notVerifiedYet": "Belum disahkan oleh INOK."
+    },
+    "saved": {
+      "status": {
+        "interested": "Berminat",
+        "preparing": "Menyediakan dokumen",
+        "ready_to_apply": "Sedia untuk memohon",
+        "applied_externally": "Telah memohon",
+        "awaiting_decision": "Menunggu maklum balas",
+        "outcome_recorded": "Keputusan diterima",
+        "not_interested": "Ditutup, tidak diteruskan lagi"
+      },
+      "reportedNote": "Status dilaporkan oleh anda, tidak diselaraskan dengan agensi kerajaan.",
+      "officialInstructions": "Cara memohon secara rasmi"
+    },
+    "settings": {
+      "reminderDays": "Peringatan tarikh tutup",
+      "reminderDaysHint": "Kami hanya mengingatkan anda tentang tarikh tutup yang telah disahkan oleh agensi. Jika tarikh belum disahkan, tiada peringatan.",
+      "daysBefore": "{n} hari sebelum tarikh tutup",
+      "daysRequired": "Pilih sekurang-kurangnya satu hari peringatan, atau matikan kemas kini tarikh tutup di atas."
+    },
+    "notif": {
+      "recheck": "Program yang anda simpan perlu disemak semula. Statusnya tidak dapat disahkan baru-baru ini."
+    }
+  },
+  "errors": {
+    "programme_exists": "Program dengan nama ini sudah wujud untuk sumber ini. Sunting program itu sebaliknya.",
+    "no_change": "Tiada perubahan berbanding versi yang diterbitkan.",
+    "duplicate": "Perubahan yang sama ini sudah menunggu semakan.",
+    "result": "Keputusan semakan itu tidak boleh digunakan.",
+    "status": "Pilihan itu tidak tersedia.",
+    "not_enabled": "Sumber ini dimatikan. Hidupkan dahulu."
+  }
+}

@@ -138,8 +138,8 @@ select is_empty(
 select is(
   (select array_agg(p.proname::text order by p.proname) from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname in ('public', 'private') and has_function_privilege('anon', p.oid, 'EXECUTE')),
-  array['compare_items', 'get_catalogue_item', 'get_listing', 'get_product_media_access', 'list_published_business_reviews', 'search_catalogue', 'search_listings'],
-  'S7.3 anon can execute only the three public directory reads and the four public catalogue reads, nothing else in public or private');
+  array['compare_items', 'get_catalogue_item', 'get_listing', 'get_product_media_access', 'gov_get_programme', 'gov_list_programmes', 'list_published_business_reviews', 'news_deadlines', 'news_get', 'news_list', 'public_biz_products', 'search_catalogue', 'search_listings'],
+  'S7.3 anon can execute only the three public directory reads, the four public catalogue reads the Phase 7 public programme list and the redesign public reads (news feed, live business products), nothing else in public or private');
 
 select is_empty(
   $$ select n.nspname || '.' || c.relname from pg_class c join pg_namespace n on n.oid = c.relnamespace
@@ -240,8 +240,21 @@ select is(
         'change_sourcing_status(p_rfq uuid, p_action text, p_expected_version integer)',
         'authorize_sourcing_document_upload(p_rfq uuid, p_partner uuid)',
         'list_sourcing_documents(p_rfq uuid, p_partner uuid)', 'get_sourcing_document_access(p_doc uuid)',
-        'remove_sourcing_document(p_doc uuid)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 141 allow-listed public RPCs');
+        'remove_sourcing_document(p_doc uuid)',
+        'gov_decide_proposal(p_proposal uuid, p_decision text, p_reason text, p_expected_status text)', 'gov_decide_source_change(p_change uuid, p_approve boolean, p_reason text)',
+        'gov_list_programmes(p_funding_type text, p_query text, p_limit integer, p_offset integer, p_category text)', 'gov_propose_manual(p_source uuid, p_programme uuid, p_candidate jsonb, p_reason text)', 'gov_review_page_change(p_change uuid, p_status text, p_note text)', 'gov_request_recheck(p_source uuid, p_reason text)', 'gov_propose_source_change(p_source uuid, p_change jsonb, p_reason text)',
+        'gov_register_source(p_agency_code text, p_agency_name text, p_domain text, p_name text, p_type text, p_adapter text, p_hosts text[], p_urls text[], p_method text, p_restrictions text)',
+        'gov_set_programme_state(p_programme uuid, p_state text, p_reason text)', 'gov_set_setting(p_key text, p_enabled boolean, p_reason text)',
+        'gov_get_profile(p_org uuid)', 'gov_save_profile(p_org uuid, p_data jsonb, p_expected_version integer)', 'gov_save_programme(p_org uuid, p_programme uuid)',
+        'gov_unsave_programme(p_org uuid, p_programme uuid)', 'gov_update_tracking(p_org uuid, p_programme uuid, p_data jsonb, p_expected_version integer)',
+        'gov_list_saved(p_org uuid)', 'gov_get_programme(p_slug text)', 'gov_get_prefs()', 'gov_set_prefs(p_data jsonb)',
+        'biz_product_save(p_org uuid, p_id uuid, p_data jsonb, p_expected_version integer)', 'biz_product_submit(p_org uuid, p_id uuid, p_expected_version integer)', 'biz_product_archive(p_org uuid, p_id uuid)',
+        'admin_biz_products(p_status text)', 'admin_biz_product_decide(p_id uuid, p_decision text, p_note text, p_expected_version integer)', 'public_biz_products(p_slug text)',
+        'news_list(p_category text, p_language text, p_sector text, p_state text, p_saved_only boolean, p_limit integer, p_offset integer)', 'news_get(p_id uuid)', 'news_deadlines(p_limit integer)',
+        'news_save(p_id uuid)', 'news_unsave(p_id uuid)', 'news_get_prefs()', 'news_set_prefs(p_data jsonb)', 'admin_news_list()', 'admin_news_get(p_id uuid)',
+        'admin_news_save(p_id uuid, p_data jsonb, p_expected_version integer)', 'admin_news_set_status(p_id uuid, p_status text, p_publish_at timestamp with time zone, p_expected_version integer)',
+        'dash_dismiss(p_org uuid, p_key text)', 'dash_active_dismissals(p_org uuid)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 179 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -255,13 +268,8 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'service_auth_attempt', 'service_complete_sourcing_cleanup', 'service_list_sourcing_cleanup',
-        'service_list_unscanned_documents', 'service_list_unscanned_product_media', 'service_list_unscanned_supplier_documents',
-        'service_org_recipient_emails', 'service_queue_sourcing_cleanup', 'service_record_auth_event', 'service_record_rejected_upload',
-        'service_register_document', 'service_register_product_media', 'service_register_sourcing_document',
-        'service_register_supplier_document', 'service_send_sourcing_reminders', 'service_set_product_media_scan',
-        'service_set_scan_result', 'service_set_supplier_document_scan'],
-  'S7.8 service_role executes exactly the 19 allow-listed service_* / bootstrap functions from public');
+  array['bootstrap_first_admin', 'gov_claim_jobs', 'gov_complete_job', 'gov_dispatch_outbox', 'gov_enqueue_due_jobs', 'gov_enqueue_reminders', 'gov_fail_job', 'gov_job_source', 'gov_last_validators', 'gov_mark_email', 'gov_mark_missing', 'gov_mark_unchanged', 'gov_record_page', 'gov_submit_candidate', 'news_digest_candidates', 'news_digest_claim', 'news_digest_posts', 'news_digest_release', 'service_auth_attempt', 'service_complete_sourcing_cleanup', 'service_list_sourcing_cleanup', 'service_list_unscanned_documents', 'service_list_unscanned_product_media', 'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_queue_sourcing_cleanup', 'service_record_auth_event', 'service_record_rejected_upload', 'service_register_document', 'service_register_product_media', 'service_register_sourcing_document', 'service_register_supplier_document', 'service_send_sourcing_reminders', 'service_set_product_media_scan', 'service_set_scan_result', 'service_set_supplier_document_scan'],
+  'S7.8 service_role executes exactly the 36 allow-listed service_* / bootstrap / worker functions from public (8 up to Phase 4, 6 from Phase 5, 9 from Phase 6, 10 Phase 7 worker RPCs, 4 weekly digest RPCs)');
 
 select is_empty(
   $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -340,7 +348,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  65, 'S6.6 inventory: exactly the 65 expected public tables exist (54 through Phase 5, 11 in Phase 6)');
+  87, 'S6.6 inventory: exactly the 87 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign; new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

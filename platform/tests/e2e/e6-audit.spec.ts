@@ -56,6 +56,7 @@ test('E6 audit page lists login, org, membership, invitation, mfa and bootstrap 
 
 test('E6 the audit list is read-only: no form can change entries', async ({ page }) => {
   await adminLogin(page, '/en/admin/audit');
-  await expect(page.locator('main form')).toHaveCount(1); // only the GET filter form
-  await expect(page.locator('main form')).toHaveAttribute('method', /get/i);
+  // Scoped to the page content, not the admin shell's own sidebar (which carries its own sign-out form).
+  await expect(page.locator('.ad-main form:not([role=search])')).toHaveCount(1); // only the GET filter form
+  await expect(page.locator('.ad-main form:not([role=search])')).toHaveAttribute('method', /get/i);
 });

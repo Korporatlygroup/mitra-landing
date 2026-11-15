@@ -1,0 +1,141 @@
+{
+  "gov": {
+    "dstatus": {
+      "open": "Open",
+      "upcoming": "Opening soon",
+      "dates_not_confirmed": "Not confirmed (dates not published)",
+      "under_review": "Under review by INOK",
+      "stale": "Not confirmed (needs checking again)",
+      "closed": "Closed",
+      "archived": "No longer listed"
+    },
+    "category": {
+      "grants_funding": "Grants and funding",
+      "business_financing": "Business financing",
+      "training": "Training and upskilling",
+      "advisory": "Business advisory",
+      "entrepreneurship": "Entrepreneurship development",
+      "digital": "Digital and technology help",
+      "other": "Other business support"
+    },
+    "find": {
+      "categoryLabel": "Type of help",
+      "anyCategory": "All types",
+      "searchLabel": "Search programmes",
+      "searchPlaceholder": "Programme name, for example SPUMI",
+      "searchButton": "Search"
+    },
+    "dash": {
+      "recommended": "Recommended for your business",
+      "recommendedHint": "Programmes whose published conditions fit what you told us, or that need a little more information. This is a guide only.",
+      "recommendedEmpty": "Nothing to suggest yet. Answer a few questions on the find page and we will compare your business with each programme.",
+      "needOrg": "Create a business profile to see this.",
+      "needSignIn": "Sign in to see this.",
+      "fresh": "New opportunities",
+      "freshEmpty": "No programme was confirmed in the last 30 days.",
+      "closing": "Closing soon",
+      "closingHint": "Only programmes with a confirmed closing date in the next 30 days.",
+      "closingEmpty": "No confirmed closing dates in the next 30 days.",
+      "saved": "Saved programmes",
+      "savedEmpty": "You have not saved a programme yet.",
+      "applications": "My applications",
+      "applicationsEmpty": "No applications recorded yet. Change the status of a saved programme when you start preparing.",
+      "training": "Training and business support",
+      "trainingEmpty": "No training or business support programme is confirmed yet."
+    },
+    "match": {
+      "potential_match": "Potentially meets all listed conditions",
+      "more_information_needed": "Cannot assess with available information",
+      "known_requirement_not_met": "May not meet certain conditions",
+      "unconfirmed_programme": "Cannot assess: programme not confirmed",
+      "for_organisations": "For organisations, not for individual shop owners",
+      "explain": {
+        "potential_match": "Your answers fit the conditions we could check. The agency makes the final decision.",
+        "more_information_needed": "We need a little more information to compare your business with this programme.",
+        "known_requirement_not_met": "Based on your answers, at least one published condition does not seem to be met.",
+        "unconfirmed_programme": "The current status or rules of this programme could not be confirmed. Check with the agency.",
+        "for_organisations": "This programme is meant for associations, NGOs or training providers, so we do not compare it with an individual business."
+      },
+      "rule": {
+        "met": "Met",
+        "not_met": "Does not appear met",
+        "unknown": "Need information",
+        "agency": "Manual verification required"
+      },
+      "reason": {
+        "meets": "Your answer satisfies this condition.",
+        "does_not_meet": "Your answer does not satisfy this condition.",
+        "not_answered": "You have not answered this question yet.",
+        "agency_only": "Only the agency can check this. INOK cannot assess it."
+      },
+      "usedLabel": "Information used",
+      "usedNone": "nothing from your answers",
+      "usedVoluntary": "your optional answer (kept private)",
+      "usedValue": "{field}: {value}",
+      "source": "Official source",
+      "counts": "{met} met, {notMet} not met, {unknown} need information, {agency} need manual verification.",
+      "disclaimer": "Indicative assessment only. The official agency determines eligibility and approval.",
+      "signInButton": "Sign in to check"
+    },
+    "detail": {
+      "notConfirmed": "Not confirmed",
+      "closedNote": "This programme is closed or its closing date has passed. Do not plan around it unless the agency announces it again.",
+      "checkButton": "Check whether this suits me",
+      "applyOfficial": "Apply on the official website",
+      "offers": "What it offers",
+      "type": "Type of help",
+      "originalWording": "Original wording from the agency ({language})",
+      "fallbackNote": "The agency published this text in {language} only. INOK has not translated it. The simple facts above are written by INOK and are not an official translation.",
+      "lang": {
+        "ms": "Bahasa Melayu",
+        "en": "English"
+      },
+      "whoFor": "Who it is for",
+      "beneficiaryLabel": "Meant for",
+      "beneficiary": {
+        "entrepreneur": "Individual entrepreneurs and small businesses",
+        "organisation": "Organisations (associations, NGOs, training providers)",
+        "both": "Both individual businesses and organisations"
+      },
+      "sectors": "Business sectors",
+      "states": "Where it applies",
+      "organisationNote": "This programme is not a grant a shop owner can apply for directly.",
+      "documentsToPrepare": "Documents to prepare",
+      "dates": "Relevant dates",
+      "opensLabel": "Opens",
+      "closesLabel": "Closes",
+      "sourceTitle": "Where this comes from",
+      "notVerifiedYet": "Not confirmed by INOK yet."
+    },
+    "saved": {
+      "status": {
+        "interested": "Interested",
+        "preparing": "Preparing documents",
+        "ready_to_apply": "Ready to apply",
+        "applied_externally": "Applied",
+        "awaiting_decision": "Waiting for response",
+        "outcome_recorded": "Result received",
+        "not_interested": "Closed, no longer pursuing"
+      },
+      "reportedNote": "Status reported by you, not synchronized with the government agency.",
+      "officialInstructions": "How to apply officially"
+    },
+    "settings": {
+      "reminderDays": "Deadline reminders",
+      "reminderDaysHint": "We only remind you about deadlines the agency has confirmed. When a date is not confirmed, there is no reminder.",
+      "daysBefore": "{n} days before the deadline",
+      "daysRequired": "Choose at least one reminder day, or turn off deadline updates above."
+    },
+    "notif": {
+      "recheck": "A programme you saved needs rechecking. Its current status could not be confirmed recently."
+    }
+  },
+  "errors": {
+    "programme_exists": "A programme with this name already exists for this source. Edit it instead.",
+    "no_change": "Nothing was changed compared with the published version.",
+    "duplicate": "This same change is already waiting for review.",
+    "result": "That check result cannot be used.",
+    "status": "That choice is not available.",
+    "not_enabled": "This source is switched off. Enable it first."
+  }
+}

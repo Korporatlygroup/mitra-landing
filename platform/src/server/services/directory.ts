@@ -234,15 +234,16 @@ export interface ReportRow {
 
 export function searchListings(
   db: Db,
-  f: { q?: string; category?: string; state?: string; page?: number },
+  f: { q?: string; category?: string; state?: string; page?: number; limit?: number },
 ): Promise<Result<SearchResult>> {
   const page = Math.max(1, Math.min(f.page ?? 1, 80));
+  const limit = Math.max(1, Math.min(f.limit ?? PAGE_SIZE, 24));
   return rpc<SearchResult>(db, 'search_listings', {
     p_q: f.q || null,
     p_category: f.category || null,
     p_state: f.state || null,
-    p_limit: PAGE_SIZE,
-    p_offset: (page - 1) * PAGE_SIZE,
+    p_limit: limit,
+    p_offset: (page - 1) * limit,
   });
 }
 

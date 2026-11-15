@@ -6,6 +6,7 @@ export default defineConfig({
   test: {
     projects: [
       { extends: true, test: { name: 'unit', include: ['tests/unit/**/*.test.ts'], environment: 'node' } },
+      { extends: true, test: { name: 'live', include: ['tests/live/**/*.test.ts'], environment: 'node', testTimeout: 90000 } },
       {
         extends: true,
         test: {

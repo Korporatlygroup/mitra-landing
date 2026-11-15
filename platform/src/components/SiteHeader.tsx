@@ -1,66 +1,42 @@
 import { getTranslations } from 'next-intl/server';
 import { Suspense } from 'react';
-import { signOutAction } from '@/app/[locale]/account/actions';
 import { Link } from '@/i18n/navigation';
+import AccountMenu from './AccountMenu';
 import LocaleSwitcher from './LocaleSwitcher';
+import PublicNav from './PublicNav';
+import Logo from './ui/Logo';
+import { initialsOf } from './ui/Tag';
 
-export default async function SiteHeader({ locale, signedIn }: { locale: string; signedIn: boolean }) {
+/** Public top bar: logo, four nav pills, language switch, then Sign in / List your business, or My business and the account menu. */
+export default async function SiteHeader({ locale, user }: { locale: string; user: { name: string; home: string } | null }) {
   const t = await getTranslations({ locale });
   return (
-    <header className="site-header">
-      <div className="header-inner">
-        <Link href="/" locale={locale} className="brand">
-          {t('common.appName')}
-        </Link>
-        <Suspense fallback={null}>
-          <LocaleSwitcher />
-        </Suspense>
-        <nav aria-label={t('common.mainNav')} className="main-nav">
-          <Link href="/directory" locale={locale}>
-            {t('nav.find')}
-          </Link>
-          <Link href="/catalogue" locale={locale}>
-            {t('p5common.nav.catalogue')}
-          </Link>
-          {signedIn ? <Link href="/sourcing" locale={locale}>{t('p6.nav')}</Link> : null}
-          {signedIn ? (
+    <header className="pub-top">
+      <div className="pub-wrap">
+        <Logo locale={locale} label={t('ws.homeLabel')} />
+        <PublicNav />
+        <div className="pub-actions">
+          <Suspense fallback={null}>
+            <LocaleSwitcher />
+          </Suspense>
+          {user ? (
             <>
-              <Link href="/requests" locale={locale}>
-                {t('nav.requests')}
+              <Link href={user.home} className="btn btn-dark btn-sm">
+                {t('ws.myBusiness')}
               </Link>
-              <Link href="/catalogue/saved" locale={locale}>
-                {t('p5buyer.nav.saved')}
-              </Link>
-              <Link href="/catalogue/requests" locale={locale}>
-                {t('p5buyer.nav.requests')}
-              </Link>
-              <Link href="/orgs" locale={locale}>
-                {t('nav.organisations')}
-              </Link>
-              <Link href="/notifications" locale={locale}>
-                {t('nav.notifications')}
-              </Link>
-              <Link href="/account" locale={locale}>
-                {t('nav.account')}
-              </Link>
-              <form action={signOutAction}>
-                <input type="hidden" name="locale" value={locale} />
-                <button type="submit" className="btn btn-link">
-                  {t('nav.signOut')}
-                </button>
-              </form>
+              <AccountMenu initials={initialsOf(user.name)} name={user.name} />
             </>
           ) : (
             <>
-              <Link href="/login" locale={locale}>
+              <Link href="/login" className="btn btn-secondary btn-sm">
                 {t('nav.signIn')}
               </Link>
-              <Link href="/signup" locale={locale}>
-                {t('nav.signUp')}
+              <Link href="/signup" className="btn btn-dark btn-sm">
+                {t('ws.listYourBusiness')}
               </Link>
             </>
           )}
-        </nav>
+        </div>
       </div>
     </header>
   );

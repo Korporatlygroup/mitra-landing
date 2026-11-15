@@ -1,15 +1,18 @@
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import ActionForm from '@/components/ActionForm';
-import { Field, SelectField, TextArea } from '@/components/Field';
+import { SelectField, TextArea } from '@/components/Field';
 import ListingView from '@/components/ListingView';
+import EnquiryDialog from '@/components/public/EnquiryDialog';
+import Icon from '@/components/ui/Icon';
 import { Link } from '@/i18n/navigation';
 import { eligibleBuyerOrgs } from '@/lib/buyer-orgs';
 import { REPORT_REASONS } from '@/lib/schemas';
 import { getListing } from '@/server/services/directory';
+import { listPublicProducts } from '@/server/services/biz-products';
 import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
-import { reportAction, sendEnquiryAction } from '../actions';
+import { reportAction } from '../actions';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; slug: string }> }) {
   const { locale, slug } = await params;
@@ -27,62 +30,57 @@ export default async function ListingPage({ params }: { params: Promise<{ locale
   const r = await getListing(supabase, slug);
   if (!r.ok) notFound();
   const b = r.data;
-  const { data: publishedReviews } = await supabase.rpc('list_published_business_reviews', { p_slug: slug });
+  const [{ data: publishedReviews }, products] = await Promise.all([supabase.rpc('list_published_business_reviews', { p_slug: slug }), listPublicProducts(supabase, slug)]);
 
   const memberships = user ? await listMyMemberships(supabase, user.id) : [];
   const orgs = eligibleBuyerOrgs(memberships);
   const next = encodeURIComponent(`/${locale}/directory/${slug}`);
 
+  const reviewList =
+    (publishedReviews?.length ?? 0) > 0 ? (
+      <section aria-labelledby="reviews-h">
+        <h2 id="reviews-h" style={{ marginTop: 0 }}>
+          {t('p4.publishedReviews')}
+        </h2>
+        <ul className="card-list">
+          {publishedReviews!.map((review: { rating: number; review_text: string; seller_response: string | null; created_at: string }, index: number) => (
+            <li key={`${review.created_at}-${index}`} className="card" style={{ boxShadow: 'none' }}>
+              <strong>{review.rating}/5</strong> ·{' '}
+              <time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString(locale)}</time>
+              <p>{review.review_text}</p>
+              {review.seller_response ? (
+                <p>
+                  {t('p4.sellerResponse')}: {review.seller_response}
+                </p>
+              ) : null}
+            </li>
+          ))}
+        </ul>
+      </section>
+    ) : undefined;
+
   return (
     <>
-      <p>
-        <Link href="/directory" locale={locale}>
-          {t('dir.backToResults')}
-        </Link>
-      </p>
-      <ListingView data={b} locale={locale} />
-      {(publishedReviews?.length ?? 0) > 0 ? <section aria-labelledby="reviews-h" className="card">
-        <h2 id="reviews-h">{t('p4.publishedReviews')}</h2>
-        <ul>{publishedReviews!.map((review: { rating: number; review_text: string; seller_response: string | null; created_at: string }, index: number) =>
-          <li key={`${review.created_at}-${index}`}><strong>{review.rating}/5</strong> · <time dateTime={review.created_at}>{new Date(review.created_at).toLocaleDateString(locale)}</time>
-            <p>{review.review_text}</p>{review.seller_response ? <p>{t('p4.sellerResponse')}: {review.seller_response}</p> : null}</li>)}</ul>
-      </section> : null}
+      <ListingView
+        data={{ ...b, slug, products }}
+        locale={locale}
+        back={
+          <Link href="/directory" className="btn btn-secondary btn-sm" style={{ alignSelf: 'flex-start' }}>
+            <Icon name="back" size={16} stroke={2.2} />
+            {t('dir2.back')}
+          </Link>
+        }
+        actions={<EnquiryDialog slug={slug} name={b.name} accepting={b.accepting_requests} signedIn={Boolean(user)} orgs={orgs.map((m) => ({ id: m.org.id, name: m.org.name }))} next={next} />}
+        reviews={reviewList}
+      />
 
-      <section aria-labelledby="enq-h">
-        <h2 id="enq-h">{t('dir.enquiryTitle')}</h2>
-        {!b.accepting_requests ? (
-          <p>{t('dir.busy')}</p>
-        ) : user ? (
-          <ActionForm action={sendEnquiryAction} submitLabel={t('dir.enquirySend')}>
-            <input type="hidden" name="locale" value={locale} />
-            <input type="hidden" name="slug" value={slug} />
-            {orgs.length > 1 ? (
-              <SelectField id="buyerOrgId" name="buyerOrgId" label={t('dir.enquiryAs')} defaultValue={orgs[0].org.id}>
-                {orgs.map((m) => (
-                  <option key={m.org.id} value={m.org.id}>
-                    {m.org.name}
-                  </option>
-                ))}
-              </SelectField>
-            ) : null}
-            <Field id="topic" name="topic" label={t('dir.enquiryTopic')} hint={t('dir.enquiryTopicHint')} required minLength={3} maxLength={200} />
-            <TextArea id="note" name="note" label={t('dir.enquiryNote')} hint={t('dir.enquiryNoteHint')} required maxLength={1000} />
-            <p className="muted">{t('dir.enquiryPrivacy')}</p>
-          </ActionForm>
-        ) : (
-          <p>
-            <Link href={`/login?next=${next}`} locale={locale} className="btn btn-primary">
-              {t('dir.enquirySignIn')}
-            </Link>
-          </p>
-        )}
-      </section>
-
-      <section aria-labelledby="rep-h">
-        <h2 id="rep-h">{t('rep.title')}</h2>
+      <section aria-labelledby="rep-h" className="wide" style={{ marginTop: 28 }}>
+        <h2 id="rep-h" style={{ fontSize: '1rem' }}>
+          {t('rep.title')}
+        </h2>
         {user ? (
-          <details>
-            <summary>{t('rep.open')}</summary>
+          <details className="card">
+            <summary style={{ cursor: 'pointer', minHeight: 44, display: 'flex', alignItems: 'center', fontWeight: 700 }}>{t('rep.open')}</summary>
             <ActionForm action={reportAction} submitLabel={t('rep.send')} variant="secondary">
               <input type="hidden" name="locale" value={locale} />
               <input type="hidden" name="type" value="listing" />
@@ -99,9 +97,7 @@ export default async function ListingPage({ params }: { params: Promise<{ locale
           </details>
         ) : (
           <p>
-            <Link href={`/login?next=${next}`} locale={locale}>
-              {t('rep.signIn')}
-            </Link>
+            <Link href={`/login?next=${next}`}>{t('rep.signIn')}</Link>
           </p>
         )}
       </section>

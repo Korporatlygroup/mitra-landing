@@ -1,5 +1,6 @@
 'use server';
 
+import { getTranslations } from 'next-intl/server';
 import { revalidatePath } from 'next/cache';
 import { eligibleBuyerOrgs } from '@/lib/buyer-orgs';
 import { formToObject, nonSecretValues, parseForm } from '@/lib/form';
@@ -12,6 +13,17 @@ import { createOrg, listMyMemberships } from '@/server/services/orgs';
 
 /** In-app enquiry from a public listing. A buyer organisation is created on first use when the user has none. */
 export async function sendEnquiryAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  // The profile dialog sends quantity / needed-by / details separately; they are written into the one stored message.
+  if (formData.has('details')) {
+    const t = await getTranslations({ locale: String(formData.get('locale') ?? 'en') });
+    const lines: string[] = [];
+    const qty = String(formData.get('quantity') ?? '').trim();
+    const by = String(formData.get('neededBy') ?? '').trim();
+    if (qty) lines.push(`${t('dir2.dialogQty')}: ${qty}`);
+    if (by) lines.push(`${t('dir2.dialogBy')}: ${by}`);
+    lines.push(String(formData.get('details') ?? '').trim());
+    formData.set('note', lines.filter(Boolean).join('\n'));
+  }
   const p = parseForm(sendEnquirySchema, formData);
   if (!p.ok) return failure(p.errorKey, p.values);
   const { supabase, user } = await actionUser();

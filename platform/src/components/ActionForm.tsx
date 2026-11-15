@@ -40,6 +40,37 @@ export function FormMessage({ state }: { state: FormState }) {
   );
 }
 
+/**
+ * useActionState that also puts back what the person typed after a failed submit (React 19 resets uncontrolled fields after every
+ * action). Reads the submitted FormData itself, so the server action needs no `values`. Password and file fields are never restored.
+ */
+export function useRestoringAction(action: (prev: FormState, formData: FormData) => Promise<FormState>) {
+  const ref = useRef<HTMLFormElement>(null);
+  const sent = useRef<FormData | null>(null);
+  const [state, formAction] = useActionState(async (prev: FormState, fd: FormData) => {
+    sent.current = fd;
+    return action(prev, fd);
+  }, idle);
+
+  useEffect(() => {
+    const form = ref.current;
+    const fd = sent.current;
+    if (!form || !fd || state.status !== 'error') return;
+    for (const el of Array.from(form.elements)) {
+      if (!(el instanceof HTMLInputElement || el instanceof HTMLSelectElement || el instanceof HTMLTextAreaElement) || !el.name) continue;
+      if (el instanceof HTMLInputElement && ['hidden', 'password', 'file', 'submit', 'button'].includes(el.type)) continue;
+      if (el instanceof HTMLInputElement && (el.type === 'checkbox' || el.type === 'radio')) {
+        el.checked = fd.getAll(el.name).includes(el.value);
+      } else {
+        const v = fd.get(el.name);
+        if (typeof v === 'string') el.value = v;
+      }
+    }
+  }, [state]);
+
+  return [state, formAction, ref] as const;
+}
+
 interface Props {
   action: (prev: FormState, formData: FormData) => Promise<FormState>;
   submitLabel: string;

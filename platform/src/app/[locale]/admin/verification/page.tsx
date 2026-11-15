@@ -1,8 +1,10 @@
 import { getTranslations } from 'next-intl/server';
+import ClaimReview from '@/components/admin/ClaimReview';
+import RouteDrawer from '@/components/admin/RouteDrawer';
 import StatusChip from '@/components/StatusChip';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
-import { claimStatusFilterSchema } from '@/lib/schemas';
+import { claimStatusFilterSchema, uuidSchema } from '@/lib/schemas';
 import { requireReviewer } from '@/server/reviewer';
 import { listQueue, queueCounts } from '@/server/services/verification';
 
@@ -21,7 +23,7 @@ export default async function AdminVerificationPage({
 }) {
   const { locale } = await params;
   const sp = await searchParams;
-  const { session, canReview } = await requireReviewer(locale, '/admin/verification');
+  const { session, canReview, canDecide } = await requireReviewer(locale, '/admin/verification');
   const t = await getTranslations({ locale });
 
   if (!canReview) {
@@ -37,45 +39,46 @@ export default async function AdminVerificationPage({
 
   const parsed = claimStatusFilterSchema.safeParse(typeof sp.status === 'string' ? sp.status : 'open');
   const filter = parsed.success ? parsed.data : 'open';
+  const claimParam = uuidSchema.safeParse(sp.claim);
   const [items, counts] = await Promise.all([listQueue(session.supabase, filter), queueCounts(session.supabase)]);
+  const openCount = (counts.submitted ?? 0) + (counts.in_review ?? 0);
+  const closeHref = `/admin/verification?status=${filter}`;
 
   return (
     <>
-      <h1>{t('adminVer.title')}</h1>
-      <p>{t('adminVer.intro')}</p>
-
-      <h2>{t('adminVer.countsTitle')}</h2>
-      <ul className="card-list">
-        {STATUSES.map((s) => (
-          <li key={s} className="card">
-            <Link href={`/admin/verification?status=${s}`} locale={locale}>
-              {t(`claimStatus.${s}`)}
-            </Link>
-            : <strong>{counts[s] ?? 0}</strong>
-          </li>
-        ))}
-      </ul>
-
-      <form method="get" className="inline-form">
-        <div className="field">
-          <label htmlFor="status">{t('adminVer.filterLabel')}</label>
-          <select id="status" name="status" defaultValue={filter}>
-            <option value="open">{t('adminVer.filterOpen')}</option>
-            <option value="all">{t('adminVer.filterAll')}</option>
-            {STATUSES.map((s) => (
-              <option key={s} value={s}>
-                {t(`claimStatus.${s}`)}
-              </option>
-            ))}
-          </select>
+      <div className="page-head" style={{ marginBottom: 0 }}>
+        <div>
+          <h1>{t('adminVer.title')}</h1>
+          <p className="page-sub">{t('adm2.queueSub')}</p>
         </div>
-        <button type="submit" className="btn btn-secondary">
-          {t('adminVer.filterApply')}
-        </button>
-      </form>
+      </div>
+
+      <nav aria-label={t('adminVer.filterLabel')} className="tiles">
+        <Link href="/admin/verification?status=open" className="tile" aria-current={filter === 'open' ? 'true' : undefined}>
+          <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
+            {t('adminVer.filterOpen')}
+          </span>
+          <span className="tile-n">{openCount}</span>
+        </Link>
+        {STATUSES.map((s) => (
+          <Link key={s} href={`/admin/verification?status=${s}`} className="tile" aria-current={filter === s ? 'true' : undefined}>
+            <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
+              {t(`claimStatus.${s}`)}
+            </span>
+            <span className="tile-n">{counts[s] ?? 0}</span>
+          </Link>
+        ))}
+        <Link href="/admin/verification?status=all" className="tile" aria-current={filter === 'all' ? 'true' : undefined}>
+          <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
+            {t('adminVer.filterAll')}
+          </span>
+        </Link>
+      </nav>
 
       {items.length === 0 ? (
-        <p>{t('adminVer.empty')}</p>
+        <div className="empty">
+          <strong>{t('adminVer.empty')}</strong>
+        </div>
       ) : (
         <div className="table-wrap">
           <table className="stack">
@@ -84,7 +87,7 @@ export default async function AdminVerificationPage({
                 <th scope="col">{t('adminVer.business')}</th>
                 <th scope="col">{t('adminVer.claim')}</th>
                 <th scope="col">{t('adminVer.status')}</th>
-                <th scope="col">{t('adminVer.age')}</th>
+                <th scope="col">{t('adm2.waiting')}</th>
                 <th scope="col">
                   <span className="visually-hidden">{t('adminVer.open')}</span>
                 </th>
@@ -92,16 +95,20 @@ export default async function AdminVerificationPage({
             </thead>
             <tbody>
               {items.map((c) => (
-                <tr key={c.id}>
-                  <td data-label={t('adminVer.business')}>{c.org_name}</td>
+                <tr key={c.id} className={claimParam.success && claimParam.data === c.id ? 'sel' : undefined}>
+                  <td data-label={t('adminVer.business')}>
+                    <strong>{c.org_name}</strong>
+                  </td>
                   <td data-label={t('adminVer.claim')}>{t(`claimTypes.${c.claim_type}`)}</td>
                   <td data-label={t('adminVer.status')}>
                     <StatusChip status={c.status} label={t(`claimStatus.${c.status}`)} />
                   </td>
-                  <td data-label={t('adminVer.age')}>{c.age_days === null ? '-' : t('adminVer.ageDays', { days: c.age_days })}</td>
+                  <td data-label={t('adm2.waiting')} style={c.age_days !== null && c.age_days >= 3 ? { color: 'var(--tag-coral)', fontWeight: 700 } : undefined}>
+                    {c.age_days === null ? '-' : t('adminVer.ageDays', { days: c.age_days })}
+                  </td>
                   <td>
-                    <Link href={`/admin/verification/${c.id}`} locale={locale}>
-                      {t('adminVer.open')}
+                    <Link href={`/admin/verification?status=${filter}&claim=${c.id}`} className="btn btn-secondary btn-sm" aria-label={`${t('adm2.review')}: ${c.org_name}`}>
+                      {t('adm2.review')}
                     </Link>
                   </td>
                 </tr>
@@ -110,6 +117,15 @@ export default async function AdminVerificationPage({
           </table>
         </div>
       )}
+
+      {claimParam.success ? (
+        <RouteDrawer title={t('adminVer.title')} closeHref={closeHref}>
+          <ClaimReview claimId={claimParam.data} locale={locale} db={session.supabase} canDecide={canDecide} />
+          <Link href={`/admin/verification/${claimParam.data}`} className="btn btn-ghost" style={{ alignSelf: 'flex-start' }}>
+            {t('adm2.fullPage')}
+          </Link>
+        </RouteDrawer>
+      ) : null}
     </>
   );
 }

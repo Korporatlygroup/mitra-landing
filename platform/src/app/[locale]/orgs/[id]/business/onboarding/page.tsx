@@ -3,7 +3,11 @@ import { redirect } from 'next/navigation';
 import ActionForm from '@/components/ActionForm';
 import ClaimDocuments from '@/components/ClaimDocuments';
 import { Field, SelectField } from '@/components/Field';
+import Icon from '@/components/ui/Icon';
+import Logo from '@/components/ui/Logo';
+import LivePreview from '@/components/workspace/LivePreview';
 import { Link } from '@/i18n/navigation';
+import { catName } from '@/lib/category';
 import { pageTitle } from '@/lib/metadata';
 import { BUSINESS_TYPES, CLAIM_TYPES, MY_STATES, REP_ROLES } from '@/lib/schemas';
 import { requireBusinessContext } from '@/server/business-context';
@@ -17,7 +21,6 @@ import {
   listDocuments,
 } from '@/server/services/verification';
 import { saveStep1Action, saveStep2Action, saveStep3Action, saveStep4Action } from '../actions';
-import { catName } from '@/lib/category';
 
 const TOTAL = 5;
 
@@ -54,7 +57,7 @@ export default async function OnboardingPage({
     );
   }
 
-  const [profile, priv, rep] = await Promise.all([getBusinessProfile(db, id), getBusinessPrivate(db, id), getRepresentative(db, id)]);
+  const [profile, priv, rep, categories] = await Promise.all([getBusinessProfile(db, id), getBusinessPrivate(db, id), getRepresentative(db, id), listCategories(db)]);
   if (!profile && step > 1) redirect(`/${locale}${base}/onboarding?step=1`);
   if (step === 2 && profile && profile.registration_status !== 'registered') redirect(`/${locale}${base}/onboarding?step=3`);
 
@@ -67,18 +70,8 @@ export default async function OnboardingPage({
   );
   const secondary = { label: t('ob.later'), value: 'later' };
 
-  const header = (
-    <>
-      <p id="progress-label">
-        <strong>{t('ob.stepOf', { n: step, total: TOTAL })}</strong>
-      </p>
-      <progress max={TOTAL} value={step} aria-labelledby="progress-label" aria-label={t('ob.progressLabel')} />
-    </>
-  );
-
   let body: React.ReactNode;
   if (step === 1) {
-    const categories = await listCategories(db);
     body = (
       <>
         <h1>{t('ob.s1.title')}</h1>
@@ -98,13 +91,15 @@ export default async function OnboardingPage({
           </div>
           <fieldset>
             <legend>{t('ob.s1.registeredLegend')}</legend>
-            <div className="radio">
-              <input id="reg-yes" type="radio" name="registered" value="yes" defaultChecked={profile?.registration_status === 'registered'} required />
-              <label htmlFor="reg-yes">{t('ob.s1.yes')}</label>
-            </div>
-            <div className="radio">
-              <input id="reg-no" type="radio" name="registered" value="no" defaultChecked={profile ? profile.registration_status !== 'registered' : false} />
-              <label htmlFor="reg-no">{t('ob.s1.no')}</label>
+            <div className="opt-grid">
+              <label className="opt" htmlFor="reg-yes">
+                <input id="reg-yes" type="radio" name="registered" value="yes" defaultChecked={profile?.registration_status === 'registered'} required />
+                <strong>{t('ob.s1.yes')}</strong>
+              </label>
+              <label className="opt" htmlFor="reg-no">
+                <input id="reg-no" type="radio" name="registered" value="no" defaultChecked={profile ? profile.registration_status !== 'registered' : false} />
+                <strong>{t('ob.s1.no')}</strong>
+              </label>
             </div>
           </fieldset>
         </ActionForm>
@@ -134,7 +129,10 @@ export default async function OnboardingPage({
     body = (
       <>
         <h1>{t('ob.s3.title')}</h1>
-        <p>{t('ob.s3.privacy')}</p>
+        <div className="notice">
+          <Icon name="lock" size={18} />
+          <span>{t('ob.s3.privacy')}</span>
+        </div>
         <ActionForm action={saveStep3Action} submitLabel={t('ob.next')} secondary={secondary}>
           {hidden}
           <SelectField id="state" name="state" label={t('ob.s3.state')} defaultValue={profile?.state ?? ''}>
@@ -157,7 +155,7 @@ export default async function OnboardingPage({
     body = (
       <>
         <h1>{t('ob.s4.title')}</h1>
-        <p>{t('ob.s4.note')}</p>
+        <p style={{ margin: 0 }}>{t('ob.s4.note')}</p>
         <ActionForm action={saveStep4Action} submitLabel={t('ob.next')} secondary={secondary}>
           {hidden}
           <Field id="rep_name" name="rep_name" label={t('ob.s4.name')} defaultValue={rep?.full_name ?? ''} required minLength={2} maxLength={120} autoComplete="name" />
@@ -179,7 +177,7 @@ export default async function OnboardingPage({
     body = (
       <>
         <h1>{t('ob.s5.title')}</h1>
-        <p>{t('ob.s5.intro')}</p>
+        <p style={{ margin: 0 }}>{t('ob.s5.intro')}</p>
         {types.map((ct) => {
           const claim = claims.find((c) => c.claim_type === ct) ?? null;
           return (
@@ -194,7 +192,7 @@ export default async function OnboardingPage({
             />
           );
         })}
-        <p>
+        <p style={{ margin: 0 }}>
           <Link href={`${base}/verification`} locale={locale} className="btn btn-secondary">
             {t('biz.openVerification')}
           </Link>
@@ -203,15 +201,64 @@ export default async function OnboardingPage({
     );
   }
 
+  const unregistered = profile ? profile.registration_status !== 'registered' : false;
+  const stepDefs = [
+    { n: 1, title: t('ob.s1.title'), done: Boolean(profile), skip: false },
+    { n: 2, title: t('ob.s2.title'), done: Boolean(profile?.ssm_number), skip: unregistered },
+    { n: 3, title: t('ob.s3.title'), done: Boolean(profile?.state), skip: false },
+    { n: 4, title: t('ob.s4.title'), done: Boolean(rep?.full_name), skip: false },
+    { n: 5, title: t('ob.s5.title'), done: false, skip: false },
+  ];
+  const cat = categories.find((c) => c.id === profile?.category_id);
+
   return (
-    <>
-      {header}
-      {body}
-      <p>
-        <Link href={back} locale={locale}>
-          {step === 1 ? t('biz.title') : t('ob.back')}
-        </Link>
-      </p>
-    </>
+    <div className="focus-shell">
+      <header className="focus-top">
+        <div className="focus-top-inner">
+          <Logo locale={locale} label={t('ws.homeLabel')} />
+          <div className="focus-progress">
+            <div className="bar" role="progressbar" aria-valuemin={1} aria-valuemax={TOTAL} aria-valuenow={step} aria-label={t('ob.progressLabel')}>
+              <div style={{ width: `${(step / TOTAL) * 100}%` }} />
+            </div>
+            <span id="progress-label">{t('ob.stepOf', { n: step, total: TOTAL })}</span>
+          </div>
+          <Link href={base} locale={locale} className="btn btn-ghost btn-sm">
+            {t('onb2.saveExit')}
+          </Link>
+        </div>
+      </header>
+      <div className="focus-body">
+        <nav aria-label={t('onb2.stepsLabel')} className="focus-steps">
+          {stepDefs.map((d) => (
+            <Link key={d.n} href={`${base}/onboarding?step=${d.n}`} locale={locale} className={`focus-step${d.done ? ' done' : ''}`} aria-current={d.n === step ? 'step' : undefined}>
+              <span className="dot" aria-hidden="true">
+                {d.done && d.n !== step ? <Icon name="check" size={14} stroke={3} /> : d.n}
+              </span>
+              <span>
+                <strong>{d.title}</strong>
+                <small>{d.skip ? t('onb2.skipped') : d.done ? t('onb2.done') : t('onb2.todo')}</small>
+              </span>
+            </Link>
+          ))}
+        </nav>
+        <div className="focus-main">
+          <div className="focus-card">
+            {body}
+            <p style={{ margin: 0 }}>
+              <Link href={back} locale={locale} className="btn btn-secondary">
+                {step === 1 ? t('biz.title') : t('ob.back')}
+              </Link>
+            </p>
+          </div>
+        </div>
+        <aside className="focus-aside" aria-label={t('onb2.previewTitle')}>
+          <LivePreview seed={id} initial={{ name: profile?.business_name ?? ctx.org.name, category: cat ? catName(locale, cat) : '', town: profile?.district ?? '' }} />
+          <div className="notice">
+            <Icon name="info" size={18} />
+            <span>{t('onb2.saves')}</span>
+          </div>
+        </aside>
+      </div>
+    </div>
   );
 }

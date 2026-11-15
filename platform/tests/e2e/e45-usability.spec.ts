@@ -44,7 +44,7 @@ test('E45 seller: empty states, incomplete and invalid forms, portfolio add, pre
   await expect(page.locator('main')).toContainText(t('listing.portfolioEmpty'));
   await expect(page.locator('main')).toContainText(t('listing.portfolioImagesLater'));
   await page.goto(orgPath('en', seller.orgId, '/requests'));
-  await expect(page.getByRole('heading', { name: t('inbox.emptyTitle') })).toBeVisible();
+  await expect(page.getByText(t('biz2.board.noneTitle'), { exact: true })).toBeVisible();
   await page.goto(orgPath('en', seller.orgId, '/requests/board'));
   await expect(page.getByRole('heading', { name: t('board.emptyTitle') })).toBeVisible();
   await axe(page, 'empty board');
@@ -69,7 +69,8 @@ test('E45 seller: empty states, incomplete and invalid forms, portfolio add, pre
   await expect(page.getByText(t('listing.saved'))).toBeVisible();
   await axe(page, 'listing editor with a portfolio example');
 
-  // switch language halfway: same page, same saved values, Bahasa Melayu labels
+  // switch language halfway: same page, same saved values, Bahasa Melayu labels (the workspace tucks the switcher in the account menu)
+  await page.getByRole('button', { name: msg('en', 'ws.accountMenu'), exact: true }).click();
   await page.getByRole('navigation', { name: t('common.languageLabel') }).getByRole('link', { name: msg('en', 'common.langMsFull') }).click();
   await expect(page).toHaveURL(/\/ms\/orgs\/.*\/business\/listing/);
   await expect(page.locator('#headline')).toHaveValue('Home cooked meals for offices');

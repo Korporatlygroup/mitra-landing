@@ -4,7 +4,7 @@ import { useLocale, useTranslations } from 'next-intl';
 import { useSearchParams } from 'next/navigation';
 import { Link, usePathname } from '@/i18n/navigation';
 
-/** EN | தமிழ் toggle. Keeps the current page and query string; the current language is marked with aria-current. */
+/** EN | தமிழ் | BM switch. Keeps the current page and query string; the current language is marked with aria-current. */
 export default function LocaleSwitcher() {
   const t = useTranslations('common');
   const locale = useLocale();
@@ -27,11 +27,9 @@ export default function LocaleSwitcher() {
   );
 
   return (
-    <nav aria-label={t('languageLabel')} className="lang-switch">
+    <nav aria-label={t('languageLabel')} className="lang-track lang-switch">
       {item('en', t('langEn'), t('langEnFull'))}
-      <span aria-hidden="true">|</span>
       {item('ta', t('langTa'), t('langTaFull'))}
-      <span aria-hidden="true">|</span>
       {item('ms', t('langMs'), t('langMsFull'))}
     </nav>
   );
