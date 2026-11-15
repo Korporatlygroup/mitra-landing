@@ -223,7 +223,7 @@ select is(
         'withdraw_supplier_submission(p_org uuid, p_supplier uuid)',
         'seller_lead_metrics(p_seller_org uuid)',
         'gov_decide_proposal(p_proposal uuid, p_decision text, p_reason text, p_expected_status text)', 'gov_decide_source_change(p_change uuid, p_approve boolean, p_reason text)',
-        'gov_list_programmes(p_funding_type text, p_query text, p_limit integer, p_offset integer)', 'gov_propose_source_change(p_source uuid, p_change jsonb, p_reason text)',
+        'gov_list_programmes(p_funding_type text, p_query text, p_limit integer, p_offset integer, p_category text)', 'gov_propose_manual(p_source uuid, p_programme uuid, p_candidate jsonb, p_reason text)', 'gov_review_page_change(p_change uuid, p_status text, p_note text)', 'gov_propose_source_change(p_source uuid, p_change jsonb, p_reason text)',
         'gov_register_source(p_agency_code text, p_agency_name text, p_domain text, p_name text, p_type text, p_adapter text, p_hosts text[], p_urls text[], p_method text, p_restrictions text)',
         'gov_set_programme_state(p_programme uuid, p_state text, p_reason text)', 'gov_set_setting(p_key text, p_enabled boolean, p_reason text)',
         'gov_get_profile(p_org uuid)', 'gov_save_profile(p_org uuid, p_data jsonb, p_expected_version integer)', 'gov_save_programme(p_org uuid, p_programme uuid)',
@@ -235,7 +235,7 @@ select is(
         'news_save(p_id uuid)', 'news_unsave(p_id uuid)', 'news_get_prefs()', 'news_set_prefs(p_data jsonb)', 'admin_news_list()', 'admin_news_get(p_id uuid)',
         'admin_news_save(p_id uuid, p_data jsonb, p_expected_version integer)', 'admin_news_set_status(p_id uuid, p_status text, p_publish_at timestamp with time zone, p_expected_version integer)',
         'dash_dismiss(p_org uuid, p_key text)', 'dash_active_dismissals(p_org uuid)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 152 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 16 added by Phase 7, 19 added by the redesign)');
+  'S7.6 authenticated can execute exactly the 154 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 18 added by Phase 7, 19 added by the redesign)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -249,7 +249,7 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'gov_claim_jobs', 'gov_complete_job', 'gov_dispatch_outbox', 'gov_enqueue_due_jobs', 'gov_enqueue_reminders', 'gov_fail_job', 'gov_job_source', 'gov_mark_email', 'gov_mark_missing', 'gov_submit_candidate', 'news_digest_candidates', 'news_digest_claim', 'news_digest_posts', 'news_digest_release', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_list_unscanned_product_media',
+  array['bootstrap_first_admin', 'gov_claim_jobs', 'gov_complete_job', 'gov_dispatch_outbox', 'gov_enqueue_due_jobs', 'gov_enqueue_reminders', 'gov_fail_job', 'gov_job_source', 'gov_last_validators', 'gov_mark_email', 'gov_mark_missing', 'gov_mark_unchanged', 'gov_record_page', 'gov_submit_candidate', 'news_digest_candidates', 'news_digest_claim', 'news_digest_posts', 'news_digest_release', 'service_auth_attempt', 'service_list_unscanned_documents', 'service_list_unscanned_product_media',
         'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_record_auth_event', 'service_record_rejected_upload',
         'service_register_document', 'service_register_product_media', 'service_register_supplier_document', 'service_set_product_media_scan',
         'service_set_scan_result', 'service_set_supplier_document_scan'],
@@ -332,7 +332,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  75, 'S6.6 inventory: exactly the 75 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 15 from Phase 7, 6 from the redesign; new tables must come with RLS tests)');
+  76, 'S6.6 inventory: exactly the 76 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 16 from Phase 7, 6 from the redesign; new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

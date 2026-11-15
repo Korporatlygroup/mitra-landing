@@ -44,6 +44,8 @@ export interface SafeFetchOptions {
   totalTimeoutMs?: number;
   maxRedirects?: number;
   accept?: readonly string[];
+  /** Validators from the last good fetch of this URL; the server may answer 304 and send no body. */
+  validators?: { etag?: string | null; lastModified?: string | null };
   transport?: Transport;
   resolver?: (hostname: string) => Promise<{ address: string; family: number }[]>;
 }
@@ -56,6 +58,8 @@ export interface SafeFetchResult {
   bytes: number;
   sha256: string;
   retryAfterSeconds: number | null;
+  etag: string | null;
+  lastModified: string | null;
 }
 
 const DEFAULT_ACCEPT = ['text/html', 'text/plain', 'application/xml', 'text/xml', 'application/xhtml+xml'] as const;
@@ -176,6 +180,10 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
   const transport = opts.transport ?? httpsTransport;
   const lookup = guardedLookup(opts.resolver);
   let url = validateUrl(rawUrl, opts.allowedHosts);
+  const conditional: Record<string, string> = {};
+  // Header values come from our own database, but are still restricted to printable ASCII before they go on the wire.
+  if (opts.validators?.etag && /^[\x20-\x7e]{1,200}$/.test(opts.validators.etag)) conditional['If-None-Match'] = opts.validators.etag;
+  if (opts.validators?.lastModified && /^[\x20-\x7e]{1,100}$/.test(opts.validators.lastModified)) conditional['If-Modified-Since'] = opts.validators.lastModified;
 
   for (let hop = 0; ; hop += 1) {
     let res: RawResponse;
@@ -183,7 +191,7 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
       res = await transport(url, {
         timeoutMs,
         lookup,
-        headers: { 'User-Agent': opts.userAgent, Accept: accept.join(', '), 'Accept-Encoding': 'gzip, identity', 'Accept-Language': 'ms,en;q=0.8' },
+        headers: { 'User-Agent': opts.userAgent, Accept: accept.join(', '), 'Accept-Encoding': 'gzip, identity', 'Accept-Language': 'ms,en;q=0.8', ...conditional },
       });
     } catch (err) {
       const code = (err as NodeJS.ErrnoException).code;
@@ -201,9 +209,11 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
     }
     const retryAfter = parseRetryAfter(header(res.headers, 'retry-after'));
     const contentType = header(res.headers, 'content-type')?.toLowerCase() ?? null;
-    if (res.status >= 400 || res.status < 200) {
+    const etag = header(res.headers, 'etag')?.slice(0, 200) ?? null;
+    const lastModified = header(res.headers, 'last-modified')?.slice(0, 100) ?? null;
+    if (res.status >= 400 || res.status < 200 || res.status === 304) {
       res.destroy();
-      return { status: res.status, finalUrl: url.toString(), contentType, text: '', bytes: 0, sha256: '', retryAfterSeconds: retryAfter };
+      return { status: res.status, finalUrl: url.toString(), contentType, text: '', bytes: 0, sha256: '', retryAfterSeconds: retryAfter, etag, lastModified };
     }
     const mime = contentType?.split(';')[0]?.trim() ?? '';
     if (!accept.includes(mime)) {
@@ -252,6 +262,8 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
       bytes: body.length,
       sha256: crypto.createHash('sha256').update(body).digest('hex'),
       retryAfterSeconds: retryAfter,
+      etag,
+      lastModified,
     };
   }
 }
