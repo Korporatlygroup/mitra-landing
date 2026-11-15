@@ -1,4 +1,4 @@
-# MITRA platform (Phase 1: core platform foundation)
+# INOK platform (Phase 1: core platform foundation; formerly named MITRA)
 
 Next.js 16 (App Router) + Supabase (Auth, Postgres, RLS). English and Tamil (`/en`, `/ta`).
 Authorisation lives in the database (RLS + RPCs in `supabase/migrations`); the app never trusts UI state.
@@ -63,7 +63,7 @@ npm run typecheck && npm run lint && npm run test:unit && npm run build
 
 - Owner screens: `/[locale]/orgs/[id]/business` (overview), `/onboarding?step=1..5`, `/verification`, `/preview`; messages at `/[locale]/notifications`.
 - Reviewer screens (admin roles, aal2): `/[locale]/admin/verification` (queue) and `/admin/verification/[claimId]`.
-- Wording rule: only "Documents reviewed by MITRA ... for: <scope>". Never claim an SSM, official or government check.
+- Wording rule: only "Documents reviewed by INOK ... for: <scope>". Never claim an SSM, official or government check.
   A unit test lints the message files for forbidden phrases.
 - Uploads (`src/server/services/documents.ts`): size, extension, declared type and magic bytes must agree; PDFs with active content are
   rejected; the file is scanned BEFORE it is written. Clean files are stored as `clean`; if the scanner is unavailable the file is stored

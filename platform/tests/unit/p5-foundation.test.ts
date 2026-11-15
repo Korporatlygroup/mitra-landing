@@ -301,11 +301,11 @@ describe('p5common messages', () => {
       return String(cur).replace(/\{(\w+)\}/g, (_, k: string) => String(values?.[k]));
     }) as Parameters<typeof reviewedSummary>[0];
     const s = reviewedSummary(t, { checks: ['contact_reachable', 'registration_document_seen'], reviewed_at: '2026-09-02T10:00:00Z' }, 'en');
-    expect(s).toContain('MITRA reviewed documents');
+    expect(s).toContain('INOK reviewed documents');
     expect(s).toContain('contact details could be reached');
     expect(s).toContain('2 September 2026');
-    expect(reviewedSummary(t, null, 'en')).toBe('MITRA has not reviewed this supplier yet.');
-    expect(reviewedSummary(t, { checks: [], reviewed_at: '2026-09-02T10:00:00Z' }, 'en')).toBe('MITRA has not reviewed this supplier yet.');
+    expect(reviewedSummary(t, null, 'en')).toBe('INOK has not reviewed this supplier yet.');
+    expect(reviewedSummary(t, { checks: [], reviewed_at: '2026-09-02T10:00:00Z' }, 'en')).toBe('INOK has not reviewed this supplier yet.');
   });
 
   it('formats money from a decimal string and lead times', () => {

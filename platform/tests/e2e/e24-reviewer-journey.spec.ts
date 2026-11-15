@@ -118,7 +118,7 @@ for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
     await item.getByRole('button', { name: t('notifications.markRead'), exact: true }).click();
     await expect(op.locator('li.card').filter({ hasText: t('notifications.kinds.verification_approved') })).not.toContainText(t('notifications.new'));
     await op.goto(`/${locale}/orgs/${sub.orgId}/business/preview`);
-    await expect(op.locator('main')).toContainText(locale === 'en' ? /Documents reviewed by MITRA on .+ for: business registration details/ : t('claimScope.business_registration'));
+    await expect(op.locator('main')).toContainText(locale === 'en' ? /Documents reviewed by INOK on .+ for: business registration details/ : t('claimScope.business_registration'));
     await ctx.close();
 
     // Email: fixed EN + TA + MS subject (no reason in it), the reason only quoted in the body, in every language.

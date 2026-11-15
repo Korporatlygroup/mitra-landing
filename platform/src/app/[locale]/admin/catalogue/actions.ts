@@ -80,7 +80,7 @@ export async function resendInvitationAction(_prev: FormState, formData: FormDat
   const d = p.data;
   const r = await resendPartnerInvitation(supabase, d.orgId, d.ownerEmail);
   if (!r.ok) return failure(r.errorKey, nonSecretValues(p.raw));
-  const sent = await mailOwnerInvite({ to: d.ownerEmail, orgName: d.orgName || 'MITRA', locale: d.locale, token: r.data.token });
+  const sent = await mailOwnerInvite({ to: d.ownerEmail, orgName: d.orgName || 'INOK', locale: d.locale, token: r.data.token });
   done();
   return sent ? success('p5admin.messages.partnerResent') : failure('email_failed');
 }

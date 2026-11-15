@@ -1,7 +1,7 @@
 {
   "p5buyer": {
     "title": "Produk dari India",
-    "intro": "Layari produk daripada pembekal yang telah disemak oleh MITRA. Minta harga apabila anda jumpa sesuatu yang sesuai.",
+    "intro": "Layari produk daripada pembekal yang telah disemak oleh INOK. Minta harga apabila anda jumpa sesuatu yang sesuai.",
     "loading": "Memuatkan produk. Sila tunggu.",
     "nav": {
       "saved": "Produk disimpan",
@@ -92,7 +92,7 @@
       "attribute": "Butiran",
       "differs": "berbeza",
       "notProvided": "Tidak diberikan",
-      "reviewed": "Semakan MITRA",
+      "reviewed": "Semakan INOK",
       "category": "Kategori",
       "variants": "Pilihan (varian)",
       "currency": "Mata wang",
@@ -130,7 +130,7 @@
       "reason": "Apakah masalahnya?",
       "note": "Beritahu kami lebih lanjut (pilihan)",
       "signIn": "Log masuk untuk melaporkan produk",
-      "sent": "Terima kasih. MITRA akan melihat laporan anda."
+      "sent": "Terima kasih. INOK akan melihat laporan anda."
     },
     "request": {
       "title": "Minta harga",

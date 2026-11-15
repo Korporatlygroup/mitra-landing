@@ -36,7 +36,7 @@ export async function startTotpEnrol(supabase: Db): Promise<Result<TotpEnrolment
   }
   const { data, error } = await supabase.auth.mfa.enroll({
     factorType: 'totp',
-    issuer: 'MITRA',
+    issuer: 'INOK',
     friendlyName: `authenticator-${Date.now()}`,
   });
   if (error || !data) return fail('internal');

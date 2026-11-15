@@ -161,7 +161,7 @@ for (const locale of ['en', 'ta', 'ms'] as const satisfies readonly Locale[]) {
 
     // The approved scope line is the only reviewed claim wording on the preview.
     const preview = texts.find((x) => x.path === base('/preview'))!.text;
-    if (locale === 'en') expect(preview).toMatch(/Documents reviewed by MITRA on .+ for: business registration details/);
+    if (locale === 'en') expect(preview).toMatch(/Documents reviewed by INOK on .+ for: business registration details/);
 
     for (const x of texts) {
       for (const re of BANNED) expect.soft(x.text, `${x.path}: banned phrase ${re}`).not.toMatch(re);

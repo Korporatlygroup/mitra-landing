@@ -53,7 +53,7 @@ export async function inviteAction(_prev: FormState, formData: FormData): Promis
   const org = await getOrg(supabase, orgId);
   try {
     const link = `${getSiteUrl()}/${locale}/invite/${created.data.token}`;
-    await getMailer().send(buildInviteEmail({ to: email, orgName: org?.name ?? 'MITRA', role, link }));
+    await getMailer().send(buildInviteEmail({ to: email, orgName: org?.name ?? 'INOK', role, link }));
   } catch (e) {
     // Never log the message: it could echo the link. The invitation stays pending and can be cancelled.
     console.error('invitation email failed', e instanceof Error ? e.name : 'error');

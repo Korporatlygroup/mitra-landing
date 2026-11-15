@@ -253,11 +253,11 @@ otp_expiry = 3600
 
 # Uncomment to customize email template
 [auth.email.template.confirmation]
-subject = "Confirm your MITRA account"
+subject = "Confirm your INOK account"
 content_path = "./supabase/templates/confirmation.html"
 
 [auth.email.template.recovery]
-subject = "Reset your MITRA password"
+subject = "Reset your INOK password"
 content_path = "./supabase/templates/recovery.html"
 
 # Uncomment to customize notification email template

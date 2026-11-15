@@ -16,7 +16,7 @@ export async function GET(request: NextRequest) {
   const headers = {
     'Cache-Control': 'no-store',
     'X-Content-Type-Options': 'nosniff',
-    'Content-Disposition': `attachment; filename="mitra-catalogue-template.${format}"`,
+    'Content-Disposition': `attachment; filename="inok-catalogue-template.${format}"`,
   };
   if (format === 'xlsx') {
     const bytes = buildTemplateXlsx();

@@ -65,8 +65,8 @@
       }
     },
     "verification": {
-      "reviewedOn": "MITRA reviewed documents for this supplier on {date}. What was checked: {checks}.",
-      "notReviewed": "MITRA has not reviewed this supplier yet.",
+      "reviewedOn": "INOK reviewed documents for this supplier on {date}. What was checked: {checks}.",
+      "notReviewed": "INOK has not reviewed this supplier yet.",
       "scope": "This is a review of documents and contact details only. It is not a recommendation, and it says nothing about the goods or the service.",
       "checks": {
         "contact_reachable": "contact details could be reached",
@@ -198,7 +198,7 @@
     "product_not_published": "This product is not published.",
     "product_not_suspendable": "This product cannot be paused in its current state.",
     "product_not_suspended": "This product is not paused.",
-    "product_suspended": "This product is paused. Please contact MITRA.",
+    "product_suspended": "This product is paused. Please contact INOK.",
     "product_under_review": "This product is being reviewed. Please wait for the decision before changing it.",
     "reference_unavailable": "A reference number could not be created. Please try again.",
     "saved_limit_reached": "You have reached the limit for saved products.",
@@ -209,7 +209,7 @@
     "supplier_not_available": "This supplier is not available right now.",
     "supplier_not_pending": "This supplier is not waiting for a decision.",
     "supplier_not_suspended": "This supplier is not paused.",
-    "supplier_suspended": "This supplier is paused. Please contact MITRA.",
+    "supplier_suspended": "This supplier is paused. Please contact INOK.",
     "supplier_under_review": "This supplier is being reviewed. Please wait for the decision before changing it.",
     "too_many_items": "A request can have up to 20 products.",
     "too_many_rows": "The file has too many rows (up to 2000).",

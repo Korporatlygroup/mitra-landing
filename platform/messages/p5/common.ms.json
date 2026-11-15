@@ -65,8 +65,8 @@
       }
     },
     "verification": {
-      "reviewedOn": "MITRA menyemak dokumen pembekal ini pada {date}. Perkara yang disemak: {checks}.",
-      "notReviewed": "MITRA belum menyemak pembekal ini.",
+      "reviewedOn": "INOK menyemak dokumen pembekal ini pada {date}. Perkara yang disemak: {checks}.",
+      "notReviewed": "INOK belum menyemak pembekal ini.",
       "scope": "Ini hanya semakan dokumen dan butiran perhubungan. Ia bukan cadangan, dan tidak menyatakan apa-apa tentang barangan atau perkhidmatan.",
       "checks": {
         "contact_reachable": "butiran perhubungan boleh dihubungi",
@@ -198,7 +198,7 @@
     "product_not_published": "Produk ini belum diterbitkan.",
     "product_not_suspendable": "Produk ini tidak boleh dijeda dalam keadaan semasa.",
     "product_not_suspended": "Produk ini tidak dijeda.",
-    "product_suspended": "Produk ini dijeda. Sila hubungi MITRA.",
+    "product_suspended": "Produk ini dijeda. Sila hubungi INOK.",
     "product_under_review": "Produk ini sedang disemak. Sila tunggu keputusan sebelum mengubahnya.",
     "reference_unavailable": "Nombor rujukan tidak dapat dijana. Sila cuba lagi.",
     "saved_limit_reached": "Anda telah mencapai had produk yang disimpan.",
@@ -209,7 +209,7 @@
     "supplier_not_available": "Pembekal ini tidak tersedia sekarang.",
     "supplier_not_pending": "Pembekal ini tidak menunggu keputusan.",
     "supplier_not_suspended": "Pembekal ini tidak dijeda.",
-    "supplier_suspended": "Pembekal ini dijeda. Sila hubungi MITRA.",
+    "supplier_suspended": "Pembekal ini dijeda. Sila hubungi INOK.",
     "supplier_under_review": "Pembekal ini sedang disemak. Sila tunggu keputusan sebelum mengubahnya.",
     "too_many_items": "Satu permintaan boleh mengandungi sehingga 20 produk.",
     "too_many_rows": "Fail ini mempunyai terlalu banyak baris (sehingga 2000).",

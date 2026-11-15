@@ -124,7 +124,7 @@ test('E60 buyer journey: search, filter, compare, save, request a price, sign ou
   await expect(main).toContainText(t('detail.notQuotation'));
   await expect(main).toContainText('Red');
   await expect(main).toContainText('6 m');
-  await expect(main).toContainText('MITRA reviewed documents for this supplier on');
+  await expect(main).toContainText('INOK reviewed documents for this supplier on');
   await expect(main).not.toContainText(/trusted|in stock/i);
   await axeClean(page, 'product');
 

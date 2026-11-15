@@ -1,7 +1,7 @@
 {
   "p5buyer": {
     "title": "Products from India",
-    "intro": "Look through products from suppliers that MITRA has reviewed. Ask for a price when you find something you like.",
+    "intro": "Look through products from suppliers that INOK has reviewed. Ask for a price when you find something you like.",
     "loading": "Loading products. Please wait.",
     "nav": {
       "saved": "Saved products",
@@ -92,7 +92,7 @@
       "attribute": "Detail",
       "differs": "differs",
       "notProvided": "Not provided",
-      "reviewed": "MITRA review",
+      "reviewed": "INOK review",
       "category": "Category",
       "variants": "Options (variants)",
       "currency": "Currency",
@@ -130,7 +130,7 @@
       "reason": "What is the problem?",
       "note": "Tell us more (optional)",
       "signIn": "Sign in to report a product",
-      "sent": "Thank you. MITRA will look at your report."
+      "sent": "Thank you. INOK will look at your report."
     },
     "request": {
       "title": "Request a price",

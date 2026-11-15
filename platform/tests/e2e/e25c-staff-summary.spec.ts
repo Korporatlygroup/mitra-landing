@@ -49,7 +49,7 @@ test('E25 staff and viewers see real claim statuses and the right preview wordin
     await expect(s.page.locator('main'), `${s.who} preview after approval`).toContainText(t('preview.registeredNote'));
     await expect(s.page.locator('main')).not.toContainText(t('preview.notReviewedYet'));
     await expect(s.page.locator('main')).not.toContainText(t('preview.nothingReviewed'));
-    await expect(s.page.locator('main')).toContainText(/Documents reviewed by MITRA on .+ for: business registration details/);
+    await expect(s.page.locator('main')).toContainText(/Documents reviewed by INOK on .+ for: business registration details/);
     await s.close();
   }
 

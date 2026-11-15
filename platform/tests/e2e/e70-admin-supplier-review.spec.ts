@@ -229,7 +229,7 @@ test('E70 partner provisioning, supplier submission, more information, approval 
   const ev2 = events.find((e) => e.kind === 'approved')!;
   expect(ev2).toMatchObject({ reason: 'Documents match the details given.', actor_user_id: reviewerB.id, to_status: 'approved' });
   await rp.reload();
-  await expect(rp.getByTestId('supplier-reviewed')).toContainText('MITRA reviewed documents for this supplier on');
+  await expect(rp.getByTestId('supplier-reviewed')).toContainText('INOK reviewed documents for this supplier on');
   await expect(rp.getByTestId('supplier-reviewed')).toContainText('contact details could be reached');
   await expect(rp.getByTestId('supplier-events')).toContainText(t('p5admin.suppliers.events.approved'));
   await expect(rp.locator('#approve-note')).toHaveCount(0);

@@ -174,7 +174,7 @@ test('E50 more-information loop, rejection, and edit after approval (the approve
   const s2 = await seedSupplier(p, reviewer, { name: 'Live Supplier' });
   await page.goto(partnerPath('en', p.orgId, `/suppliers/${s2.id}`));
   await expect(main(page).getByText(t('p5common.status.supplier.approved'), { exact: true }).first()).toBeVisible();
-  await expect(main(page).getByText(/MITRA reviewed documents for this supplier on/)).toBeVisible();
+  await expect(main(page).getByText(/INOK reviewed documents for this supplier on/)).toBeVisible();
   await expect(main(page).getByText(t('p5partner.suppliers.liveStaysNote'))).toBeVisible();
   await checkPage(page, 'supplier detail (approved)');
   await main(page).getByRole('link', { name: t('p5partner.suppliers.editApproved'), exact: true }).click();

@@ -92,8 +92,8 @@ describe('wording lint', () => {
     expect(JSON.stringify(ms).toLowerCase()).not.toContain(phrase);
   });
 
-  it('the preview wording is "Documents reviewed by MITRA ... for:" and the unregistered label is exact', () => {
-    expect(en.preview.reviewedOn).toBe('Documents reviewed by MITRA on {date} for: {scope}');
+  it('the preview wording is "Documents reviewed by INOK ... for:" and the unregistered label is exact', () => {
+    expect(en.preview.reviewedOn).toBe('Documents reviewed by INOK on {date} for: {scope}');
     expect(en.preview.unregistered).toBe('Not registered with SSM. Limited, unverified profile.');
   });
 

@@ -13,6 +13,10 @@ const t = (k: string, v: Record<string, string> = {}) => msg('en', `gov.${k}`, v
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
 
 test.describe.configure({ timeout: 300_000 });
+test.afterAll(async () => {
+  // The switches start off in a fresh database; leave them as found for any database test that runs next.
+  await sql(`update public.gov_settings set enabled = false where key = 'publishing_enabled'`);
+});
 test.skip(({ isMobile }) => isMobile, 'laptop journey');
 
 async function as(page: Page, admin: Admin, path: string) {

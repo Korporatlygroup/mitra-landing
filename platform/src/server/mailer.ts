@@ -19,7 +19,7 @@ export class MailConfigError extends Error {
 }
 
 const DEV_SMTP_URL = 'smtp://127.0.0.1:54425';
-const DEV_MAIL_FROM = 'MITRA <no-reply@mitra.local>';
+const DEV_MAIL_FROM = 'INOK <no-reply@inok.local>';
 
 /**
  * Resolves SMTP settings. In production SMTP_URL and MAIL_FROM are mandatory: there is no silent fallback,

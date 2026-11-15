@@ -12,7 +12,7 @@
     },
     "common": {
       "error": "Ralat",
-      "noAccess": "Anda tiada akses ke halaman ini. Minta pentadbir super MITRA jika anda memerlukannya.",
+      "noAccess": "Anda tiada akses ke halaman ini. Minta pentadbir super INOK jika anda memerlukannya.",
       "conflict": "Anda tidak boleh membuat keputusan untuk yang ini: anda pernah terlibat dengan rakan kongsi ini (contohnya sebagai ahli, atau dengan menyediakannya). Penyemak lain perlu membuat keputusan.",
       "reason": "Sebab",
       "reasonLabel": "Sebab (sekurang-kurangnya 5 aksara)",
@@ -75,9 +75,9 @@
     },
     "partners": {
       "title": "Rakan kongsi",
-      "intro": "Rakan kongsi ialah organisasi yang menambah pembekal dan produk ke dalam katalog. Rakan kongsi hanya boleh menambah kandungan selepas MITRA meluluskannya.",
+      "intro": "Rakan kongsi ialah organisasi yang menambah pembekal dan produk ke dalam katalog. Rakan kongsi hanya boleh menambah kandungan selepas INOK meluluskannya.",
       "provisionTitle": "Sediakan rakan kongsi baharu",
-      "provisionIntro": "MITRA mencipta organisasi rakan kongsi sebagai diluluskan dan menghantar jemputan melalui e-mel kepada pemiliknya. Pemilik menerimanya, log masuk dan menghidupkan log masuk dua langkah. Anda tidak menjadi ahli.",
+      "provisionIntro": "INOK mencipta organisasi rakan kongsi sebagai diluluskan dan menghantar jemputan melalui e-mel kepada pemiliknya. Pemilik menerimanya, log masuk dan menghidupkan log masuk dua langkah. Anda tidak menjadi ahli.",
       "provisionButton": "Cipta rakan kongsi dan hantar jemputan",
       "fields": {
         "orgName": "Nama organisasi",
@@ -97,13 +97,13 @@
       },
       "empty": "Belum ada rakan kongsi di sini.",
       "explain": {
-        "pending": "Dicipta oleh organisasi itu sendiri. Ia tidak boleh menambah apa-apa sehingga MITRA meluluskannya.",
+        "pending": "Dicipta oleh organisasi itu sendiri. Ia tidak boleh menambah apa-apa sehinggan INOK meluluskannya.",
         "approved": "Boleh menambah pembekal dan produk serta menjawab permintaan pembeli.",
         "suspended": "Dijeda. Pembekal dan produknya disembunyikan daripada pembeli dan ia tidak boleh menerima permintaan."
       },
       "orgName": "Organisasi",
       "origin": "Disediakan oleh",
-      "provisionedByMitra": "MITRA",
+      "provisionedByMitra": "INOK",
       "selfCreated": "Organisasi itu sendiri",
       "created": "Dicipta",
       "decided": "Keputusan terakhir",
@@ -158,7 +158,7 @@
           "website": "Laman web"
         },
         "contactHeading": "Butiran perhubungan (peribadi)",
-        "contactNote": "Hanya penyemak MITRA boleh melihat ini. Ia tidak pernah ditunjukkan kepada pembeli.",
+        "contactNote": "Hanya penyemak INOK boleh melihat ini. Ia tidak pernah ditunjukkan kepada pembeli.",
         "noContact": "Tiada butiran perhubungan disimpan.",
         "docsHeading": "Dokumen",
         "docsNote": "Dokumen hanya boleh dibuka selepas semakan fail lulus.",
@@ -328,7 +328,7 @@
       "productStatus": "Keadaan produk sekarang",
       "supplier": "Pembekal",
       "received": "Dilaporkan",
-      "handlerNote": "Sebab yang diberikan oleh MITRA",
+      "handlerNote": "Sebab yang diberikan oleh INOK",
       "dismissSummary": "Tolak laporan",
       "dismissHint": "Produk kekal seperti sedia ada.",
       "dismissButton": "Tolak laporan",
