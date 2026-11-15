@@ -21,3 +21,16 @@ Terminology choices for Malaysian small businesses (for the reviewer to confirm)
 Not claimed: no native-speaker or professional translator has read the Tamil or Bahasa Melayu text. `_meta` in each file says so. Both languages must be reviewed before public launch, especially legal pages (still placeholders in all languages), error messages and the reviewer-facing admin text.
 
 Known gaps: the Astro landing page at the repository root is unchanged and has no Bahasa Melayu version. Legal pages are placeholder text in every language.
+
+## Phases 1 to 7 integrated check (2026-11-15)
+Key parity was computed from the message files (every English key has a Bahasa Melayu and a Tamil key; strings identical to English are mostly product or agency names). The unit tests `messages.test.ts` and the e2e journeys (`e81` journey G, `e24` three-language flow) exercise the three languages.
+
+| Area | English keys | ms missing | ta missing |
+|---|---|---|---|
+| core | 1305 | 0 | 0 |
+| Phase 5 admin / buyer / common / partner | 304 / 207 / 211 / 574 | 0 | 0 |
+| Phase 6 sourcing | 107 | 0 | 0 |
+| Redesign | 482 | 0 | 0 |
+| Phase 7 user / admin | 105 / 249 | 0 | 0 |
+
+**Human review status: none.** Every Bahasa Melayu and Tamil string was produced or adapted by machine assistance. The operator-name change from MITRA to INOK in these languages (this integration) swapped one word only; nobody who reads Tamil or Bahasa Melayu has approved the result. Areas that need a native reviewer before public launch, in priority order: legal pages (still placeholders), error messages, the Government Assistance Navigator (eligibility wording must not mislead), reviewer-facing admin text, the redesign strings. Do not describe the translations as reviewed.

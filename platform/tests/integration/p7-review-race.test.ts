@@ -51,8 +51,10 @@ afterAll(async () => {
   await sql(`delete from public.gov_programmes where source_id = $1`, [sourceId]);
   await sql(`delete from public.gov_sources where id = $1`, [sourceId]);
   await sql(`delete from public.gov_agencies where id = $1`, [agencyId]);
-  await sql(`delete from public.memberships where org_id = $1 and user_id = any($2)`, [mitraOrg, [a.id, b.id]]);
-  if (createdMitra) await sql(`delete from public.organisations where id = $1 and not exists (select 1 from public.memberships where org_id = $1)`, [mitraOrg]);
+  // The last-administrator guard (rightly) refuses to remove the only admin_super membership. When this test created the
+  // organisation itself, deleting the organisation removes its memberships with it; otherwise only remove the two it added.
+  if (createdMitra) await sql(`delete from public.organisations where id = $1`, [mitraOrg]);
+  else await sql(`delete from public.memberships where org_id = $1 and user_id = any($2)`, [mitraOrg, [a.id, b.id]]);
 });
 
 it('two administrators approving the same change: one version, the second is told it was already decided', async () => {

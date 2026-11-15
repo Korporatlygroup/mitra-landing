@@ -7,7 +7,7 @@ import { Link } from '@/i18n/navigation';
 import Icon from './ui/Icon';
 import { usePopover } from './ui/Overlay';
 
-/** Avatar button that opens the account menu: account, organisations, messages, sign out. Used in the public bar and the workspace bar. */
+/** Avatar button that opens the account menu: account, my requests, saved products, catalogue requests, sourcing, organisations, messages, sign out. Used in the public bar and the workspace bar. */
 export default function AccountMenu({ initials, name, language }: { initials: string; name?: string; language?: ReactNode }) {
   const t = useTranslations();
   const locale = useLocale();
@@ -29,6 +29,22 @@ export default function AccountMenu({ initials, name, language }: { initials: st
           <Link role="menuitem" className="pi" href="/account" onClick={() => setOpen(false)}>
             <Icon name="users" size={18} />
             <span>{t('nav.account')}</span>
+          </Link>
+          <Link role="menuitem" className="pi" href="/requests" onClick={() => setOpen(false)}>
+            <Icon name="board" size={18} />
+            <span>{t('nav.requests')}</span>
+          </Link>
+          <Link role="menuitem" className="pi" href="/catalogue/saved" onClick={() => setOpen(false)}>
+            <Icon name="box" size={18} />
+            <span>{t('p5buyer.nav.saved')}</span>
+          </Link>
+          <Link role="menuitem" className="pi" href="/catalogue/requests" onClick={() => setOpen(false)}>
+            <Icon name="list" size={18} />
+            <span>{t('p5buyer.nav.requests')}</span>
+          </Link>
+          <Link role="menuitem" className="pi" href="/sourcing" onClick={() => setOpen(false)}>
+            <Icon name="search" size={18} />
+            <span>{t('p6.nav')}</span>
           </Link>
           <Link role="menuitem" className="pi" href="/orgs" onClick={() => setOpen(false)}>
             <Icon name="store" size={18} />
