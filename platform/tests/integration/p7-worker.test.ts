@@ -68,9 +68,10 @@ afterAll(async () => {
   await sql(`update public.gov_settings set enabled = false where key in ('monitoring_enabled','publishing_enabled','notifications_enabled')`);
   // Leave the shared database as found (pgTAP files assume empty gov tables). Versions are append-only and never created here.
   await sql(`delete from public.gov_change_proposals where source_id in (select id from public.gov_sources where name = 'Worker test')`);
-  await sql(`delete from public.gov_programmes where source_id in (select id from public.gov_sources where name = 'Worker test')`);
-  await sql(`delete from public.gov_sources where name = 'Worker test'`);
-  await sql(`delete from public.gov_agencies where name = 'Test agency'`);
+  // A programme that has a version cannot be removed (versions are append-only), so those rows stay until the next db reset.
+  await sql(`delete from public.gov_programmes p where source_id in (select id from public.gov_sources where name = 'Worker test') and not exists (select 1 from public.gov_programme_versions v where v.programme_id = p.id)`);
+  await sql(`delete from public.gov_sources s where name = 'Worker test' and not exists (select 1 from public.gov_programmes p where p.source_id = s.id)`);
+  await sql(`delete from public.gov_agencies a where name = 'Test agency' and not exists (select 1 from public.gov_sources s where s.agency_id = a.id)`);
 });
 beforeEach(async () => {
   // Isolate each test: other sources off, their queued jobs cancelled.
@@ -262,6 +263,9 @@ const changes = () => sql<{ status: string; old_result_id: string; new_result_id
 describe('Journey P: page monitor', () => {
   beforeEach(async () => {
     sourceId = await newPageSource();
+    // The outer beforeEach also made a TEKUN source: only the page monitor under test may run.
+    await sql(`update public.gov_sources set enabled = false where id <> $1`, [sourceId]);
+    await sql(`update public.gov_fetch_jobs set status = 'cancelled' where status in ('queued','running') and source_id <> $1`, [sourceId]);
   });
   const pages = (html: string, extra: Page = {}): Record<string, Page | Error> => ({
     'https://www.mitra.gov.my/robots.txt': { text: MITRA_ROBOTS },
