@@ -35,6 +35,7 @@ const BODY: Record<string, string> = {
   rule_change: 'A programme you saved has changed its published terms',
   unavailable: 'A programme you saved is no longer listed',
   reminder: 'You asked us to remind you about a saved programme',
+  recheck: 'A programme you saved has not been confirmed with its agency for a while, so check the official source before relying on it',
 };
 
 export async function runNotificationsOnce(deps: NotifyDeps): Promise<NotifySummary> {

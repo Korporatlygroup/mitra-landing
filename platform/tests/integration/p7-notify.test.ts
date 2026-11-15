@@ -93,9 +93,23 @@ describe('Journey E: notifications', () => {
     expect((await sql(`select email_status from public.gov_outbox where programme_id = $1 and version_no = 3`, [progId]))[0]).toMatchObject({ email_status: 'sent' });
   });
 
+  it('two overlapping workers deliver one email and one in-app notification (row locks, not luck)', async () => {
+    await owner.client.rpc('gov_set_prefs', { p_data: { channel_email: true } });
+    const before = (await inApp()).length;
+    await emit('programme_updated', 5);
+    const sent: { to: string }[] = [];
+    // A slow provider keeps the first worker busy while the second one runs.
+    const slow: MailerLike = { send: async (m) => { await new Promise((r) => setTimeout(r, 400)); sent.push(m); } };
+    const runs = await Promise.all([runNotificationsOnce(deps(slow)), runNotificationsOnce(deps(slow)), runNotificationsOnce(deps(slow))]);
+    expect(runs.reduce((n, r) => n + r.emailsAccepted, 0)).toBe(1);
+    expect(sent).toHaveLength(1);
+    expect((await inApp()).length - before).toBe(1);
+    expect((await sql(`select email_status from public.gov_outbox where programme_id = $1 and version_no = 5`, [progId]))[0]).toMatchObject({ email_status: 'sent' });
+  });
+
   it('unsubscribe stops email immediately', async () => {
     await owner.client.rpc('gov_set_prefs', { p_data: { channel_email: false } });
-    await emit('programme_updated', 4);
+    await emit('programme_updated', 6);
     const sent: unknown[] = [];
     const r = await runNotificationsOnce(deps({ send: async (m) => { sent.push(m); } }));
     expect(r.emailJobs).toBe(0);
