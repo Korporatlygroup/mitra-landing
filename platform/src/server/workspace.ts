@@ -2,7 +2,7 @@ import { cookies } from 'next/headers';
 import { cache } from 'react';
 import { listSellerRequests, type SellerInboxRow } from './services/directory';
 import { getProfile } from './services/auth';
-import { listMyMemberships, type MyMembership, type OrgSummary } from './services/orgs';
+import { getRolePermissions, listMyMemberships, type MyMembership, type OrgSummary } from './services/orgs';
 import { listNotifications, type NotificationRow } from './services/verification';
 import { getOptionalUser } from './session';
 
@@ -26,6 +26,8 @@ export interface Workspace {
   unread: number;
   latest: NotificationRow[];
   isReviewed: boolean;
+  /** UI hint only: whether the side menu may offer the Verification page (the database still enforces it). */
+  canReadVerification: boolean;
 }
 
 export const homeFor = (m: { id: string; type: string }) => (m.type === 'business' ? `/orgs/${m.id}/business` : m.type === 'partner' ? `/orgs/${m.id}/partner` : '/requests');
@@ -49,6 +51,7 @@ export const getWorkspace = cache(async (orgId?: string): Promise<Workspace | nu
     chosen && kind === 'business' ? listSellerRequests(supabase, chosen.org.id, 'all') : Promise.resolve([] as SellerInboxRow[]),
   ]);
   const unread = notes.filter((n) => !n.read_at);
+  const canReadVerification = chosen && kind === 'business' ? (await getRolePermissions(supabase, chosen.role)).has('verification:read') : false;
   return {
     user: { id: user.id, email: user.email ?? '', name: profile.display_name || user.email || '' },
     kind,
@@ -58,5 +61,6 @@ export const getWorkspace = cache(async (orgId?: string): Promise<Workspace | nu
     unread: unread.length,
     latest: notes.slice(0, 3),
     isReviewed: false,
+    canReadVerification,
   };
 });

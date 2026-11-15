@@ -1,8 +1,10 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import Icon from '@/components/ui/Icon';
+import StatusChip from '@/components/StatusChip';
 import { Link } from '@/i18n/navigation';
 import { matchProgramme } from '@/lib/gov-matching';
 import { pageTitle } from '@/lib/metadata';
+import { CLAIM_TYPES } from '@/lib/schemas';
 import { requireBusinessContext } from '@/server/business-context';
 import { activeDismissals } from '@/server/services/dashboard';
 import { getOwnerListing, listSellerRequests, type SellerInboxRow } from '@/server/services/directory';
@@ -11,7 +13,7 @@ import { getGovProfile, listGovProgrammes } from '@/server/services/gov';
 import { listNews } from '@/server/services/news';
 import { listOrgProducts } from '@/server/services/biz-products';
 import { getWorkspace } from '@/server/workspace';
-import { getBusinessProfile, getVerificationSummary, listCategories } from '@/server/services/verification';
+import { applicableClaims, getBusinessPrivate, getBusinessProfile, getRepresentative, getVerificationSummary, listCategories, recommendNextStep } from '@/server/services/verification';
 import { dismissCardAction } from './home-actions';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -61,6 +63,12 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ l
     listCategories(db),
     activeDismissals(db, id),
   ]);
+  const [priv, rep] = await Promise.all([ctx.canEdit ? getBusinessPrivate(db, id) : Promise.resolve(null), getRepresentative(db, id)]);
+  const next = recommendNextStep({ profile, priv, rep, claims });
+  const nextHref = next.href === 'onboarding' ? `${base}/onboarding?step=${next.step}` : `${base}/${next.href}`;
+  const byType = new Map(claims.map((c) => [c.claim_type, c]));
+  const applicable = applicableClaims(profile);
+  const anyApproved = claims.some((c) => c.status === 'approved');
   const ws = await getWorkspace(id);
   const catSlug = categories.find((c) => c.id === profile?.category_id)?.slug ?? null;
   const m = metrics.ok ? metrics.data : null;
@@ -79,7 +87,6 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ l
 
   const dur = (mins: number) => (mins < 60 ? t('biz2.home.minutes', { n: Math.round(mins) }) : mins < 2880 ? t('biz2.home.hours', { n: Math.round(mins / 6) / 10 }) : t('biz2.home.days', { n: Math.round(mins / 144) / 10 }));
 
-  const anyApproved = claims.some((c) => c.status === 'approved');
   const needsInfo = claims.find((c) => c.status === 'needs_info');
   const listingLive = listing?.live_status === 'published';
   const answeredHelp = govProfile?.ok ? govProfile.data.version >= 1 : false;
@@ -142,6 +149,8 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ l
         </div>
       </div>
 
+      {!ctx.canRead && ctx.canEdit ? <p className="notice" style={{ margin: 0 }}>{t('biz.staffNoVerification')}</p> : null}
+
       <div className="metric-row" role="group" aria-label={t('biz2.home.keyNumbers')}>
         <Metric href={`${base}/requests`} label={t('biz2.home.mNew')} value={String(newOnes.length)} tag={dueToday.length ? t('biz2.home.mDue', { n: dueToday.length }) : undefined} tagTone="coral" bars={spark} />
         <Metric href="/enquiries" label={t('biz2.home.mReply')} value={m && m.median_response_minutes !== null ? dur(m.median_response_minutes) : '–'} tag={m && m.median_response_minutes === null ? t('biz2.home.mReplyNone') : undefined} />
@@ -153,6 +162,52 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ l
         />
         <Metric href="/enquiries" label={t('biz2.home.mEnq')} value={String(m?.enquiries_received ?? 0)} />
       </div>
+
+      <section className="card" aria-labelledby="status-h" style={{ padding: '22px 24px' }}>
+        <h2 id="status-h" style={{ margin: '0 0 10px', fontSize: '1.125rem' }}>
+          {t('biz.statusTitle')}
+        </h2>
+        {!anyApproved ? (
+          <p style={{ margin: '0 0 10px' }}>
+            <StatusChip status="none" label={t('biz.unverified')} />
+          </p>
+        ) : null}
+        {profile ? (
+          <ul className="card-list" style={{ margin: 0 }}>
+            {CLAIM_TYPES.filter((ct) => applicable.includes(ct)).map((ct) => {
+              const status = byType.get(ct)?.status ?? 'none';
+              return (
+                <li key={ct} className="card">
+                  <strong>{t(`claimTypes.${ct}`)}</strong> <StatusChip status={status} label={t(`claimStatus.${status}`)} />
+                </li>
+              );
+            })}
+          </ul>
+        ) : (
+          <p>{t('biz.notStarted')}</p>
+        )}
+        {ctx.canEdit && !ctx.canSubmit ? <p className="muted">{t('biz.readOnly')}</p> : null}
+        {ctx.canEdit ? (
+          <div className="next-step" style={{ marginTop: 14 }}>
+            <h3 id="next-h" style={{ margin: '0 0 8px', fontSize: '1rem' }}>
+              {t('biz.nextHeading')}
+            </h3>
+            <Link href={nextHref} className="btn btn-primary">
+              {t(`biz.next.${next.key}`)}
+            </Link>
+          </div>
+        ) : null}
+      </section>
+
+      <nav aria-label={t('biz.title')} className="home-links">
+        {ctx.canEdit ? <Link className="btn btn-secondary btn-sm" href={`${base}/onboarding?step=1`}>{t('biz.openOnboarding')}</Link> : null}
+        {ctx.canRead ? <Link className="btn btn-secondary btn-sm" href={`${base}/verification`}>{t('biz.openVerification')}</Link> : null}
+        {ctx.canEdit ? <Link className="btn btn-secondary btn-sm" href={`${base}/listing`}>{t('biz.openListing')}</Link> : null}
+        {canRespond ? <Link className="btn btn-secondary btn-sm" href={`${base}/requests/board`}>{t('biz.openBoard')}</Link> : null}
+        {ctx.perms.has('lead:manage') ? <Link className="btn btn-secondary btn-sm" href={`${base}/leads`}>{t('p4.leadsTitle')}</Link> : null}
+        <Link className="btn btn-secondary btn-sm" href={`${base}/preview`}>{t('biz.openPreview')}</Link>
+        <Link className="btn btn-secondary btn-sm" href={`/orgs/${id}/members`}>{t('biz.openMembers')}</Link>
+      </nav>
 
       <div style={{ display: 'flex', flexWrap: 'wrap', gap: 24, alignItems: 'flex-start' }}>
         <section className="card" aria-labelledby="setup-h" style={{ flex: '999 1 460px', minWidth: 0, padding: '22px 24px 8px' }}>

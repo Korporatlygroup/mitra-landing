@@ -229,7 +229,7 @@ export default async function ListingView({
         ) : (
           <span>{t('dir.notReviewed')}</span>
         )}
-        <span className="mut" style={{ fontSize: '0.8125rem', lineHeight: 1.5, borderTop: '1px solid #eef1ef', paddingTop: 10 }}>
+        <span className="mut" style={{ fontSize: '0.8125rem', lineHeight: 1.5, borderTop: '1px solid #f3ebdc', paddingTop: 10 }}>
           {t('dir.reviewLimit')} {t('dir2.reviewNote')}
         </span>
       </div>

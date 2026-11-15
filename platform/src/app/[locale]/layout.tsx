@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
-import { Noto_Sans_Tamil, Plus_Jakarta_Sans } from 'next/font/google';
+import { Bricolage_Grotesque, Hanken_Grotesk, Noto_Sans_Tamil } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import SiteFooter from '@/components/SiteFooter';
@@ -14,7 +14,8 @@ import '../ui.css';
 import '../shell.css';
 import '../pages.css';
 
-const jakarta = Plus_Jakarta_Sans({ subsets: ['latin', 'latin-ext'], weight: ['400', '500', '600', '700', '800'], variable: '--font-jakarta', display: 'swap' });
+const hanken = Hanken_Grotesk({ subsets: ['latin', 'latin-ext'], variable: '--font-hanken', display: 'swap' });
+const bricolage = Bricolage_Grotesque({ subsets: ['latin', 'latin-ext'], variable: '--font-bricolage', display: 'swap' });
 const tamil = Noto_Sans_Tamil({ subsets: ['tamil'], weight: ['400', '500', '600', '700'], variable: '--font-tamil', display: 'swap' });
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -41,7 +42,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   }
 
   return (
-    <html lang={locale} className={`${jakarta.variable} ${tamil.variable}`}>
+    <html lang={locale} className={`${hanken.variable} ${bricolage.variable} ${tamil.variable}`}>
       <body>
         <NextIntlClientProvider locale={locale} messages={messages}>
           <a className="skip-link" href="#main">

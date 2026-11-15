@@ -47,7 +47,7 @@ test('E24 queue: aal1 is sent to MFA, aal2 sees the queue and its counts', async
   // Counts agree with the database.
   const counts = await sql<{ status: string; n: number }>(`select status::text, count(*)::int as n from public.verification_claims where submitted_at is not null group by status`);
   const nSubmitted = counts.find((c) => c.status === 'submitted')?.n ?? 0;
-  await expect(page.locator('ul.card-list li', { hasText: msg('en', 'claimStatus.submitted') }).first()).toContainText(`: ${nSubmitted}`);
+  await expect(page.locator('a.tile', { hasText: msg('en', 'claimStatus.submitted') }).first()).toContainText(String(nSubmitted));
 
   // Filter works.
   await page.goto(adminPath('en', '?status=approved'));

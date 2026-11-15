@@ -1,7 +1,7 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useActionState, useState } from 'react';
+import { useActionState, useEffect, useRef, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { decideAction } from '@/app/[locale]/admin/verification/actions';
 import { FormMessage } from '@/components/ActionForm';
@@ -27,13 +27,23 @@ export default function DecisionForm({ claimId, version }: { claimId: string; ve
   const [state, action] = useActionState(decideAction, idle);
   const [decision, setDecision] = useState('');
   const [checked, setChecked] = useState<string[]>([]);
+  const formRef = useRef<HTMLFormElement>(null);
+  // React clears uncontrolled fields after every action submission, success or failure.
+  // The reason (and decision/checklist, kept here as React state already) must survive a failed save.
+  useEffect(() => {
+    const reason = state.values?.reason;
+    if (state.status === 'error' && reason) {
+      const el = formRef.current?.elements.namedItem('reason');
+      if (el instanceof HTMLTextAreaElement) el.value = reason;
+    }
+  }, [state]);
   const options = [
     ['approve', t('approve')],
     ['request_info', t('requestInfo')],
     ['reject', t('reject')],
   ] as const;
   return (
-    <form action={action} className="form" style={{ maxWidth: 'none' }}>
+    <form ref={formRef} action={action} className="form" style={{ maxWidth: 'none' }}>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="claimId" value={claimId} />
       <input type="hidden" name="expectedVersion" value={version} />
@@ -46,7 +56,6 @@ export default function DecisionForm({ claimId, version }: { claimId: string; ve
               <label key={k} className={`ck${on ? ' on' : ''}`}>
                 <input
                   type="checkbox"
-                  className="sr"
                   name="checks"
                   value={a(k)}
                   checked={on}
@@ -66,7 +75,7 @@ export default function DecisionForm({ claimId, version }: { claimId: string; ve
         <div className="decisions">
           {options.map(([value, label]) => (
             <label key={value} className={`dec${decision === value ? ' on' : ''}`}>
-              <input type="radio" name="decision" value={value} className="sr" checked={decision === value} onChange={() => setDecision(value)} required />
+              <input type="radio" id={`d-${value === 'request_info' ? 'info' : value}`} name="decision" value={value} checked={decision === value} onChange={() => setDecision(value)} required />
               {label}
             </label>
           ))}

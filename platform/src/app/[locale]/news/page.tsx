@@ -172,7 +172,7 @@ export default async function NewsPage({
                 {deadlines.data.map((d) => {
                   const when = new Date(`${d.deadline_on}T00:00:00Z`);
                   return (
-                    <li key={d.id} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderTop: '1px solid #eef1ef' }}>
+                    <li key={d.id} style={{ display: 'flex', gap: 12, alignItems: 'center', padding: '10px 0', borderTop: '1px solid #f3ebdc' }}>
                       <span className="date-block" aria-hidden="true">
                         <strong>{fmt.dateTime(when, { day: 'numeric', timeZone: 'UTC' })}</strong>
                         <small>{fmt.dateTime(when, { month: 'short', timeZone: 'UTC' })}</small>

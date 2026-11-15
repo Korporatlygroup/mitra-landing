@@ -40,7 +40,7 @@ for (const locale of ['en', 'ta', 'ms'] as const satisfies readonly Locale[]) {
     await expect(page.locator('html')).toHaveAttribute('lang', locale);
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(msg(locale, 'home.titleSignedIn', { name }));
     await expect(page.getByRole('heading', { level: 2, name: msg(locale, 'home.yourOrgs') })).toBeVisible();
-    await expect(page.getByRole('button', { name: msg(locale, 'nav.signOut'), exact: true })).toBeVisible();
+    await expect(page.getByRole('button', { name: msg(locale, 'ws.accountMenu'), exact: true }).or(page.getByRole('button', { name: msg(locale, 'nav.signOut'), exact: true })).first()).toBeVisible();
     if (locale === 'ta') {
       // Tamil script actually renders (not English fallbacks).
       expect(await page.locator('main').innerText()).toMatch(/[஀-௿]/);

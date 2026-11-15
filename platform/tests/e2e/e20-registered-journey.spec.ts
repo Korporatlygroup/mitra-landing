@@ -13,7 +13,7 @@ test('E20 registered business: steps 1 to 5, upload, send all three claims', asy
 
   // Overview before anything is done.
   await page.goto(orgPath('en', orgId));
-  await expect(page.getByRole('heading', { level: 1 })).toHaveText(orgName);
+  await expect(page.locator('.org-btn')).toContainText(orgName);
   await expect(page.locator('main')).toContainText(t('biz.unverified'));
   await expect(page.locator('main')).toContainText(t('biz.notStarted'));
 

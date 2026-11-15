@@ -38,11 +38,10 @@ export default async function AdminShell({ locale, children }: { locale: string;
     {
       key: 'catalogue',
       label: a('gCatalogue'),
+      // One entry point: the catalogue section has its own tab bar (CatalogueAdminNav) for partners/suppliers/products/reports/imports,
+      // so repeating those here would duplicate every link on every catalogue page.
       items: [
-        { key: 'cat', href: '/admin/catalogue', label: t('p5admin.nav.catalogue'), icon: 'layers', match: ['/admin/catalogue'], exact: true },
-        { key: 'partners', href: '/admin/catalogue/partners', label: a('partners'), icon: 'users', match: ['/admin/catalogue/partners', '/admin/catalogue/suppliers'] },
-        { key: 'catprod', href: '/admin/catalogue/products', label: a('products'), icon: 'box', match: ['/admin/catalogue/products'] },
-        { key: 'imports', href: '/admin/catalogue/imports', label: a('imports'), icon: 'upload', match: ['/admin/catalogue/imports'] },
+        { key: 'cat', href: '/admin/catalogue', label: t('p5admin.nav.catalogue'), icon: 'layers', match: ['/admin/catalogue'] },
       ],
     },
     {

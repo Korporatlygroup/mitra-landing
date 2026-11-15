@@ -9,13 +9,13 @@ export default function Tag({ tone = 'gray', children, large }: { tone?: Tone; c
 
 /** Cover colours and tint for a business, picked from its id so a business keeps one colour everywhere. */
 const PALETTE = [
-  { c1: '#0B5D4B', c2: 'rgba(245,178,45,0.55)', tint: '#E8F3EF' },
+  { c1: '#8c1d40', c2: 'rgba(244,165,28,0.55)', tint: '#f9e8ed' },
   { c1: '#8A5A00', c2: 'rgba(255,255,255,0.35)', tint: '#FEF0D2' },
   { c1: '#2446A8', c2: 'rgba(255,255,255,0.3)', tint: '#E7EDFC' },
-  { c1: '#5435B8', c2: 'rgba(245,178,45,0.45)', tint: '#EEE9FC' },
+  { c1: '#5435B8', c2: 'rgba(244,165,28,0.45)', tint: '#EEE9FC' },
   { c1: '#9A3412', c2: 'rgba(255,255,255,0.3)', tint: '#FCE7DE' },
-  { c1: '#101A16', c2: 'rgba(245,178,45,0.5)', tint: '#EEF1EF' },
-  { c1: '#0A5444', c2: 'rgba(255,255,255,0.35)', tint: '#E3F2EC' },
+  { c1: '#2a1a12', c2: 'rgba(244,165,28,0.5)', tint: '#f3ebdc' },
+  { c1: '#5C0F28', c2: 'rgba(244,165,28,0.5)', tint: '#F3DCE3' },
 ];
 
 export function paletteFor(key: string) {

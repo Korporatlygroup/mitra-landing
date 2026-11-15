@@ -223,7 +223,7 @@ export default function LeadsBoard({ cards, orgId, browseHref }: { cards: LeadCa
   };
 
   const CardButton = ({ c }: { c: LeadCard }) => (
-    <button type="button" className={`lead${openKey === c.key ? ' sel' : ''}`} onClick={() => setOpenKey(c.key)} aria-label={`${t('openDetail')}: ${c.title}`} data-testid="inbox-row">
+    <button type="button" className={`lead${openKey === c.key ? ' sel' : ''}`} onClick={() => setOpenKey(c.key)} data-testid="inbox-row">
       <span style={{ display: 'flex', justifyContent: 'space-between', gap: 8, alignItems: 'flex-start' }}>
         <strong style={{ fontSize: '0.95rem', lineHeight: 1.3 }}>{c.title}</strong>
       </span>
@@ -270,7 +270,7 @@ export default function LeadsBoard({ cards, orgId, browseHref }: { cards: LeadCa
         </div>
       ) : view === 'board' ? (
         <div className="board" role="group" aria-label={t('columns')}>
-          {[...COLS, ...(showLost ? [{ key: 'lost' as const, dot: '#8a9a93', label: 'colLost' }] : [])].map((col) => {
+          {[...COLS, ...(showLost ? [{ key: 'lost' as const, dot: '#9c8d7d', label: 'colLost' }] : [])].map((col) => {
             const items = cards.filter((c) => c.column === col.key);
             return (
               <section key={col.key} className="col" aria-label={`${t(col.label)} (${items.length})`}>

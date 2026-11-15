@@ -59,7 +59,7 @@ test('E44b directory, request wizard, seller pages and admin queue in Bahasa Mel
   // public directory
   await page.goto('/ms/directory');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(m('dir.title'));
-  await expect(page.locator('#category')).toContainText(m('categories.food-beverage'));
+  await expect(page.locator('.fchip-row')).toContainText(m('categories.food-beverage'));
   await axe(page, 'directory in ms');
   await page.locator('#q').fill('zzzz-no-such-business');
   await page.getByRole('button', { name: m('dir.search'), exact: true }).click();

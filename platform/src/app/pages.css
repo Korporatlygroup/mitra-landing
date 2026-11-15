@@ -22,7 +22,7 @@
   top: -160px;
   width: 620px;
   height: 620px;
-  background: var(--brand-tint);
+  background: #fde7b8;
 }
 .hero-disc-b {
   right: 180px;
@@ -69,7 +69,7 @@
   flex-wrap: wrap;
   gap: 6px;
   align-items: center;
-  box-shadow: 0 18px 50px rgba(16, 26, 22, 0.12);
+  box-shadow: 0 18px 50px rgba(42,26,18, 0.12);
   border: 1px solid var(--line);
   max-width: 680px;
 }
@@ -125,7 +125,7 @@
 .float {
   background: #fff;
   border-radius: 20px;
-  box-shadow: 0 24px 60px rgba(16, 26, 22, 0.16), 0 2px 6px rgba(16, 26, 22, 0.06);
+  box-shadow: 0 24px 60px rgba(42,26,18, 0.16), 0 2px 6px rgba(42,26,18, 0.06);
   position: absolute;
 }
 .f1 {
@@ -241,14 +241,14 @@
 }
 .owner-steps li {
   border-radius: 20px;
-  background: #1c2823;
+  background: #3a2419;
   padding: 20px;
   display: flex;
   flex-direction: column;
   gap: 8px;
 }
 .owner-steps li > span:last-child {
-  color: #aebbb5;
+  color: #d9c3ab;
   font-size: 0.875rem;
   line-height: 1.5;
 }
@@ -334,7 +334,7 @@
 .dir-banner {
   border-radius: 24px;
   background-color: var(--brand);
-  background-image: radial-gradient(rgba(245, 178, 45, 0.35) 1.2px, transparent 1.3px);
+  background-image: radial-gradient(rgba(244,165,28, 0.35) 1.2px, transparent 1.3px);
   background-size: 22px 22px;
   color: #fff;
   padding: 28px;
@@ -374,7 +374,7 @@
 .profile-cover {
   height: 200px;
   background-color: var(--c1, var(--brand));
-  background-image: radial-gradient(var(--c2, rgba(245, 178, 45, 0.55)) 1.4px, transparent 1.5px);
+  background-image: radial-gradient(var(--c2, rgba(244,165,28, 0.55)) 1.4px, transparent 1.5px);
   background-size: 24px 24px;
 }
 .profile-top {
@@ -453,7 +453,7 @@
   justify-content: space-between;
   gap: 12px;
   padding: 14px 0;
-  border-top: 1px solid #eef1ef;
+  border-top: 1px solid #f3ebdc;
 }
 .svc-row:first-child {
   border-top: 0;
@@ -468,12 +468,12 @@
   border-radius: 16px;
   object-fit: cover;
   width: 100%;
-  background: #f1f4f2;
+  background: #fcf1dc;
 }
 
 /* ---------- business help (public and workspace) ---------- */
 .help-hero {
-  background: var(--brand-tint);
+  background: #fcf1dc;
 }
 .help-hero .pub-wrap {
   padding-top: 48px;
@@ -511,7 +511,7 @@
   gap: 14px;
   align-items: flex-start;
   padding: 16px 0;
-  border-top: 1px solid #eef1ef;
+  border-top: 1px solid #f3ebdc;
 }
 .step-row:first-child {
   border-top: 0;
@@ -594,7 +594,7 @@
 }
 .lead:hover {
   border-color: var(--brand);
-  box-shadow: 0 6px 18px rgba(11, 93, 75, 0.1);
+  box-shadow: 0 6px 18px rgba(140,29,64, 0.1);
 }
 .lead.sel {
   border: 2px solid var(--brand);
@@ -721,7 +721,7 @@
 }
 .bub.them {
   align-self: flex-start;
-  background: #f1f4f2;
+  background: #fcf1dc;
   color: var(--ink);
   border-bottom-left-radius: 6px;
 }
@@ -794,7 +794,7 @@ tr.sel td {
   font-size: 0.9375rem;
 }
 .ck.on {
-  border-color: #bfdccf;
+  border-color: #f3c7d6;
   background: var(--brand-tint-2);
 }
 .ck:focus-within {
@@ -895,4 +895,31 @@ tr.sel td {
 .auth-card .btn-row .btn,
 .auth-card .link-row .btn {
   width: auto;
+}
+
+/* Radios and checkboxes in the review form: the real input fills its label so pointer, keyboard and screen readers all hit it. */
+.dec,
+.ck {
+  position: relative;
+}
+.dec input,
+.ck input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+  z-index: 1;
+}
+.dec:has(input:focus-visible),
+.ck:has(input:focus-visible) {
+  outline: 2px solid var(--brand);
+  outline-offset: 2px;
+}
+.home-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
 }

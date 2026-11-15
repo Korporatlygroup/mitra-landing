@@ -2,22 +2,22 @@
    Shells (public, workspace, admin) live in shell.css; page-level pieces in ui.css. */
 :root {
   /* brand */
-  --brand: #0b5d4b;
-  --brand-hover: #08463a;
-  --brand-tint: #e8f3ef;
-  --brand-tint-2: #f2f8f5;
-  --gold: #f5b22d;
-  --gold-hover: #e9a01a;
-  --on-gold: #2a1c00;
-  --ink: #101a16;
-  --text-2: #3b4842;
-  --muted: #55625c;
-  --line: #e8ece9;
-  --line-app: #e5eae7;
-  --line-strong: #d3dbd6;
-  --input-line: #c5cfca;
-  --bg-public: #fafaf7;
-  --bg-app: #f4f6f4;
+  --brand: #8c1d40;
+  --brand-hover: #5c0f28;
+  --brand-tint: #f9e8ed;
+  --brand-tint-2: #fdf3f5;
+  --gold: #f4a51c;
+  --gold-hover: #e0940f;
+  --on-gold: #2a1500;
+  --ink: #2a1a12;
+  --text-2: #4a362a;
+  --muted: #6b5747;
+  --line: #f0e3ca;
+  --line-app: #efe2c8;
+  --line-strong: #dcc8a4;
+  --input-line: #c4ab7c;
+  --bg-public: #fffcf6;
+  --bg-app: #fbf4e6;
   --surface-card: #ffffff;
   --warn-bg: #fef7e6;
   --warn-line: #f3dfae;
@@ -32,14 +32,14 @@
   --tag-blue: #2446a8;
   --tag-coral-bg: #fce7de;
   --tag-coral: #9a3412;
-  --tag-gray-bg: #eef1ef;
-  --tag-gray: #4a5751;
+  --tag-gray-bg: #f3ebdc;
+  --tag-gray: #5a4a3d;
   --tag-violet-bg: #eee9fc;
   --tag-violet: #5435b8;
 
   /* legacy names, so older rules and any inline use keep working */
   --bg: var(--bg-public);
-  --surface: #f1f4f2;
+  --surface: #fcf1dc;
   --text: var(--ink);
   --text-muted: var(--muted);
   --border: var(--line-strong);
@@ -54,13 +54,17 @@
   --tap: 44px;
   --space: 16px;
 
-  --shadow-card: 0 1px 2px rgba(16, 26, 22, 0.04);
-  --shadow-hover: 0 10px 28px rgba(11, 93, 75, 0.1);
-  --shadow-pop: 0 18px 48px rgba(16, 26, 22, 0.16);
-  --shadow-drawer: -18px 0 48px rgba(16, 26, 22, 0.18);
+  --shadow-card: 0 1px 2px rgba(42,26,18, 0.04);
+  --shadow-hover: 0 10px 28px rgba(140,29,64, 0.1);
+  --shadow-pop: 0 18px 48px rgba(42,26,18, 0.16);
+  --shadow-drawer: -18px 0 48px rgba(42,26,18, 0.18);
 
-  --font: var(--font-jakarta), 'Plus Jakarta Sans', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, sans-serif;
+  --font: var(--font-hanken), 'Hanken Grotesk', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, var(--font-tamil), 'Noto Sans Tamil', 'Latha', 'Nirmala UI', sans-serif;
+  --font-display: var(--font-bricolage), 'Bricolage Grotesque', var(--font);
   --font-ta: var(--font-tamil), 'Noto Sans Tamil', 'Latha', 'Nirmala UI', sans-serif;
+  --brand-ink: #2a1500;
+  --footer-bg: #2a0d17;
+  --footer-text: #f3e3cf;
 }
 
 *,
@@ -123,6 +127,14 @@ main:has(> .ws-shell) {
   display: flex;
 }
 
+h1,
+h2,
+h3,
+h4,
+.hero-h1,
+.logo-word {
+  font-family: var(--font-display);
+}
 h1 {
   font-size: clamp(1.7rem, 2.4vw, 2rem);
   line-height: 1.15;
@@ -544,7 +556,7 @@ td {
   text-align: left;
   vertical-align: top;
   padding: 12px 16px;
-  border-bottom: 1px solid #eef1ef;
+  border-bottom: 1px solid #f3ebdc;
 }
 th {
   font-size: 0.7rem;
@@ -587,7 +599,7 @@ caption {
 }
 code {
   word-break: break-all;
-  background: #eef1ef;
+  background: #f3ebdc;
   padding: 2px 6px;
   border-radius: 6px;
   font-size: 0.9em;
@@ -635,7 +647,7 @@ pre.details {
   padding: 0 0 14px 14px;
 }
 .next-step {
-  border: 1px solid #bfdccf;
+  border: 1px solid #f3c7d6;
   border-radius: 20px;
   padding: 20px;
   background: var(--brand-tint-2);
@@ -750,7 +762,7 @@ main:has(.catalogue-wide) > * {
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  background: #f1f4f2;
+  background: #fcf1dc;
   border-radius: 14px;
 }
 .p5-price {
@@ -794,7 +806,7 @@ main:has(.catalogue-wide) > * {
   transition: box-shadow 0.15s, transform 0.15s;
 }
 .catalogue-card:hover {
-  box-shadow: 0 14px 36px rgba(16, 26, 22, 0.12);
+  box-shadow: 0 14px 36px rgba(42,26,18, 0.12);
   transform: translateY(-2px);
 }
 .catalogue-card-title {
@@ -920,7 +932,7 @@ main:has(.catalogue-wide) > * {
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--line-strong);
-  box-shadow: 0 -10px 30px rgba(16, 26, 22, 0.1);
+  box-shadow: 0 -10px 30px rgba(42,26,18, 0.1);
   padding: 10px var(--space);
 }
 .compare-tray-title {

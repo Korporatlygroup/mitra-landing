@@ -131,8 +131,12 @@ export default async function DirectoryPage({
         </p>
       ) : data.items.length === 0 ? (
         <section className="empty" aria-labelledby="none-h">
-          <strong id="none-h">{t('dir2.noMatch')}</strong>
-          <span className="mut">{t('dir2.noMatchSub')}</span>
+          <h2 id="none-h" style={{ margin: 0, fontSize: '1rem' }}>
+            {t('dir.noneTitle')}
+          </h2>
+          <p className="mut" style={{ margin: 0 }}>
+            {t('dir.noneBody')}
+          </p>
           {filtered ? (
             <Link href="/directory" className="btn btn-secondary btn-sm">
               {t('dir.noneClear')}
@@ -171,7 +175,7 @@ export default async function DirectoryPage({
       <div className="dir-banner">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6, flex: '1 1 320px' }}>
           <strong>{t('dir2.canTFind')}</strong>
-          <span style={{ color: '#cfe6dd' }}>{t('dir2.canTFindSub')}</span>
+          <span style={{ color: '#f6d6e1' }}>{t('dir2.canTFindSub')}</span>
         </div>
         <Link href="/requests/new" className="btn btn-gold">
           {t('dir2.postRequest')}

@@ -53,7 +53,7 @@ export default async function AdminVerificationPage({
         </div>
       </div>
 
-      <nav aria-label={t('adminVer.countsTitle')} className="tiles">
+      <nav aria-label={t('adminVer.filterLabel')} className="tiles">
         <Link href="/admin/verification?status=open" className="tile" aria-current={filter === 'open' ? 'true' : undefined}>
           <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
             {t('adminVer.filterOpen')}

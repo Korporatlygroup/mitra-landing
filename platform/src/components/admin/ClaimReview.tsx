@@ -15,6 +15,8 @@ export default async function ClaimReview({ claimId, locale, db, canDecide, head
   const [orgName, docs, events] = await Promise.all([getOrgName(db, claim.org_id), listAttachedDocuments(db, claim.id, claim.version), listEvents(db, [claim.id])]);
   const open = claim.status === 'submitted' || claim.status === 'in_review';
   const H = headingLevel === 1 ? 'h1' : 'h2';
+  // Sections sit one level below the title: h2 on the full page, h3 inside the queue drawer.
+  const S = headingLevel === 1 ? 'h2' : 'h3';
   const hiddenIds = (
     <>
       <input type="hidden" name="locale" value={locale} />
@@ -35,7 +37,7 @@ export default async function ClaimReview({ claimId, locale, db, canDecide, head
       </div>
 
       <section>
-        <h3 style={{ margin: '0 0 8px' }}>{t('adminVer.snapshotTitle')}</h3>
+        <S style={{ margin: '0 0 8px' }}>{t('adminVer.snapshotTitle')}</S>
         <dl className="dl">
           {Object.entries(claim.snapshot ?? {}).map(([k, v]) => (
             <div key={k} style={{ display: 'contents' }}>
@@ -47,7 +49,7 @@ export default async function ClaimReview({ claimId, locale, db, canDecide, head
       </section>
 
       <section>
-        <h3 style={{ margin: '0 0 8px' }}>{t('adminVer.ownerNote')}</h3>
+        <S style={{ margin: '0 0 8px' }}>{t('adminVer.ownerNote')}</S>
         <div className="notice">{claim.owner_note ?? t('adminVer.noNote')}</div>
         {claim.decision_reason ? (
           <p>
@@ -57,7 +59,7 @@ export default async function ClaimReview({ claimId, locale, db, canDecide, head
       </section>
 
       <section>
-        <h3 style={{ margin: '0 0 8px' }}>{t('adminVer.docsTitle')}</h3>
+        <S style={{ margin: '0 0 8px' }}>{t('adminVer.docsTitle')}</S>
         {docs.length === 0 ? (
           <p>{t('adminVer.noDocs')}</p>
         ) : (
@@ -98,7 +100,7 @@ export default async function ClaimReview({ claimId, locale, db, canDecide, head
       ) : null}
 
       <section>
-        <h3 style={{ margin: '0 0 8px' }}>{t('adminVer.historyTitle')}</h3>
+        <S style={{ margin: '0 0 8px' }}>{t('adminVer.historyTitle')}</S>
         <ol className="timeline">
           {events.map((e) => (
             <li key={e.id}>

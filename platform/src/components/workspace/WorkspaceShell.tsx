@@ -39,7 +39,9 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
         items: [
           { key: 'products', href: `${base}/business/products`, icon: 'box', label: m('products'), match: [`${base}/business/products`] },
           { key: 'listing', href: `${base}/business/listing`, icon: 'store', label: m('listing'), match: [`${base}/business/listing`, `${base}/business/preview`] },
-          { key: 'verification', href: `${base}/business/verification`, icon: 'shield', label: m('verification'), match: [`${base}/business/verification`] },
+          ...(ws.canReadVerification
+            ? [{ key: 'verification', href: `${base}/business/verification`, icon: 'shield' as const, label: m('verification'), match: [`${base}/business/verification`] }]
+            : []),
         ],
       },
       {
