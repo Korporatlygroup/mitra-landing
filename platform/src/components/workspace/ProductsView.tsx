@@ -5,7 +5,7 @@ import { useSearchParams } from 'next/navigation';
 import { useActionState, useEffect, useState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { archiveProductAction, saveProductAction } from '@/app/[locale]/orgs/[id]/business/products/actions';
-import { FormMessage } from '@/components/ActionForm';
+import { FormMessage, useRestoringAction } from '@/components/ActionForm';
 import Icon from '@/components/ui/Icon';
 import { Dialog, Drawer, Switch } from '@/components/ui/Overlay';
 import { Link } from '@/i18n/navigation';
@@ -27,14 +27,14 @@ function Submit({ intent, children, kind }: { intent: 'draft' | 'submit'; childr
 function ProductForm({ orgId, product, kind, onDone }: { orgId: string; product: BizProduct | null; kind: 'product' | 'service'; onDone: () => void }) {
   const t = useTranslations('biz2.products');
   const locale = useLocale();
-  const [state, action] = useActionState(saveProductAction, idle);
+  const [state, action, formRef] = useRestoringAction(saveProductAction);
   const [ask, setAsk] = useState(product?.ask_for_quote ?? false);
   useEffect(() => {
     if (state.status === 'success') onDone();
   }, [state, onDone]);
   const price = product && product.price_cents !== null ? (product.price_cents / 100).toFixed(2) : '';
   return (
-    <form action={action} className="form" style={{ maxWidth: 'none' }}>
+    <form ref={formRef} action={action} className="form" style={{ maxWidth: 'none' }}>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="orgId" value={orgId} />
       <input type="hidden" name="id" value={product?.id ?? ''} />

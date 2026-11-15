@@ -1,11 +1,9 @@
 'use client';
 
 import { useLocale, useTranslations } from 'next-intl';
-import { useActionState } from 'react';
 import { useFormStatus } from 'react-dom';
 import { saveNewsPostAction } from '@/app/[locale]/admin/news/actions';
-import { FormMessage } from '@/components/ActionForm';
-import { idle } from '@/lib/form-state';
+import { FormMessage, useRestoringAction } from '@/components/ActionForm';
 import type { NewsCategory } from '@/server/services/news';
 
 export interface EditorPost {
@@ -37,9 +35,9 @@ export default function NewsEditor({ post, categories, states, sectorLabels }: {
   const t = useTranslations('news2.admin');
   const c = useTranslations('common');
   const locale = useLocale();
-  const [state, action] = useActionState(saveNewsPostAction, idle);
+  const [state, action, formRef] = useRestoringAction(saveNewsPostAction);
   return (
-    <form action={action} className="form form-wide" style={{ maxWidth: '46rem' }}>
+    <form ref={formRef} action={action} className="form form-wide" style={{ maxWidth: '46rem' }}>
       <input type="hidden" name="locale" value={locale} />
       <input type="hidden" name="id" value={post.id ?? ''} />
       <input type="hidden" name="version" value={post.version ?? ''} />

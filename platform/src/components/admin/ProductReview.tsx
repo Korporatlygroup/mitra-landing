@@ -1,11 +1,10 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useActionState, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { decideProductAction } from '@/app/[locale]/admin/products/actions';
-import { FormMessage } from '@/components/ActionForm';
+import { FormMessage, useRestoringAction } from '@/components/ActionForm';
 import { Drawer } from '@/components/ui/Overlay';
-import { idle } from '@/lib/form-state';
 import type { AdminBizProduct } from '@/server/services/biz-products-types';
 
 const DECISIONS = [
@@ -16,13 +15,13 @@ const DECISIONS = [
 
 function Form({ p, onDone }: { p: AdminBizProduct; onDone: () => void }) {
   const t = useTranslations('adm2.products');
-  const [state, action] = useActionState(decideProductAction, idle);
+  const [state, action, formRef] = useRestoringAction(decideProductAction);
   const [decision, setDecision] = useState<string>('');
   useEffect(() => {
     if (state.status === 'success') onDone();
   }, [state, onDone]);
   return (
-    <form action={action} className="form" style={{ maxWidth: 'none' }}>
+    <form ref={formRef} action={action} className="form" style={{ maxWidth: 'none' }}>
       <input type="hidden" name="id" value={p.id} />
       <input type="hidden" name="version" value={p.version} />
       <div role="radiogroup" aria-label={t('save')} className="seg" style={{ width: '100%' }}>
