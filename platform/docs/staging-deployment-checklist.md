@@ -7,11 +7,11 @@ Status key: **Local** = verified on the developer machine only. **Prepared** = f
 |---|---|---|
 | A1 | Read-only re-check on 2026-11-16: 11 history rows with execution-time versions (`20261110074212` to `…243`), names equal to files 001 to 011, 0 users, 0 organisations, 17 public tables, 1 private table, 1 private bucket (`verification-docs`), 18 policies, extensions citext, pgcrypto, uuid-ossp, pg_stat_statements, supabase_vault | Done (read-only) |
 | A2 | Freeze other writers (MCP `apply_migration`, other developers) for the window | Needs you |
-| A3 | Snapshot the 11 history rows and take a schema dump outside git | Open (hosted read) |
-| A4 | `supabase migration repair` of the 11 rows (reverted then applied), exact commands in `staging-migration-reconciliation.md` | Prepared, **needs your approval** (hosted write to bookkeeping only) |
-| A5 | `supabase db push --dry-run` must list exactly 29 versions, in order: `000012 000013 000014 000100–000107 000110–000116 000150–000153 000200 000201 000210 000220 000221 000222 000223` | Prepared |
-| A6 | `supabase db push` of those 29 | **Needs your approval** |
-| A7 | Post-push checks: every public table has RLS on, advisor run (security and performance), `verification-docs` and `catalogue-media` private, 223 is a no-op because the bucket exists | Open |
+| A3 | Snapshot of the 11 history rows and a schema dump outside git | **Done 2026-11-16** (backups folder outside git) |
+| A4 | `supabase migration repair` of the 11 rows | **Done 2026-11-16** (approved; execution record in `staging-migration-reconciliation.md`) |
+| A5 | `supabase db push --dry-run` listed exactly the 29 expected versions | **Done 2026-11-16** |
+| A6 | `supabase db push` of those 29 | **Done 2026-11-16** (exit 0; hosted schema matches local at the same head, see the record) |
+| A7 | Post-push checks: RLS on every public table (0 without), buckets private, advisors run (0 errors, 206 warnings reviewed; 13 initplan warnings proposed as migration 224, not applied) | **Done** except migration 224 |
 | A8 | Backup posture: confirm plan backups or PITR before real data | Needs you (plan decision) |
 
 ## B. Application host: Cloudflare Workers (decision 2026-11-16: Cloudflare and Supabase only)
