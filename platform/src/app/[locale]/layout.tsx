@@ -9,8 +9,7 @@ import SiteHeader from '@/components/SiteHeader';
 import { BASE_PATHS } from '@/i18n/client-namespaces';
 import { pickMessages } from '@/i18n/pick-messages';
 import { routing } from '@/i18n/routing';
-import { getOptionalUser } from '@/server/session';
-import { listMyMemberships } from '@/server/services/orgs';
+import { getOptionalUser, myMembershipsOnce, myProfileOnce } from '@/server/session';
 import '../globals.css';
 import '../ui.css';
 import '../shell.css';
@@ -35,8 +34,8 @@ export default async function LocaleLayout({ children, params }: { children: Rea
 
   let header: { name: string; home: string } | null = null;
   if (user && supabase) {
-    const [{ data }, memberships] = await Promise.all([supabase.from('profiles').select('display_name').eq('id', user.id).maybeSingle(), listMyMemberships(supabase, user.id)]);
-    const name = (data as { display_name?: string } | null)?.display_name || user.email || '';
+    const [profile, memberships] = await Promise.all([myProfileOnce(supabase, user.id), myMembershipsOnce(supabase, user.id)]);
+    const name = profile.display_name || user.email || '';
     const staff = memberships.find((m) => m.org.type === 'mitra');
     const biz = memberships.find((m) => m.org.type === 'business');
     const partner = memberships.find((m) => m.org.type === 'partner');

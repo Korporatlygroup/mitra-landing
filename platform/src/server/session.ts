@@ -1,7 +1,8 @@
 import { redirect } from 'next/navigation';
+import { cache } from 'react';
 import type { Locale } from '@/i18n/routing';
 import { requiresMfa } from '@/lib/permissions';
-import { createClient } from '@/lib/supabase/server';
+import { createClient as createClientUncached } from '@/lib/supabase/server';
 import { getProfile, type Profile } from './services/auth';
 import { getMfaStatus } from './services/mfa';
 import { listMyMemberships, type MyMembership } from './services/orgs';
@@ -15,6 +16,24 @@ export interface AppSession {
   needsMfa: boolean;
   aal: 'aal1' | 'aal2';
 }
+
+/**
+ * Per-request memoisation (React cache: one render, one set of answers). The layout, the page gate and the proxy-refreshed cookies used to
+ * trigger the same Auth-server and database calls several times per signed-in page; each call costs Worker CPU (TLS, JSON) on the Free
+ * plan. Identity is still validated by the Auth server (getUser), once per render instead of three times. Outside a render (server
+ * actions, route handlers) cache() does not memoise, so those paths behave exactly as before.
+ */
+const createClient = cache(createClientUncached);
+const userOnce = cache(async () => {
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+  return { supabase, user: data.user, error };
+});
+const profileOnce = cache((supabase: Awaited<ReturnType<typeof createClient>>, userId: string) => getProfile(supabase, userId));
+const membershipsOnce = cache((supabase: Awaited<ReturnType<typeof createClient>>, userId: string) => listMyMemberships(supabase, userId));
+/** Same as listMyMemberships, once per render. */
+export const myMembershipsOnce = membershipsOnce;
+export const myProfileOnce = profileOnce;
 
 export const localePath = (locale: string, path: string) => `/${locale}${path === '/' ? '' : path}`;
 
@@ -32,13 +51,11 @@ export async function requireSession(opts: {
   requireMfaIfNeeded?: boolean;
 }): Promise<AppSession> {
   const { locale, path, requireMfaIfNeeded = true } = opts;
-  const supabase = await createClient();
-  const { data, error } = await supabase.auth.getUser();
-  const user = data.user;
+  const { supabase, user, error } = await userOnce();
   const next = encodeURIComponent(localePath(locale, path));
   if (error || !user) redirect(`${localePath(locale, '/login')}?next=${next}`);
 
-  const [profile, memberships] = await Promise.all([getProfile(supabase, user.id), listMyMemberships(supabase, user.id)]);
+  const [profile, memberships] = await Promise.all([profileOnce(supabase, user.id), membershipsOnce(supabase, user.id)]);
   const needsMfa = memberships.some((m) => requiresMfa(m.role, m.org.type));
 
   const mfa = await getMfaStatus(supabase);
@@ -55,9 +72,8 @@ export async function requireSession(opts: {
 /** Signed-in user or null, without redirecting (public pages). Tolerates a missing Supabase configuration. */
 export async function getOptionalUser() {
   try {
-    const supabase = await createClient();
-    const { data } = await supabase.auth.getUser();
-    return { supabase, user: data.user };
+    const { supabase, user } = await userOnce();
+    return { supabase, user };
   } catch {
     return { supabase: null, user: null };
   }
