@@ -4,6 +4,7 @@
 // configuration denies everything (fail closed). The scheduler's job routes and the health check stay reachable: the job routes
 // enforce their own bearer secret and answer 404/401 otherwise. Removing the gate for launch is a deliberate config change.
 import app from './.open-next/worker.js';
+import { servePublicPage } from './public-page-cache.mjs';
 
 export * from './.open-next/worker.js';
 
@@ -50,6 +51,6 @@ export default {
         }
       }
     }
-    return app.fetch(request, env, ctx);
+    return servePublicPage(request, () => app.fetch(request, env, ctx));
   },
 };

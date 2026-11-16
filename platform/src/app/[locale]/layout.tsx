@@ -6,6 +6,8 @@ import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import SiteFooter from '@/components/SiteFooter';
 import SiteHeader from '@/components/SiteHeader';
+import { BASE_PATHS } from '@/i18n/client-namespaces';
+import { pickMessages } from '@/i18n/pick-messages';
 import { routing } from '@/i18n/routing';
 import { getOptionalUser } from '@/server/session';
 import { listMyMemberships } from '@/server/services/orgs';
@@ -44,7 +46,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   return (
     <html lang={locale} className={`${hanken.variable} ${bricolage.variable} ${tamil.variable}`}>
       <body>
-        <NextIntlClientProvider locale={locale} messages={messages}>
+        <NextIntlClientProvider locale={locale} messages={pickMessages(messages as Record<string, unknown>, BASE_PATHS) as never}>
           <a className="skip-link" href="#main">
             {t('common.skipToContent')}
           </a>

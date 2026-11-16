@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import type { ReactNode } from 'react';
+import ScopedMessages from '@/components/ScopedMessages';
 import WorkspaceShell from '@/components/workspace/WorkspaceShell';
 
 /**
@@ -10,13 +11,15 @@ export default async function BusinessHelpLayout({ children, params }: { childre
   const { locale } = await params;
   const t = await getTranslations({ locale, namespace: 'gov' });
   return (
-    <WorkspaceShell locale={locale}>
-      <div className="catalogue-wide">
-        {children}
-        <p className="muted gov-notice" role="note">
-          {t('independent')}
-        </p>
-      </div>
-    </WorkspaceShell>
+    <ScopedMessages area="business-help" locale={locale}>
+      <WorkspaceShell locale={locale}>
+        <div className="catalogue-wide">
+          {children}
+          <p className="muted gov-notice" role="note">
+            {t('independent')}
+          </p>
+        </div>
+      </WorkspaceShell>
+    </ScopedMessages>
   );
 }
