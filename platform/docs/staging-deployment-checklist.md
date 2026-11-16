@@ -19,7 +19,7 @@ Evidence and open items are in `cloudflare-hosting-evaluation.md`. Prepared file
 | # | Step | State |
 |---|---|---|
 | B1 | Cloudflare access for the work: scoped API token or someone runs the commands (list in the evaluation, section 1) | **Needs you** |
-| B2 | Add the OpenNext adapter and wrangler as dev dependencies, the two config files, and the Workers fetch transport for the government monitor (code change with tests, local commit) | Prepared, **needs your approval** |
+| B2 | Adapter and wrangler as dev dependencies and the two config files (Workers fetch transport for the government monitor is already implemented and committed) | Prepared, **dependencies need your approval** |
 | B3 | Create Worker `inok-app-staging`, its R2 cache bucket (the adapter's documented cache setup), secrets set in Cloudflare, build project on this repository with root directory `platform` and build watch paths | **Needs you** (Cloudflare account; Workers Paid plan expected) |
 | B4 | `staging.inok.my` as a Worker custom domain (a DNS change) with Cloudflare Access in front; no search indexing | **Needs you** |
 | B5 | Health check: `GET /api/v1/health` | Prepared (route exists; 200 in workerd) |

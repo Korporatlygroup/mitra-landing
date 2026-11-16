@@ -2,7 +2,7 @@ import crypto from 'node:crypto';
 import dns from 'node:dns';
 import https from 'node:https';
 import net from 'node:net';
-import type { Readable } from 'node:stream';
+import { Readable } from 'node:stream';
 import zlib from 'node:zlib';
 
 /**
@@ -140,6 +140,61 @@ const httpsTransport: Transport = (url, init) =>
     req.end();
   });
 
+/** True inside a Cloudflare Worker (the documented check). The Node transport is used everywhere else. */
+export function isCloudflareWorkers(): boolean {
+  return typeof navigator !== 'undefined' && navigator.userAgent === 'Cloudflare-Workers';
+}
+
+/**
+ * Transport for Cloudflare Workers, where node:https rejects the `lookup` option the Node transport relies on.
+ * The address is resolved and checked with the same guard BEFORE the request (not pinned at connect time, which fetch cannot do;
+ * Workers also cannot reach private networks). Redirects stay manual so safeFetch validates every hop. fetch has already
+ * decoded the body, so the content-encoding header is dropped. A stalled body is cut after `timeoutMs` without data.
+ */
+export const workersFetchTransport: Transport = async (url, init) => {
+  await new Promise<void>((resolve, reject) => {
+    init.lookup(url.hostname, { all: true } as dns.LookupOptions, (err) => (err ? reject(err) : resolve()));
+  });
+  const ac = new AbortController();
+  const timeout = () => Object.assign(new Error('timeout'), { code: 'ETIMEDOUT' });
+  let timer = setTimeout(() => ac.abort(timeout()), init.timeoutMs);
+  let res: Response;
+  try {
+    res = await fetch(url, { method: 'GET', headers: init.headers, redirect: 'manual', signal: ac.signal });
+  } catch (err) {
+    clearTimeout(timer);
+    if (ac.signal.aborted) throw timeout();
+    throw err;
+  }
+  const headers: Record<string, string | string[] | undefined> = {};
+  res.headers.forEach((value, key) => {
+    headers[key] = value;
+  });
+  delete headers['content-encoding'];
+  const body = res.body ? Readable.fromWeb(res.body as never) : Readable.from([]);
+  const arm = () => {
+    clearTimeout(timer);
+    timer = setTimeout(() => {
+      ac.abort(timeout());
+      body.destroy(timeout());
+    }, init.timeoutMs);
+  };
+  arm();
+  body.on('data', arm);
+  body.on('end', () => clearTimeout(timer));
+  body.on('close', () => clearTimeout(timer));
+  return {
+    status: res.status,
+    headers,
+    stream: body,
+    destroy: () => {
+      clearTimeout(timer);
+      ac.abort();
+      body.destroy();
+    },
+  };
+};
+
 async function readLimited(res: RawResponse, maxBytes: number, deadline: number): Promise<Buffer> {
   const chunks: Buffer[] = [];
   let total = 0;
@@ -177,7 +232,7 @@ export async function safeFetch(rawUrl: string, opts: SafeFetchOptions): Promise
   const maxRedirects = opts.maxRedirects ?? 3;
   const deadline = Date.now() + (opts.totalTimeoutMs ?? 30_000);
   const accept = opts.accept ?? DEFAULT_ACCEPT;
-  const transport = opts.transport ?? httpsTransport;
+  const transport = opts.transport ?? (isCloudflareWorkers() ? workersFetchTransport : httpsTransport);
   const lookup = guardedLookup(opts.resolver);
   let url = validateUrl(rawUrl, opts.allowedHosts);
   const conditional: Record<string, string> = {};

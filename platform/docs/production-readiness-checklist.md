@@ -51,7 +51,7 @@ Route compatibility, auth, bounded retries, leases, duplicate prevention, remind
 ## 7. Hosting, domain, monitoring
 | Item | Status |
 |---|---|
-| Host | Cloudflare Workers (OpenNext adapter) for the application, decided by management; builds and runs locally in workerd; one code change (government monitor fetch) and one required setting (R2 incremental cache) found. Not deployed. See `cloudflare-hosting-evaluation.md`. |
+| Host | Cloudflare Workers (OpenNext adapter) for the application, decided by management; builds and runs locally in workerd; the government monitor fetch change is implemented and tested locally; one unresolved test failure (stale form after a server action) remains. Not deployed. See `cloudflare-hosting-evaluation.md`. |
 | `app.inok.my` and `staging.inok.my` as Worker custom domains (proxied by Cloudflare), HTTPS, HSTS (the app sends HSTS) | Blocked, DNS changes need your approval |
 | Landing page links (`inok.my`): Register Your Business, Sign In, Explore Businesses, Government Assistance | Prepared in `phase1-7-staging-readiness.md` section 5. The live page is not modified. Government Assistance route is the public programme list under `/business-help`. |
 | Logging, error monitoring, alerts | Open: host logs plus an error tracker to choose; uptime check on `/api/v1/health`; alert on scheduler failures |
