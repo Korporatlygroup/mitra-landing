@@ -5,13 +5,13 @@
 {
   "$schema": "node_modules/wrangler/config-schema.json",
   "name": "inok-app-staging",
-  "main": ".open-next/worker.js",
+  "main": "cf-entry.mjs",
   "compatibility_date": "2026-11-01",
   "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
   // Reachable at https://inok-app-staging.<account-subdomain>.workers.dev. Put Cloudflare Access in front before sharing the address.
-  "vars": { "SITE_URL": "https://inok-app-staging.long-wind-0982.workers.dev" },
+  "vars": { "SITE_URL": "https://inok-app-staging.long-wind-0982.workers.dev", "ACCESS_GATE": "required" },
   "workers_dev": true,
   "preview_urls": false
 }

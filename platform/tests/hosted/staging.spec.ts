@@ -88,6 +88,8 @@ async function gotoWithMfa(page: Page, a: Account, path: string) {
 const A: Record<string, Account> = {};
 
 test('public pages answer on the deployed Worker', async ({ page, request }) => {
+  const noKey = await fetch(`${process.env.HOSTED_BASE_URL}/en/login`);
+  expect(noKey.status, 'the pre-launch gate refuses a request without the access key').toBe(401);
   const health = await request.get('/api/v1/health');
   expect(health.status()).toBe(200);
   for (const p of ['/en', '/ms', '/ta', '/en/signup', '/en/login', '/en/directory', '/en/business-help', '/en/catalogue']) {

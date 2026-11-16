@@ -7,5 +7,12 @@ export default defineConfig({
   workers: 1,
   retries: 0,
   reporter: [['line']],
-  use: { baseURL: process.env.HOSTED_BASE_URL, trace: 'off', ...devices['Desktop Chrome'] },
+  use: {
+    baseURL: process.env.HOSTED_BASE_URL,
+    trace: 'off',
+    // Pre-launch Workers sit behind an access key (HTTP Basic, any user name).
+    httpCredentials: process.env.HOSTED_ACCESS_KEY ? { username: 'inok', password: process.env.HOSTED_ACCESS_KEY } : undefined,
+    extraHTTPHeaders: process.env.HOSTED_ACCESS_KEY ? { 'x-inok-access-key': process.env.HOSTED_ACCESS_KEY } : undefined,
+    ...devices['Desktop Chrome'],
+  },
 });
