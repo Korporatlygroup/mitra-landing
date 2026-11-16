@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
+import { Fragment } from 'react';
 import { updateGovTrackingAction, unsaveGovProgrammeAction } from '../actions';
 import ActionForm from '@/components/ActionForm';
 import QuickForm from '@/components/catalogue/QuickForm';
@@ -90,6 +91,10 @@ export default async function SavedPage({
                 {t('saved.reportedNote')}
               </p>
               <ActionForm action={updateGovTrackingAction} submitLabel={t('saved.update')} variant="secondary">
+                {/* The fields are keyed by the stored version: after a save they are rebuilt from the refreshed row, so a runtime that delivers the
+                    refreshed page after React has reset the form (seen on Cloudflare Workers) cannot leave the old stage showing. The form itself
+                    (and its "Updated." message) is not remounted. */}
+                <Fragment key={`${r.programme_id}:${r.version}`}>
                 {r.rules_changed ? (
                   <div className="field field-check">
                     <input id={`ms-${r.slug}`} type="checkbox" name="markSeen" />
@@ -132,6 +137,7 @@ export default async function SavedPage({
                   <label htmlFor={`nt-${r.slug}`}>{t('saved.notes')}</label>
                   <textarea id={`nt-${r.slug}`} name="note" maxLength={500} rows={2} defaultValue={r.note ?? ''} />
                 </div>
+                </Fragment>
               </ActionForm>
               <p>
                 <Link href={`/business-help/${r.slug}?org=${org.org.id}#gov-app-h`} locale={locale}>

@@ -155,9 +155,14 @@ test('B + C personalised matching, saving and self-reported application tracking
   expect(stages).toEqual(['interested', 'preparing', 'ready_to_apply', 'applied_externally', 'awaiting_decision', 'outcome_recorded', 'not_interested']);
 
   const stage = () => sql<{ s: string }>(`select tracking_status as s from public.gov_saved where org_id = $1 and programme_id = $2`, [orgId, ids.grant]).then((r) => r[0]?.s);
+  const storedVersion = saved.locator('input[name=version]');
+  const version0 = await storedVersion.inputValue();
   await saved.locator('select[name=tracking_status]').selectOption('ready_to_apply');
   await saved.getByRole('button', { name: t('en', 'saved.update') }).click();
   await expect.poll(stage).toBe('ready_to_apply');
+  // Wait until the page has been refreshed with the saved row (the form carries the new stored version) before editing again.
+  await expect(storedVersion).not.toHaveValue(version0);
+  await expect(saved.locator('select[name=tracking_status]')).toHaveValue('ready_to_apply');
   await saved.locator('select[name=tracking_status]').selectOption('applied_externally');
   await saved.locator('input[name=applied_on]').fill(inDays(-1));
   await saved.getByRole('button', { name: t('en', 'saved.update') }).click();
