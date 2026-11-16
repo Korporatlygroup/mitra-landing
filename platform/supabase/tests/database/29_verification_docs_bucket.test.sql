@@ -1,0 +1,10 @@
+begin;
+create extension if not exists pgtap with schema extensions;
+select plan(5);
+select is((select count(*)::int from storage.buckets where id = 'verification-docs'), 1, 'the verification-docs bucket exists after the migrations');
+select is((select public from storage.buckets where id = 'verification-docs'), false, 'the bucket is private');
+select is((select file_size_limit from storage.buckets where id = 'verification-docs'), 10485760::bigint, 'the bucket limit is 10 MiB');
+select is((select allowed_mime_types from storage.buckets where id = 'verification-docs'), array['application/pdf', 'image/png', 'image/jpeg'], 'only PDF, PNG and JPEG are allowed');
+select is((select count(*)::int from pg_policies where schemaname = 'storage' and tablename = 'objects' and roles && array['anon', 'authenticated']::name[]), 0, 'no storage policy exists for the anon or authenticated role');
+select * from finish();
+rollback;
