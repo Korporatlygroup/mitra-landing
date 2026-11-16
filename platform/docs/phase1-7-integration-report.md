@@ -9,10 +9,10 @@ Date: 2026-11-16. Branch `integration/phase1-7` (worktree `MITRA-P17`), head `67
 - Working tree: only `supabase/config.toml` (local ports) is modified. Remote: nothing pushed; the two repositories share a remote, cross-repository fetch was done locally.
 
 ## 2. Database
-- Fresh `supabase db reset` applies every migration; pgTAP: **28 files, 2411 assertions, all pass** (final head).
+- Fresh `supabase db reset` applies every migration; pgTAP: **29 files, 2416 assertions, all pass** (final head, including migration 222).
 - Upgrade rehearsal on a disposable copy migrated to `...153` with synthetic Phase 1-6 data (users, organisations of every type, listing, request, enquiry, RFQ, claims, notifications), then upgraded: per-table row counts and hashes unchanged for every pre-existing table; pgTAP also passes on the upgraded database. Scripts: `supabase/dev/upgrade-rehearsal-*.sql`.
 - Migration numbers 200-221 do not overlap 150-153; no duplicates found. Migration 221 only renames the operator organisation and replaces `bootstrap_first_admin` (body identical apart from one literal).
-- **Open item (needs approval, not applied):** `audit_log_select` and `verification_events_select` call `private.has_platform_permission(...)` per row. With about 9.4k audit rows a query as an unprivileged user took 1.7 s; wrapping the call as `(select ...)` took it to 7 ms in a rolled-back test. The integration test `rpc-security` timed out twice on this locally. Proposed migration: recreate both policies with the wrapped call plus an EXPLAIN-based pgTAP check.
+- **Row-level security performance (approved by the owner, applied locally only):** `audit_log_select` and `verification_events_select` called `private.has_platform_permission(...)` once per row (1.7 s for an unprivileged user with about 9.4k audit rows). Migration `20260701000222_rls_initplan_platform_permission.sql` recreates both policies with the same rules but `(select private.has_platform_permission(...))`, so it runs once per statement. pgTAP `28_rls_initplan.test.sql` (5 assertions) checks the policy text, that a user without the permission still sees no rows, and that the plan contains an InitPlan. Not applied to any hosted database.
 - Hosted database: not touched. The hosted migration history reconciliation (`docs/staging-migration-reconciliation.md`) is still an owner decision.
 
 ## 3. Phase 7 (Government Assistance Navigator)
@@ -29,10 +29,11 @@ Date: 2026-11-16. Branch `integration/phase1-7` (worktree `MITRA-P17`), head `67
 | ESLint | 0 errors; 6 warnings (pre-existing). Two `no-explicit-any` errors in my new unit test were fixed |
 | Production build | succeeds |
 | Unit (`vitest --project unit`) | 38 files, **942 passed** |
-| pgTAP | 28 files, **2411 passed**, fresh database |
+| pgTAP | 29 files, **2416 passed**, fresh database (28 files / 2411 before migration 222) |
 | Integration, process pool, one run | 18 files passed, 1 skipped; 158 passed, 15 skipped, **1 worker crash (exit 3221226505) on `scan-queue.test.ts`**. This run is **not clean**. |
 | `scan-queue.test.ts` rerun alone (separate) | 2 passed |
 | Integration, thread pool, full (separate run) | 19 files passed, 1 skipped; 159 passed, 15 skipped, no crash |
+| Integration, thread pool, full, after migration 222 (separate run) | 19 files passed, 1 skipped; 159 passed, 15 skipped, no crash |
 | Playwright desktop, full (210) | 206 passed, 1 skipped, **3 failed**: e27-staleness and e73 (worker crash 3221226505), e50-ms (`EADDRINUSE` ephemeral-port exhaustion in the test runner) |
 | Desktop rerun of those 3 specs only (separate) | 11 passed |
 | Playwright mobile, full (210) | 192 passed, 15 skipped, **3 failed**: real layout bugs at 360 px (e21 ta, e28 ta: width 367; e40: width 361) |
@@ -61,7 +62,7 @@ Blocking conditions before the first staging deploy:
 5. All secrets set in the host (`GOV_WORKER_SECRET`, `CRON_SECRET`, Supabase keys, mail, scan).
 
 Conditions that can follow shortly after:
-6. Approve and apply the RLS performance patch (section 2).
+6. Apply migration 222 (RLS performance, approved, local only) to staging with the other migrations.
 7. Create the scheduler Worker only after approval; keep source monitoring switched off until a person has verified the sources.
 8. Human verification of the programme records before publication; no programme is published today.
 9. Native review of the ms and ta wording.
