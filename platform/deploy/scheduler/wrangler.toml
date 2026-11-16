@@ -1,0 +1,19 @@
+# Cloudflare Cron Trigger Worker that calls the two INOK job routes. PREPARED ONLY: not created, not deployed, no schedule is live.
+# One Worker per environment. Create staging first (`wrangler deploy --env staging`), production only after staging acceptance and approval.
+# Secrets are never written here: `wrangler secret put GOV_WORKER_SECRET --env staging` and `... CRON_SECRET --env staging`
+# (separate values per environment, the same values as the application host's variables).
+name = "inok-scheduler"
+main = "src/index.ts"
+compatibility_date = "2026-11-01"
+
+[env.staging]
+name = "inok-scheduler-staging"
+vars = { APP_ORIGIN = "https://staging.inok.my" }
+[env.staging.triggers]
+crons = ["*/15 * * * *", "*/10 * * * *"]
+
+[env.production]
+name = "inok-scheduler-production"
+vars = { APP_ORIGIN = "https://app.inok.my" }
+[env.production.triggers]
+crons = ["*/15 * * * *", "*/10 * * * *"]

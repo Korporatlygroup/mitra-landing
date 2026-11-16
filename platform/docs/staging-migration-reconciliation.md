@@ -51,3 +51,11 @@ Then, only with approval, apply hosted: `supabase db push` (applies 000012-00001
 4. Step 1 and step 2 are separate commands; if step 2 fails the history is empty. Rollback is the reverse repair using the snapshot of the 11 original rows.
 5. After repair, re-dump the schema and diff against `staging-before.sql` (expect no difference).
 6. Check the project's backup/PITR tier; a schema dump is not a data backup (staging currently has no users or organisations).
+
+## Update 2026-11-16 (integrated Phase 1-7 branch; still NOT EXECUTED)
+- Hosted `mitra-staging` re-checked read-only: unchanged (the same 11 execution-time history rows, 0 users, 0 organisations, 17 public tables and 1 private table, 18 policies, bucket `verification-docs` only). Extensions present: citext, pgcrypto, uuid-ossp, pg_stat_statements, supabase_vault, plpgsql. The local migrations need only citext and pgcrypto.
+- The integrated branch has 40 migration files. After the repair in this document, `supabase db push --dry-run` must list exactly these 29 versions, in this order: `20260701000012`, `…013`, `…014`, `…100` to `…107`, `…110` to `…116`, `…150` to `…153`, `…200`, `…201`, `…210`, `…220`, `…221`, `…222`, `…223`. All sort above the repaired `…011`, so the ordering rule holds. No number is duplicated.
+- New since the earlier plan: `222` recreates two RLS policies (performance only, same rules) and `223` inserts the private `verification-docs` bucket with `on conflict do nothing`. On `mitra-staging` the bucket already exists with the same settings (private, 10 MiB), so 223 changes nothing there. A brand-new project (`inok-production`) now gets the bucket from migrations; before 223 it would have had none (it lived only in local `config.toml`).
+- `221` renames the operator organisation only when it still carries the old name and replaces `bootstrap_first_admin`; staging has 0 organisations, so it is a no-op there.
+- Data risk on staging: none of the 29 migrations deletes or rewrites existing rows in the Phase 1-2 tables (staging holds no business data anyway). The local upgrade rehearsal with synthetic data proved row-for-row preservation for Phase 1-6 tables.
+- Still required before executing: owner approval of the repair and of the push, a frozen-writers window, and the snapshot of the 11 original history rows.
