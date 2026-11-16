@@ -5,8 +5,9 @@ import en from '../../messages/en.json';
 
 // The Phase 6 sourcing notifications and the Phase 7 programme notifications share one helper after the Phase 1-7 integration.
 const row = (over: Partial<NotificationRow>): NotificationRow => ({ id: 'n1', kind: 'x', entity_type: null, entity_id: null, org_id: null, read_at: null, created_at: '2026-11-15T00:00:00Z', ...over }) as NotificationRow;
-const tree = en as unknown as Record<string, any>;
-const lookup = (key: string) => key.split('.').reduce<any>((o, k) => (o ? o[k] : undefined), tree);
+type Tree = { [k: string]: Tree | string | undefined };
+const tree = en as unknown as Tree;
+const lookup = (key: string) => key.split('.').reduce<Tree | string | undefined>((o, k) => (o && typeof o === 'object' ? o[k] : undefined), tree);
 
 describe('notification helper after the Phase 1-7 integration', () => {
   it.each([
