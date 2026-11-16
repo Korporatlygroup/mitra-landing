@@ -26,9 +26,9 @@ Branch `integration/phase1-7`, latest commit `6f45ce0` (this report is committed
 ## The main new finding: Worker instability on the Free plan
 - Cloudflare returns **1102 (Worker exceeded resource limits)** on a small share of staging requests: 2 of 150 on `/en/terms`, up to 20 percent on earlier samples, on every kind of page including `/api/v1/health`; the failing request is usually the first after idle.
 - The production Worker (older bundle, idle) answered 80 of 80 test requests, but has had no real traffic.
-- Bundle size is 3,036 KiB gzip against the Free-plan limit of 3 MiB (3,072 KiB). The Free plan also caps CPU per request. I could not read the Worker's own logs, so the cause is **not proven**; cold-start CPU on a near-limit bundle is the leading explanation.
-- Impact: real visitors can see an error page on first requests; sign-in flows can fail intermittently. Not acceptable for launch.
-- Options (all need your decision): shrink the bundle (drop unused dependencies, split rarely used admin code), pre-render the large policy pages, or move the Worker to a paid plan. I have not changed any plan.
+- **Correction (supersedes the earlier text here):** the 3 MiB bundle limit no longer exists, so size is not the cause. `wrangler tail` shows the cause: Workers Free allows 10 ms CPU per request, a rendered Next.js page costs about 15-50 ms, and some requests are cut (`exceededCpu`, 503). Full evidence, numbers and results: `cloudflare-worker-cpu.md`.
+- What was done: scoped client messages and a public-page cache (commit `361729b`, staging only). Public pages are now reliable; signed-in pages, server-action responses and RSC navigations are not (the same build passed the 20-test hosted suite three times, then failed 3 of 20 desktop and 3 of 20 mobile).
+- Impact: signed-in use on Workers Free is not reliable. Not acceptable for launch. Decision needed (see `cloudflare-worker-cpu.md`, last section). No plan was changed.
 
 ## Subsystem status
 | Subsystem | Status |
