@@ -9,5 +9,5 @@ export default defineConfig([
   { files: ['tests/integration/**', 'tests/e2e/**/*.ts'], rules: { '@typescript-eslint/no-explicit-any': 'off' } },
   // Node build scripts are CommonJS by design.
   { files: ['scripts/**/*.cjs'], rules: { '@typescript-eslint/no-require-imports': 'off' } },
-  globalIgnores(['.next/**', 'out/**', 'node_modules/**', 'next-env.d.ts', 'supabase/**', 'playwright-report/**', 'test-results/**']),
+  globalIgnores(['.next/**', '.open-next/**', '.wrangler/**', 'out/**', 'node_modules/**', 'next-env.d.ts', 'supabase/**', 'playwright-report/**', 'test-results/**']),
 ]);

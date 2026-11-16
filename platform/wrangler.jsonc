@@ -1,0 +1,16 @@
+// Worker `inok-app-staging`: the full INOK application on Cloudflare Workers (OpenNext adapter).
+// The top level IS staging, so a plain `wrangler deploy` can never touch production. The production Worker gets its own
+// environment block later. No secrets live here: set them with `wrangler secret put` (see docs/cloudflare-deployment-runbook.md).
+// NEXT_PUBLIC_* values are inlined at BUILD time (see scripts/cf-build.mjs); only server-side values are read at run time.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "inok-app-staging",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  // Reachable at https://inok-app-staging.<account-subdomain>.workers.dev. Put Cloudflare Access in front before sharing the address.
+  "workers_dev": true,
+  "preview_urls": false
+}

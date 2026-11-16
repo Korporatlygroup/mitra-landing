@@ -20,7 +20,9 @@
     "db:start": "supabase start",
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
-    "bootstrap:admin": "node scripts/bootstrap-admin.mjs"
+    "bootstrap:admin": "node scripts/bootstrap-admin.mjs",
+    "cf:build:staging": "node scripts/cf-build.mjs staging",
+    "cf:check": "wrangler deploy --dry-run --outdir .wrangler/dry-run"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",
@@ -36,6 +38,7 @@
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.14.0",
+    "@opennextjs/cloudflare": "1.20.17",
     "@playwright/test": "1.65.0",
     "@types/node": "26.6.6",
     "@types/nodemailer": "8.0.2",
@@ -47,6 +50,11 @@
     "pg": "^8.23.1",
     "supabase": "3.0.0",
     "typescript": "5.9.3",
-    "vitest": "5.1.0"
+    "vitest": "5.1.0",
+    "wrangler": "4.162.0"
+  },
+  "allowScripts": {
+    "workerd@1.20261113.1": true,
+    "esbuild@0.28.2": true
   }
 }
