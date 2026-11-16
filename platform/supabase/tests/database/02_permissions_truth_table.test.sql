@@ -124,7 +124,8 @@ insert into tt.spec values
   ('admin_super','gov:source_admin'),('admin_super','gov:review'),('admin_super','gov:publish'),('admin_super','gov:view'),
   ('admin_ops','gov:source_admin'),('admin_ops','gov:view'),('admin_review','gov:review'),('admin_review','gov:view'),
   ('admin_content','gov:publish'),('admin_content','gov:view'),
-  ('owner','assist:manage'),('manager','assist:manage'),('staff','assist:manage');
+  ('owner','assist:manage'),('manager','assist:manage'),('staff','assist:manage'),
+  ('admin_super','privacy:handle');
 grant select on tt.spec to public;
 
 select tt.fresh_mitra();
@@ -198,7 +199,7 @@ begin
   perform set_config('tt.s1_n', v_n::text, true);
 end $$;
 select is(current_setting('tt.s1_bad'), '', 'S1.2 has_permission truth table: every role x aal x permission x own/other org matches seed + MFA rule');
-select is(current_setting('tt.s1_n')::int, 11 * 2 * 37 * 5, 'S1.3 truth table actually evaluated all 4070 combinations (11 users x 2 aal x 37 permissions x 5 target orgs)');
+select is(current_setting('tt.s1_n')::int, 11 * 2 * 38 * 5, 'S1.3 truth table actually evaluated all 4180 combinations (11 users x 2 aal x 38 permissions x 5 target orgs)');
 
 -- S1.4 explicit spot checks of the MFA rule
 select tt.act('tt_p_owner', 'aal1');

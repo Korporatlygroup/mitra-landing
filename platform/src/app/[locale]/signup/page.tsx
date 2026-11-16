@@ -39,12 +39,17 @@ export default async function SignUpPage({ params }: { params: Promise<{ locale:
         </SelectField>
         <CheckField id="acceptTerms" name="acceptTerms" label={t('acceptTerms')} />
         <CheckField id="acceptPrivacy" name="acceptPrivacy" label={t('acceptPrivacy')} />
+        <CheckField id="acceptMarketing" name="acceptMarketing" label={t('acceptMarketing')} required={false} />
+        <p className="hint">{t('marketingHint')}</p>
         <p className="link-row">
           <Link href="/terms" locale={locale}>
             {t('readTerms')}
           </Link>
           <Link href="/privacy" locale={locale}>
             {t('readPrivacy')}
+          </Link>
+          <Link href="/cookies" locale={locale}>
+            {t('readCookies')}
           </Link>
         </p>
       </ActionForm>

@@ -57,6 +57,7 @@ export const KNOWN_MESSAGE_KEYS = [
   'invalid_doc_type',
   'infected_not_stored',
   'invalid_note',
+  'invalid_details', 'invalid_request_type', 'note_required',
   'invalid_data',
   // Phase 7 (government assistance)
   'not_lease_holder',

@@ -58,10 +58,10 @@ export function SelectField({
   );
 }
 
-export function CheckField({ id, name, label }: { id: string; name: string; label: string }) {
+export function CheckField({ id, name, label, required = true, defaultChecked }: { id: string; name: string; label: string; required?: boolean; defaultChecked?: boolean }) {
   return (
     <div className="field check">
-      <input id={id} name={name} type="checkbox" required />
+      <input id={id} name={name} type="checkbox" required={required} defaultChecked={defaultChecked} />
       <label htmlFor={id}>{label}</label>
     </div>
   );

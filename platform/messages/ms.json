@@ -27,7 +27,12 @@
     "privacy": "Privasi",
     "notifications": "Mesej",
     "find": "Cari perniagaan",
-    "requests": "Permintaan saya"
+    "requests": "Permintaan saya",
+    "cookies": "Kuki",
+    "marketplace": "Dasar pasaran",
+    "government": "Notis kerajaan",
+    "complaints": "Aduan",
+    "legal": "Undang-undang"
   },
   "home": {
     "titleSignedOut": "Selamat datang ke INOK",
@@ -61,7 +66,10 @@
     "haveAccount": "Sudah ada akaun?",
     "checkEmailTitle": "Semak e-mel anda",
     "checkEmailBody": "Jika alamat e-mel ini boleh digunakan, kami telah menghantar pautan kepadanya. Buka pautan itu untuk selesai. Semak juga folder spam anda.",
-    "toLogin": "Pergi ke log masuk"
+    "toLogin": "Pergi ke log masuk",
+    "acceptMarketing": "Hantarkan saya berita dan tawaran pilihan daripada INOK",
+    "marketingHint": "Pilihan. Tidak diperlukan untuk menggunakan INOK. Anda boleh mengubahnya pada bila-bila masa dalam Akaun saya.",
+    "readCookies": "Baca Dasar Kuki"
   },
   "login": {
     "title": "Log masuk",
@@ -102,7 +110,41 @@
     "mfaOn": "Aktif. Akaun anda dilindungi dengan aplikasi pengesah.",
     "mfaOff": "Tidak aktif.",
     "mfaSetUp": "Sediakan aplikasi pengesah",
-    "signOut": "Log keluar"
+    "signOut": "Log keluar",
+    "privacyTitle": "Privasi",
+    "marketingTitle": "Mesej pemasaran",
+    "marketingIntro": "Berita dan tawaran pilihan. Mesej akaun dan keselamatan sentiasa dihantar apabila perlu.",
+    "marketingSave": "Simpan pilihan",
+    "marketingSaved": "Pilihan pemasaran anda telah disimpan.",
+    "requestsTitle": "Permintaan data anda",
+    "requestsIntro": "Minta untuk melihat, membetulkan, memindahkan atau memadam data peribadi anda, menarik balik persetujuan atau membuat aduan privasi. Kami membalas dalam lebih kurang 21 hari.",
+    "requestType": "Jenis permintaan",
+    "requestDetails": "Butiran",
+    "requestSubmit": "Hantar permintaan",
+    "requestSent": "Selesai.",
+    "requestDue": "balasan sebelum",
+    "requestOverdue": "tertunggak",
+    "requestUpdate": "Simpan",
+    "requestStatusLabel": "Keadaan",
+    "requestAnswer": "Jawapan kepada pengguna (wajib untuk melengkapkan atau menolak)",
+    "requestsNone": "Tiada permintaan terbuka.",
+    "requestsAdminTitle": "Permintaan data",
+    "requestsAdminIntro": "Permintaan privasi daripada pengguna. Tutup setiap satu dengan jawapan bertulis.",
+    "requestTypes": {
+      "access": "Akses kepada data saya",
+      "correction": "Betulkan data saya",
+      "deletion": "Padam data saya",
+      "portability": "Pindahkan data saya kepada penyedia lain",
+      "consent_withdrawal": "Tarik balik persetujuan",
+      "complaint": "Aduan privasi",
+      "other": "Lain-lain"
+    },
+    "requestStatus": {
+      "open": "Terbuka",
+      "in_progress": "Sedang diproses",
+      "completed": "Selesai",
+      "rejected": "Ditolak"
+    }
   },
   "orgs": {
     "title": "Organisasi anda",
@@ -368,7 +410,10 @@
     "review_not_eligible": "Balasan penjual atau sebut harga diperlukan sebelum anda boleh menilai interaksi ini.",
     "invalid_quote": "Sila semak ruangan sebut harga, jumlah dan tarikh luput.",
     "invalid_line": "Sila semak setiap item, kuantiti, unit dan harga.",
-    "amount_too_large": "Jumlah terlalu besar untuk sebut harga."
+    "amount_too_large": "Jumlah terlalu besar untuk sebut harga.",
+    "invalid_details": "Sila terangkan permintaan anda (sehingga 2,000 aksara).",
+    "invalid_request_type": "Sila pilih jenis permintaan.",
+    "note_required": "Sila tulis jawapan sebelum menutup permintaan."
   },
   "consent": {
     "title": "Semak dan terima terma serta privasi",
@@ -1196,7 +1241,10 @@
     "referralInbox": "Rujukan menunggu jawapan anda",
     "buyerConsentedReferral": "Pelanggan bersetuju berkongsi pertanyaan ini dengan perniagaan anda.",
     "acceptReferral": "Terima rujukan",
-    "referralAccepted": "Rujukan diterima. Anda kini boleh memulakan perbualan dengan pelanggan.", "startConversation": "Mulakan perbualan", "openConversation": "Buka perbualan", "handoffOpened": "Perbualan dimulakan. Pelanggan telah dimaklumkan.",
+    "referralAccepted": "Rujukan diterima. Anda kini boleh memulakan perbualan dengan pelanggan.",
+    "startConversation": "Mulakan perbualan",
+    "openConversation": "Buka perbualan",
+    "handoffOpened": "Perbualan dimulakan. Pelanggan telah dimaklumkan.",
     "publishedReviews": "Ulasan pelanggan",
     "moderateReviews": "Moderasi ulasan",
     "moderateResponses": "Maklum balas perniagaan menunggu semakan",
@@ -1500,5 +1548,24 @@
       "health_degraded": "Merosot",
       "health_failing": "Gagal"
     }
+  },
+  "legalUi": {
+    "draftTitle": "DRAF untuk semakan pengurusan.",
+    "draftBody": "Teks ini belum diluluskan pengurusan atau disemak peguam, belum berkuat kuasa dan boleh berubah. Butiran syarikat dalam [kurungan] masih perlu diberikan.",
+    "translationPending": "Terjemahan Tamil sedang disediakan dan mesti disemak sebelum digunakan. Teks Inggeris dipaparkan.",
+    "contents": "Kandungan",
+    "otherPolicies": "Dasar lain",
+    "effective": "Berkuat kuasa",
+    "effectivePending": "belum berkuat kuasa",
+    "updated": "Dikemas kini",
+    "navPrivacy": "Notis Privasi",
+    "navTerms": "Terma Perkhidmatan",
+    "navMarketplace": "Dasar Pembeli, Penjual dan Pembekal",
+    "navCookies": "Dasar Kuki",
+    "navGovernment": "Notis Bantuan Kerajaan",
+    "navComplaints": "Aduan dan Piawaian Komuniti"
+  },
+  "adm": {
+    "privacyRequests": "Permintaan data"
   }
 }

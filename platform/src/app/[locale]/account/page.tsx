@@ -7,7 +7,8 @@ import { safeRedirectPath } from '@/lib/safe-redirect';
 import { hasCurrentConsents } from '@/server/services/consent';
 import { getMfaStatus } from '@/server/services/mfa';
 import { requireSession } from '@/server/session';
-import { changePasswordAction, grantConsentAction, signOutAction, updateProfileAction } from './actions';
+import { hasMarketingConsent, listMyPrivacyRequests, PRIVACY_REQUEST_TYPES } from '@/server/services/privacy';
+import { changePasswordAction, grantConsentAction, setMarketingAction, signOutAction, submitPrivacyRequestAction, updateProfileAction } from './actions';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'account.title');
@@ -26,7 +27,12 @@ export default async function AccountPage({
   const t = await getTranslations({ locale, namespace: 'account' });
   const c = await getTranslations({ locale, namespace: 'consent' });
   const signup = await getTranslations({ locale, namespace: 'signup' });
-  const [mfa, consented] = await Promise.all([getMfaStatus(s.supabase), hasCurrentConsents(s.supabase, s.user.id)]);
+  const [mfa, consented, marketing, myRequests] = await Promise.all([
+    getMfaStatus(s.supabase),
+    hasCurrentConsents(s.supabase, s.user.id),
+    hasMarketingConsent(s.supabase, s.user.id),
+    listMyPrivacyRequests(s.supabase),
+  ]);
   const next = safeRedirectPath(typeof sp.next === 'string' ? sp.next : null, '');
 
   return (
@@ -97,6 +103,45 @@ export default async function AccountPage({
           </Link>
         </p>
       )}
+
+      <h2 id="privacy-title">{t('privacyTitle')}</h2>
+      <p>
+        <Link href="/privacy" locale={locale}>
+          {signup('readPrivacy')}
+        </Link>
+      </p>
+      <h3>{t('marketingTitle')}</h3>
+      <p>{t('marketingIntro')}</p>
+      <ActionForm action={setMarketingAction} submitLabel={t('marketingSave')}>
+        <input type="hidden" name="locale" value={locale} />
+        <CheckField id="marketing" name="marketing" label={signup('acceptMarketing')} required={false} defaultChecked={marketing} />
+      </ActionForm>
+      <h3>{t('requestsTitle')}</h3>
+      <p>{t('requestsIntro')}</p>
+      <ActionForm action={submitPrivacyRequestAction} submitLabel={t('requestSubmit')}>
+        <input type="hidden" name="locale" value={locale} />
+        <SelectField id="request-type" name="type" label={t('requestType')} defaultValue="access">
+          {PRIVACY_REQUEST_TYPES.map((k) => (
+            <option key={k} value={k}>
+              {t(`requestTypes.${k}`)}
+            </option>
+          ))}
+        </SelectField>
+        <div className="field">
+          <label htmlFor="request-details">{t('requestDetails')}</label>
+          <textarea id="request-details" name="details" required maxLength={2000} rows={4} />
+        </div>
+      </ActionForm>
+      {myRequests.length ? (
+        <ul className="plain-list" data-testid="my-privacy-requests">
+          {myRequests.map((r) => (
+            <li key={r.id}>
+              <strong>{t(`requestTypes.${r.request_type}`)}</strong> — {t(`requestStatus.${r.status}`)} ({t('requestDue')} {r.due_at.slice(0, 10)})
+              {r.response_note ? <> — {r.response_note}</> : null}
+            </li>
+          ))}
+        </ul>
+      ) : null}
 
       <form action={signOutAction}>
         <input type="hidden" name="locale" value={locale} />

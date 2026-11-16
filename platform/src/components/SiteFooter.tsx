@@ -12,6 +12,10 @@ export default async function SiteFooter({ locale }: { locale: string }) {
         <nav className="pub-foot-links" aria-label={t('ws.footerNav')}>
           <Link href="/terms">{t('nav.terms')}</Link>
           <Link href="/privacy">{t('nav.privacy')}</Link>
+          <Link href="/marketplace-policy">{t('nav.marketplace')}</Link>
+          <Link href="/cookies">{t('nav.cookies')}</Link>
+          <Link href="/government-disclaimer">{t('nav.government')}</Link>
+          <Link href="/complaints">{t('nav.complaints')}</Link>
         </nav>
       </div>
     </footer>

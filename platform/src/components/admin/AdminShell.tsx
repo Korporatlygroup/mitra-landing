@@ -58,6 +58,7 @@ export default async function AdminShell({ locale, children }: { locale: string;
       items: [
         { key: 'users', href: '/admin/users', label: a('users'), icon: 'users', match: ['/admin/users'] },
         { key: 'audit', href: '/admin/audit', label: a('audit'), icon: 'list', match: ['/admin/audit'] },
+        { key: 'privacy', href: '/admin/privacy-requests', label: a('privacyRequests'), icon: 'shield', match: ['/admin/privacy-requests'] },
         { key: 'public', href: '/', label: a('publicSite'), icon: 'globe', match: [], exact: true },
       ],
     },

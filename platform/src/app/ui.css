@@ -620,3 +620,31 @@ button.metric:hover {
   margin: 4px 0 0;
   font-size: 0.9375rem;
 }
+
+/* Legal documents (privacy, terms, marketplace, cookies, government notice, complaints): readable column, contents beside it on wide screens. */
+.legal { max-width: 70rem; margin: 0 auto; }
+.legal-banner { border-left: 4px solid var(--gold); background: var(--warn-bg); color: var(--warn-text); }
+.legal-grid { display: grid; gap: 1.5rem; grid-template-columns: minmax(0, 1fr); }
+.legal-aside { font-size: 0.9375rem; }
+.legal-toc summary { cursor: pointer; font-weight: 700; color: var(--brand); padding: 0.5rem 0; }
+.legal-toc ol { margin: 0.25rem 0 1rem 1.25rem; padding: 0; }
+.legal-toc li { margin: 0.25rem 0; }
+.legal-others ul { list-style: none; margin: 0.25rem 0 0; padding: 0; }
+.legal-others li { margin: 0.25rem 0; }
+.legal-body { min-width: 0; max-width: 46rem; }
+.legal-body h1 { margin-bottom: 0.25rem; }
+.legal-body h2 { margin-top: 2rem; padding-top: 0.5rem; border-top: 2px solid var(--line); color: var(--brand); font-size: 1.25rem; scroll-margin-top: 5rem; }
+.legal-dates { color: var(--muted); font-size: 0.9375rem; margin-top: 0; }
+.legal-intro { font-size: 1.0625rem; }
+.legal-note { border-left: 4px solid var(--gold); background: var(--warn-bg); color: var(--warn-text); padding: 0.5rem 0.75rem; }
+.legal-table-wrap { overflow-x: auto; margin: 1rem 0; border: 1px solid var(--line-strong); border-radius: 6px; background: var(--surface-card); }
+.legal-table-wrap:focus-visible { outline: 3px solid var(--gold); outline-offset: 2px; }
+.legal-table-wrap table { border-collapse: collapse; width: 100%; min-width: 34rem; font-size: 0.9375rem; }
+.legal-table-wrap th, .legal-table-wrap td { text-align: left; vertical-align: top; padding: 0.5rem 0.75rem; border-bottom: 1px solid var(--line); }
+.legal-table-wrap thead th { background: var(--brand-tint); color: var(--ink); }
+.legal-table-wrap tbody th { font-weight: 600; width: 28%; }
+@media (min-width: 62rem) {
+  .legal-grid { grid-template-columns: 16rem minmax(0, 1fr); gap: 2.5rem; align-items: start; }
+  .legal-aside { position: sticky; top: 1rem; max-height: calc(100vh - 2rem); overflow: auto; }
+}
+@media print { .legal-aside { display: none; } }

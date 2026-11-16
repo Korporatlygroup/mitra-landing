@@ -12,6 +12,8 @@ interface SignUpArgs {
   language: 'en' | 'ta' | 'ms';
   redirectTo: string;
   consentVersion: string;
+  /** Optional marketing consent: recorded only when the box was ticked. */
+  marketing?: boolean;
 }
 
 /**
@@ -27,7 +29,7 @@ export async function signUp(supabase: Db, a: SignUpArgs): Promise<Result<null>>
       data: {
         display_name: a.displayName,
         language: a.language,
-        consents: { terms: a.consentVersion, privacy: a.consentVersion },
+        consents: { terms: a.consentVersion, privacy: a.consentVersion, ...(a.marketing ? { marketing: a.consentVersion } : {}) },
       },
     },
   });

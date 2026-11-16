@@ -1,20 +1,11 @@
-import { getTranslations } from 'next-intl/server';
-import { pageTitle } from '@/lib/metadata';
+import LegalPage from '@/components/legal/LegalPage';
+import { legalMetadata } from '@/lib/legal-metadata';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
-  return pageTitle((await params).locale, 'legal.termsTitle');
+  return legalMetadata((await params).locale, 'terms');
 }
 
 export default async function TermsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const t = await getTranslations({ locale, namespace: 'legal' });
-  return (
-    <>
-      <p className="banner" role="note">
-        {t('draftBanner')}
-      </p>
-      <h1>{t('termsTitle')}</h1>
-      <p>{t('termsBody')}</p>
-    </>
-  );
+  return <LegalPage locale={locale} slug="terms" />;
 }

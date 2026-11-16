@@ -1,0 +1,45 @@
+# INOK data-processing inventory (2026-11-16)
+
+Built from the code (`src`), the 42 migrations and the hosted catalogue, not from assumptions. "Basis" uses the Personal Data Protection Act 2010 (PDPA) concepts (consent, performance of a contract, legal obligation, legitimate need) as a plain mapping for counsel; it is not a legal opinion. Everything is stored in the Supabase project for the environment (production: `inok-production`, Tokyo, ap-northeast-1) unless stated. Providers: **Supabase** (database, Auth, private storage), **Cloudflare** (Workers hosting and delivery). No analytics, advertising, payment or email provider is connected today.
+
+## A. What exists in the product (checked)
+| Area | Exists? | Evidence |
+|---|---|---|
+| Public business directory | Yes | `/directory`, public RPC `search_listings`; listing shows only what the seller published |
+| Registration and sign-in | Yes (production sign-up **disabled**) | `/signup`, `/login`, recovery, MFA; Auth config `deploy/supabase-auth/production.toml` |
+| Buyer, seller, supplier accounts | Yes | organisation types `business`, `buyer`, `partner`, `mitra` |
+| Business profiles, SSM verification | Yes | `business_profiles`, `verification_claims`; document upload exists but is **quarantined** (no scanner) |
+| Products and service listings | Yes | `biz_products`, `business_services`, `catalogue_items`, `products` |
+| Enquiries, quotation requests, messaging | Yes | `enquiries`, `enquiry_messages`, `quotations` (+ versions) |
+| Supplier sourcing and negotiation | Yes | `sourcing_rfqs`, quotes, counters, samples, messages, documents |
+| Government assistance matching, saved programmes, tracking | Yes | `gov_*` tables; finder; `gov_saved`; reminders (email inactive) |
+| Business readiness profile | Partly: the assistance profile (needs, registration, citizenship) exists; there is **no** separate readiness assessment feature | `gov_assistance_profiles` |
+| Notifications | In-app only; email not active | `notifications`, `gov_outbox` (email status unsent) |
+| Analytics | None (no web analytics). Seller lead metrics are counts from the database | grep, staging response headers and HTML |
+| Private document uploads | Yes, fail-closed | `verification_documents`, `supplier_documents`, `product_media`, `sourcing_rfq_documents` |
+| Admin access and moderation | Yes, MFA required | admin console, `content_reports`, `product_reports`, suspensions |
+| Account deletion and data requests | **Was missing**; added 2026-11-16: in-app data request (`privacy_requests`) and staff queue. Erasure itself is a reviewed manual action (procedure in `privacy-requests-procedure.md`); the database anonymises history when an Auth user is deleted | migration 225, pgTAP 13 and 31 |
+
+## B. Inventory (the twelve required columns)
+Columns: Category | Source | Purpose | Basis or consent | Mandatory? | Storage | Who can access | Providers | Retention (proposed) | Deletion | Security controls | Cross-border.
+
+| # | Category | Source | Purpose | Basis | Mandatory? | Storage | Access | Providers | Retention (proposed) | Deletion | Security | Cross-border |
+|---|---|---|---|---|---|---|---|---|---|---|---|---|
+| 1 | Account identity: email, name, password hash, language | User | Account, sign-in, notices | Contract (service requested) | Yes to hold an account | Supabase Auth, `profiles` | User; Auth service; support staff only through admin tools | Supabase | While open + 30 days | Auth user deletion (anonymises audit history) after a verified request | HTTPS, hashed password, rate limits, MFA available, RLS | Tokyo |
+| 2 | Consents: terms, privacy (versioned, timestamped), marketing (optional) | User | Prove acceptance | Legal accountability; marketing = consent | Terms/privacy yes; marketing no | `consents` | User (own rows) | Supabase | As long as needed to prove | With account, except audit entries | RLS own rows; versioned; append-only audit | Tokyo |
+| 3 | Organisation membership and role | User, owner | Authorisation | Contract | Yes for org features | `organisations`, `memberships` | Org owner/managers; staff | Supabase | While active | Cascades on org/user removal (last-owner rules) | RLS tenant isolation, role checks | Tokyo |
+| 4 | Business profile: name, category, SSM number, status, type | Seller/representative | Listing, verification | Contract; legal duty for supplier records | Required for listing | `business_profiles`, `business_listings` | Public (published parts), org, reviewers | Supabase | 3 yr after closure (supplier-record rule) | Manual after period | RLS; publish only after review | Tokyo |
+| 5 | Private business details: street address, postcode, contact phone/email | Seller | Verification, contact | Contract; consent for public display | Yes for verification; public display optional | `business_private` | Org, reviewers | Supabase | 3 yr after closure | Manual after period | RLS; never in public RPCs | Tokyo |
+| 6 | Representative: full name, role, phone, email | Business | Authority check | Contract | Yes for verification | `business_representatives` | Org, reviewers | Supabase | With verification record | With org record | RLS | Tokyo |
+| 7 | Verification documents and decisions | Seller, reviewers | Verification | Contract; legitimate need | Only if verification requested | Private bucket `verification-docs`; `verification_documents/claims/events` | Owner org; reviewers; **quarantined until scanned (scanner not live)** | Supabase | Files 12 months after end; decisions 3 yr | Delete object + row; queued cleanup | Private bucket, no API policy, signed short-lived access, type/size limits, fail-closed scan | Tokyo |
+| 8 | Listings, products, services, portfolio, photos | Sellers/partners | Discovery | Contract; user publishes | Optional | `business_*`, `catalogue_*`, `products`, `product_media` | Public once approved | Supabase | While active + 3 yr records | Archive/remove | Review before publish; media scanned (fail-closed) | Tokyo |
+| 9 | Enquiries, messages, quotations, reviews, reports | Buyers, sellers, reporters | Communication, evidence | Contract; legitimate need | Created by use | `enquiries`, `enquiry_messages`, `quotations`, `business_reviews`, `content_reports` | Parties to the thread; staff for reports | Supabase | 3 yr after close | Manual after period | RLS per party, rate limits | Tokyo; counterpart may be abroad |
+| 10 | Buyer requests (contact only if shared) | Buyer | Matching sellers | Consent to share | Contact sharing optional | `buyer_requests`, `buyer_request_private` | Matched sellers (consent flag) | Supabase | 3 yr after close | Manual | RLS; `share_contact` gate | Tokyo |
+| 11 | Sourcing: items, notes, quotes, counters, messages, attachments | Buyers, partners | Sourcing | Contract | Created by use | `sourcing_*`, bucket | Buyer org; invited partners | Supabase; **recipient suppliers may be abroad** | 3 yr after last activity | Manual; attachment cleanup queue | RLS; attachments scanned first (refused if scanner down) | Tokyo + supplier countries |
+| 12 | Supplier records: contact name/email/phone, registration id, website, documents | Partners | Supplier listing | Contract; legal duty | Required to list | `suppliers`, `supplier_private`, `supplier_documents` | Partner org; reviewers | Supabase | 3 yr (record rule) | Manual | RLS; private fields excluded from public views | Tokyo |
+| 13 | Government assistance: needs, registration, citizenship, saved programmes, notes, tracking, reminder prefs | User | Guidance | Consent (optional input) | Optional | `gov_assistance_profiles`, `gov_saved`, `gov_notification_prefs` | Own org | Supabase | While account open | With account | RLS; org-scoped | Tokyo |
+| 14 | News/notification preferences, in-app notices | User, system | Preferences | Consent/contract | Optional | `news_prefs`, `notifications` | User | Supabase | While account open | With account | RLS own rows | Tokyo |
+| 15 | Audit and security log: action, actor, time, details; rate-limit events | System | Security, accountability | Legitimate need; legal | Automatic | `audit_log`, `rate_limit_events` | Staff with `audit:read` | Supabase | 24 months (breach records ≥ 2 yr) | Anonymised on user deletion, not removed | Append-only triggers, no edit | Tokyo |
+| 16 | Data requests and answers | User, staff | Handle rights requests | Legal duty | Created by use | `privacy_requests` | User (own); `privacy:handle` staff | Supabase | 3 yr after closure | Manual | RLS; RPC-only writes; audited | Tokyo |
+| 17 | IP address and request metadata | Browser | Delivery, abuse protection | Legitimate need | Automatic | **Not stored by INOK.** Processed transiently by Cloudflare and visible in Worker logs if enabled | Cloudflare | Cloudflare | Per Cloudflare settings (to confirm) | n/a | TLS | Global edge |
+| 18 | Cookies and browser storage | Browser | Session, language | Strictly necessary | Yes | Browser | User, INOK | n/a | Per cookie policy | User clears | HttpOnly, Secure, SameSite=Lax | n/a |

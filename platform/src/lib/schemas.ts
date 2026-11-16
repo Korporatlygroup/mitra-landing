@@ -66,6 +66,12 @@ const checkbox = z
   .union([z.literal('on'), z.literal('true')], 'terms_required')
   .transform(() => true as const);
 
+/** An optional tick box (marketing): absent or unticked is false, ticked is true. Never required. */
+export const optionalCheckbox = z
+  .union([z.literal('on'), z.literal('true'), z.literal('')])
+  .optional()
+  .transform((v) => v === 'on' || v === 'true');
+
 export const signUpSchema = z.object({
   email: emailSchema,
   password: passwordSchema,
@@ -73,6 +79,7 @@ export const signUpSchema = z.object({
   language: localeSchema,
   acceptTerms: checkbox,
   acceptPrivacy: checkbox,
+  acceptMarketing: optionalCheckbox,
 });
 
 export const loginSchema = z.object({
@@ -101,6 +108,18 @@ export const totpCodeSchema = z
 export const profileSchema = z.object({ displayName: displayNameSchema, language: localeSchema });
 export const forgotPasswordSchema = z.object({ email: emailSchema });
 export const consentSchema = z.object({ acceptTerms: checkbox, acceptPrivacy: checkbox, locale: localeSchema, next: z.string().optional() });
+export const marketingSchema = z.object({ marketing: optionalCheckbox, locale: localeSchema });
+export const privacyRequestSchema = z.object({
+  type: z.enum(['access', 'correction', 'deletion', 'portability', 'consent_withdrawal', 'complaint', 'other'], 'invalid_request_type'),
+  details: z.string('invalid_details').trim().min(1, 'invalid_details').max(2000, 'invalid_details'),
+  locale: localeSchema,
+});
+export const privacyHandleSchema = z.object({
+  id: uuidSchema,
+  status: z.enum(['in_progress', 'completed', 'rejected'], 'invalid_status'),
+  note: z.string().trim().max(2000, 'invalid_note').default(''),
+  locale: localeSchema,
+});
 export const changePasswordSchema = z.object({ password: passwordSchema });
 
 export const auditFilterSchema = z.object({

@@ -60,6 +60,7 @@ export const ROLE_PERMISSIONS: Record<MemberRole, readonly string[]> = {
     'gov:review',
     'gov:publish',
     'gov:view',
+    'privacy:handle',
   ],
   admin_ops: ['audit:read', 'report:view', 'gov:source_admin', 'gov:view'],
   admin_review: ['verification:review', 'verification:decide', 'listing:review', 'review:moderate', 'supplier:review', 'catalogue:review', 'partner:manage', 'gov:review', 'gov:view'],

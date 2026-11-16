@@ -253,8 +253,10 @@ select is(
         'news_list(p_category text, p_language text, p_sector text, p_state text, p_saved_only boolean, p_limit integer, p_offset integer)', 'news_get(p_id uuid)', 'news_deadlines(p_limit integer)',
         'news_save(p_id uuid)', 'news_unsave(p_id uuid)', 'news_get_prefs()', 'news_set_prefs(p_data jsonb)', 'admin_news_list()', 'admin_news_get(p_id uuid)',
         'admin_news_save(p_id uuid, p_data jsonb, p_expected_version integer)', 'admin_news_set_status(p_id uuid, p_status text, p_publish_at timestamp with time zone, p_expected_version integer)',
-        'dash_dismiss(p_org uuid, p_key text)', 'dash_active_dismissals(p_org uuid)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 179 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign)');
+        'dash_dismiss(p_org uuid, p_key text)', 'dash_active_dismissals(p_org uuid)',
+        'set_marketing_consent(p_on boolean)', 'submit_privacy_request(p_type text, p_details text)', 'list_my_privacy_requests()',
+        'admin_list_privacy_requests(p_status text)', 'admin_update_privacy_request(p_id uuid, p_status text, p_note text)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 184 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -348,7 +350,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  87, 'S6.6 inventory: exactly the 87 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign; new tables must come with RLS tests)');
+  88, 'S6.6 inventory: exactly the 88 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign, 1 privacy_requests; new tables must come with RLS tests)');
 
 select * from finish();
 rollback;
