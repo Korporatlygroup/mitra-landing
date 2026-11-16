@@ -19,9 +19,10 @@ Status words (used strictly): **Configured** (set up on the real service), **Tes
 ## 2. Migrations and database
 | Item | Status | Evidence |
 |---|---|---|
-| Fresh local database from all 40 migrations | Tested locally | `supabase db reset` clean; pgTAP 30 files, 2421 assertions pass on the head that includes 222 and 223 |
+| Fresh local database from all 41 migrations | Tested locally | `supabase db reset` clean; pgTAP 31 files, 2437 assertions pass on the head that includes 222, 223 and 224 |
 | Upgrade from Phase 1 to 6 with synthetic data | Tested locally | per-table row counts and hashes unchanged (`phase1-7-integration-report.md`) |
 | Migration 222 (RLS initplan) | Tested locally | pgTAP 28 (policy text, behaviour, plan contains an InitPlan); timing result recorded in the integration report |
+| Migration 224 (RLS initplan for `auth.uid()`, 13 policies) | Tested locally | pgTAP 30; hosted advisors flagged the 13 policies; not yet applied to any hosted project |
 | Migration 223 (`verification-docs` bucket) | Tested locally | pgTAP 29; closes a gap: the bucket existed only in local config and by hand on staging |
 | Apply to `inok-production` | Blocked | only after the project exists and you approve; the order is the file order, applied by `supabase db push` from one named person or CI |
 | RLS on every exposed table, ownership, public directory data, private documents and messages, admin-only records, grants for functions | Tested locally | pgTAP 01 (87 tables, 179 authenticated RPCs, 36 service-role functions) plus integration `rpc-security`, `hardening`, `storage-lockdown` |
@@ -59,7 +60,7 @@ Route compatibility, auth, bounded retries, leases, duplicate prevention, remind
 
 ## 8. Release gates (all must be ticked by a named person)
 - [ ] Staging acceptance passed on the exact commit to be released
-- [ ] Production project healthy, all 40 migrations applied, advisors clean or explained
+- [ ] Production project healthy, all 41 migrations applied, advisors clean or explained
 - [ ] SMTP delivery verified with real mailboxes; SPF, DKIM, DMARC pass
 - [ ] `clamd` connected, EICAR rejected, documents released after clean scan
 - [ ] First administrator created, MFA enrolled, second administrator exists
