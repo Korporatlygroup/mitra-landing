@@ -5,15 +5,21 @@
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
 
+const STAGING_REF = 'udxzukodfqjzdukweygy'; // Supabase project mitra-staging
 const TARGETS = {
-  staging: { ref: 'udxzukodfqjzdukweygy' }, // Supabase project mitra-staging
-  // production: set when the inok-production project exists and is approved.
+  staging: { ref: STAGING_REF },
+  // The production build needs the new project's reference in INOK_PRODUCTION_REF and can never point at the staging project.
+  production: { ref: process.env.INOK_PRODUCTION_REF ?? '' },
 };
 const target = process.argv[2];
 const cfg = TARGETS[target];
 if (!cfg) {
   console.error(`Usage: node scripts/cf-build.mjs <${Object.keys(TARGETS).join('|')}>`);
   process.exit(2);
+}
+if (target === 'production' && (!cfg.ref || cfg.ref === STAGING_REF)) {
+  console.error('cf-build: set INOK_PRODUCTION_REF to the inok-production project reference (it must not be the staging project)');
+  process.exit(1);
 }
 const url = process.env.NEXT_PUBLIC_SUPABASE_URL ?? '';
 const key = process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY ?? '';

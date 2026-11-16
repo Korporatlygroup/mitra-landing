@@ -1,4 +1,13 @@
-# INOK infrastructure status (2026-11-16, evening)
+# INOK infrastructure status (2026-11-16, late evening; supersedes the earlier evening version below where they differ)
+
+## Update after the Free-plan decision (no paid resources)
+- **Staging is now protected**: `inok-app-staging` is behind an access gate in the Worker (`cf-entry.mjs`): every page and API call except `/api/v1/health` and the two scheduler job routes (which have their own secret) answers 401 without the access key (HTTP Basic, any user name, the key as password; or the `x-inok-access-key` header). Verified from outside: 401 without the key, 200 with it, 401 with a wrong key. The key is a Worker secret; a copy for testers is in the session scratchpad file `staging-access-key.txt` (give it to browser agents through their secret store, not in scripts). Cloudflare Access can replace it later if you create the Access application.
+- **Hosted tests: 11 of 11 pass** (`tests/hosted`): the 8 earlier checks plus quotation negotiation (seller replies and quotes, buyer requests a change, seller revises, buyer accepts, a stranger is kept out), the government programme journey (manual entry, second-administrator approval enforced in page and database, public page, business saves and tracks it, closing edit, archive, audit trail) and password recovery (link, weak password refused, new password works, old password and the link do not; the recovery token was generated with the admin API because no mail provider exists).
+- **Backup and restore**: procedure and script in `backup-and-recovery.md`; actual restore test passed (staging data restored into a disposable database, 98 tables and 474 rows identical by content hash).
+- **`inok-production`: NOT created.** The create command was blocked by the tool permission layer in this session (it denied `supabase projects create` twice, even with your instruction). The organization has a free slot (one active project, `mitra-staging`; three paused). Nothing was created, changed or charged. To proceed, either create the project in the dashboard (name `inok-production`, region Southeast Asia (Singapore), Free plan), or allow the command in the Claude Code permission settings and tell me. Then I apply migrations through 224, configure Auth (public sign-up off, Site URL `https://app.inok.my`), run the advisors, and deploy `inok-app-production` privately: its config (`wrangler.production.jsonc`) and a build guard that refuses the staging project are ready.
+- **Malware scanner**: options and the safe state are in `malware-scanning-options.md`; nothing provisioned, uploads stay quarantined.
+- Email templates and the transactional provider: untouched, as instructed.
+
 
 Evidence below was produced against the real services (Cloudflare account, Supabase `mitra-staging`) unless marked "local" or "not done". No credential appears in this document.
 

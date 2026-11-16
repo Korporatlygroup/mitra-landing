@@ -1,0 +1,16 @@
+// Worker `inok-app-production`: PREPARED, NOT DEPLOYED (the inok-production Supabase project does not exist yet).
+// Deploy with: npx wrangler deploy -c wrangler.production.jsonc   (after `npm run cf:build:production` with the production
+// project's URL, publishable key and INOK_PRODUCTION_REF in the shell). Separate Worker, separate secrets, no staging credentials.
+// Private until release acceptance: ACCESS_GATE stays "required"; no custom domain and no app.inok.my route are configured here.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "inok-app-production",
+  "main": "cf-entry.mjs",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  "vars": { "SITE_URL": "https://inok-app-production.long-wind-0982.workers.dev", "ACCESS_GATE": "required" },
+  "workers_dev": true,
+  "preview_urls": false
+}

@@ -22,7 +22,8 @@
     "db:reset": "supabase db reset",
     "bootstrap:admin": "node scripts/bootstrap-admin.mjs",
     "cf:build:staging": "node scripts/cf-build.mjs staging",
-    "cf:check": "wrangler deploy --dry-run --outdir .wrangler/dry-run"
+    "cf:check": "wrangler deploy --dry-run --outdir .wrangler/dry-run",
+    "cf:build:production": "node scripts/cf-build.mjs production"
   },
   "dependencies": {
     "@supabase/ssr": "0.12.7",

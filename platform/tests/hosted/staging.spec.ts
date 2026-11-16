@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
-import { account, admin, anon, gotoWithMfa, guardStaging, loginUi, remoteSql, run, url, type Account } from './support';
+import { msg } from '../e2e/support/i18n';
+import { account, admin, strong, anon, gotoWithMfa, guardStaging, loginUi, remoteSql, run, url, type Account } from './support';
 
 test.describe.configure({ mode: 'serial' });
 test.beforeAll(guardStaging);
@@ -112,6 +113,37 @@ test('administrator: first admin, MFA sign-in in the browser, console access; a 
   await page.goto('/en/admin/business-help');
   expect(page.url()).toMatch(/mfa|login/);
   await page.context().clearCookies();
+});
+
+test('password recovery: the recovery link lands on the reset form, a weak password is refused, the new password works, the old one and the link do not', async ({ page, browser }) => {
+  // The recovery token is generated with the admin API because no mail provider exists yet: this tests the link handling, the reset form and the session,
+  // not email delivery.
+  const u = await account('reset');
+  const gen = await admin().auth.admin.generateLink({ type: 'recovery', email: u.email });
+  expect(gen.error, gen.error?.message).toBeNull();
+  const link = `/auth/callback?token_hash=${gen.data.properties!.hashed_token}&type=recovery`;
+  await page.context().clearCookies();
+  await page.goto(link);
+  await expect(page).toHaveURL(/\/en\/reset-password$/);
+  await page.getByLabel(msg('en', 'reset.password')).fill('alllowercaseletters');
+  await page.getByRole('button', { name: msg('en', 'reset.submit'), exact: true }).click();
+  await expect(page.locator('main [role=alert]').filter({ hasText: msg('en', 'errors.password_weak') })).toBeVisible();
+  const fresh = strong();
+  await page.getByLabel(msg('en', 'reset.password')).fill(fresh);
+  await page.getByRole('button', { name: msg('en', 'reset.submit'), exact: true }).click();
+  await expect(page).toHaveURL(/\/en\/account\?saved=1$/);
+  await page.context().clearCookies();
+  await page.goto('/en/login');
+  await page.locator('#email').fill(u.email);
+  await page.locator('#password').fill(u.password);
+  await page.locator('main form button[type=submit]').click();
+  await expect(page.locator('main [role=alert]').filter({ hasText: msg('en', 'errors.login_failed') })).toBeVisible();
+  await loginUi(page, { ...u, password: fresh });
+  const ctx = await browser.newContext();
+  const p2 = await ctx.newPage();
+  await p2.goto(link);
+  await expect(p2).toHaveURL(/\/en\/login\?error=link_invalid$/);
+  await ctx.close();
 });
 
 test('sessions: refresh works while signed in and a global sign-out revokes the refresh token', async () => {
