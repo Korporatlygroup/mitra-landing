@@ -1,3 +1,8 @@
+# Final staging verification (2026-11-16, night)
+- Hosted tests: `tests/hosted` now has 13 tests; the two new ones (`sourcing-uploads.spec.ts`) **passed** on the deployed staging Worker: sourcing request to two partners, quote, buyer message, sample request, counter, revision, choice, and outsiders/other partners/other buyers shown nothing (page, document route, API rows); verification documents: unsafe files refused, a valid PDF stays quarantined with no scanner, 404 for owner/other tenants/anonymous, send for review refused, storage closed. The earlier 11 passed in the previous run and were not rerun after this change (13 of 13 in one run is not yet shown).
+- Sourcing attachments with no scanner are refused (nothing stored); verification documents are accepted but quarantined.
+- Advisor review: `advisor-review.md` (no genuine risk found). Isolation: each Worker's key opens only its own Worker. Backup incl. storage objects and a restore test: `backup-and-recovery.md`. Launch checklist: `launch-checklist.md`. Domain plan: `app-domain-and-landing-integration.md` (nothing attached).
+
 # INOK infrastructure status (2026-11-16, late evening; supersedes the earlier evening version below where they differ)
 
 ## Production, later the same evening (project created by you in the dashboard)

@@ -7,7 +7,7 @@ The Free plan has no automatic backups and no point-in-time recovery. The proced
 |---|---|---|
 | Schema | the migrations in git (`supabase/migrations`) are the schema of record; a hosted schema dump (`supabase db dump --remote=<ref>`) is kept as a cross-check | A new project is rebuilt by `supabase db push`, not by replaying a dump |
 | Data | `supabase db dump --remote=<ref> --data-only -s public,private,auth,storage -f <file>` | Includes `auth.users`, identities, MFA factors, sessions and `private.bootstrap_state` (without that row a restored project would allow a second first-administrator bootstrap) |
-| Storage files | private buckets `verification-docs` and `catalogue-media`: the dump holds only the bucket rows. Object bytes need their own copy (`supabase storage cp`, experimental) before real documents exist | **Not yet covered, no documents exist yet** |
+| Storage files | private buckets `verification-docs` and `catalogue-media`: the dump holds only bucket and object rows. Object bytes are copied by `deploy/backup/storage-backup.mjs` (Storage API, secret key read at run time) with a sha256 manifest. The Supabase CLI `storage cp -r` from a hosted bucket is unsupported in CLI 3.0.0 (tried) | **Tested 2026-11-16 on staging**: 1 object copied, its hash equals the `sha256` stored in the database row. Restoring objects into a new project (upload with the same paths) is documented, not yet drilled |
 | Secrets and settings | not in a dump. Auth settings are in `deploy/supabase-auth/*.toml`; Worker secrets must be re-entered from the password manager | |
 
 ## Where backups go
@@ -23,3 +23,6 @@ To restore a real project: create an empty project, `supabase db push`, then run
 - Run the restore test again after every schema change batch and after the first real data exists; a backup that was never restored is not a backup.
 - The restore script resets the local stack: never run it on anything to be kept.
 - Production: no backups exist until `inok-production` exists. On Free the project also pauses after inactivity; a paid plan (daily backups) remains the recommended state before real business data, but is not purchased.
+
+## One-command backup (added 2026-11-16)
+`deploy/backup/backup.sh <project-ref> <output-dir outside the repo>` writes data (public, private, auth, storage rows), a schema cross-check, every storage object and a `MANIFEST.sha256`. Run on staging: restore test with the new dump **RESTORE VERIFIED, 98 tables identical, 1966 rows** (includes the hosted test accounts, MFA factors and the document row). To restore storage objects into a rebuilt project, upload each file under its original bucket and path with the Storage API or dashboard, then compare with `STORAGE-MANIFEST.txt`. Auth data restores with the data dump (users keep their password hashes and MFA factors; sessions are not meant to survive).
