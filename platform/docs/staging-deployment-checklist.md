@@ -11,7 +11,7 @@ Status key: **Local** = verified on the developer machine only. **Prepared** = f
 | A4 | `supabase migration repair` of the 11 rows | **Done 2026-11-16** (approved; execution record in `staging-migration-reconciliation.md`) |
 | A5 | `supabase db push --dry-run` listed exactly the 29 expected versions | **Done 2026-11-16** |
 | A6 | `supabase db push` of those 29 | **Done 2026-11-16** (exit 0; hosted schema matches local at the same head, see the record) |
-| A7 | Post-push checks: RLS on every public table (0 without), buckets private, advisors run (0 errors, 206 warnings reviewed; 13 initplan warnings fixed by migration 224, committed locally, not yet pushed to staging) | **Done** except pushing migration 224 (needs approval) |
+| A7 | Post-push checks: RLS on every public table (0 without), buckets private, advisors run (0 errors, 206 warnings reviewed; 13 initplan warnings fixed by migration 224, pushed to staging 2026-11-16) | **Done** |
 | A8 | Backup posture: confirm plan backups or PITR before real data | Needs you (plan decision) |
 
 ## B. Application host: Cloudflare Workers (decision 2026-11-16: Cloudflare and Supabase only)
