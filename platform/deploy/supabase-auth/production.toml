@@ -1,0 +1,21 @@
+# Supabase Auth settings for inok-production (project ref tykdrzrszznwlcyxmgrg). Declared keys only; push with a scratch work directory (see staging.toml).
+# PUBLIC REGISTRATION IS OFF until release acceptance and a working email provider: enable_signup = false.
+# The private pre-launch Worker URL is allowed as a redirect so the private deployment can be tested; remove it at launch.
+project_id = "tykdrzrszznwlcyxmgrg"
+
+[auth]
+site_url = "https://app.inok.my"
+additional_redirect_urls = ["https://app.inok.my/auth/callback", "https://inok-app-production.long-wind-0982.workers.dev/auth/callback"]
+enable_signup = false
+enable_anonymous_sign_ins = false
+minimum_password_length = 10
+password_requirements = "lower_upper_letters_digits"
+
+[auth.email]
+double_confirm_changes = true
+enable_confirmations = true
+otp_expiry = 3600
+
+[auth.mfa.totp]
+enroll_enabled = true
+verify_enabled = true
