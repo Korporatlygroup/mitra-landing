@@ -1,0 +1,26 @@
+// PREPARED, NOT WIRED (a code change to src/server/gov/safe-fetch.ts needs approval).
+// Why: on Workers, node:https rejects the `lookup` option ("The options.lookup option is not implemented"), and the
+// government monitor's SSRF guard relies on that option. safeFetch already accepts an injectable `transport`, so the
+// smallest change is a second transport for the Workers runtime, chosen at startup, leaving the Node one untouched.
+// Tested only in a local workerd probe: a public host answered 200, and a public name that resolves to 127.0.0.1 was refused as private_address.
+import { Readable } from 'node:stream';
+import type { Transport } from '@/server/gov/safe-fetch';
+
+export const workersFetchTransport: Transport = async (url, init) => {
+  // 1. Resolve and refuse any non-public address with the same guard the Node transport uses.
+  await new Promise<void>((resolve, reject) => init.lookup(url.hostname, { all: true } as never, (err) => (err ? reject(err) : resolve())));
+  // 2. Plain fetch, redirects handled by safeFetch itself (each hop is validated again).
+  const ac = new AbortController();
+  const timer = setTimeout(() => ac.abort(), init.timeoutMs);
+  const res = await fetch(url, { method: 'GET', headers: init.headers, redirect: 'manual', signal: ac.signal });
+  clearTimeout(timer);
+  const headers: Record<string, string> = {};
+  res.headers.forEach((v, k) => {
+    headers[k] = v;
+  });
+  delete headers['content-encoding']; // fetch already decoded the body
+  const body = res.body ? Readable.fromWeb(res.body as never) : Readable.from([]);
+  return { status: res.status, headers, stream: body, destroy: () => body.destroy() };
+};
+// Limit to remember: with fetch the address is checked before the request, not pinned at connect time. Workers cannot reach
+// private networks, which limits the exposure, but the pre-check is weaker than the Node connect-time guard. Redirects stay validated.

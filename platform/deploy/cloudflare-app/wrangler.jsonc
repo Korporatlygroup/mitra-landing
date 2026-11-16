@@ -1,0 +1,22 @@
+// PREPARED, NOT WIRED. One Worker per environment. No secrets here: set them with `wrangler secret put` or the dashboard.
+// NEXT_PUBLIC_* values are inlined at build time, so each environment is built with its own project URL and publishable key.
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "main": ".open-next/worker.js",
+  "compatibility_date": "2026-11-01",
+  "compatibility_flags": ["nodejs_compat", "global_fetch_strictly_public"],
+  "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
+  "observability": { "enabled": true },
+  "env": {
+    "staging": {
+      "name": "inok-app-staging",
+      "vars": { "SITE_URL": "https://staging.inok.my", "MAIL_FROM": "INOK <no-reply@staging-mail.inok.my>" },
+      "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "inok-app-cache-staging" }]
+    },
+    "production": {
+      "name": "inok-app-production",
+      "vars": { "SITE_URL": "https://app.inok.my", "MAIL_FROM": "INOK <no-reply@mail.inok.my>" },
+      "r2_buckets": [{ "binding": "NEXT_INC_CACHE_R2_BUCKET", "bucket_name": "inok-app-cache-production" }]
+    }
+  }
+}

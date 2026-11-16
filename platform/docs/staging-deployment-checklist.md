@@ -14,16 +14,17 @@ Status key: **Local** = verified on the developer machine only. **Prepared** = f
 | A7 | Post-push checks: every public table has RLS on, advisor run (security and performance), `verification-docs` and `catalogue-media` private, 223 is a no-op because the bucket exists | Open |
 | A8 | Backup posture: confirm plan backups or PITR before real data | Needs you (plan decision) |
 
-## B. Application host (recommended: Vercel, Node runtime, Singapore or nearest region)
-Reasons are in `phase1-7-staging-readiness.md` section 1 (Cloudflare Workers lacks `dns.lookup` and general TCP; the app needs both). Cloudflare keeps `inok.my`.
+## B. Application host: Cloudflare Workers (decision 2026-11-16: Cloudflare and Supabase only)
+Evidence and open items are in `cloudflare-hosting-evaluation.md`. Prepared files: `platform/deploy/cloudflare-app/`.
 | # | Step | State |
 |---|---|---|
-| B1 | Create the host project from the repository, root directory `platform`, build `npm run build`, Node 22 or 24 | **Needs you** (account and billing; free tier cannot hold a commercial service) |
-| B2 | Set the variables in section D on the host, scoped to the staging environment only | Needs you |
-| B3 | Domain `staging.inok.my`: DNS-only CNAME (no Cloudflare proxy) | Needs you |
-| B4 | Protect the deployment (host password or SSO) and keep it out of search engines | Needs you |
-| B5 | Health check: `GET /api/v1/health` | Prepared (route exists) |
-| B6 | Rollback: redeploy the previous host build (instant); database rollbacks are forward fixes, see the migration notes | Prepared |
+| B1 | Cloudflare access for the work: scoped API token or someone runs the commands (list in the evaluation, section 1) | **Needs you** |
+| B2 | Add the OpenNext adapter and wrangler as dev dependencies, the two config files, and the Workers fetch transport for the government monitor (code change with tests, local commit) | Prepared, **needs your approval** |
+| B3 | Create Worker `inok-app-staging`, its R2 cache bucket (the adapter's documented cache setup), secrets set in Cloudflare, build project on this repository with root directory `platform` and build watch paths | **Needs you** (Cloudflare account; Workers Paid plan expected) |
+| B4 | `staging.inok.my` as a Worker custom domain (a DNS change) with Cloudflare Access in front; no search indexing | **Needs you** |
+| B5 | Health check: `GET /api/v1/health` | Prepared (route exists; 200 in workerd) |
+| B6 | Rollback: Workers keep previous versions (roll back from the dashboard or `wrangler rollback`); database rollbacks are forward fixes | Prepared |
+| B7 | Fix the failing Workers Builds on non-production branches of the landing Worker | Needs Cloudflare access |
 
 ## C. Supabase Auth for staging (hosted projects do not read `config.toml`)
 | Setting | Value |
@@ -62,7 +63,7 @@ Recommended provider: **Resend** (simplest domain verification, SMTP and API) or
 | F4 | Edge body-size limit in front of the app (the app accepts 16 MiB) | Open |
 
 ## G. Scheduler (Phase 7)
-Prepared files: `platform/deploy/scheduler/wrangler.toml` and `src/index.ts` (Cloudflare Cron Trigger Worker, POST with bearer secret, 15 minute cron for `/api/v1/jobs/gov`, 10 minute cron for `/api/v1/jobs/rescan`). Not created, no schedule live. Vercel classic cron is not used: it sends GET and its free tier is daily only.
+Prepared files: `platform/deploy/scheduler/wrangler.toml` and `src/index.ts` (Cloudflare Cron Trigger Worker, POST with bearer secret, 15 minute cron for `/api/v1/jobs/gov`, 10 minute cron for `/api/v1/jobs/rescan`). Not created, no schedule live. Behind Cloudflare Access, call the app by service binding or bypass Access for `/api/v1/jobs/*`.
 | # | Step | State |
 |---|---|---|
 | G1 | Create `inok-scheduler-staging` with `wrangler deploy --env staging`; add the two secrets with `wrangler secret put` | **Needs you** (Cloudflare account and approval) |

@@ -34,7 +34,7 @@ Date: 2026-11-16. Branch `integration/phase1-7` (worktree `MITRA-P17`), head `67
 | `scan-queue.test.ts` rerun alone (separate) | 2 passed |
 | Integration, thread pool, full (separate run) | 19 files passed, 1 skipped; 159 passed, 15 skipped, no crash |
 | Integration, thread pool, full, after migration 222 (separate run) | 19 files passed, 1 skipped; 159 passed, 15 skipped, no crash |
-| Playwright desktop, full (210) | 206 passed, 1 skipped, **3 failed**: e27-staleness and e73 (worker crash 3221226505), e50-ms (`EADDRINUSE` ephemeral-port exhaustion in the test runner) |
+| Playwright desktop, full (210), earlier build | 206 passed, 1 skipped, **3 failed**: e27-staleness and e73 (worker crash 3221226505), e50-ms (`EADDRINUSE` ephemeral-port exhaustion in the test runner) |
 | Desktop rerun of those 3 specs only (separate) | 11 passed |
 | Playwright mobile, full (210) | 192 passed, 15 skipped, **3 failed**: real layout bugs at 360 px (e21 ta, e28 ta: width 367; e40: width 361) |
 | Mobile rerun 1 after the tag fix, e21 + e28 + e40 only (separate) | 14 passed, 1 failed (e40, the Tamil directory search form 1 px too wide) |
@@ -45,11 +45,27 @@ Date: 2026-11-16. Branch `integration/phase1-7` (worktree `MITRA-P17`), head `67
 - An earlier full desktop run tested a stale server (old build, port still held) and was discarded.
 - Security regression: RLS, grant and RPC pgTAP lists, `rpc-security`, hardening, MFA and upload/scan journeys are inside the suites above. They passed except as listed.
 
+
+### Final regression on the head including migrations 222 and 223 (2026-11-16, local, separate runs)
+| Run | Result |
+|---|---|
+| pgTAP, fresh database | 30 files, **2421 passed** |
+| Unit | 38 files, **942 passed** |
+| tsc / ESLint | clean / 0 errors, 6 existing warnings |
+| Playwright desktop, full 210 (Node server, production build) | **209 passed, 1 skipped, 0 failed**, no worker crash, first attempt |
+| Playwright mobile, full 210 | **195 passed, 15 skipped, 0 failed**, first attempt (the earlier 3 layout failures were fixed by commit `400f613`) |
+| Integration, process pool | 154 passed, 17 skipped, **1 worker crash 3221226505** (`p4-erasure`): **not clean** |
+| Integration, thread pool | 19 files passed, 1 skipped; 157 passed, 17 skipped, no crash |
+Crash tally for the process pool across this work: about 5 crashes in 13 full integration runs (a different file each time); thread pool 0 in 5. Cause still unestablished.
+
+### Migration 222 measurement (rolled-back transaction, local)
+23,118 audit rows, user without the permission, same result (0 rows): old per-row policy **4,348 ms**, new policy **15 ms** (plan contains an InitPlan). Script: kept outside git.
+
 ### The recurring crash 3221226505
 Documented in `docs/test-runner-crash-investigation.md`. It is `STATUS_STACK_BUFFER_OVERRUN` (a fast fail), seen when a worker process starts. Process pool: 4 crashes in 12 full integration runs (a different file each time); thread pool: 0 of 4; unit suite: 0 of 40; bare Node: 0 of 1500. No diagnostic report, no Windows error entry. Not established: the fast-fail sub-code, and whether Defender, CET shadow stack or memory pressure (about 3 GB free, 58-64 Docker containers) is involved. No application code was changed to hide it. Follow-ups that need approval are listed in that document (WER dumps, Defender exclusion, CET test, Node 22 comparison).
 
 ## 5. Hosting (assessment only)
-See `docs/phase1-7-staging-readiness.md`. Summary: the app needs Node features (`dns.lookup`, `node:https`, SMTP and clamd TCP sockets, Next 16 proxy on Node) that Cloudflare Workers does not fully provide. Recommended: Vercel (or a container host) for the app, Cloudflare for DNS and the existing `inok.my` landing page (not modified), and a Cloudflare Cron Trigger Worker that POSTs to the job routes. Vercel classic cron sends GET and Hobby is daily only, so it is not used for the 15-minute jobs. Staging domain must be DNS-only. Nothing was created or configured.
+See `docs/phase1-7-staging-readiness.md`. Summary: the app needs Node features (`dns.lookup`, `node:https`, SMTP and clamd TCP sockets, Next 16 proxy on Node) that Cloudflare Workers does not fully provide. **Superseded:** management chose Cloudflare and Supabase only. The application was built with the OpenNext Cloudflare adapter and run in the local Workers runtime: most journeys pass, with one required code change (government monitor fetch) and two unresolved test failures. See `cloudflare-hosting-evaluation.md`. Nothing was created or configured on Cloudflare.
 
 ## 6. Deployment readiness
 **Classification: Ready for staging with conditions.** (Local verification only; hosted staging is unverified.)

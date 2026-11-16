@@ -2,6 +2,8 @@
 
 Status: PLAN, prepared 2026-11-15. Nothing here was executed against Cloudflare, Vercel, a hosted Supabase project, DNS or any mail provider. Verification so far is local only (see `phase1-7-integration-report.md`).
 
+> **Superseded 2026-11-16.** Management standardised on Cloudflare and Supabase. The Vercel recommendation below is replaced by `cloudflare-hosting-evaluation.md`, which tested the application in the Workers runtime. The Node-feature analysis in this section is still the background.
+
 ## 1. Where the application can run
 
 ### What the code needs from its host

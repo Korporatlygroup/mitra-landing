@@ -1,0 +1,7 @@
+// PREPARED, NOT WIRED. Copy next to package.json, without the .template suffix, when the Cloudflare deployment is approved.
+// An incremental cache is the adapter's documented production setup (revalidation and caching need it). It did NOT fix the
+// stale-form failure in e81 "B + C" (see docs/cloudflare-hosting-evaluation.md, section 3, item 2).
+import { defineCloudflareConfig } from '@opennextjs/cloudflare';
+import r2IncrementalCache from '@opennextjs/cloudflare/overrides/incremental-cache/r2-incremental-cache';
+
+export default defineCloudflareConfig({ incrementalCache: r2IncrementalCache });

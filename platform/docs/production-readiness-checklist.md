@@ -5,7 +5,7 @@ Status words (used strictly): **Configured** (set up on the real service), **Tes
 ## 1. Supabase project `inok-production`
 | Item | Status | Notes |
 |---|---|---|
-| Organisation | **Blocked, needs you** | The CLI shows one organisation (id `tlnsuuidgrdpgszsfjlc`) that also holds the `sea-*` projects (SEA AI Academy, paused) and `mitra-staging`. Confirm whether `inok-production` goes in this organisation or in a separate INOK organisation. I will not touch the paused projects. |
+| Organisation | **Blocked, needs you** | The signed-in Supabase CLI sees **two** organisations: `korporatlygroup` (holds `mitra-staging` and the paused `sea-*` projects) and `inok project` (no projects yet). The CLI can create projects, so permission is likely, but the plan, price and backups can only be confirmed in the dashboard. Your decision: which organisation. I will not touch the paused projects. |
 | Cost and plan | **Blocked, needs you** | A plan that does not pause for inactivity is required (the free tier pauses idle projects). I have not queried prices; check current Pro pricing, compute add-on, and backup or PITR options in the dashboard and approve the monthly amount. Nothing is created until you do. |
 | Region and version | Prepared | Singapore (`ap-southeast-1`), Postgres 17 (local stack and `mitra-staging` are 17). |
 | Creation | Blocked | Needs the two items above. The CLI (`supabase projects create`) or dashboard can create it; I will use the CLI that is already signed in once you approve. |
@@ -51,8 +51,8 @@ Route compatibility, auth, bounded retries, leases, duplicate prevention, remind
 ## 7. Hosting, domain, monitoring
 | Item | Status |
 |---|---|
-| Recommended host | Vercel (Node runtime) or a container host; Cloudflare Workers is not suitable without code changes (DNS lookup and TCP needs). Decision needed from you. |
-| `app.inok.my` and `staging.inok.my` DNS-only CNAMEs, HTTPS, HSTS (the app sends HSTS) | Blocked, DNS is yours |
+| Host | Cloudflare Workers (OpenNext adapter) for the application, decided by management; builds and runs locally in workerd; one code change (government monitor fetch) and one required setting (R2 incremental cache) found. Not deployed. See `cloudflare-hosting-evaluation.md`. |
+| `app.inok.my` and `staging.inok.my` as Worker custom domains (proxied by Cloudflare), HTTPS, HSTS (the app sends HSTS) | Blocked, DNS changes need your approval |
 | Landing page links (`inok.my`): Register Your Business, Sign In, Explore Businesses, Government Assistance | Prepared in `phase1-7-staging-readiness.md` section 5. The live page is not modified. Government Assistance route is the public programme list under `/business-help`. |
 | Logging, error monitoring, alerts | Open: host logs plus an error tracker to choose; uptime check on `/api/v1/health`; alert on scheduler failures |
 | Rollback | Prepared: redeploy the previous host build; database fixes go forward as new migrations; restore drill from backup |
