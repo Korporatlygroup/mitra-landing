@@ -51,6 +51,6 @@ export default {
         }
       }
     }
-    return servePublicPage(request, () => app.fetch(request, env, ctx));
+    return servePublicPage(request, () => app.fetch(request, env, ctx), { ctx });
   },
 };

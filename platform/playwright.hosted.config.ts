@@ -13,6 +13,7 @@ export default defineConfig({
     // Pre-launch Workers sit behind an access key (HTTP Basic, any user name).
     httpCredentials: process.env.HOSTED_ACCESS_KEY ? { username: 'inok', password: process.env.HOSTED_ACCESS_KEY } : undefined,
     extraHTTPHeaders: process.env.HOSTED_ACCESS_KEY ? { 'x-inok-access-key': process.env.HOSTED_ACCESS_KEY } : undefined,
-    ...devices['Desktop Chrome'],
+    // HOSTED_DEVICE=mobile runs the same checks in a phone-sized browser (Pixel 7).
+    ...devices[process.env.HOSTED_DEVICE === 'mobile' ? 'Pixel 7' : 'Desktop Chrome'],
   },
 });

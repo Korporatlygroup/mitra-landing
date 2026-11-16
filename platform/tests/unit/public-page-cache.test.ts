@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 // @ts-expect-error plain .mjs without types
-import { _store, cacheTtl, servePublicPage, SHORT_TTL_MS, STATIC_TTL_MS } from '../../public-page-cache.mjs';
+import { _store, cacheTtl, servePublicPage, SHORT_STALE_MS, SHORT_TTL_MS, STATIC_TTL_MS } from '../../public-page-cache.mjs';
 
 const req = (path: string, init: RequestInit & { headers?: Record<string, string> } = {}) =>
   new Request(`https://x.test${path}`, { ...init, headers: { accept: 'text/html', ...(init.headers ?? {}) } });
@@ -21,7 +21,8 @@ describe('public page cache: what may be stored', () => {
     expect(cacheTtl(req('/en/login'))).toBe(STATIC_TTL_MS);
     expect(cacheTtl(req('/en'))).toBe(SHORT_TTL_MS);
     expect(cacheTtl(req('/ta/directory'))).toBe(SHORT_TTL_MS);
-    for (const p of ['/en/account', '/en/admin', '/en/orgs', '/en/directory/some-business', '/api/v1/health', '/en/reset-password', '/fr/terms', '/en/mfa/verify', '/en/sourcing', '/en/catalogue']) {
+    for (const p of ['/en/catalogue', '/ms/business-help', '/en/news']) expect(cacheTtl(req(p)), p).toBe(SHORT_TTL_MS);
+    for (const p of ['/en/account', '/en/admin', '/en/orgs', '/en/directory/some-business', '/api/v1/health', '/en/reset-password', '/fr/terms', '/en/mfa/verify', '/en/sourcing']) {
       expect(cacheTtl(req(p)), p).toBe(0);
     }
   });
@@ -45,9 +46,9 @@ describe('public page cache: serving', () => {
       renders += 1;
       return page()();
     };
-    const a = await servePublicPage(req('/en/terms'), render, 1000);
-    const b = await servePublicPage(req('/en/terms'), render, 2000);
-    const c = await servePublicPage(req('/en/terms'), render, 3000);
+    const a = await servePublicPage(req('/en/terms'), render, { now: 1000 });
+    const b = await servePublicPage(req('/en/terms'), render, { now: 2000 });
+    const c = await servePublicPage(req('/en/terms'), render, { now: 3000 });
     expect(renders).toBe(1);
     expect([a, b, c].map((r) => r.headers.get('x-inok-page-cache'))).toEqual(['miss', 'hit', 'hit']);
     const nonces: string[] = [];
@@ -63,16 +64,43 @@ describe('public page cache: serving', () => {
     }
     expect(new Set(nonces).size).toBe(3);
   });
-  it('expires after the lifetime', async () => {
+  it('serves a stale copy at once and renews it in the background; a failed renewal costs the visitor nothing', async () => {
+    let renders = 0;
+    let failRenewal = false;
+    const render = () => {
+      renders += 1;
+      return failRenewal ? Promise.reject(new Error('Worker exceeded CPU time limit')) : page()();
+    };
+    const pending: Promise<unknown>[] = [];
+    const ctx = { waitUntil: (p: Promise<unknown>) => void pending.push(p) };
+    await servePublicPage(req('/en'), render, { now: 0, ctx });
+    await servePublicPage(req('/en'), render, { now: SHORT_TTL_MS - 1, ctx });
+    expect(renders).toBe(1);
+    failRenewal = true;
+    const stale = await servePublicPage(req('/en'), render, { now: SHORT_TTL_MS + 1, ctx });
+    expect(stale.status).toBe(200);
+    expect(stale.headers.get('x-inok-page-cache')).toBe('hit');
+    await Promise.all(pending);
+    expect(renders).toBe(2);
+    // the failed renewal left the old copy in place and allows another attempt
+    const again = await servePublicPage(req('/en'), render, { now: SHORT_TTL_MS + 2, ctx });
+    expect(again.status).toBe(200);
+    failRenewal = false;
+    await Promise.all(pending);
+    await servePublicPage(req('/en'), render, { now: SHORT_TTL_MS + 3, ctx });
+    await Promise.all(pending);
+    const renewed = await servePublicPage(req('/en'), render, { now: SHORT_TTL_MS + 4, ctx });
+    expect(renewed.status).toBe(200);
+    expect(renders).toBe(4);
+  });
+  it('renders again once the copy is older than the stale limit', async () => {
     let renders = 0;
     const render = () => {
       renders += 1;
       return page()();
     };
-    await servePublicPage(req('/en'), render, 0);
-    await servePublicPage(req('/en'), render, SHORT_TTL_MS - 1);
-    expect(renders).toBe(1);
-    await servePublicPage(req('/en'), render, SHORT_TTL_MS + 1);
+    await servePublicPage(req('/en'), render, { now: 0 });
+    await servePublicPage(req('/en'), render, { now: SHORT_STALE_MS + 1 });
     expect(renders).toBe(2);
   });
   it('does not store errors, other cookies, or responses without a nonce; passes a session request straight through', async () => {
