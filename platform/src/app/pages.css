@@ -287,6 +287,9 @@
   background: #fff;
   border: 1px solid var(--line-strong);
   flex: 0 1 460px;
+  min-width: 0;
+  max-width: 100%;
+  box-sizing: border-box;
   color: var(--muted);
 }
 .dir-search:focus-within {

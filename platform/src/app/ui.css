@@ -9,6 +9,7 @@
   padding: 4px 10px;
   border-radius: 999px;
   white-space: nowrap;
+  max-width: 100%;
   background: var(--tag-gray-bg);
   color: var(--tag-gray);
 }
@@ -35,6 +36,12 @@
 .t-violet {
   background: var(--tag-violet-bg);
   color: var(--tag-violet);
+}
+/* A long label (Tamil) wraps inside the viewport instead of widening the page. */
+@media (max-width: 480px) {
+  .tag {
+    white-space: normal;
+  }
 }
 .tag-lg {
   font-size: 0.8125rem;
