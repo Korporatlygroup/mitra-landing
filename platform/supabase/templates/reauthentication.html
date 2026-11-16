@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>Your INOK confirmation code</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f1f3;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1f3;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">
+<tr><td style="background:#8c1d40;padding:20px 28px;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:2px;">INOK</td></tr>
+<tr><td style="padding:28px;">{{ if eq .Data.language "ms" }}<h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#111;">Kod pengesahan anda</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#222;">Masukkan kod ini untuk mengesahkan perubahan penting pada akaun INOK anda:</p><p style="margin:24px 0;font-size:32px;font-weight:700;letter-spacing:6px;color:#8c1d40;">{{ .Token }}</p><p style="margin:0;font-size:14px;line-height:1.5;color:#555;">Jika anda tidak meminta kod ini, tetapkan semula kata laluan anda.</p>{{ else if eq .Data.language "ta" }}<h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#111;">உங்கள் உறுதிப்படுத்தும் குறியீடு</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#222;">உங்கள் INOK கணக்கில் முக்கிய மாற்றத்தை உறுதிப்படுத்த இந்தக் குறியீட்டை உள்ளிடவும்:</p><p style="margin:24px 0;font-size:32px;font-weight:700;letter-spacing:6px;color:#8c1d40;">{{ .Token }}</p><p style="margin:0;font-size:14px;line-height:1.5;color:#555;">நீங்கள் இந்தக் குறியீட்டைக் கோரவில்லை என்றால் கடவுச்சொல்லை மீட்டமைக்கவும்.</p>{{ else }}<h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#111;">Your confirmation code</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#222;">Enter this code to confirm a sensitive change to your INOK account:</p><p style="margin:24px 0;font-size:32px;font-weight:700;letter-spacing:6px;color:#8c1d40;">{{ .Token }}</p><p style="margin:0;font-size:14px;line-height:1.5;color:#555;">If you did not ask for this code, reset your password.</p>{{ end }}</td></tr>
+<tr><td style="padding:16px 28px 24px;border-top:1px solid #eee;font-size:12px;line-height:1.5;color:#666;">{{ if eq .Data.language "ms" }}INOK ialah platform perniagaan bebas. INOK bukan agensi kerajaan dan tidak menentukan kelayakan bagi sebarang program.{{ else if eq .Data.language "ta" }}INOK ஒரு சுதந்திரமான வணிகத் தளம். இது அரசு நிறுவனம் அல்ல; எந்த திட்டத்திற்கும் தகுதியை இது தீர்மானிக்காது.{{ else }}INOK is an independent business platform. It is not a government agency and does not decide eligibility for any programme.{{ end }}</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

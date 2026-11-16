@@ -1,19 +1,18 @@
-# Cloudflare Cron Trigger Worker that calls the two INOK job routes. PREPARED ONLY: not created, not deployed, no schedule is live.
-# One Worker per environment. Create staging first (`wrangler deploy --env staging`), production only after staging acceptance and approval.
-# Secrets are never written here: `wrangler secret put GOV_WORKER_SECRET --env staging` and `... CRON_SECRET --env staging`
-# (separate values per environment, the same values as the application host's variables).
-name = "inok-scheduler"
+# Cloudflare Cron Trigger Worker that calls the two INOK job routes (staging). Production gets its own Worker later.
+# Recurring schedules are ON for staging after one controlled run passed (2026-11-16). Production gets its own Worker and stays off.
+# Secrets (never in this file): GOV_WORKER_SECRET and CRON_SECRET (the same values as the app Worker), SCHEDULER_TRIGGER_SECRET.
+name = "inok-scheduler-staging"
 main = "src/index.ts"
 compatibility_date = "2026-11-01"
+workers_dev = true
+preview_urls = false
 
-[env.staging]
-name = "inok-scheduler-staging"
-vars = { APP_ORIGIN = "https://staging.inok.my" }
-[env.staging.triggers]
-crons = ["*/15 * * * *", "*/10 * * * *"]
+[vars]
+APP_ORIGIN = "https://inok-app-staging.long-wind-0982.workers.dev"
 
-[env.production]
-name = "inok-scheduler-production"
-vars = { APP_ORIGIN = "https://app.inok.my" }
-[env.production.triggers]
-crons = ["*/15 * * * *", "*/10 * * * *"]
+[[services]]
+binding = "APP"
+service = "inok-app-staging"
+
+[triggers]
+crons = ["*/15 * * * *", "*/10 * * * *"]   # gov monitor every 15 min, rescan every 10 min (the database switches stay off until a person enables them)

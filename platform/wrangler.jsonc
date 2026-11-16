@@ -11,6 +11,7 @@
   "assets": { "directory": ".open-next/assets", "binding": "ASSETS" },
   "observability": { "enabled": true },
   // Reachable at https://inok-app-staging.<account-subdomain>.workers.dev. Put Cloudflare Access in front before sharing the address.
+  "vars": { "SITE_URL": "https://inok-app-staging.long-wind-0982.workers.dev" },
   "workers_dev": true,
   "preview_urls": false
 }

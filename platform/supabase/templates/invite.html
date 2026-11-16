@@ -1,0 +1,20 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="color-scheme" content="light">
+<title>You have been invited to INOK</title>
+</head>
+<body style="margin:0;padding:0;background:#f6f1f3;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f6f1f3;">
+<tr><td align="center" style="padding:24px 12px;">
+<table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="max-width:560px;background:#ffffff;border-radius:12px;overflow:hidden;font-family:Arial,Helvetica,sans-serif;">
+<tr><td style="background:#8c1d40;padding:20px 28px;color:#ffffff;font-size:24px;font-weight:700;letter-spacing:2px;">INOK</td></tr>
+<tr><td style="padding:28px;">{{ if eq .Data.language "ms" }}<h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#111;">Anda dijemput ke INOK</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#222;">Seorang pentadbir INOK menjemput anda untuk membuat akaun.</p><p style="margin:24px 0;"><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account" style="display:inline-block;background:#8c1d40;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 24px;border-radius:8px;">Terima jemputan</a></p><p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#555;word-break:break-all;">{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account</p><p style="margin:0;font-size:14px;line-height:1.5;color:#555;">Jika anda tidak menjangkakan jemputan ini, sila abaikan e-mel ini.</p>{{ else if eq .Data.language "ta" }}<h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#111;">நீங்கள் INOK-க்கு அழைக்கப்பட்டுள்ளீர்கள்</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#222;">ஒரு INOK நிர்வாகி கணக்கை உருவாக்க உங்களை அழைத்துள்ளார்.</p><p style="margin:24px 0;"><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account" style="display:inline-block;background:#8c1d40;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 24px;border-radius:8px;">அழைப்பை ஏற்கவும்</a></p><p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#555;word-break:break-all;">{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account</p><p style="margin:0;font-size:14px;line-height:1.5;color:#555;">இந்த அழைப்பை நீங்கள் எதிர்பார்க்கவில்லை என்றால் இந்த மின்னஞ்சலைப் புறக்கணிக்கவும்.</p>{{ else }}<h1 style="margin:0 0 16px;font-size:22px;line-height:1.3;color:#111;">You have been invited to INOK</h1><p style="margin:0 0 16px;font-size:16px;line-height:1.5;color:#222;">An INOK administrator invited you to create an account.</p><p style="margin:24px 0;"><a href="{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account" style="display:inline-block;background:#8c1d40;color:#ffffff;text-decoration:none;font-weight:700;font-size:16px;padding:14px 24px;border-radius:8px;">Accept the invitation</a></p><p style="margin:0 0 16px;font-size:13px;line-height:1.5;color:#555;word-break:break-all;">{{ .SiteURL }}/auth/callback?token_hash={{ .TokenHash }}&type=invite&next=/account</p><p style="margin:0;font-size:14px;line-height:1.5;color:#555;">If you were not expecting this invitation, you can ignore this email.</p>{{ end }}</td></tr>
+<tr><td style="padding:16px 28px 24px;border-top:1px solid #eee;font-size:12px;line-height:1.5;color:#666;">{{ if eq .Data.language "ms" }}INOK ialah platform perniagaan bebas. INOK bukan agensi kerajaan dan tidak menentukan kelayakan bagi sebarang program.{{ else if eq .Data.language "ta" }}INOK ஒரு சுதந்திரமான வணிகத் தளம். இது அரசு நிறுவனம் அல்ல; எந்த திட்டத்திற்கும் தகுதியை இது தீர்மானிக்காது.{{ else }}INOK is an independent business platform. It is not a government agency and does not decide eligibility for any programme.{{ end }}</td></tr>
+</table>
+</td></tr>
+</table>
+</body>
+</html>

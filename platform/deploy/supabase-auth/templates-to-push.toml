@@ -1,0 +1,35 @@
+# Add these blocks to the work-directory config (next to staging.toml's content) when custom SMTP or a paid plan is available,
+# and copy supabase/templates into <dir>/supabase/templates. Subjects are in supabase/templates/subjects.json.
+[auth.email.template.confirmation]
+subject = "Confirm your INOK account"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.recovery]
+subject = "Reset your INOK password"
+content_path = "./supabase/templates/recovery.html"
+
+[auth.email.template.email_change]
+subject = "Confirm your new INOK email address"
+content_path = "./supabase/templates/email_change.html"
+
+[auth.email.template.invite]
+subject = "You have been invited to INOK"
+content_path = "./supabase/templates/invite.html"
+
+[auth.email.template.magic_link]
+subject = "Your INOK sign-in link"
+content_path = "./supabase/templates/magic_link.html"
+
+[auth.email.template.reauthentication]
+subject = "Your INOK confirmation code"
+content_path = "./supabase/templates/reauthentication.html"
+
+[auth.email.notification.password_changed]
+enabled = true
+subject = "Your INOK password was changed"
+content_path = "./supabase/templates/password_changed_notification.html"
+
+[auth.email.notification.email_changed]
+enabled = true
+subject = "The email address on your INOK account was changed"
+content_path = "./supabase/templates/email_changed_notification.html"

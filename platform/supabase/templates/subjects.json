@@ -1,0 +1,10 @@
+{
+  "confirmation": "Confirm your INOK account",
+  "recovery": "Reset your INOK password",
+  "email_change": "Confirm your new INOK email address",
+  "invite": "You have been invited to INOK",
+  "magic_link": "Your INOK sign-in link",
+  "reauthentication": "Your INOK confirmation code",
+  "password_changed_notification": "Your INOK password was changed",
+  "email_changed_notification": "The email address on your INOK account was changed"
+}
