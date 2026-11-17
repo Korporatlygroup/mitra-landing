@@ -49,6 +49,7 @@ test('Buy / Sell / Both chooser: a new account picks a purpose, the form is pres
     ['buyerB', 'both', 'business', 'PROD TEST Both Enterprise (test)'],
   ];
   for (const [key, purpose, type, name] of picks) {
+    if (persona(key).orgId) { cover('prod-onboarding', `${key}: already onboarded by an earlier run (chooser only shows for accounts without an organisation)`, 'observed'); continue; }
     const a = await Agent.create(browser, key);
     await a.login();
     await a.must('prod-onboarding', `${key}: no organisation yet, the three purposes are offered`, async () => {
