@@ -1012,12 +1012,12 @@
     }
   },
   "app": {
-    "_note": "Links into the INOK platform (app.inok.my). DO NOT PUBLISH until the platform is open to the public: sign-up is off and the app is behind an access gate. English entry points; the platform offers Bahasa Melayu (/ms) and Tamil (/ta) from its own language switch.",
+    "_note": "Links into the INOK platform (app.inok.my). English entry points; the platform offers Bahasa Melayu (/ms) and Tamil (/ta) from its own language switch.",
     "origin": "https://app.inok.my",
     "links": [
-      { "label": "Explore businesses", "path": "/en/directory" },
-      { "label": "Register business", "path": "/en/signup" },
-      { "label": "Sign in", "path": "/en/login" }
+      { "label": "Get started", "path": "/en/signup" },
+      { "label": "Sign in", "path": "/en/login" },
+      { "label": "Explore businesses", "path": "/en/directory" }
     ]
   }
 }
