@@ -69,6 +69,12 @@
         "href": "#journey",
         "style": "secondary",
         "videoUrl": null
+      },
+      {
+        "label": "Get started",
+        "href": "https://app.inok.my/en/signup",
+        "style": "secondary",
+        "videoUrl": null
       }
     ]
   },
@@ -1004,5 +1010,14 @@
         }
       ]
     }
+  },
+  "app": {
+    "_note": "Links into the INOK platform (app.inok.my). English entry points; the platform offers Bahasa Melayu (/ms) and Tamil (/ta) from its own language switch.",
+    "origin": "https://app.inok.my",
+    "links": [
+      { "label": "Get started", "path": "/en/signup" },
+      { "label": "Sign in", "path": "/en/login" },
+      { "label": "Explore businesses", "path": "/en/directory" }
+    ]
   }
 }

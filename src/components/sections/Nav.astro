@@ -1,7 +1,7 @@
 ---
 import site from '../../../content/site.json';
 import Logo from '../Logo.astro';
-import { navLinks } from '../../lib/content';
+import { appLinks, navLinks } from '../../lib/content';
 ---
 
 <header class="nav" data-nav>
@@ -15,6 +15,7 @@ import { navLinks } from '../../lib/content';
     <nav class="nav__desktop" aria-label="Primary">
       <ul>
         {navLinks.map((n) => <li><a href={n.href} data-spy={n.href}>{n.label}</a></li>)}
+        {appLinks.map((n) => <li><a href={n.href} rel="noopener">{n.label}</a></li>)}
       </ul>
     </nav>
 
@@ -24,6 +25,7 @@ import { navLinks } from '../../lib/content';
       <nav aria-label="Primary (mobile)">
         <ul>
           {navLinks.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
+          {appLinks.map((n) => <li><a href={n.href} rel="noopener">{n.label}</a></li>)}
         </ul>
       </nav>
     </details>
