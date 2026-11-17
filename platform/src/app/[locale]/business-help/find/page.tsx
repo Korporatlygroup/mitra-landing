@@ -6,7 +6,7 @@ import { matchProgramme, rankMatches, type AssistanceProfile } from '@/lib/gov-m
 import { CATEGORIES } from '@/lib/gov-status';
 import { eligibleAssistOrgs, GOV_NEEDS, NEED_TO_FUNDING, parseNeed } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
-import { getGovProfile, listGovProgrammes, listGovSaved } from '@/server/services/gov';
+import { getGovProfile, listGovProgrammes, listMyGovSaved } from '@/server/services/gov';
 import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
 
@@ -43,7 +43,7 @@ export default async function FindPage({
 
   const profileRes = supabase && org ? await getGovProfile(supabase, org.org.id) : null;
   const profile = profileRes?.ok ? profileRes.data : null;
-  const savedRes = supabase && org ? await listGovSaved(supabase, org.org.id) : null;
+  const savedRes = supabase && user ? await listMyGovSaved(supabase) : null;
   const savedIds = new Set(savedRes?.ok ? savedRes.data.map((s) => s.programme_id) : []);
 
   const listRes = supabase ? await listGovProgrammes(supabase, { limit: 100, category, q }) : null;
@@ -148,7 +148,7 @@ export default async function FindPage({
             <p role="status">{t('find.count', { n: ranked.length })}</p>
             <ul className="p5-grid catalogue-grid">
               {ranked.map(({ p, match }) => (
-                <ProgrammeCard key={p.id} p={p} locale={locale} match={user && org ? match : null} orgId={org?.org.id ?? null} saved={savedIds.has(p.id)} />
+                <ProgrammeCard key={p.id} p={p} locale={locale} match={user && org ? match : null} orgId={org?.org.id ?? null} signedIn={Boolean(user)} saved={savedIds.has(p.id)} />
               ))}
             </ul>
           </>

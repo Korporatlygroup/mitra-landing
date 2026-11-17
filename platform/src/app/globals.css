@@ -2,44 +2,44 @@
    Shells (public, workspace, admin) live in shell.css; page-level pieces in ui.css. */
 :root {
   /* brand */
-  --brand: #8c1d40;
-  --brand-hover: #5c0f28;
-  --brand-tint: #f9e8ed;
-  --brand-tint-2: #fdf3f5;
-  --gold: #f4a51c;
-  --gold-hover: #e0940f;
-  --on-gold: #2a1500;
-  --ink: #2a1a12;
-  --text-2: #4a362a;
-  --muted: #6b5747;
-  --line: #f0e3ca;
-  --line-app: #efe2c8;
-  --line-strong: #dcc8a4;
-  --input-line: #c4ab7c;
-  --bg-public: #fffcf6;
-  --bg-app: #fbf4e6;
+  --brand: #981b40;
+  --brand-hover: #7b1534;
+  --brand-tint: #fceef2;
+  --brand-tint-2: #fdf6f8;
+  --gold: #f5a623;
+  --gold-hover: #e0951a;
+  --on-gold: #171717;
+  --ink: #171717;
+  --text-2: #334155;
+  --muted: #64748b;
+  --line: #e5e7eb;
+  --line-app: #e5e7eb;
+  --line-strong: #d1d5db;
+  --input-line: #cbd5e1;
+  --bg-public: #ffffff;
+  --bg-app: #f8fafc;
   --surface-card: #ffffff;
-  --warn-bg: #fef7e6;
-  --warn-line: #f3dfae;
+  --warn-bg: #fffbeb;
+  --warn-line: #fde68a;
   --warn-text: #4a3608;
 
   /* status tag pairs (background / text) */
-  --tag-green-bg: #e3f2ec;
-  --tag-green: #0a5444;
-  --tag-gold-bg: #fef0d2;
-  --tag-gold: #704a00;
+  --tag-green-bg: #dcfce7;
+  --tag-green: #166534;
+  --tag-gold-bg: #fef3c7;
+  --tag-gold: #854d0e;
   --tag-blue-bg: #e7edfc;
   --tag-blue: #2446a8;
   --tag-coral-bg: #fce7de;
   --tag-coral: #9a3412;
-  --tag-gray-bg: #f3ebdc;
-  --tag-gray: #5a4a3d;
+  --tag-gray-bg: #f1f5f9;
+  --tag-gray: #475569;
   --tag-violet-bg: #eee9fc;
   --tag-violet: #5435b8;
 
   /* legacy names, so older rules and any inline use keep working */
   --bg: var(--bg-public);
-  --surface: #fcf1dc;
+  --surface: #f8fafc;
   --text: var(--ink);
   --text-muted: var(--muted);
   --border: var(--line-strong);
@@ -48,23 +48,23 @@
   --focus: var(--brand);
   --error: #9a3412;
   --error-bg: #fdf1ec;
-  --ok: #0a5444;
+  --ok: #16a34a;
   --ok-bg: #effaf4;
   --radius: 12px;
   --tap: 44px;
   --space: 16px;
 
-  --shadow-card: 0 1px 2px rgba(42,26,18, 0.04);
-  --shadow-hover: 0 10px 28px rgba(140,29,64, 0.1);
-  --shadow-pop: 0 18px 48px rgba(42,26,18, 0.16);
-  --shadow-drawer: -18px 0 48px rgba(42,26,18, 0.18);
+  --shadow-card: 0 1px 2px rgba(15, 23, 42, 0.04);
+  --shadow-hover: 0 6px 18px rgba(15, 23, 42, 0.08);
+  --shadow-pop: 0 12px 32px rgba(15, 23, 42, 0.14);
+  --shadow-drawer: -12px 0 32px rgba(15, 23, 42, 0.16);
 
-  --font: var(--font-hanken), 'Hanken Grotesk', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, var(--font-tamil), 'Noto Sans Tamil', 'Latha', 'Nirmala UI', sans-serif;
-  --font-display: var(--font-bricolage), 'Bricolage Grotesque', var(--font);
+  --font: var(--font-inter), 'Inter', 'Segoe UI', system-ui, -apple-system, Roboto, Arial, var(--font-tamil), 'Noto Sans Tamil', 'Latha', 'Nirmala UI', sans-serif;
+  --font-display: var(--font);
   --font-ta: var(--font-tamil), 'Noto Sans Tamil', 'Latha', 'Nirmala UI', sans-serif;
-  --brand-ink: #2a1500;
-  --footer-bg: #2a0d17;
-  --footer-text: #f3e3cf;
+  --brand-ink: #171717;
+  --footer-bg: #1f0a12;
+  --footer-text: #f1f5f9;
 }
 
 *,
@@ -285,7 +285,7 @@ textarea[aria-invalid='true'] {
 }
 input::placeholder,
 textarea::placeholder {
-  color: #7a8680;
+  color: #94a3b8;
 }
 .field.check,
 .field-check {
@@ -556,7 +556,7 @@ td {
   text-align: left;
   vertical-align: top;
   padding: 12px 16px;
-  border-bottom: 1px solid #f3ebdc;
+  border-bottom: 1px solid #f1f5f9;
 }
 th {
   font-size: 0.7rem;
@@ -599,7 +599,7 @@ caption {
 }
 code {
   word-break: break-all;
-  background: #f3ebdc;
+  background: #f1f5f9;
   padding: 2px 6px;
   border-radius: 6px;
   font-size: 0.9em;
@@ -742,11 +742,10 @@ textarea {
 }
 
 /* ---------- Phase 5 catalogue helpers (partner, buyer, admin) ---------- */
-main:has(.catalogue-wide) {
-  max-width: 1240px;
-}
-main:has(.catalogue-wide) > * {
+/* The catalogue pages are wider than a reading column. Scoped to the block itself: a rule on the outer <main> used to cap the whole signed-in shell at 1240px. */
+.catalogue-wide {
   max-width: none;
+  width: 100%;
 }
 .p5-grid {
   list-style: none;
@@ -762,7 +761,7 @@ main:has(.catalogue-wide) > * {
   height: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-  background: #fcf1dc;
+  background: #f8fafc;
   border-radius: 14px;
 }
 .p5-price {
@@ -806,7 +805,7 @@ main:has(.catalogue-wide) > * {
   transition: box-shadow 0.15s, transform 0.15s;
 }
 .catalogue-card:hover {
-  box-shadow: 0 14px 36px rgba(42,26,18, 0.12);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12);
   transform: translateY(-2px);
 }
 .catalogue-card-title {
@@ -932,7 +931,7 @@ main:has(.catalogue-wide) > * {
   background: rgba(255, 255, 255, 0.96);
   backdrop-filter: blur(10px);
   border-top: 1px solid var(--line-strong);
-  box-shadow: 0 -10px 30px rgba(42,26,18, 0.1);
+  box-shadow: 0 -10px 30px rgba(15, 23, 42, 0.1);
   padding: 10px var(--space);
 }
 .compare-tray-title {
@@ -1049,7 +1048,7 @@ body:has(.compare-tray) main {
   border: 1px dashed var(--input-line);
   border-radius: 14px;
   color: var(--muted);
-  background: #fafbfa;
+  background: #f8fafc;
 }
 .filters {
   max-width: 42rem;

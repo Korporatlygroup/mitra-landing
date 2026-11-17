@@ -62,7 +62,7 @@
   padding: 0 16px;
   border-radius: 999px;
   background: #fff;
-  border: 1px solid #d7ded9;
+  border: 1px solid #e2e8f0;
   color: var(--text-2);
   font: inherit;
   font-size: 0.875rem;
@@ -94,7 +94,7 @@
   gap: 4px;
   padding: 4px;
   border-radius: 12px;
-  background: #e9eeeb;
+  background: #f1f5f9;
   max-width: 100%;
   flex-wrap: wrap;
 }
@@ -120,7 +120,7 @@
 .seg-btn.on {
   background: #fff;
   color: var(--brand);
-  box-shadow: 0 1px 3px rgba(42,26,18, 0.14);
+  box-shadow: 0 1px 3px rgba(15, 23, 42, 0.14);
 }
 
 /* switch */
@@ -129,7 +129,7 @@
   height: 28px;
   border-radius: 999px;
   border: 0;
-  background: #c9d2cd;
+  background: #cbd5e1;
   position: relative;
   cursor: pointer;
   flex: none;
@@ -173,7 +173,7 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0 24px;
-  border-top: 1px solid #f3ebdc;
+  border-top: 1px solid #f1f5f9;
 }
 .tab {
   min-height: 48px;
@@ -232,7 +232,7 @@
   min-width: 0;
 }
 .biz:hover {
-  box-shadow: 0 14px 36px rgba(42,26,18, 0.12);
+  box-shadow: 0 14px 36px rgba(15, 23, 42, 0.12);
   transform: translateY(-2px);
   color: var(--ink);
 }
@@ -259,7 +259,7 @@
 .biz-desc {
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #2a3530;
+  color: #1f2937;
 }
 .biz-tags {
   display: flex;
@@ -394,7 +394,7 @@ button.metric:hover {
 .bar {
   height: 8px;
   border-radius: 999px;
-  background: #e6ece9;
+  background: #e5e7eb;
   overflow: hidden;
 }
 .bar > div {
@@ -423,7 +423,7 @@ button.metric:hover {
 .scrim {
   position: fixed;
   inset: 0;
-  background: rgba(42,26,18, 0.32);
+  background: rgba(15, 23, 42, 0.32);
   border: 0;
   cursor: pointer;
   z-index: 60;
@@ -472,7 +472,7 @@ button.metric:hover {
   flex: none;
 }
 .ib:hover {
-  background: #eef3f0;
+  background: #f1f5f9;
   color: var(--brand);
 }
 .modal {
@@ -487,7 +487,7 @@ button.metric:hover {
 .modal-scrim {
   position: absolute;
   inset: 0;
-  background: rgba(42,26,18, 0.45);
+  background: rgba(15, 23, 42, 0.45);
   border: 0;
   cursor: pointer;
 }
@@ -591,7 +591,7 @@ button.metric:hover {
   justify-content: space-between;
   gap: 12px;
   padding: 14px 0;
-  border-top: 1px solid #f3ebdc;
+  border-top: 1px solid #f1f5f9;
   font-size: 0.9375rem;
 }
 .row:first-child {

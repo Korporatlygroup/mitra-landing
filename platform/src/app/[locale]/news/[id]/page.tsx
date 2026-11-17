@@ -51,7 +51,7 @@ export default async function NewsPostPage({ params }: { params: Promise<{ local
       ) : null}
       <div className="card" style={{ padding: 26 }} lang={n.language}>
         <p style={{ margin: '0 0 14px', fontSize: '1.0625rem', fontWeight: 600, lineHeight: 1.55 }}>{n.summary}</p>
-        <div style={{ whiteSpace: 'pre-line', lineHeight: 1.75, color: '#2a3530' }}>{n.body}</div>
+        <div style={{ whiteSpace: 'pre-line', lineHeight: 1.75, color: 'var(--text-2)' }}>{n.body}</div>
       </div>
       {n.source_url && n.publisher && /^https:\/\//.test(n.source_url) ? (
         <p className="muted" style={{ margin: 0, fontSize: '0.9375rem' }}>

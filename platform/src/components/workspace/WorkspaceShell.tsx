@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
 import { initialsOf } from '@/components/ui/Tag';
 import { notificationLabelKey, notificationTarget } from '@/lib/notification-ui';
@@ -12,6 +13,7 @@ import WorkspaceChrome, { type BellItem, type CreateItem, type MenuGroup } from 
 export default async function WorkspaceShell({ locale, orgId, children }: { locale: string; orgId?: string; children: ReactNode }) {
   const ws = await getWorkspace(orgId);
   if (!ws) return <>{children}</>;
+  const initialCollapsed = (await cookies()).get('inok_sb')?.value === '1';
   const t = await getTranslations({ locale });
   const id = ws.org?.id;
   const m = (k: string) => t(`ws.menu.${k}`);
@@ -19,7 +21,8 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
 
   let tabs: { key: string; href: string; icon: 'home' | 'board' | 'message' | 'box' | 'store'; label: string }[];
   let create: CreateItem[];
-  let searchAction: string | null = null;
+  // Search goes to what it can actually search: the public directory (businesses and their services); a business workspace also searches its own requests.
+  let searchAction: string | null = `/${locale}/directory`;
 
   const isBiz = ws.kind === 'business' && Boolean(id);
   const isPartner = ws.kind === 'partner' && Boolean(id);
@@ -99,7 +102,19 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       ],
     },
   ];
-  if (ws.isStaff) groups.push({ key: 'admin', label: m('sAdmin'), items: [{ key: 'admin', href: '/admin', icon: 'shield', label: m('adminConsole'), match: ['/admin'] }] });
+  if (ws.isStaff) {
+    groups.push({
+      key: 'admin',
+      label: m('sAdmin'),
+      items: [
+        { key: 'admin', href: '/admin', icon: 'shield', label: m('adminConsole'), match: [], exact: true },
+        { key: 'adminReviews', href: '/admin/verification', icon: 'check', label: m('adminReviews'), match: ['/admin/verification', '/admin/listings'] },
+        { key: 'adminDup', href: '/admin/duplicates', icon: 'users', label: m('adminDuplicates'), match: ['/admin/duplicates'] },
+        { key: 'adminProg', href: '/admin/business-help', icon: 'target', label: m('adminProgrammes'), match: ['/admin/business-help'] },
+        { key: 'adminNews', href: '/admin/news', icon: 'news', label: m('adminNews'), match: ['/admin/news'] },
+      ],
+    });
+  }
 
   if (isBiz) {
     tabs = [
@@ -154,6 +169,7 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       unread={ws.unread}
       bell={bell}
       searchAction={searchAction}
+      initialCollapsed={initialCollapsed}
     >
       {children}
     </WorkspaceChrome>

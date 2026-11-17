@@ -126,6 +126,23 @@ export const saveGovProgramme = (db: Db, org: string, programme: string) => rpc<
 export const unsaveGovProgramme = (db: Db, org: string, programme: string) => rpc<null>(db, 'gov_unsave_programme', { p_org: org, p_programme: programme });
 export const updateGovTracking = (db: Db, org: string, programme: string, data: Record<string, unknown>, expectedVersion: number) =>
   rpc<number>(db, 'gov_update_tracking', { p_org: org, p_programme: programme, p_data: data, p_expected_version: expectedVersion });
+/** Account-level bookmarks: no business needed. */
+export interface GovSavedMeRow {
+  programme_id: string;
+  slug: string;
+  name: string;
+  agency_name: string;
+  funding_type: string | null;
+  application_status: 'open' | 'closed' | 'upcoming' | 'unknown';
+  closes_on: string | null;
+  last_checked_at: string | null;
+  last_verified_at: string | null;
+  is_stale: boolean;
+  saved_at: string;
+}
+export const saveMyGovProgramme = (db: Db, programme: string) => rpc<null>(db, 'gov_save_programme_me', { p_programme: programme });
+export const unsaveMyGovProgramme = (db: Db, programme: string) => rpc<null>(db, 'gov_unsave_programme_me', { p_programme: programme });
+export const listMyGovSaved = (db: Db) => rpc<GovSavedMeRow[]>(db, 'gov_list_saved_me');
 export const listGovSaved = (db: Db, org: string) => rpc<GovSavedRow[]>(db, 'gov_list_saved', { p_org: org });
 export const getGovPrefs = (db: Db) => rpc<GovPrefs>(db, 'gov_get_prefs');
 export const setGovPrefs = (db: Db, data: Record<string, unknown>) => rpc<null>(db, 'gov_set_prefs', { p_data: data });

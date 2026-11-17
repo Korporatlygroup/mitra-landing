@@ -209,6 +209,9 @@
     "admin_super": "Pentadbir utama"
   },
   "apphome": {
+    "searchLabel": "Cari perniagaan, produk dan perkhidmatan",
+    "searchPlaceholder": "Cari perniagaan, produk dan perkhidmatan",
+    "searchButton": "Cari",
     "hello": "Selamat datang, {name}",
     "noWorkspace": "Belum ada butiran perniagaan atau pembeli",
     "reviewed": "Disemak oleh INOK",
@@ -690,6 +693,9 @@
       "title": "Butiran pendaftaran",
       "ssm": "Nombor pendaftaran SSM",
       "ssmHint": "Contoh: 202001012345 atau 1234567-A",
+      "ssmWhat": "SSM bermaksud Suruhanjaya Syarikat Malaysia. Nombor pendaftaran SSM mengenal pasti perniagaan yang berdaftar dengannya.",
+      "ssmNotProof": "Menaip nombor tidak bermakna ia sah. INOK tidak menyemaknya secara automatik; penyemak membandingkannya dengan dokumen yang anda hantar. Sehingga itu, perniagaan anda dipaparkan sebagai belum disemak.",
+      "ssmWho": "Pemilikan tunggal, perkongsian, LLP dan syarikat Sdn Bhd berdaftar dengan SSM, jadi mereka memberi nombor ini. Penjual yang tidak berdaftar melangkau langkah ini dan disemak di bawah peraturan berbeza.",
       "type": "Jenis perniagaan",
       "typeChoose": "Pilih satu"
     },
@@ -703,7 +709,8 @@
       "privacy": "Alamat jalan dan poskod anda kekal peribadi. Alamat kediaman tidak diterbitkan. Hanya negeri dan daerah boleh dipaparkan pada profil awam anda."
     },
     "s4": {
-      "title": "Orang yang diberi kuasa",
+      "title": "Pemilik perniagaan atau wakil yang dibenarkan",
+      "help": "Orang yang dibenarkan mengurus perniagaan ini di INOK, seperti pemilik, pengarah atau pekerja yang dibenarkan oleh pemilik.",
       "name": "Nama penuh",
       "role": "Peranan mereka dalam perniagaan",
       "email": "E-mel (pilihan)",

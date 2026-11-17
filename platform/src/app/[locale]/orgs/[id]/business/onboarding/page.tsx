@@ -111,6 +111,13 @@ export default async function OnboardingPage({
     body = (
       <>
         <h1>{t('ob.s2.title')}</h1>
+        <p style={{ margin: 0 }}>{t('ob.s2.ssmWhat')}</p>
+        <p className="banner" role="note" style={{ margin: 0 }}>
+          {t('ob.s2.ssmNotProof')}
+        </p>
+        <p className="muted" style={{ margin: 0 }}>
+          {t('ob.s2.ssmWho')}
+        </p>
         <ActionForm action={saveStep2Action} submitLabel={t('ob.next')} secondary={secondary}>
           {hidden}
           <Field id="ssm_number" name="ssm_number" label={t('ob.s2.ssm')} hint={t('ob.s2.ssmHint')} defaultValue={profile?.ssm_number ?? ''} required maxLength={20} />
@@ -157,7 +164,8 @@ export default async function OnboardingPage({
     body = (
       <>
         <h1>{t('ob.s4.title')}</h1>
-        <p style={{ margin: 0 }}>{t('ob.s4.note')}</p>
+        <p style={{ margin: 0 }}>{t('ob.s4.help')}</p>
+        <p className="muted" style={{ margin: 0 }}>{t('ob.s4.note')}</p>
         <ActionForm action={saveStep4Action} submitLabel={t('ob.next')} secondary={secondary}>
           {hidden}
           <Field id="rep_name" name="rep_name" label={t('ob.s4.name')} defaultValue={rep?.full_name ?? ''} required minLength={2} maxLength={120} autoComplete="name" />

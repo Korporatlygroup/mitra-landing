@@ -1,5 +1,5 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
-import { saveGovProgrammeAction, unsaveGovProgrammeAction } from '@/app/[locale]/business-help/actions';
+import { saveMyProgrammeAction, unsaveMyProgrammeAction } from '@/app/[locale]/business-help/actions';
 import QuickForm from '@/components/catalogue/QuickForm';
 import { Link } from '@/i18n/navigation';
 import type { MatchResult } from '@/lib/gov-matching';
@@ -18,12 +18,15 @@ export default async function ProgrammeCard({
   locale,
   match,
   orgId,
+  signedIn,
   saved,
 }: {
   p: GovProgrammeRow;
   locale: string;
   match?: MatchResult | null;
   orgId?: string | null;
+  /** Saving is a personal bookmark: any signed-in person can do it, with or without a business. */
+  signedIn?: boolean;
   saved?: boolean;
 }) {
   const t = await getTranslations({ locale, namespace: 'gov' });
@@ -76,10 +79,10 @@ export default async function ProgrammeCard({
           {t('card.details')}
           <span className="p5b-sr">: {p.name}</span>
         </Link>
-        {orgId ? (
+        {signedIn ? (
           <QuickForm
-            action={saved ? unsaveGovProgrammeAction : saveGovProgrammeAction}
-            fields={{ orgId, programmeId: p.id }}
+            action={saved ? unsaveMyProgrammeAction : saveMyProgrammeAction}
+            fields={{ programmeId: p.id }}
             label={saved ? t('card.remove') : t('card.save')}
             srName={p.name}
           />

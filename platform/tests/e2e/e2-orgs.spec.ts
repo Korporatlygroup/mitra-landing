@@ -56,7 +56,7 @@ test('E2 organisation name validation shows an error and keeps what was typed', 
   await page.goto('/en/orgs/new');
   await page.locator('#type-buyer').check();
   // Bypass native minlength so the server-side rule is what answers.
-  await page.evaluate(() => ((document.querySelector('main form') as HTMLFormElement).noValidate = true));
+  await page.evaluate(() => ((document.querySelector('main form:has(#name)') as HTMLFormElement).noValidate = true));
   await page.locator('#name').fill('x');
   await page.locator('main form button[type=submit]').click();
   await expect(page.locator('main [role=alert]').filter({ hasText: msg('en', 'errors.invalid_name') }).or(page.locator('main [role=alert]').filter({ hasText: msg('en', 'errors.invalid_input') }))).toBeVisible();

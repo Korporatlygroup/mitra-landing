@@ -209,6 +209,9 @@
     "admin_super": "Super administrator"
   },
   "apphome": {
+    "searchLabel": "Search businesses, products and services",
+    "searchPlaceholder": "Search businesses, products and services",
+    "searchButton": "Search",
     "hello": "Welcome, {name}",
     "noWorkspace": "No business or buyer details yet",
     "reviewed": "Reviewed by INOK",
@@ -690,6 +693,9 @@
       "title": "Registration details",
       "ssm": "SSM registration number",
       "ssmHint": "Example: 202001012345 or 1234567-A",
+      "ssmWhat": "SSM stands for Suruhanjaya Syarikat Malaysia, the Companies Commission of Malaysia. The SSM registration number identifies a business registered with it.",
+      "ssmNotProof": "Typing a number does not make it genuine. INOK does not check it automatically; a reviewer compares it with the document you send. Until then your business shows as not yet reviewed.",
+      "ssmWho": "Sole proprietorships, partnerships, LLPs and Sdn Bhd companies register with SSM, so they give this number. A seller that is not registered skips this step and is reviewed under different rules.",
       "type": "Type of business",
       "typeChoose": "Choose one"
     },
@@ -703,7 +709,8 @@
       "privacy": "Your street address and postcode stay private. Residential addresses are not published. Only the state and district can appear on your public profile."
     },
     "s4": {
-      "title": "Authorised person",
+      "title": "Business owner or authorised representative",
+      "help": "The person permitted to manage this business on INOK, such as its owner, a director, or an employee the owner has authorised.",
       "name": "Full name",
       "role": "Their role in the business",
       "email": "Email (optional)",

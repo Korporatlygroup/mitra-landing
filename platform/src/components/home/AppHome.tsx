@@ -80,6 +80,17 @@ export default async function AppHome({ locale }: { locale: string }) {
         </div>
       </div>
 
+      <form role="search" action={`/${locale}/directory`} method="get" className="home-search">
+        <label htmlFor="home-q" className="sr">
+          {t('apphome.searchLabel')}
+        </label>
+        <Icon name="search" size={20} />
+        <input id="home-q" name="q" type="search" maxLength={80} placeholder={t('apphome.searchPlaceholder')} />
+        <button type="submit" className="btn btn-primary btn-sm">
+          {t('apphome.searchButton')}
+        </button>
+      </form>
+
       {!hasOrg ? (
         <section className="card" role="region" aria-labelledby="home-start" style={{ padding: 20 }}>
           <h2 id="home-start" style={{ marginTop: 0 }}>{t('apphome.startTitle')}</h2>

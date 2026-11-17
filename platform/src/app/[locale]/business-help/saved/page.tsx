@@ -1,13 +1,13 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { Fragment } from 'react';
-import { updateGovTrackingAction, unsaveGovProgrammeAction } from '../actions';
+import { updateGovTrackingAction, unsaveGovProgrammeAction, unsaveMyProgrammeAction } from '../actions';
 import ActionForm from '@/components/ActionForm';
 import QuickForm from '@/components/catalogue/QuickForm';
 import { Link } from '@/i18n/navigation';
 import StatusBadge from '@/components/gov/StatusBadge';
 import { eligibleAssistOrgs, TRACKING_STATUSES } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
-import { listGovSaved } from '@/server/services/gov';
+import { listGovSaved, listMyGovSaved } from '@/server/services/gov';
 import { requireSession } from '@/server/session';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -35,16 +35,46 @@ export default async function SavedPage({
   const org = (wanted ? orgs.find((m) => m.org.id === wanted) : null) ?? orgs[0] ?? null;
   const res = org ? await listGovSaved(session.supabase, org.org.id) : null;
   const rows = res?.ok ? res.data : [];
+  const mineRes = await listMyGovSaved(session.supabase);
+  const mine = mineRes.ok ? mineRes.data : [];
 
   return (
     <>
       <h1>{t('saved.title')}</h1>
       <p>{t('saved.intro')}</p>
       <p className="muted">{t('saved.note')}</p>
+      <section aria-labelledby="gov-me-h">
+        <h2 id="gov-me-h">{t('opps.mySaved')}</h2>
+        {mine.length === 0 ? (
+          <p>
+            {t('opps.mySavedNone')}{' '}
+            <Link href="/business-help" locale={locale}>
+              {t('opps.browse')}
+            </Link>
+          </p>
+        ) : (
+          <ul className="card-list">
+            {mine.map((r) => (
+              <li key={r.programme_id} className="card">
+                <h3 style={{ margin: 0 }}>
+                  <Link href={`/business-help/${r.slug}`} locale={locale}>
+                    {r.name}
+                  </Link>
+                </h3>
+                <p className="muted" style={{ margin: '2px 0' }}>
+                  {r.agency_name} · {r.funding_type ? t(`type.${r.funding_type}`) : '-'} · {t(`status.${r.application_status}`)}
+                  {r.closes_on ? ` · ${fmt.dateTime(new Date(`${r.closes_on}T00:00:00Z`), { dateStyle: 'medium', timeZone: 'UTC' })}` : ''}
+                </p>
+                <QuickForm action={unsaveMyProgrammeAction} fields={{ programmeId: r.programme_id }} label={t('card.remove')} srName={r.name} />
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
       {!org ? (
         <p>
           <Link href="/orgs" locale={locale}>
-            {t('find.noOrg')}
+            {t('opps.trackNeedsBusiness')}
           </Link>
         </p>
       ) : rows.length === 0 ? (
