@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import StatusChip from '@/components/StatusChip';
+import Icon from '@/components/ui/Icon';
 import { Link } from '@/i18n/navigation';
 import { matchProgramme, rankMatches, type MatchResult } from '@/lib/gov-matching';
 import { pageTitle } from '@/lib/metadata';
@@ -212,8 +213,11 @@ export default async function Business360Page({ params }: { params: Promise<{ lo
         <p className="muted">{t('b360.readiness.note')}</p>
         <ul className="card-list">
           {checks.map((c) => (
-            <li key={c.key} className="card" style={{ boxShadow: 'none', display: 'flex', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
-              <span>{c.ok ? '✓ ' : '○ '}{t(`b360.check.${c.key}.label`)}</span>
+            <li key={c.key} data-done={c.ok ? 'true' : 'false'} className="card" style={{ boxShadow: 'none', display: 'flex', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
+              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
+                <Icon name={c.ok ? 'check' : 'clock'} size={18} />
+                {t(`b360.check.${c.key}.label`)}
+              </span>
               {c.ok ? <span className="muted">{t('b360.done')}</span> : <Link href={c.href}>{t(`b360.check.${c.key}.todo`)}</Link>}
             </li>
           ))}

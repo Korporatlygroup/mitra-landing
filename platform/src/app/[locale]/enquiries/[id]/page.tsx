@@ -17,7 +17,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 export default async function EnquiryPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
   if (!uuidSchema.safeParse(id).success) notFound();
-  const session = await requireSession({ locale, path: `/enquiries/${id}` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/enquiries/${id}` });
   const t = await getTranslations({ locale });
   const fmt = await getFormatter({ locale });
   const [e, parties] = await Promise.all([getEnquiry(session.supabase, id), getEnquiryParties(session.supabase, id)]);

@@ -19,7 +19,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 /** Request Price for one product (signed in; an organisation of your own is created on first use if you have none). */
 export default async function RequestPricePage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
-  const session = await requireSession({ locale, path: `/catalogue/${id}/request` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/catalogue/${id}/request` });
   const item = await loadItem(id);
   if (!item) notFound();
   const t = await getTranslations({ locale, namespace: 'p5buyer' });

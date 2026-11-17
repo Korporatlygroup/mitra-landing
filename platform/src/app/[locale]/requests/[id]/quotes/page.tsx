@@ -9,7 +9,7 @@ import { compareQuotes, type QuoteSummary } from '@/server/services/quote-compar
 export default async function CompareQuotesPage({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
   if (!uuidSchema.safeParse(id).success) notFound();
-  const session = await requireSession({ locale, path: `/requests/${id}/quotes` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/requests/${id}/quotes` });
   const request = await getBuyerRequest(session.supabase, id);
   if (!request || !session.memberships.some((m) => m.org.id === request.buyer_org_id)) notFound();
   const t = await getTranslations({ locale, namespace: 'p4' });

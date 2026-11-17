@@ -27,7 +27,7 @@ export default async function MyProductRequestsPage({
   const { locale } = await params;
   const rawPage = Number((await searchParams).page);
   const page = Number.isInteger(rawPage) && rawPage >= 1 && rawPage <= 400 ? rawPage : 1;
-  const session = await requireSession({ locale, path: '/catalogue/requests' });
+  const session = await requireSession({ locale, requireOrg: true, path: '/catalogue/requests' });
   const t = await getTranslations({ locale, namespace: 'p5buyer' });
   const tc = await getTranslations({ locale, namespace: 'p5common' });
   const orgs = eligibleBuyerOrgs(session.memberships);

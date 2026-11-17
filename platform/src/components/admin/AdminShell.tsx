@@ -24,7 +24,14 @@ export default async function AdminShell({ locale, children }: { locale: string;
   const a = (k: string) => t(`adm.${k}`);
 
   const groups: AdminGroup[] = [
-    { key: 'top', label: null, items: [{ key: 'overview', href: '/admin', label: a('overview'), icon: 'home', match: [], exact: true }] },
+    {
+      key: 'top',
+      label: null,
+      items: [
+        { key: 'overview', href: '/admin', label: a('overview'), icon: 'home', match: [], exact: true },
+        { key: 'appHome', href: '/', label: a('appHome'), icon: 'back', match: [], exact: true },
+      ],
+    },
     {
       key: 'review',
       label: a('gReview'),

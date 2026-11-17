@@ -31,7 +31,8 @@ describe('client message scoping (keeps each page small enough for the Free-plan
 
   it('every area that needs messages is wrapped by a layout using ScopedMessages', () => {
     for (const area of Object.keys(AREA_PATHS)) {
-      const f = join(process.cwd(), 'src/app/[locale]', area, 'layout.tsx');
+      // The signed-in Home is the locale root page itself (area "page"), so it scopes its own messages.
+      const f = join(process.cwd(), 'src/app/[locale]', area === 'page' ? 'page.tsx' : join(area, 'layout.tsx'));
       expect(readFileSync(f, 'utf8'), area).toContain(`area="${area}"`);
     }
   });

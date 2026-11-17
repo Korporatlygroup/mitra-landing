@@ -34,7 +34,7 @@ test('360 page renders every section from real data, with honest empty states', 
     expect(hint).toMatch(/\d+%/);
     expect(hint).toMatch(/\d+ of 10 checks done/);
     const done = Number(/(\d+) of 10/.exec(hint)![1]);
-    const ticks = await a.page.locator('#b360-c ~ ul li, section[aria-labelledby="b360-c"] li').filter({ hasText: '✓' }).count();
+    const ticks = await a.page.locator('li[data-done="true"]').count();
     expect(ticks).toBe(done);
   });
   await a.check('prod-360', 'every action link stays inside this organisation or a public area', async () => {

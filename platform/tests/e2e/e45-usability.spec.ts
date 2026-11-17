@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { createBusinessOwner, orgPath } from './support/biz';
 import { addMember, createUser, sql, uniq } from './support/db';
 import { msg } from './support/i18n';
-import { expectNoHorizontalScroll, loginUi } from './support/ui';
+import { createOrgUi, expectNoHorizontalScroll, loginUi } from './support/ui';
 
 // E45: realistic mistakes and detours with synthetic accounts, on a phone (360px) and a desktop: leaving forms incomplete,
 // invalid input, switching language halfway, resuming a request, missing permission, empty states. Not user research.
@@ -101,6 +101,7 @@ test('E45b buyer: saves a request for later, returns to it, finishes; a viewer c
   const tag = uniq('usabb').replace(/-/g, '');
   const buyer = await createUser('usabb', { name: 'Buyer Usab' });
   await loginUi(page, buyer, 'en');
+  await createOrgUi(page, 'buyer', 'Buyer Usab Org', 'en'); // action pages ask for details first
   await page.goto('/en/requests/new');
   await page.locator('#title').fill(`Wedding cake ${tag}`);
   await page.locator('#category_slug').selectOption('food-beverage');

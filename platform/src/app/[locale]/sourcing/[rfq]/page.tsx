@@ -26,7 +26,7 @@ export default async function SourcingDetailPage({
 }) {
   const { locale, rfq } = await params;
   const partner = (await searchParams).partner ?? null;
-  const session = await requireSession({ locale, path: `/sourcing/${rfq}` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/sourcing/${rfq}` });
   const t = await getTranslations({ locale, namespace: 'p6' });
   const [result, counterResult, timelineResult, partnerResult, matchResult] = await Promise.all([
     getSourcingRfq(session.supabase, rfq, partner), listSourcingCounters(session.supabase, rfq, partner),

@@ -9,8 +9,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'orgs.title');
 }
 
-export default async function OrgsPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function OrgsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale } = await params;
+  const required = (await searchParams).required === '1';
   const s = await requireSession({ locale, path: '/orgs', requireMfaIfNeeded: false });
   const t = await getTranslations({ locale });
 
@@ -22,6 +23,11 @@ export default async function OrgsPage({ params }: { params: Promise<{ locale: s
           {t('orgs.create')}
         </Link>
       </div>
+      {required && s.memberships.length === 0 ? (
+        <p className="banner" role="status">
+          {t('orgs.requiredNote')}
+        </p>
+      ) : null}
       {s.memberships.length === 0 ? (
         <div className="empty">
           <strong>{t('orgs.none')}</strong>

@@ -10,7 +10,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 /** Messages: the list of conversations. Choosing one opens it in the right pane. */
 export default async function MessagesPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const s = await requireSession({ locale, path: '/enquiries', requireMfaIfNeeded: false });
+  const s = await requireSession({ locale, requireOrg: true, path: '/enquiries', requireMfaIfNeeded: false });
   const t = await getTranslations({ locale });
   const list = await ConversationList({ db: s.supabase, locale });
   return (

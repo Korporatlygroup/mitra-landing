@@ -80,6 +80,8 @@ export const signUpSchema = z.object({
   acceptTerms: checkbox,
   acceptPrivacy: checkbox,
   acceptMarketing: optionalCheckbox,
+  /** What the person came to do (from "List your business"). Only used to route them after email verification; grants nothing. */
+  intent: z.preprocess((v) => (v === '' || v == null ? undefined : v), z.enum(['sell']).optional()),
 });
 
 export const loginSchema = z.object({

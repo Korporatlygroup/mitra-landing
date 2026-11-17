@@ -1,14 +1,15 @@
 import { getTranslations } from 'next-intl/server';
+import ScopedMessages from '@/components/ScopedMessages';
+import AppHome from '@/components/home/AppHome';
 import BusinessCard from '@/components/public/BusinessCard';
+import WorkspaceShell from '@/components/workspace/WorkspaceShell';
 import Icon from '@/components/ui/Icon';
 import Tag, { initialsOf, paletteFor } from '@/components/ui/Tag';
 import { Link } from '@/i18n/navigation';
 import { catName } from '@/lib/category';
 import { categoryIcon } from '@/lib/category-ui';
 import { MY_STATES } from '@/lib/schemas';
-import { getProfile } from '@/server/services/auth';
 import { searchListings } from '@/server/services/directory';
-import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -23,11 +24,18 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
   const { locale } = await params;
   const t = await getTranslations({ locale });
   const { supabase, user } = await getOptionalUser();
+  // Signed in: the real Home (inside the workspace shell). The public home below is for visitors.
+  if (user) {
+    return (
+      <ScopedMessages area="page" locale={locale}>
+        <WorkspaceShell locale={locale}>
+          <AppHome locale={locale} />
+        </WorkspaceShell>
+      </ScopedMessages>
+    );
+  }
 
-  const [profile, memberships] = user && supabase ? await Promise.all([getProfile(supabase, user.id), listMyMemberships(supabase, user.id)]) : [null, []];
-  const isAdmin = memberships.some((m) => m.org.type === 'mitra');
-  const hasAudit = isAdmin || memberships.some((m) => m.role === 'owner');
-  const Heading = user ? 'h2' : 'h1';
+  const Heading = 'h1';
   const first = supabase ? await searchListings(supabase, { limit: 8 }) : null;
   const data = first?.ok ? first.data : null;
   const categories = data?.categories ?? [];
@@ -42,58 +50,6 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
 
   return (
     <div className="bleed home">
-      {user ? (
-        <section className="pub-wrap signed-in" aria-labelledby="me-h" style={{ paddingTop: 28 }}>
-          <h1 id="me-h" style={{ margin: '0 0 12px' }}>
-            {t('home.titleSignedIn', { name: profile?.display_name || user.email || '' })}
-          </h1>
-          <h2 className="h2" style={{ fontSize: '1.0625rem' }}>
-            {t('home.yourOrgs')}
-          </h2>
-          {memberships.length === 0 ? (
-            <p>{t('home.noOrgs')}</p>
-          ) : (
-            <ul className="card-list">
-              {memberships.map((m) => (
-                <li key={m.org.id} className="card">
-                  <h3 style={{ margin: 0 }}>
-                    <Link href={m.org.type === 'business' ? `/orgs/${m.org.id}/business` : m.org.type === 'partner' ? `/orgs/${m.org.id}/partner` : `/orgs/${m.org.id}/members`}>{m.org.name}</Link>
-                  </h3>
-                  <p className="muted" style={{ margin: 0 }}>
-                    {t(`roles.${m.role}`)}
-                  </p>
-                </li>
-              ))}
-            </ul>
-          )}
-          <p className="link-row">
-            <Link href="/orgs/new" className="btn btn-primary">
-              {t('home.createOrg')}
-            </Link>
-            <Link href="/orgs" className="btn btn-secondary">
-              {t('home.openOrgs')}
-            </Link>
-            <Link href="/requests/new" className="btn btn-secondary">
-              {t('home.postRequest')}
-            </Link>
-          </p>
-          {isAdmin || hasAudit ? (
-            <>
-              <h2 className="h2" style={{ fontSize: '1.0625rem' }}>
-                {t('home.adminTitle')}
-              </h2>
-              <p className="link-row">
-                {isAdmin ? <Link href="/admin/users">{t('home.adminUsers')}</Link> : null}
-                {isAdmin ? <Link href="/admin/verification">{t('home.adminVerification')}</Link> : null}
-                {isAdmin ? <Link href="/admin/listings">{t('home.adminListings')}</Link> : null}
-                {isAdmin ? <Link href="/admin/reports">{t('home.adminReports')}</Link> : null}
-                {isAdmin ? <Link href="/admin/catalogue">{t('p5admin.nav.catalogue')}</Link> : null}
-                <Link href="/admin/audit">{t('home.adminAudit')}</Link>
-              </p>
-            </>
-          ) : null}
-        </section>
-      ) : null}
       <section className="hero">
         <div className="hero-disc hero-disc-a" aria-hidden="true" />
         <div className="hero-disc hero-disc-b" aria-hidden="true" />
@@ -254,7 +210,7 @@ export default async function HomePage({ params }: { params: Promise<{ locale: s
             </h2>
             <p style={{ margin: 0, color: '#c3cec9', fontSize: '1.05rem', lineHeight: 1.6 }}>{t('home2.ownerP')}</p>
             <div className="btn-row">
-              <Link className="btn btn-gold" href="/signup">
+              <Link className="btn btn-gold" href="/list-your-business">
                 {t('home2.ownerCta')}
               </Link>
               {!user ? (

@@ -24,6 +24,8 @@ export interface Workspace {
   /** Hints for the menu badges; the database decides everything. */
   newRequests: number;
   unread: number;
+  /** UI hint only: the person is MITRA staff, so the menu offers the Admin section (every admin page and the database check again). */
+  isStaff: boolean;
   latest: NotificationRow[];
   isReviewed: boolean;
   /** UI hint only: whether the side menu may offer the Verification page (the database still enforces it). */
@@ -59,6 +61,7 @@ export const getWorkspace = cache(async (orgId?: string): Promise<Workspace | nu
     orgs: usable.map((m) => ({ id: m.org.id, name: m.org.name, type: m.org.type as WorkspaceOrg['type'], home: homeFor(m.org) })),
     newRequests: requests.filter(isNew).length,
     unread: unread.length,
+    isStaff: memberships.some((m) => m.org.type === 'mitra'),
     latest: notes.slice(0, 3),
     isReviewed: false,
     canReadVerification,

@@ -49,13 +49,16 @@ export async function requireSession(opts: {
   locale: Locale | string;
   path: string;
   requireMfaIfNeeded?: boolean;
+  /** Action pages (requests, enquiries, sourcing...): a person with no organisation yet is sent to fill in their details first. */
+  requireOrg?: boolean;
 }): Promise<AppSession> {
-  const { locale, path, requireMfaIfNeeded = true } = opts;
+  const { locale, path, requireMfaIfNeeded = true, requireOrg = false } = opts;
   const { supabase, user, error } = await userOnce();
   const next = encodeURIComponent(localePath(locale, path));
   if (error || !user) redirect(`${localePath(locale, '/login')}?next=${next}`);
 
   const [profile, memberships, adminMfa] = await Promise.all([profileOnce(supabase, user.id), membershipsOnce(supabase, user.id), adminMfaRequired(supabase)]);
+  if (requireOrg && memberships.length === 0) redirect(`${localePath(locale, '/orgs')}?required=1`);
   const needsMfa = memberships.some((m) => requiresMfa(m.role, m.org.type, adminMfa));
 
   const mfa = await getMfaStatus(supabase);

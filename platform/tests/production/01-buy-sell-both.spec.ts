@@ -110,7 +110,7 @@ test('one account, both sides: a business can buy; a buyer can start selling; bo
     await buyer.goto('/en/orgs');
     const already = await buyer.page.getByText('PROD TEST Buyer Now Sells (test)').count();
     await buyer.goto('/en/requests');
-    if (!already) await expect(buyer.page.locator('a[href*="/orgs/new?purpose=sell"]').first()).toBeAttached();
+    if (!already) await expect(buyer.page.locator('a[href$="/list-your-business"]').first()).toBeAttached();
   });
   await buyer.check('prod-both', 'adding a business organisation to the same account', async () => {
     await buyer.goto('/en/orgs');

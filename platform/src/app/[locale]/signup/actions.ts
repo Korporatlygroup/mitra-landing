@@ -31,6 +31,7 @@ export async function signUpAction(_prev: FormState, formData: FormData): Promis
     redirectTo: `${getSiteUrl()}/auth/callback`,
     consentVersion: CONSENT_VERSION,
     marketing: d.acceptMarketing,
+    intent: d.intent,
   });
   if (!result.ok) return failure(result.errorKey, nonSecretValues(parsed.raw));
   redirect(neutral);

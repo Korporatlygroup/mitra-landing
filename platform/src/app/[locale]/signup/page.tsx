@@ -9,8 +9,10 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'signup.title');
 }
 
-export default async function SignUpPage({ params }: { params: Promise<{ locale: string }> }) {
+export default async function SignUpPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<Record<string, string | string[] | undefined>> }) {
   const { locale } = await params;
+  const sp = await searchParams;
+  const intent = sp.intent === 'sell' ? 'sell' : '';
   const t = await getTranslations({ locale, namespace: 'signup' });
   const req = (await getTranslations({ locale, namespace: 'common' }))('required');
 
@@ -18,6 +20,7 @@ export default async function SignUpPage({ params }: { params: Promise<{ locale:
     <>
       <h1>{t('title')}</h1>
       <ActionForm action={signUpAction} submitLabel={t('submit')}>
+        {intent ? <input type="hidden" name="intent" value={intent} /> : null}
         <Field id="displayName" name="displayName" label={t('displayName')} required requiredLabel={req} autoComplete="name" maxLength={120} />
         <Field id="email" name="email" type="email" label={t('email')} required requiredLabel={req} autoComplete="email" inputMode="email" maxLength={254} />
         <Field

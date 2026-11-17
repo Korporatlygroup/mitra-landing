@@ -29,7 +29,7 @@ export default async function SavedPage({
   const { locale } = await params;
   const rawPage = Number((await searchParams).page);
   const page = Number.isInteger(rawPage) && rawPage >= 1 && rawPage <= 500 ? rawPage : 1;
-  const session = await requireSession({ locale, path: '/catalogue/saved' });
+  const session = await requireSession({ locale, requireOrg: true, path: '/catalogue/saved' });
   const t = await getTranslations({ locale, namespace: 'p5buyer' });
   const r = await listSavedProducts(session.supabase, (page - 1) * SAVED_PAGE_SIZE);
   const pages = r.ok ? pageCount(r.data.total, SAVED_PAGE_SIZE) : 1;

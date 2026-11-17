@@ -33,6 +33,19 @@ export async function GET(request: NextRequest) {
   if (error) return failed();
 
   // Recovery links always land on the reset page (the `next` parameter is ignored for them).
-  const target = parsed.data.type === 'recovery' ? '/reset-password' : next;
-  return NextResponse.redirect(new URL(target, base));
+  if (parsed.data.type === 'recovery') return NextResponse.redirect(new URL('/reset-password', base));
+
+  // Seller intent from "List your business": after the first email confirmation, a person with no business goes straight to business
+  // onboarding. The intent is a routing hint stored at sign-up; it grants nothing, and a person who already has a business is not redirected.
+  if (next === '/' && (parsed.data.type === 'email' || parsed.data.type === 'signup')) {
+    const { data } = await supabase.auth.getUser();
+    const meta = data.user?.user_metadata as { intent?: unknown; language?: unknown } | undefined;
+    if (data.user && meta?.intent === 'sell') {
+      const { data: orgs } = await supabase.from('memberships').select('org_id, organisations!inner(type)').eq('user_id', data.user.id).eq('status', 'active');
+      const hasBusiness = (orgs ?? []).some((m) => (m as unknown as { organisations: { type: string } }).organisations?.type === 'business');
+      const lang = meta.language === 'ms' || meta.language === 'ta' ? meta.language : 'en';
+      if (!hasBusiness) return NextResponse.redirect(new URL(`/${lang}/orgs/new?purpose=sell`, base));
+    }
+  }
+  return NextResponse.redirect(new URL(next, base));
 }

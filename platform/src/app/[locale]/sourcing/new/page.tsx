@@ -15,7 +15,7 @@ export default async function NewSourcingPage({
 }) {
   const { locale } = await params;
   const sp = await searchParams;
-  const session = await requireSession({ locale, path: '/sourcing/new' });
+  const session = await requireSession({ locale, requireOrg: true, path: '/sourcing/new' });
   const t = await getTranslations({ locale, namespace: 'p6' });
   const orgs = eligibleBuyerOrgs(session.memberships).map((m) => ({ id: m.org.id, name: m.org.name }));
   const partnersResult = await listSourcingPartners(session.supabase);

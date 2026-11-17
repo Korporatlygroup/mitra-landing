@@ -31,7 +31,7 @@ export default async function RequestDetailPage({
 }) {
   const { locale, id } = await params;
   const sp = await searchParams;
-  const session = await requireSession({ locale, path: `/catalogue/requests/${id}` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/catalogue/requests/${id}` });
   if (!uuidSchema.safeParse(id).success) notFound();
   const r = await getSourcingRequest(session.supabase, id);
   if (!r.ok || r.data.your_side !== 'buyer') notFound();

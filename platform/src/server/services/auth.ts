@@ -14,6 +14,8 @@ interface SignUpArgs {
   consentVersion: string;
   /** Optional marketing consent: recorded only when the box was ticked. */
   marketing?: boolean;
+  /** Routing hint only ("sell" = go to business onboarding after verification). Never an authorisation. */
+  intent?: 'sell';
 }
 
 /**
@@ -29,6 +31,7 @@ export async function signUp(supabase: Db, a: SignUpArgs): Promise<Result<null>>
       data: {
         display_name: a.displayName,
         language: a.language,
+        ...(a.intent ? { intent: a.intent } : {}),
         consents: { terms: a.consentVersion, privacy: a.consentVersion, ...(a.marketing ? { marketing: a.consentVersion } : {}) },
       },
     },

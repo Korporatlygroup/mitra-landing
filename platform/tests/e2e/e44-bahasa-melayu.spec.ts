@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { createBusinessOwner, createReviewer, orgPath, reviewerGoto } from './support/biz';
 import { createUser, sql } from './support/db';
 import { msg } from './support/i18n';
-import { expectNoHorizontalScroll, loginUi } from './support/ui';
+import { createOrgUi, expectNoHorizontalScroll, loginUi } from './support/ui';
 
 // E44: Bahasa Melayu (ms) works across the app: switching, persistence, forms, errors, directory, requests, board, admin.
 
@@ -69,6 +69,7 @@ test('E44b directory, request wizard, seller pages and admin queue in Bahasa Mel
   // buyer: wizard step 1 and the review step labels
   const buyer = await createUser('msb', { language: 'ms', name: 'Pembeli MS' });
   await loginUi(page, buyer, 'ms');
+  await createOrgUi(page, 'buyer', 'Pembeli MS Org', 'ms'); // action pages ask for details first
   await page.goto('/ms/requests');
   await expect(page.getByRole('heading', { level: 1 })).toHaveText(m('req.title'));
   await axe(page, 'my requests in ms');

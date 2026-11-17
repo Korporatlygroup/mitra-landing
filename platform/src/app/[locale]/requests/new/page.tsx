@@ -33,7 +33,7 @@ export default async function NewRequestPage({
   const rawStep = Number(typeof sp.step === 'string' ? sp.step : '1');
   const step = Number.isInteger(rawStep) && rawStep >= 1 && rawStep <= TOTAL ? rawStep : 1;
 
-  const session = await requireSession({ locale, path: `/requests/new?step=${step}${id ? `&id=${id}` : ''}` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/requests/new?step=${step}${id ? `&id=${id}` : ''}` });
   const t = await getTranslations({ locale });
   const db = session.supabase;
 

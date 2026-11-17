@@ -6,7 +6,7 @@ import { requireSession } from '@/server/session';
 
 export default async function SourcingHome({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const session = await requireSession({ locale, path: '/sourcing' });
+  const session = await requireSession({ locale, requireOrg: true, path: '/sourcing' });
   const t = await getTranslations({ locale, namespace: 'p6' });
   const orgs = eligibleBuyerOrgs(session.memberships);
   const lists = await Promise.all(orgs.map((m) => listSourcingRfqs(session.supabase, m.org.id)));

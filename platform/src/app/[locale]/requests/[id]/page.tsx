@@ -95,7 +95,7 @@ export default async function RequestDetailPage({
   const { locale, id } = await params;
   const sp = await searchParams;
   if (!uuidSchema.safeParse(id).success) notFound();
-  const session = await requireSession({ locale, path: `/requests/${id}` });
+  const session = await requireSession({ locale, requireOrg: true, path: `/requests/${id}` });
   const t = await getTranslations({ locale });
   const fmt = await getFormatter({ locale });
   const db = session.supabase;

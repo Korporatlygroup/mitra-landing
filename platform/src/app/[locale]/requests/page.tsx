@@ -12,7 +12,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 export default async function MyRequestsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
-  const session = await requireSession({ locale, path: '/requests' });
+  const session = await requireSession({ locale, requireOrg: true, path: '/requests' });
   const t = await getTranslations({ locale });
   const orgs = eligibleBuyerOrgs(session.memberships);
   const lists = await Promise.all(orgs.map(async (m) => ({ org: m.org, items: await listBuyerRequests(session.supabase, m.org.id) })));

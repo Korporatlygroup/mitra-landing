@@ -31,7 +31,7 @@ export default async function SiteHeader({ locale, user }: { locale: string; use
               <Link href="/login" className="btn btn-secondary btn-sm">
                 {t('nav.signIn')}
               </Link>
-              <Link href="/signup" className="btn btn-dark btn-sm">
+              <Link href="/list-your-business" className="btn btn-dark btn-sm">
                 {t('ws.listYourBusiness')}
               </Link>
             </>
