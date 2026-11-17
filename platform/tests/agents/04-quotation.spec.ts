@@ -2,7 +2,7 @@ import { expect, test } from '@playwright/test';
 import { Agent, cover, finding, inDays } from './harness';
 import { def } from './personas';
 import { getData, persona, setData } from './store';
-import { lit, remoteRows } from '../hosted/support';
+import { lit, remoteRows, remoteSql } from '../hosted/support';
 import { next, t } from './ui';
 
 // The coordinated scenario: Buyer A posts a request, the seller independently receives it and answers, they negotiate a quotation
@@ -13,6 +13,8 @@ const TITLE = `100 school polo shirts (agent ${new Date().toISOString().slice(5,
 
 test('Buyer A posts a request and invites the seller', async ({ browser }) => {
   test.setTimeout(600_000);
+  // Start from a clean slate: a buyer may hold only 5 open requests, and an earlier run's accepted enquiry would block a new negotiation.
+  remoteSql(`update public.buyer_requests set status = 'closed' where buyer_org_id = ${lit(persona('buyerA').orgId!)} and status::text = 'open'`);
   const b = await Agent.create(browser, 'buyerA');
   await b.login();
   await b.must('request', 'five-step request form: validation on step 1 then complete', async () => {
@@ -72,17 +74,23 @@ test('Seller receives it independently, expresses interest and quotes; Buyer A n
   await b.login();
   const orgId = (await import('./store')).persona('seller').orgId!;
 
-  await s.must('quotation', 'seller sees the invitation in the request inbox and shows interest', async () => {
+  // AGENT_REUSE_ENQUIRY=<id> resumes the negotiation on an existing enquiry (a buyer may post only 10 requests a day, so reruns cannot always start a new one).
+  const reuse = process.env.AGENT_REUSE_ENQUIRY;
+  if (!reuse) await s.must('quotation', 'seller sees the invitation in the request inbox and shows interest', async () => {
     await s.goto(`/en/orgs/${orgId}/business/requests`);
     const row = s.page.getByText(getData('requestTitle') ?? /100 school polo shirts/).first();
     await expect(row).toBeVisible();
     await row.click();
     if (await s.page.locator('#note-i').count()) await s.page.locator('#note-i').fill('We can do this in three weeks.');
-    if (await s.page.getByRole('button', { name: /interested/i }).count()) await s.page.getByRole('button', { name: /interested/i }).click();
-    await expect(s.page.getByRole('link', { name: /open the (enquiry|full page)/i }).first()).toBeVisible();
+    const interested = s.page.getByRole('button', { name: /interested/i });
+    await interested.or(s.page.getByRole('button', { name: /send quotation/i })).first().waitFor();
+    if (await interested.count()) await interested.click();
+    await s.page.waitForLoadState('networkidle'); // the drawer closes and the lead moves to Talking
+    
   });
-  let url = '';
-  await b.must('quotation', 'Buyer A sees the seller interest and opens the enquiry', async () => {
+  let url = reuse ? `/en/enquiries/${reuse}` : '';
+  if (reuse) setData('enquiryUrl', url);
+  if (!reuse) await b.must('quotation', 'Buyer A sees the seller interest and opens the enquiry', async () => {
     await b.goto(`/en/requests/${getData('requestId')}`);
     await b.page.locator('[data-testid=match-card]').filter({ hasText: SELLER }).getByRole('link', { name: t('match.openEnquiry') }).click();
     await expect(b.page).toHaveURL(/\/enquiries\/[0-9a-f-]{36}/);
@@ -114,8 +122,13 @@ test('Seller receives it independently, expresses interest and quotes; Buyer A n
     await expect(s.page.locator('main')).not.toContainText('MYR -500.00');
     await s.page.locator('#unitPrice1').fill('18.50');
     await s.page.getByRole('button', { name: t('p4.saveDraft') }).click();
+    // Let the save finish and the page refresh before sending (clicking Send while the save is still in flight is a stale-version race, not a defect).
+    await s.page.waitForLoadState('networkidle');
+    await expect(s.page.locator('main').last()).toContainText('MYR 1850.00');
   });
   await s.must('quotation', 'seller sends the quotation', async () => {
+    await s.page.waitForLoadState('networkidle');
+    await s.page.waitForTimeout(1500); // let the page re-render with the saved draft version before pressing Send
     await s.page.getByRole('button', { name: t('p4.sendQuote') }).click();
     await s.page.waitForLoadState('networkidle');
     if (await s.page.getByText(/someone changed this item/i).count()) {

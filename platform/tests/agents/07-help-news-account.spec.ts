@@ -19,6 +19,9 @@ test('government assistance navigator: discovery, profile, saved programmes, set
   });
   await s.check('gov', 'eligibility profile saves and confirms', async () => {
     await s.goto('/en/business-help/find?need=financing');
+    await s.page.waitForLoadState('networkidle');
+    await s.page.locator('details:has(#gp-registration) > summary').first().click().catch(() => undefined);
+    await expect(s.page.locator('#gp-registration')).toBeEnabled({ timeout: 30_000 });
     await s.page.locator('#gp-registration').selectOption('registered');
     await s.page.locator('#gp-community').selectOption('indian');
     await s.page.locator('#gp-citizenship').selectOption('malaysian');
@@ -28,6 +31,9 @@ test('government assistance navigator: discovery, profile, saved programmes, set
   });
   await s.check('gov', 'invalid age is refused', async () => {
     await s.goto('/en/business-help/find?need=financing');
+    await s.page.waitForLoadState('networkidle');
+    await s.page.locator('details:has(#gp-age) > summary').first().click().catch(() => undefined);
+    await expect(s.page.locator('#gp-age')).toBeEnabled({ timeout: 30_000 });
     await s.page.locator('#gp-age').fill('7');
     await s.page.evaluate(() => document.querySelector('main form')?.setAttribute('novalidate', ''));
     await s.page.getByRole('button', { name: t('gov.find.save') }).click();
@@ -144,7 +150,7 @@ test('exploratory: expired session, back button, double submit, unauthorised dee
   });
   await b.check('exploratory', 'back button after sign-out does not reveal private pages', async () => {
     await b.goto('/en/requests');
-    await b.page.getByRole('button', { name: /sign out|log out/i }).first().click().catch(async () => { await b.page.locator('[aria-label*=ccount]').first().click(); await b.page.getByRole('button', { name: /sign out|log out/i }).first().click(); });
+    await b.page.getByRole('button', { name: /sign out|log out/i }).first().click().catch(async () => { await b.page.locator('button[aria-label="Account menu"]').first().click(); await b.page.getByRole('menuitem', { name: /sign out|log out/i }).or(b.page.getByRole('button', { name: /sign out|log out/i })).first().click(); });
     await b.page.waitForLoadState('domcontentloaded');
     await b.page.goBack().catch(() => undefined);
     await b.page.waitForLoadState('domcontentloaded');

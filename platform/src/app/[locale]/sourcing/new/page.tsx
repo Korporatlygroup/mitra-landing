@@ -36,7 +36,7 @@ export default async function NewSourcingPage({
     product_id: catalogue.data.id, name: catalogue.data.name, unit: catalogue.data.unit,
     quantity: String(catalogue.data.moq), specification: '',
   }] : undefined;
-  return <main className="container">
+  return <div className="container">
     <h1>{t('new')}</h1>
     <p>{t('intro')}</p>
     {!orgs.length ? <p className="message message-error">
@@ -47,5 +47,5 @@ export default async function NewSourcingPage({
         defaultOrg={saved ? sp.org : undefined}
         initial={initial} initialState={repeat?.ok ? repeat.data.state : undefined}
         initialCity={repeat?.ok ? repeat.data.city ?? undefined : undefined} />}
-  </main>;
+  </div>;
 }

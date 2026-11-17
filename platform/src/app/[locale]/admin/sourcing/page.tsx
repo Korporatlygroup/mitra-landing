@@ -10,7 +10,7 @@ export default async function SourcingOperationsPage({ params }: { params: Promi
   const result = await sourcingOperations(ctx.session.supabase);
   if (!result.ok) return <p role="alert">{t('loadFailed')}</p>;
   const report = result.data;
-  return <main className="container">
+  return <div className="container">
     <h1>{t('operations')}</h1>
     <dl className="card">
       <dt>{t('allRequests')}</dt><dd>{report.total_requests}</dd>
@@ -20,5 +20,5 @@ export default async function SourcingOperationsPage({ params }: { params: Promi
     <h2>{t('myRequests')}</h2>
     <ul className="card-list">{report.items.map((item) =>
       <li className="card" key={item.id}>{item.reference} · {t(`status.${item.status as 'submitted'}`)}</li>)}</ul>
-  </main>;
+  </div>;
 }

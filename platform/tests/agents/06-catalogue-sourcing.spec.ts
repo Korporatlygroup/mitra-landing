@@ -8,23 +8,42 @@ import { expectNoRawKeys, partnerPath, t } from './ui';
 // discovery, price requests, partner request inbox and the sourcing (RFQ) screens. Uploads stay quarantined (no scanner).
 test.describe.configure({ mode: 'serial' });
 
-test('supplier partner: gate before approval, administrator approves, partner workspace opens', async ({ browser }) => {
+test('supplier partner: submits its profile, the administrator approves, partner workspace opens', async ({ browser }) => {
   test.setTimeout(600_000);
   const sp = await Agent.create(browser, 'supplier');
   const ad = await Agent.create(browser, 'admin');
   const org = persona('supplier').orgId!;
   await sp.login();
   await sp.check('catalogue', 'partner workspace before approval shows a clear state, not an error', async () => {
-    const r = await sp.goto(partnerPath(org));
+    const r = await sp.open(partnerPath(org));
     expect(r!.status()).toBeLessThan(500);
     await expectNoRawKeys(sp.page);
-    cover('catalogue', 'partner home text before approval', 'observed', (await sp.page.locator('main').last().innerText()).replace(/\s+/g, ' ').slice(0, 220));
+  });
+  await sp.check('catalogue', 'partner owner submits the organisation profile (display name, contact email)', async () => {
+    if (await sp.page.locator('#displayName').count()) {
+      await sp.page.locator('#displayName').fill('AGENT Supplier Chennai Textiles');
+      await sp.page.locator('#contactEmail').fill('agent-supplier@example.test');
+      await sp.page.locator('main form button[type=submit]').click();
+      await sp.page.waitForLoadState('networkidle');
+    }
+    await expect(sp.page.locator('main').last()).toContainText(/review|approval|pending|waiting/i);
   });
   await ad.login();
-  await ad.check('catalogue', 'administrator partner list shows the supplier organisation', async () => {
+  await ad.check('catalogue', 'administrator partner list shows the supplier and approves it', async () => {
     await ad.open('/en/admin/catalogue/partners');
-    await expect(ad.page.locator('main').last()).toContainText(def('supplier').orgName!);
-    cover('catalogue', 'admin partner list: approve control for self-registered partner organisations', 'observed', (await ad.page.locator('main').last().innerText()).replace(/\s+/g, ' ').slice(0, 260));
+    const card = ad.page.locator('main').last().locator('li, article, section').filter({ hasText: 'AGENT Supplier Chennai Textiles' }).last();
+    await expect(card).toBeVisible();
+    const sum = card.locator('details > summary').first();
+    if (await sum.count()) {
+      await sum.click();
+      await card.locator('textarea').first().fill('Synthetic agent partner approved for testing.');
+      await card.getByRole('button', { name: /approve/i }).click();
+      await ad.page.waitForLoadState('networkidle');
+    }
+  });
+  await sp.check('catalogue', 'after approval the partner home shows the workspace, not the gate', async () => {
+    await sp.open(partnerPath(org));
+    await expect(sp.page.locator('#gate-h')).toHaveCount(0);
   });
   await ad.close();
   await sp.close();
@@ -37,7 +56,7 @@ test('supplier partner builds a supplier record through the wizard', async ({ br
   await sp.login();
   const main = sp.page.locator('main').last();
   await sp.check('catalogue', 'supplier wizard step 1 validates a one-letter name and keeps typed values', async () => {
-    await sp.goto(partnerPath(org, '/suppliers/new'));
+    await sp.open(partnerPath(org, '/suppliers/new'));
     if (/do not have access|approval|pending/i.test(await main.innerText())) throw new Error('partner not approved: wizard unavailable');
     await sp.page.locator('#name').fill('A');
     await sp.page.locator('#state_city').fill('Chennai');
@@ -54,7 +73,7 @@ test('supplier partner builds a supplier record through the wizard', async ({ br
   });
   await sp.check('catalogue', 'partner product, import and request screens open', async () => {
     for (const p of ['/products', '/import', '/requests', '/notifications', '/settings', '/sourcing']) {
-      const r = await sp.goto(partnerPath(org, p), false);
+      const r = await sp.open(partnerPath(org, p), false);
       expect(r!.status(), p).toBeLessThan(500);
     }
   });
