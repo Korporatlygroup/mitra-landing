@@ -987,3 +987,15 @@ body:has(.focus-shell) > .pub-chrome {
 }
 .ad-toggle { white-space: nowrap; }
 .ad-brand > :first-child { flex: none; white-space: nowrap; }
+
+/* Onboarding stepper: a compact scrolling row on phones */
+@media (max-width: 767px) {
+  .focus-body { padding: 16px 16px 48px; gap: 16px; }
+  .focus-steps { flex-direction: row; overflow-x: auto; flex: 1 1 100%; border-radius: 14px; padding: 6px; scrollbar-width: none; }
+  .focus-steps::-webkit-scrollbar { display: none; }
+  .focus-step { width: auto; flex: none; min-height: 44px; padding: 6px 10px; }
+  .focus-step small { display: none; }
+  .focus-step strong { font-size: 0.8125rem; white-space: nowrap; }
+  .focus-card { padding: 20px; border-radius: 16px; }
+  .focus-card h1 { font-size: 1.5rem; }
+}

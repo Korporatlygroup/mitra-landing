@@ -17,6 +17,12 @@ test('screenshots of the signed-in screens', async ({ page }, info) => {
   await loginUi(page, u, 'en');
   await createOrgUi(page, 'business', 'Kedai Aisha', 'en');
   const orgId = page.url().match(/orgs\/([0-9a-f-]{36})/)![1]!;
+  // Give the business a saved profile (step 1) so the review step has something to show.
+  await page.goto(`/en/orgs/${orgId}/business/onboarding?step=1`);
+  await page.locator('#category_slug').selectOption({ index: 1 });
+  await page.locator('#reg-no').check();
+  await page.locator('main form button[type=submit]').first().click();
+  await page.waitForURL(/step=3/);
   await page.goto('/en/directory');
   const profileHref = (await page.locator('a.lcard-link').first().getAttribute('href')) ?? '/en/directory';
   const screens: [string, string][] = [
@@ -34,6 +40,7 @@ test('screenshots of the signed-in screens', async ({ page }, info) => {
     ['settings-security', '/en/account?section=security'],
     ['business-360', `/en/orgs/${orgId}/business/360`],
     ['onboarding-registration', `/en/orgs/${orgId}/business/onboarding?step=2`],
+    ['onboarding-review', `/en/orgs/${orgId}/business/onboarding?step=review`],
     ['onboarding-representative', `/en/orgs/${orgId}/business/onboarding?step=4`],
   ];
   for (const w of WIDTHS) {
