@@ -964,3 +964,12 @@ body:has(.focus-shell) > .pub-chrome {
 .pub-foot .mut {
   color: #d1d5db;
 }
+
+/* Workspace switcher lives in the header (premium v3). */
+.org-btn-top { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; margin: 0; padding: 4px 10px 4px 4px; border-radius: 10px; background: #fff; color: var(--ink); cursor: pointer; text-decoration: none; max-width: 240px; font: inherit; text-align: left; }
+.org-btn-top:hover, .org-btn-top:focus-visible { border-color: var(--brand); }
+.org-btn-top .org-init { width: 30px; height: 30px; border-radius: 8px; }
+.org-btn-top .orgtxt { min-width: 0; line-height: 1.2; }
+.org-btn-top .orgtxt strong, .org-btn-top .orgtxt small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.org-menu-top { left: auto; right: 0; width: 280px; }
+@media (max-width: 899px) { .org-btn-top .orgtxt { display: none; } .org-btn-top { padding: 4px; } }
