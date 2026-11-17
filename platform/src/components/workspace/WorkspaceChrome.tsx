@@ -152,7 +152,7 @@ export default function WorkspaceChrome(p: ChromeProps) {
           <div className="ws-top-actions">
             {p.orgName ? (
               <div className="pop-anchor" ref={orgRef}>
-                <button type="button" className="org-btn org-btn-top" aria-label={p.orgName ?? undefined} aria-expanded={orgOpen} aria-haspopup="true" onClick={() => setOrgOpen((v) => !v)}>
+                <button type="button" className="org-btn org-btn-top" aria-expanded={orgOpen} aria-haspopup="true" onClick={() => setOrgOpen((v) => !v)}>
                   <span className="org-init" aria-hidden="true">
                     {p.orgInitials}
                   </span>
@@ -184,7 +184,7 @@ export default function WorkspaceChrome(p: ChromeProps) {
                 ) : null}
               </div>
             ) : (
-              <Link href="/orgs/new" className="org-btn org-btn-top" aria-label={t('orgs.create')}>
+              <Link href="/orgs/new" className="org-btn org-btn-top">
                 <span className="org-init" aria-hidden="true">
                   <Icon name="plus" size={18} />
                 </span>

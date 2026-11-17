@@ -972,4 +972,4 @@ body:has(.focus-shell) > .pub-chrome {
 .org-btn-top .orgtxt { min-width: 0; line-height: 1.2; }
 .org-btn-top .orgtxt strong, .org-btn-top .orgtxt small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .org-menu-top { left: auto; right: 0; width: 280px; }
-@media (max-width: 899px) { .org-btn-top .orgtxt { display: none; } .org-btn-top { padding: 4px; } }
+@media (max-width: 899px) { .org-btn-top .orgtxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .org-btn-top { padding: 4px; } }
