@@ -1,6 +1,9 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import ProgrammeCard from '@/components/gov/ProgrammeCard';
-import Icon, { type IconName } from '@/components/ui/Icon';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
+import TabsNav from '@/components/shared/TabsNav';
+import Icon from '@/components/ui/Icon';
 import { Link } from '@/i18n/navigation';
 import { matchProgramme, type AssistanceProfile, type MatchResult } from '@/lib/gov-matching';
 import { daysUntil, displayStatus } from '@/lib/gov-status';
@@ -17,12 +20,14 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 
 const TABS = ['all', 'recommended', 'new', 'closing', 'saved'] as const;
 type Tab = (typeof TABS)[number];
+const TYPES = ['financing', 'grant', 'subsidy', 'training', 'other'] as const;
 const LISTED = new Set(['open', 'upcoming', 'dates_not_confirmed']);
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 
 /**
- * Programmes & Opportunities. Everything shown is a published programme; the four counts are real filters over the same list, and a
- * recommendation appears only for a business that answered the questions (the matcher explains each one). Saving is a personal bookmark.
+ * Programmes & Opportunities. Everything shown is a published programme. The page opens on the programmes themselves (search, type
+ * and tabs); matching is a separate, optional step, and a recommendation appears only for a business that answered the questions
+ * (the matcher explains each one). Saving is a personal bookmark.
  */
 export default async function BusinessHelpHome({
   params,
@@ -34,6 +39,8 @@ export default async function BusinessHelpHome({
   const { locale } = await params;
   const sp = await searchParams;
   const tab: Tab = (TABS as readonly string[]).includes(String(sp.tab)) ? (sp.tab as Tab) : 'all';
+  const type = (TYPES as readonly string[]).includes(String(sp.type)) ? String(sp.type) : '';
+  const q = (typeof sp.q === 'string' ? sp.q : '').trim().slice(0, 80);
   const t = await getTranslations({ locale, namespace: 'gov' });
   const fmt = await getFormatter({ locale });
   const { supabase, user } = await getOptionalUser();
@@ -70,51 +77,80 @@ export default async function BusinessHelpHome({
     .filter(({ p }) => stateOf(p) === 'open' && (daysUntil(p.closes_on) ?? 999) <= 30)
     .sort((a, b) => (daysUntil(a.p.closes_on) ?? 0) - (daysUntil(b.p.closes_on) ?? 0));
   const saved = entries.filter(({ p }) => savedIds.has(p.id));
-  const shown = { all: entries, recommended, new: fresh, closing, saved }[tab];
+  const byTab = { all: entries, recommended, new: fresh, closing, saved };
+  const needle = q.toLowerCase();
+  const shown = byTab[tab].filter(({ p }) => (!type || p.funding_type === type) && (!needle || `${p.name} ${p.agency_name}`.toLowerCase().includes(needle)));
 
-  const cards: { key: Tab; label: string; hint: string; n: number; icon: IconName }[] = [
-    { key: 'recommended', label: t('opps.cardRec'), hint: answered ? t('opps.hintRec') : t('opps.needProfile'), n: recommended.length, icon: 'star' },
-    { key: 'new', label: t('opps.cardNew'), hint: t('opps.hintNew'), n: fresh.length, icon: 'plus' },
-    { key: 'closing', label: t('opps.cardClosing'), hint: t('opps.hintClosing'), n: closing.length, icon: 'clock' },
-    { key: 'saved', label: t('opps.cardSaved'), hint: t('opps.hintSaved'), n: saved.length, icon: 'bookmark' },
-  ];
   const tabLabel: Record<Tab, string> = { all: t('opps.tabAll'), recommended: t('opps.tabRec'), new: t('opps.tabNew'), closing: t('opps.tabClosing'), saved: t('opps.tabSaved') };
   const date = (d: string) => fmt.dateTime(new Date(d), { dateStyle: 'medium', timeZone: 'Asia/Kuala_Lumpur' });
+  const keep = (extra: Record<string, string>) => {
+    const p = new URLSearchParams();
+    if (type) p.set('type', type);
+    if (q) p.set('q', q);
+    for (const [k, v] of Object.entries(extra)) if (v) p.set(k, v);
+    const s = p.toString();
+    return s ? `?${s}` : '';
+  };
+  const filtered = Boolean(type || q || tab !== 'all');
+  const matchHref = org ? `/business-help/find?org=${org.org.id}` : user ? '/orgs' : '/business-help/find';
 
   return (
     <>
-      <nav aria-label="Breadcrumb" className="crumbs">
-        <Link href="/">{t('opps.crumbHome')}</Link>
-        <span aria-hidden="true"> / </span>
-        <span aria-current="page">{t('opps.title')}</span>
-      </nav>
-      <h1 style={{ margin: '4px 0 4px' }}>{t('opps.title')}</h1>
-      <p className="muted" style={{ margin: '0 0 16px' }}>{t('opps.sub')}</p>
+      <PageHeader
+        eyebrow={
+          <nav aria-label="Breadcrumb" className="crumbs" style={{ margin: 0 }}>
+            <Link href="/">{t('opps.crumbHome')}</Link>
+            <span aria-hidden="true"> / </span>
+            <span aria-current="page">{t('opps.title')}</span>
+          </nav>
+        }
+        title={t('opps.title')}
+        sub={t('opps.sub')}
+      />
 
-      <ul className="opps-cards" aria-label={t('opps.filters')}>
-        {cards.map((c) => (
-          <li key={c.key}>
-            <Link href={`/business-help?tab=${c.key}`} className="opps-card" aria-current={tab === c.key ? 'true' : undefined}>
-              <span className="opps-card-ico" aria-hidden="true">
-                <Icon name={c.icon} size={20} />
-              </span>
-              <span className="opps-card-n">{c.n}</span>
-              <span className="opps-card-l">{c.label}</span>
-              <span className="opps-card-h">{c.hint}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <form method="get" role="search" className="toolbar-x">
+        {tab !== 'all' ? <input type="hidden" name="tab" value={tab} /> : null}
+        {org && sp.org ? <input type="hidden" name="org" value={org.org.id} /> : null}
+        <div className="search-x">
+          <Icon name="search" size={18} />
+          <label className="sr" htmlFor="gh-q">
+            {t('opps.search')}
+          </label>
+          <input id="gh-q" name="q" type="search" maxLength={80} defaultValue={q} placeholder={t('opps.search')} />
+        </div>
+        <label className="sr" htmlFor="gh-type">
+          {t('opps.typeLabel')}
+        </label>
+        <select id="gh-type" name="type" defaultValue={type} className="select-x">
+          <option value="">{t('opps.typeAll')}</option>
+          {TYPES.map((k) => (
+            <option key={k} value={k}>
+              {t(`type.${k}`)}
+            </option>
+          ))}
+        </select>
+        <button type="submit" className="btn btn-secondary btn-sm">
+          {t('opps.searchBtn')}
+        </button>
+        {filtered ? (
+          <Link href="/business-help" className="btn btn-ghost btn-sm">
+            {t('opps.clear')}
+          </Link>
+        ) : null}
+      </form>
+
+      <TabsNav
+        label={t('opps.filters')}
+        items={TABS.map((k) => ({
+          href: `/business-help${keep(k === 'all' ? {} : { tab: k })}`,
+          label: tabLabel[k],
+          count: k === 'all' ? undefined : byTab[k].length,
+          active: tab === k,
+        }))}
+      />
 
       <div className="opps-grid">
         <div style={{ minWidth: 0 }}>
-          <nav aria-label={t('opps.filters')} className="opps-tabs">
-            {TABS.map((k) => (
-              <Link key={k} href={k === 'all' ? '/business-help' : `/business-help?tab=${k}`} aria-current={tab === k ? 'page' : undefined}>
-                {tabLabel[k]}
-              </Link>
-            ))}
-          </nav>
           {tab === 'recommended' && !answered ? (
             <p className="banner" role="note">
               {user && org ? (
@@ -133,43 +169,72 @@ export default async function BusinessHelpHome({
             </p>
           ) : null}
           {shown.length === 0 ? (
-            <p>{t('opps.emptyTab')}</p>
+            <EmptyState icon="money" title={filtered ? t('opps.noMatch') : t('opps.emptyTab')} text={filtered ? t('opps.noMatchBody') : t('opps.sub')} action={filtered ? { href: '/business-help', label: t('opps.clear') } : undefined} />
           ) : (
-            <ul className="card-list" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 22rem), 1fr))' }}>
-              {shown.map(({ p, match }) => (
-                <ProgrammeCard key={p.id} p={p} locale={locale} match={match} orgId={org?.org.id ?? null} signedIn={Boolean(user)} saved={savedIds.has(p.id)} />
-              ))}
-            </ul>
+            <>
+              <p className="mut" role="status" style={{ margin: '0 0 12px', fontSize: '0.875rem' }}>
+                {t('opps.results', { n: shown.length })}
+              </p>
+              <ul className="xgrid xgrid-3" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {shown.map(({ p, match }) => (
+                  <ProgrammeCard key={p.id} p={p} locale={locale} match={match} orgId={org?.org.id ?? null} signedIn={Boolean(user)} saved={savedIds.has(p.id)} />
+                ))}
+              </ul>
+            </>
           )}
           {!user ? <p className="muted">{t('opps.signInSave')}</p> : null}
         </div>
 
         <aside className="opps-aside" aria-label={t('opps.howTitle')}>
-          <section className="card" aria-labelledby="opps-how">
-            <h2 id="opps-how" style={{ marginTop: 0, fontSize: '1.0625rem' }}>{t('opps.howTitle')}</h2>
+          <section className="acard" aria-labelledby="opps-match">
+            <span className="dcard-ico" aria-hidden="true">
+              <Icon name="target" size={20} />
+            </span>
+            <h2 id="opps-match" style={{ margin: 0, fontSize: '1.0625rem' }}>
+              {t('opps.matchTitle')}
+            </h2>
+            <p className="mut" style={{ margin: 0, fontSize: '0.875rem' }}>
+              {t('opps.matchText')}
+            </p>
+            <div>
+              <Link href={matchHref} className="btn btn-primary btn-sm">
+                {t('opps.matchCta')}
+              </Link>
+            </div>
+          </section>
+          <section className="acard" aria-labelledby="opps-how">
+            <h2 id="opps-how" style={{ margin: 0, fontSize: '1.0625rem' }}>
+              {t('opps.howTitle')}
+            </h2>
             <ol className="opps-how">
               {(['how1', 'how2', 'how3', 'how4'] as const).map((k) => (
                 <li key={k}>{t(`opps.${k}`)}</li>
               ))}
             </ol>
           </section>
-          <section className="card" aria-labelledby="opps-news">
-            <h2 id="opps-news" style={{ marginTop: 0, fontSize: '1.0625rem' }}>{t('opps.newsTitle')}</h2>
+          <section className="acard" aria-labelledby="opps-news">
+            <h2 id="opps-news" style={{ margin: 0, fontSize: '1.0625rem' }}>
+              {t('opps.newsTitle')}
+            </h2>
             {news.length === 0 ? (
-              <p className="muted" style={{ margin: 0 }}>{t('opps.newsNone')}</p>
+              <p className="muted" style={{ margin: 0 }}>
+                {t('opps.newsNone')}
+              </p>
             ) : (
-              <ul className="card-list" style={{ margin: 0 }}>
+              <ul className="stack-x" style={{ margin: 0, padding: 0, listStyle: 'none' }}>
                 {news.map((n) => (
                   <li key={n.id}>
                     <Link href={`/news/${n.id}`}>{n.title}</Link>
-                    <p className="muted" style={{ margin: '2px 0 0', fontSize: '0.8125rem' }}>{[n.publisher, date(n.published_at)].filter(Boolean).join(' · ')}</p>
+                    <p className="muted" style={{ margin: '2px 0 0', fontSize: '0.8125rem' }}>
+                      {[n.publisher, date(n.published_at)].filter(Boolean).join(' · ')}
+                    </p>
                   </li>
                 ))}
               </ul>
             )}
-            <p style={{ marginBottom: 0 }}>
+            <div>
               <Link href="/news">{t('opps.newsAll')}</Link>
-            </p>
+            </div>
           </section>
         </aside>
       </div>

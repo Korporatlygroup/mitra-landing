@@ -165,8 +165,8 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await logoutUi(ap);
   await loginUi(ap, buyer, 'en');
   await ap.goto('/en/requests');
-  await expect(ap.locator('li.card').filter({ hasText: reqTitle }).filter({ hasText: t('req.counts', { invited: '1', interested: '1', declined: '0' }) })).toHaveCount(1);
-  await expect(ap.locator('li.card').filter({ hasText: reqTitle }).filter({ hasText: t('enq.statuses.open') })).toHaveCount(2); // the request and its enquiry both persist
+  await expect(ap.locator('li.rrow').filter({ hasText: reqTitle }).filter({ hasText: t('req.counts', { invited: '1', interested: '1', declined: '0' }) })).toHaveCount(1);
+  await expect(ap.locator('li.rrow').filter({ hasText: reqTitle }).filter({ hasText: t('enq.statuses.open') })).toHaveCount(2); // the request and its enquiry both persist
   await ap.goto(`/en/requests/${requestId}`);
   const mc = ap.locator('[data-testid=match-card]').filter({ hasText: bizName });
   await expect(mc).toContainText(t('match.status.interested'));

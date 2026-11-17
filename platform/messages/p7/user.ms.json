@@ -33,7 +33,18 @@
       "mySavedNone": "Anda belum menyimpan sebarang program.",
       "browse": "Layari program",
       "trackNeedsBusiness": "Tambah perniagaan untuk menjejak permohonan anda juga.",
-      "filters": "Paparan"
+      "filters": "Paparan",
+      "search": "Cari program atau agensi",
+      "searchBtn": "Cari",
+      "typeLabel": "Jenis",
+      "typeAll": "Semua jenis",
+      "noMatch": "Tiada program sepadan",
+      "noMatchBody": "Cuba perkataan lain atau jenis yang berbeza.",
+      "clear": "Kosongkan penapis",
+      "matchTitle": "Cari bantuan yang sesuai dengan perniagaan anda",
+      "matchText": "Jawab beberapa soalan dan lihat program yang mungkin sesuai, beserta sebabnya. Pilihan.",
+      "matchCta": "Mula padanan",
+      "results": "{n} program"
     },
     "dstatus": {
       "open": "Dibuka",

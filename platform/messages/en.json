@@ -153,7 +153,22 @@
       "in_progress": "In progress",
       "completed": "Completed",
       "rejected": "Declined"
-    }
+    },
+    "sub": "Manage your profile, security, notifications and privacy.",
+    "navLabel": "Settings sections",
+    "navAccount": "My account",
+    "navSecurity": "Security",
+    "navNotifications": "Notifications",
+    "navPrivacy": "Privacy",
+    "navData": "Data requests",
+    "signedInAs": "Signed in as",
+    "accountHint": "Your name and the language INOK uses for you.",
+    "securityHint": "Keep your account safe with a strong password and a second step.",
+    "notifHint": "Choose which emails INOK may send you.",
+    "privacyHint": "How INOK handles your information.",
+    "dataHint": "Ask for a copy of your data, a correction or an erasure.",
+    "mfaStateOn": "On",
+    "mfaStateOff": "Off"
   },
   "orgs": {
     "title": "Your organisations",
@@ -283,6 +298,17 @@
   },
   "b360": {
     "title": "My Business 360°",
+    "viewListing": "Public listing",
+    "editProfile": "Edit business profile",
+    "groupDone": "{done} of {total}",
+    "grp": {
+      "identity": "Business identity",
+      "registration": "Registration",
+      "contact": "Contact and location",
+      "online": "Online presence",
+      "listings": "Listings",
+      "verification": "Verification"
+    },
     "overview": "Your business at a glance",
     "verification": "Verification",
     "verified": "{n} item(s) approved",
@@ -845,7 +871,7 @@
     "notReviewedYet": "This has not been reviewed by INOK yet."
   },
   "notifications": {
-    "title": "Messages",
+    "title": "Notifications",
     "none": "You have no messages.",
     "markRead": "Mark as read",
     "new": "New",
@@ -878,7 +904,16 @@
       "sourcing_sample_requested": "The buyer asked for a sample",
       "sourcing_document_uploaded": "A private sourcing document was shared",
       "sourcing_quote_reminder": "Please send an offer for your accepted request"
-    }
+    },
+    "sub": "What happened in your workspace, newest first.",
+    "tAll": "All",
+    "tUnread": "Unread",
+    "tabsLabel": "Filter notifications",
+    "prefs": "Notification settings",
+    "today": "Today",
+    "earlier": "Earlier",
+    "noneUnread": "You are all caught up",
+    "emptyText": "New activity on your business, requests and enquiries will appear here."
   },
   "adminVer": {
     "title": "Verification queue",
@@ -1130,6 +1165,30 @@
   "req": {
     "title": "My requests",
     "post": "Post a request",
+    "sub": "Tell businesses what you need, then follow their replies in one place.",
+    "mOpen": "Open requests",
+    "mDraft": "Drafts",
+    "mInterested": "Businesses interested",
+    "mEnquiries": "Enquiries",
+    "tAll": "All",
+    "tOpen": "Open",
+    "tDraft": "Drafts",
+    "tClosed": "Closed",
+    "tabsLabel": "Filter requests",
+    "search": "Search my requests",
+    "searchBtn": "Search",
+    "noMatch": "No requests match",
+    "noMatchBody": "Try another word or choose a different tab.",
+    "clear": "Clear filters",
+    "created": "Created {date}",
+    "responses": "{n} interested",
+    "open": "Open",
+    "continue": "Continue",
+    "explore": "Explore businesses",
+    "emptyCta": "Create your first request",
+    "emptyHint": "Describe what you need, pick the businesses to invite and wait for their replies.",
+    "enqSub": "Conversations with businesses",
+    "allEnquiries": "All enquiries",
     "untitled": "Request without a title",
     "enquiriesTitle": "Your enquiries",
     "noEnquiries": "No enquiries yet.",
@@ -1606,7 +1665,8 @@
       "importantDates": "Important dates",
       "opens": "Opens: {date}",
       "closes": "Closes: {date}",
-      "noDates": "No dates published"
+      "noDates": "No dates published",
+      "staleShort": "Needs a re-check"
     },
     "type": {
       "financing": "Financing",

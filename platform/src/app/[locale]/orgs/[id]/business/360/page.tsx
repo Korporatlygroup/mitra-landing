@@ -1,7 +1,10 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
-import StatusChip from '@/components/StatusChip';
+import EmptyState from '@/components/shared/EmptyState';
+import StatusBadge from '@/components/shared/StatusBadge';
 import Icon from '@/components/ui/Icon';
+import { initialsOf } from '@/components/ui/Tag';
 import { Link } from '@/i18n/navigation';
+import { catName } from '@/lib/category';
 import { matchProgramme, rankMatches, type MatchResult } from '@/lib/gov-matching';
 import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
@@ -15,23 +18,17 @@ import { getBusinessPrivate, getBusinessProfile, getRepresentative, getVerificat
 function Tile({ label, value, href, hint }: { label: string; value: string | number; href?: string; hint?: string }) {
   const body = (
     <>
-      <span className="metric-head">
-        <span className="metric-label">{label}</span>
-      </span>
-      <span className="metric-big">{value}</span>
-      {hint ? (
-        <span className="mut" style={{ fontSize: '0.8125rem' }}>
-          {hint}
-        </span>
-      ) : null}
+      <span>{label}</span>
+      <b>{value}</b>
+      {hint ? <span>{hint}</span> : null}
     </>
   );
   return href ? (
-    <Link href={href} className="metric">
+    <Link href={href} className="mcard metric mcard-link">
       {body}
     </Link>
   ) : (
-    <div className="metric">{body}</div>
+    <div className="mcard metric">{body}</div>
   );
 }
 
@@ -134,149 +131,278 @@ export default async function Business360Page({ params }: { params: Promise<{ lo
       ? [p.amount_min ? `RM ${fmt.number(Number(p.amount_min))}` : null, p.amount_max ? `RM ${fmt.number(Number(p.amount_max))}` : null].filter(Boolean).join(' – ')
       : t('b360.assist.amountNone');
 
+  const GROUPS: { key: string; checks: string[] }[] = [
+    { key: 'identity', checks: ['profile', 'description'] },
+    { key: 'registration', checks: ['registration', 'representative'] },
+    { key: 'contact', checks: ['location', 'address'] },
+    { key: 'online', checks: ['links'] },
+    { key: 'listings', checks: ['products', 'published'] },
+    { key: 'verification', checks: ['verified'] },
+  ];
+  const cat = categories.find((c) => c.id === profile?.category_id);
+  const place = profile?.state ?? null;
+  const verifiedTone = approved > 0 ? 'green' : needsInfo ? 'gold' : 'neutral';
+  const verifiedLabel = approved > 0 ? t('b360.verified', { n: approved }) : needsInfo ? t('b360.needsInfo') : t('b360.notVerified');
+  const businessName = profile?.business_name ?? ctx.org.name;
+
   return (
     <div className="wide" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
-      <div className="page-head" style={{ marginBottom: 0 }}>
-        <div>
+      <header className="bizhead">
+        <span className="bizhead-mono" aria-hidden="true">
+          {initialsOf(businessName)}
+        </span>
+        <div className="bizhead-text">
           <h1>{t('b360.title')}</h1>
-          <p className="muted">{profile?.business_name ?? ctx.org.name}</p>
+          <p className="bizhead-name">{businessName}</p>
+          <div className="bizhead-meta">
+            {cat ? <span>{catName(locale, cat)}</span> : null}
+            {place ? <span>{place}</span> : null}
+            <StatusBadge label={verifiedLabel} tone={verifiedTone} />
+          </div>
         </div>
-      </div>
+        <div className="pagehead-actions">
+          <Link href={`${base}/listing`} className="btn btn-secondary">
+            {t('b360.viewListing')}
+          </Link>
+          {ctx.canEdit ? (
+            <Link href={`${base}/onboarding?step=1`} className="btn btn-primary">
+              <Icon name="edit" size={18} />
+              {t('b360.editProfile')}
+            </Link>
+          ) : null}
+        </div>
+      </header>
 
       <section aria-labelledby="b360-a">
-        <h2 id="b360-a">{t('b360.overview')}</h2>
-        <div className="metric-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(11rem, 1fr))', gap: 12 }}>
-          <div className="metric">
-            <span className="metric-label">{t('b360.verification')}</span>
-            <StatusChip status={approved > 0 ? 'approved' : needsInfo ? 'needs_info' : 'none'} label={approved > 0 ? t('b360.verified', { n: approved }) : needsInfo ? t('b360.needsInfo') : t('b360.notVerified')} />
-          </div>
+        <div className="sechead">
+          <h2 id="b360-a">{t('b360.overview')}</h2>
+        </div>
+        <div className="xgrid-m">
           <Tile label={t('b360.completion')} value={`${pct}%`} hint={t('b360.completionHint', { done, total: checks.length })} />
           <Tile label={t('b360.liveProducts')} value={liveProducts} href={`${base}/products`} />
           <Tile label={t('b360.openEnquiries')} value={openEnquiries ?? '-'} href="/enquiries" />
           <Tile label={t('b360.quotesSent')} value={m?.quotes_sent ?? '-'} href="/enquiries" />
-          <Tile label={t('b360.unread')} value={unread.count ?? 0} href="/notifications" />
-          <Tile label={t('b360.buyingRequests')} value={buying.count ?? 0} href="/requests" />
-          <Tile label={t('b360.tasks')} value={topTasks.length} />
         </div>
-      </section>
-
-      <section aria-labelledby="b360-g">
-        <h2 id="b360-g">{t('b360.nextTitle')}</h2>
-        {topTasks.length === 0 ? (
-          <p>{t('b360.nextNone')}</p>
-        ) : (
-          <ol className="card-list">
-            {topTasks.map((x) => (
-              <li key={x.key} className="card" style={{ boxShadow: 'none' }}>
-                <Link href={x.href}>{x.text}</Link>
-              </li>
-            ))}
-          </ol>
-        )}
-      </section>
-
-      <section aria-labelledby="b360-b">
-        <h2 id="b360-b">{t('b360.assist.title')}</h2>
-        <p className="muted">{t('b360.assist.note')}</p>
-        {!answeredHelp ? (
-          <p>
-            {t('b360.assist.noProfile')} <Link href="/business-help/find">{t('b360.assist.answer')}</Link>
-          </p>
-        ) : matched.length === 0 ? (
-          <p>{t('b360.assist.none')}</p>
-        ) : (
-          <ul className="card-list">
-            {matched.map(({ p, match }) => (
-              <li key={p.id} className="card" style={{ boxShadow: 'none' }}>
-                <strong><Link href={`/business-help/${p.slug}`}>{p.name}</Link></strong>
-                <p className="muted" style={{ margin: '2px 0' }}>
-                  {p.agency_name} · {p.funding_type ? t(`gov.type.${p.funding_type}`) : '-'} · {t(`gov.status.${p.application_status}`)} · {money(p)}
-                </p>
-                <p style={{ margin: '4px 0' }}>
-                  <strong>{t(`gov.match.${match.label}`)}.</strong> {t(`gov.match.explain.${match.label}`)}
-                </p>
-                {match.met.length > 0 ? <p className="muted" style={{ margin: 0 }}>{t('gov.match.fits')}: {match.met.map((f) => t(`gov.match.field.${f}`)).join(', ')}</p> : null}
-                {match.missing.length > 0 ? <p className="muted" style={{ margin: 0 }}>{t('gov.match.missing')}: {[...new Set(match.missing.map((f) => t(`gov.match.field.${f}`)))].join(', ')}</p> : null}
-                <p style={{ margin: '4px 0 0' }}>
-                  {p.application_url || p.info_url ? (
-                    <a href={(p.application_url ?? p.info_url)!} target="_blank" rel="noopener noreferrer nofollow">{t('b360.assist.official')}</a>
-                  ) : null}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section aria-labelledby="b360-c">
-        <h2 id="b360-c">{t('b360.readiness.title')}</h2>
-        <p className="muted">{t('b360.readiness.note')}</p>
-        <ul className="card-list">
-          {checks.map((c) => (
-            <li key={c.key} data-done={c.ok ? 'true' : 'false'} className="card" style={{ boxShadow: 'none', display: 'flex', gap: 12, justifyContent: 'space-between', alignItems: 'center' }}>
-              <span style={{ display: 'inline-flex', alignItems: 'center', gap: 8 }}>
-                <Icon name={c.ok ? 'check' : 'clock'} size={18} />
-                {t(`b360.check.${c.key}.label`)}
-              </span>
-              {c.ok ? <span className="muted">{t('b360.done')}</span> : <Link href={c.href}>{t(`b360.check.${c.key}.todo`)}</Link>}
-            </li>
-          ))}
-        </ul>
-      </section>
-
-      <section aria-labelledby="b360-d">
-        <h2 id="b360-d">{t('b360.training.title')}</h2>
-        {training.length === 0 ? (
-          <p>{t('b360.training.none')}</p>
-        ) : (
-          <ul className="card-list">
-            {training.map((p) => (
-              <li key={p.id} className="card" style={{ boxShadow: 'none' }}>
-                <strong><Link href={`/business-help/${p.slug}`}>{p.name}</Link></strong>
-                <p className="muted" style={{ margin: '2px 0' }}>{p.agency_name} · {t(`gov.status.${p.application_status}`)}{p.closes_on ? ` · ${fmt.dateTime(new Date(`${p.closes_on}T00:00:00Z`), { dateStyle: 'medium', timeZone: 'UTC' })}` : ''}</p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      <section aria-labelledby="b360-e">
-        <h2 id="b360-e">{t('b360.market.title')}</h2>
-        {newRequests.length === 0 ? (
-          <p>{t('b360.market.none')}</p>
-        ) : (
-          <ul className="card-list">
-            {newRequests.slice(0, 5).map((r) => (
-              <li key={r.request_id} className="card" style={{ boxShadow: 'none' }}>
-                <Link href={`${base}/requests/${r.request_id}`}>{r.title ?? t('b360.market.untitled')}</Link>
-                <span className="muted"> · {[r.category_slug ? t(`categories.${r.category_slug}`) : null, r.target_state].filter(Boolean).join(' · ')}</span>
-              </li>
-            ))}
-          </ul>
-        )}
-        <p>
-          <Link href={`${base}/requests`}>{t('b360.market.all')}</Link>
+        <p className="chiprow-x">
+          <Link href="/notifications" className="chip-x">
+            {t('b360.unread')}: {unread.count ?? 0}
+          </Link>
+          <Link href="/requests" className="chip-x">
+            {t('b360.buyingRequests')}: {buying.count ?? 0}
+          </Link>
         </p>
       </section>
 
-      <section aria-labelledby="b360-f">
-        <h2 id="b360-f">{t('b360.news.title')}</h2>
-        {newsShown.length === 0 ? (
-          <p>{t('b360.news.none')}</p>
-        ) : (
-          <ul className="card-list">
-            {newsShown.map((n) => (
-              <li key={n.id} className="card" style={{ boxShadow: 'none' }}>
-                <Link href={`/news/${n.id}`}>{n.title}</Link>
-                <p className="muted" style={{ margin: '2px 0 0' }}>
-                  {n.publisher ? `${n.publisher} · ` : ''}
-                  {fmt.dateTime(new Date(n.published_at), { dateStyle: 'medium', timeZone: 'Asia/Kuala_Lumpur' })}
-                </p>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+      <div className="split-x">
+        <div className="stack-x" style={{ gap: 24 }}>
+          <section aria-labelledby="b360-c">
+            <div className="sechead">
+              <h2 id="b360-c">{t('b360.readiness.title')}</h2>
+              <span className="chip-x brand">
+                {pct}% · {t('b360.completionHint', { done, total: checks.length })}
+              </span>
+            </div>
+            <div className="acard">
+              <div className="acard-bar" role="progressbar" aria-valuenow={pct} aria-valuemin={0} aria-valuemax={100} aria-label={t('b360.completion')}>
+                <i style={{ width: `${pct}%` }} />
+              </div>
+              <p className="mut" style={{ margin: 0, fontSize: '0.875rem' }}>
+                {t('b360.readiness.note')}
+              </p>
+              {GROUPS.map((g) => {
+                const items = checks.filter((c) => g.checks.includes(c.key));
+                const gDone = items.filter((c) => c.ok).length;
+                return (
+                  <details key={g.key} className="rgroup" open={gDone < items.length}>
+                    <summary>
+                      <span>{t(`b360.grp.${g.key}`)}</span>
+                      <span className={`chip-x${gDone === items.length ? ' green' : ''}`}>{t('b360.groupDone', { done: gDone, total: items.length })}</span>
+                    </summary>
+                    <ul className="rlist">
+                      {items.map((c) => (
+                        <li key={c.key} data-done={c.ok ? 'true' : 'false'}>
+                          <span className="rlist-l">
+                            <Icon name={c.ok ? 'check' : 'clock'} size={18} />
+                            {t(`b360.check.${c.key}.label`)}
+                          </span>
+                          {c.ok ? <span className="mut">{t('b360.done')}</span> : <Link href={c.href} className="btn btn-secondary btn-sm">{t(`b360.check.${c.key}.todo`)}</Link>}
+                        </li>
+                      ))}
+                    </ul>
+                  </details>
+                );
+              })}
+            </div>
+          </section>
+
+          <section aria-labelledby="b360-b">
+            <div className="sechead">
+              <h2 id="b360-b">{t('b360.assist.title')}</h2>
+              <Link href="/business-help">{t('apphome.seeAll')}</Link>
+            </div>
+            <p className="mut" style={{ margin: '0 0 12px', fontSize: '0.875rem' }}>
+              {t('b360.assist.note')}
+            </p>
+            {!answeredHelp ? (
+              <div className="acard">
+                <p style={{ margin: 0 }}>{t('b360.assist.noProfile')}</p>
+                <div>
+                  <Link href="/business-help/find" className="btn btn-primary btn-sm">
+                    {t('b360.assist.answer')}
+                  </Link>
+                </div>
+              </div>
+            ) : matched.length === 0 ? (
+              <div className="acard">
+                <p style={{ margin: 0 }}>{t('b360.assist.none')}</p>
+              </div>
+            ) : (
+              <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {matched.map(({ p, match }) => (
+                  <li key={p.id} className="rrow">
+                    <div className="rrow-top">
+                      <h3>
+                        <Link href={`/business-help/${p.slug}`}>{p.name}</Link>
+                      </h3>
+                      <StatusBadge label={t(`gov.match.${match.label}`)} tone="brand" />
+                    </div>
+                    <div className="meta">
+                      <span>{p.agency_name}</span>
+                      <span>{p.funding_type ? t(`gov.type.${p.funding_type}`) : '-'}</span>
+                      <span>{t(`gov.status.${p.application_status}`)}</span>
+                      <span>{money(p)}</span>
+                    </div>
+                    <p style={{ margin: 0, fontSize: '0.875rem' }}>{t(`gov.match.explain.${match.label}`)}</p>
+                    {match.met.length > 0 ? (
+                      <p className="mut" style={{ margin: 0, fontSize: '0.8125rem' }}>
+                        {t('gov.match.fits')}: {match.met.map((f) => t(`gov.match.field.${f}`)).join(', ')}
+                      </p>
+                    ) : null}
+                    {match.missing.length > 0 ? (
+                      <p className="mut" style={{ margin: 0, fontSize: '0.8125rem' }}>
+                        {t('gov.match.missing')}: {[...new Set(match.missing.map((f) => t(`gov.match.field.${f}`)))].join(', ')}
+                      </p>
+                    ) : null}
+                    <div className="rrow-foot">
+                      <Link href={`/business-help/${p.slug}`} className="btn btn-secondary btn-sm">
+                        {t('apphome.viewDetails')}
+                      </Link>
+                      {p.application_url || p.info_url ? (
+                        <a className="btn btn-ghost btn-sm" href={(p.application_url ?? p.info_url)!} target="_blank" rel="noopener noreferrer nofollow">
+                          {t('b360.assist.official')}
+                        </a>
+                      ) : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section aria-labelledby="b360-e">
+            <div className="sechead">
+              <h2 id="b360-e">{t('b360.market.title')}</h2>
+              <Link href={`${base}/requests`}>{t('b360.market.all')}</Link>
+            </div>
+            {newRequests.length === 0 ? (
+              <EmptyState icon="board" title={t('b360.market.title')} text={t('b360.market.none')} />
+            ) : (
+              <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {newRequests.slice(0, 5).map((r) => (
+                  <li key={r.request_id} className="rrow">
+                    <h3>
+                      <Link href={`${base}/requests/${r.request_id}`}>{r.title ?? t('b360.market.untitled')}</Link>
+                    </h3>
+                    <div className="meta">
+                      {r.category_slug ? <span>{t(`categories.${r.category_slug}`)}</span> : null}
+                      {r.target_state ? <span>{r.target_state}</span> : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </div>
+
+        <aside className="stack-x" style={{ gap: 24 }}>
+          <section aria-labelledby="b360-g">
+            <div className="sechead">
+              <h2 id="b360-g">{t('b360.nextTitle')}</h2>
+            </div>
+            {topTasks.length === 0 ? (
+              <div className="acard">
+                <p style={{ margin: 0 }}>{t('b360.nextNone')}</p>
+              </div>
+            ) : (
+              <ol className="nextlist">
+                {topTasks.map((x, i) => (
+                  <li key={x.key}>
+                    <Link href={x.href}>
+                      <span className="nextlist-n" aria-hidden="true">
+                        {i + 1}
+                      </span>
+                      <span>{x.text}</span>
+                      <Icon name="forward" size={16} />
+                    </Link>
+                  </li>
+                ))}
+              </ol>
+            )}
+          </section>
+
+          <section aria-labelledby="b360-d">
+            <div className="sechead">
+              <h2 id="b360-d">{t('b360.training.title')}</h2>
+            </div>
+            {training.length === 0 ? (
+              <div className="acard">
+                <p style={{ margin: 0 }}>{t('b360.training.none')}</p>
+              </div>
+            ) : (
+              <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {training.map((p) => (
+                  <li key={p.id} className="rrow">
+                    <h3>
+                      <Link href={`/business-help/${p.slug}`}>{p.name}</Link>
+                    </h3>
+                    <div className="meta">
+                      <span>{p.agency_name}</span>
+                      <span>{t(`gov.status.${p.application_status}`)}</span>
+                      {p.closes_on ? <span>{fmt.dateTime(new Date(`${p.closes_on}T00:00:00Z`), { dateStyle: 'medium', timeZone: 'UTC' })}</span> : null}
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+
+          <section aria-labelledby="b360-f">
+            <div className="sechead">
+              <h2 id="b360-f">{t('b360.news.title')}</h2>
+              <Link href="/news">{t('apphome.seeAll')}</Link>
+            </div>
+            {newsShown.length === 0 ? (
+              <div className="acard">
+                <p style={{ margin: 0 }}>{t('b360.news.none')}</p>
+              </div>
+            ) : (
+              <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                {newsShown.map((n) => (
+                  <li key={n.id} className="rrow">
+                    <h3>
+                      <Link href={`/news/${n.id}`}>{n.title}</Link>
+                    </h3>
+                    <div className="meta">
+                      {n.publisher ? <span>{n.publisher}</span> : null}
+                      <span>{fmt.dateTime(new Date(n.published_at), { dateStyle: 'medium', timeZone: 'Asia/Kuala_Lumpur' })}</span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        </aside>
+      </div>
     </div>
   );
 }

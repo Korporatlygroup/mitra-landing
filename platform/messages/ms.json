@@ -153,7 +153,22 @@
       "in_progress": "Sedang diproses",
       "completed": "Selesai",
       "rejected": "Ditolak"
-    }
+    },
+    "sub": "Urus profil, keselamatan, pemberitahuan dan privasi anda.",
+    "navLabel": "Bahagian tetapan",
+    "navAccount": "Akaun saya",
+    "navSecurity": "Keselamatan",
+    "navNotifications": "Pemberitahuan",
+    "navPrivacy": "Privasi",
+    "navData": "Permintaan data",
+    "signedInAs": "Log masuk sebagai",
+    "accountHint": "Nama anda dan bahasa yang INOK gunakan untuk anda.",
+    "securityHint": "Lindungi akaun anda dengan kata laluan yang kukuh dan langkah kedua.",
+    "notifHint": "Pilih e-mel yang boleh INOK hantar kepada anda.",
+    "privacyHint": "Cara INOK mengendalikan maklumat anda.",
+    "dataHint": "Minta salinan data anda, pembetulan atau pemadaman.",
+    "mfaStateOn": "Hidup",
+    "mfaStateOff": "Mati"
   },
   "orgs": {
     "title": "Organisasi anda",
@@ -283,6 +298,17 @@
   },
   "b360": {
     "title": "Perniagaan Saya 360°",
+    "viewListing": "Senarai awam",
+    "editProfile": "Edit profil perniagaan",
+    "groupDone": "{done} daripada {total}",
+    "grp": {
+      "identity": "Identiti perniagaan",
+      "registration": "Pendaftaran",
+      "contact": "Hubungan dan lokasi",
+      "online": "Kehadiran dalam talian",
+      "listings": "Senarai",
+      "verification": "Pengesahan"
+    },
     "overview": "Perniagaan anda sekilas pandang",
     "verification": "Pengesahan",
     "verified": "{n} item diluluskan",
@@ -845,7 +871,7 @@
     "notReviewedYet": "Ini belum disemak oleh INOK."
   },
   "notifications": {
-    "title": "Mesej",
+    "title": "Pemberitahuan",
     "none": "Anda tiada mesej.",
     "markRead": "Tandakan sudah dibaca",
     "new": "Baharu",
@@ -878,7 +904,16 @@
       "sourcing_sample_requested": "Pembeli meminta sampel",
       "sourcing_document_uploaded": "Dokumen peribadi telah dikongsi",
       "sourcing_quote_reminder": "Sila hantar tawaran untuk permintaan yang diterima"
-    }
+    },
+    "sub": "Apa yang berlaku dalam ruang kerja anda, terbaharu dahulu.",
+    "tAll": "Semua",
+    "tUnread": "Belum dibaca",
+    "tabsLabel": "Tapis pemberitahuan",
+    "prefs": "Tetapan pemberitahuan",
+    "today": "Hari ini",
+    "earlier": "Sebelumnya",
+    "noneUnread": "Tiada yang tertinggal",
+    "emptyText": "Aktiviti baharu pada perniagaan, permintaan dan pertanyaan anda akan muncul di sini."
   },
   "adminVer": {
     "title": "Senarai semakan",
@@ -1130,6 +1165,30 @@
   "req": {
     "title": "Permintaan saya",
     "post": "Hantar permintaan",
+    "sub": "Beritahu perniagaan apa yang anda perlukan, kemudian ikuti balasan mereka di satu tempat.",
+    "mOpen": "Permintaan terbuka",
+    "mDraft": "Draf",
+    "mInterested": "Perniagaan berminat",
+    "mEnquiries": "Pertanyaan",
+    "tAll": "Semua",
+    "tOpen": "Terbuka",
+    "tDraft": "Draf",
+    "tClosed": "Ditutup",
+    "tabsLabel": "Tapis permintaan",
+    "search": "Cari permintaan saya",
+    "searchBtn": "Cari",
+    "noMatch": "Tiada permintaan sepadan",
+    "noMatchBody": "Cuba perkataan lain atau pilih tab yang berbeza.",
+    "clear": "Kosongkan penapis",
+    "created": "Dibuat {date}",
+    "responses": "{n} berminat",
+    "open": "Buka",
+    "continue": "Teruskan",
+    "explore": "Terokai perniagaan",
+    "emptyCta": "Buat permintaan pertama anda",
+    "emptyHint": "Terangkan apa yang anda perlukan, pilih perniagaan untuk dijemput dan tunggu balasan mereka.",
+    "enqSub": "Perbualan dengan perniagaan",
+    "allEnquiries": "Semua pertanyaan",
     "untitled": "Permintaan tanpa tajuk",
     "enquiriesTitle": "Pertanyaan anda",
     "noEnquiries": "Belum ada pertanyaan.",
@@ -1606,7 +1665,8 @@
       "importantDates": "Tarikh penting",
       "opens": "Dibuka: {date}",
       "closes": "Ditutup: {date}",
-      "noDates": "Tiada tarikh diterbitkan"
+      "noDates": "Tiada tarikh diterbitkan",
+      "staleShort": "Perlu semakan semula"
     },
     "type": {
       "financing": "Pembiayaan",
