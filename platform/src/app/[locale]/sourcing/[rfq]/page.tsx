@@ -54,7 +54,7 @@ export default async function SourcingDetailPage({
     name: i.name, quantity: String(i.quantity), unit: i.unit, category_slug: i.category_slug ?? undefined,
     specification: i.specification ?? '',
   })));
-  return <main className="container">
+  return <div className="container">
     <nav className="link-row" aria-label={t('title')}>
       <Link href={buyer ? '/sourcing' : `/orgs/${partnerId}/partner/sourcing`} locale={locale} className="btn btn-secondary">
         {buyer ? t('myRequests') : t('partnerRequests')}
@@ -186,5 +186,5 @@ export default async function SourcingDetailPage({
     </section> : null}
     <section><h2>{t('timeline')}</h2><ol>{timeline.map((event, n) =>
       <li key={n}>{event.kind} · {event.at.slice(0, 10)}</li>)}</ol></section>
-  </main>;
+  </div>;
 }

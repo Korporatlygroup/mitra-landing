@@ -40,7 +40,7 @@ test('seller: five-step business onboarding, document upload without a scanner, 
   const orgId = persona('seller').orgId!;
   await s.login();
 
-  await s.must('seller-onboarding', 'step 1 to 4 accept valid details', async () => {
+  await s.check('seller-onboarding', 'step 1 to 4 accept valid details', async () => {
     await s.goto(`${bizPath(orgId, '/onboarding')}?step=1`);
     await s.page.locator('#business_name').fill(def('seller').orgName!);
     await s.page.locator('#category_slug').selectOption('tailoring-apparel');

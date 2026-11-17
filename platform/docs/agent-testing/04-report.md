@@ -49,3 +49,18 @@ Per-email login throttle and the Auth rate limit forced waits (150 s) and made t
 
 ## Recommended product improvements (for review, not implemented)
 Return 403 on denied admin pages; refresh the quotation form version after each save; hide or explain the "Partner" organisation type; show remaining lock time on login throttling; link the five open requests in the limit message; add an in-app way to accept an invitation when email is down; remove the nested `<main>`.
+
+
+## Resolution of the findings (follow-up, 2026-11-17)
+| ID | Outcome | Evidence |
+|---|---|---|
+| F-01 stale quotation send | **Withdrawn: not a product defect.** Optimistic locking works. The error appeared only when the suite pressed Send while the save was still re-rendering. With the page settled, three consecutive saves advanced the draft version 1, 2, 3 with no error, and the full negotiation then passed (control run ctl31). | Debug run printed both `expectedVersion` fields: 1/1, 2/2, 3/3; no alert. |
+| F-02 Partner dead end | **Withdrawn: test gap, product behaves as designed.** A partner owner must use an authenticator app (stated on the form) and submit the organisation profile; an administrator then approves. With the supplier persona given TOTP, the profile form, administrator approval and the supplier wizard all passed (ctl22, ctl26). | `tests/agents/06-catalogue-sourcing.spec.ts` |
+| F-03 HTTP 200 on denied admin pages | **Not changed, deliberately.** Returning 403 needs Next's experimental `forbidden()` (a config flag plus edits in about 24 pages with different markup) and its behaviour on the Cloudflare adapter is unverified. No data is exposed. Revisit after the hosting decision. | Code survey of all `noAccess` sites |
+| F-04 nested `<main>` | **Fixed**: five pages now render a `div` inside the layout's single `main` (`admin/sourcing`, `sourcing`, `sourcing/new`, `sourcing/[rfq]`, `partner/sourcing`). The suite's single-landmark check no longer fails (ctl20 onward). | commit with this note |
+| F-05 login throttle message | **Fixed**: the message now says to wait a few minutes (up to 15), in English, Bahasa Melayu and Tamil (Malay and Tamil are machine-assisted wording, needing native review). The limit itself is unchanged. | `messages/*.json` |
+| F-06 request cap message | **Fixed**: points to "My requests". Also found: new requests are capped at **10 per day per user** and show "Too many tries" (now explained by the new wording). | `messages/*.json`; migration `reqsubmit` limit |
+| F-07 staging admin debris | **Fixed on staging**: 74 throwaway `hosted-*@example.test` administrator memberships were removed; the two agent administrators remain. Staging only. | SQL on `mitra-staging` |
+| F-08 missing features | **Not fixable as a bug**: Business Readiness Passport, course catalogue, payments and email are product scope or need a provider; they stay on the roadmap list. | Inventory |
+
+Test-suite fixes made along the way (not product changes): login waits for the per-email throttle, the interest step on the seller board, collapsed profile form on Business help, supplier MFA, and a clean-slate step. A rerun of the whole suite in one go is limited by the per-user daily request cap, so the negotiation can resume on an existing enquiry with `AGENT_REUSE_ENQUIRY=<id>`.

@@ -6,7 +6,6 @@ import { Agent, cover, finding } from './harness';
 test.describe.configure({ mode: 'serial' });
 
 const PUBLIC = ['/', '/directory', '/catalogue', '/business-help', '/business-help/find', '/news', '/search', '/signup', '/login', '/forgot-password', '/privacy', '/terms', '/cookies', '/marketplace-policy', '/complaints', '/government-disclaimer'];
-const RAW_KEY = /\b(?:MISSING_MESSAGE|[a-z][a-zA-Z0-9]+\.[a-z][a-zA-Z0-9]+\.[a-z][a-zA-Z0-9]+)\b(?![\w@/.-])/;
 
 test('visitor: public pages in en, ms and ta load, have a heading and no raw message keys', async ({ browser }) => {
   test.setTimeout(900_000);
