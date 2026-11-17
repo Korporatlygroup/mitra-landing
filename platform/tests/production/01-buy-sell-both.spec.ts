@@ -107,7 +107,9 @@ test('one account, both sides: a business can buy; a buyer can start selling; bo
   await buyer.check('prod-both', 'a buyer workspace offers "Sell on INOK"', async () => {
     await buyer.goto('/en/requests');
     // The link is offered only while the account has no business organisation yet (a rerun after the next step has already added one).
-    const already = await buyer.page.locator('a[href*="/orgs/"]', { hasText: 'PROD TEST Buyer Now Sells' }).count();
+    await buyer.goto('/en/orgs');
+    const already = await buyer.page.getByText('PROD TEST Buyer Now Sells (test)').count();
+    await buyer.goto('/en/requests');
     if (!already) await expect(buyer.page.locator('a[href*="/orgs/new?purpose=sell"]').first()).toBeAttached();
   });
   await buyer.check('prod-both', 'adding a business organisation to the same account', async () => {
