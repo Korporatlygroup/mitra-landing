@@ -1024,9 +1024,7 @@
     "_note": "Links into the INOK platform (app.inok.my). English entry points; the platform offers Bahasa Melayu (/ms) and Tamil (/ta) from its own language switch.",
     "origin": "https://app.inok.my",
     "links": [
-      { "label": "Get started", "path": "/en/signup" },
-      { "label": "Sign in", "path": "/en/login" },
-      { "label": "Explore businesses", "path": "/en/directory" }
+      { "label": "Explore Businesses", "path": "/en/directory", "cta": true }
     ]
   }
 }
