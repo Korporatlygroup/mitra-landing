@@ -100,3 +100,12 @@
   .dir-filters { flex-wrap: wrap; }
   .dir-filters nav { width: 100%; }
 }
+
+/* Products filter disclosure: button only on phones. */
+.fsheet-btn { display: none; }
+@media (max-width: 639px) {
+  .fsheet-btn { display: inline-flex; width: 100%; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .fsheet[data-open='false'] .fsheet-body { display: none; }
+}
+
+.compare-differs .muted, .compare-differs .mut { color: #475569; }

@@ -4,7 +4,7 @@ import {
   axeClean, card, daysAgo, makePartner, makeProduct, makeReviewer, makeSupplier, partnerAcknowledge, partnerClarify, partnerView, requestEvents, requestItems, requestsForSupplier, requestsOfBuyer,
   savedProductIds, tb, tcm, today, type Product,
 } from './support/p5-buyer';
-import { loginUi, logoutUi } from './support/ui';
+import { createOrgUi, loginUi, logoutUi } from './support/ui';
 
 // E60 (journey 4): a Malaysian buyer finds products from India, filters, compares two, saves one, sends a real price request, signs out and in
 // again and finds both still there; the partner sees the request. Real database, real RPCs, synthetic data. Persisted state is read with SQL.
@@ -108,6 +108,8 @@ test('E60 buyer journey: search, filter, compare, save, request a price, sign ou
   await expect(page).toHaveURL(/\/login\?next=/);
   await fillLogin(page, buyer);
   await expect(page).toHaveURL(new RegExp(`/catalogue\\?q=${tag}$`));
+  await createOrgUi(page, 'buyer', 'E60 Buyer Co'); // actions need an organisation
+  await page.goto(`/en/catalogue?q=${tag}`);
 
   // ---- signed in: save one product, the state comes from the database
   await page.waitForLoadState('networkidle');

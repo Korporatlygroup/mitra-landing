@@ -1,3 +1,4 @@
+import FilterSheet from '@/components/catalogue/FilterSheet';
 import { getTranslations } from 'next-intl/server';
 import CardActions from '@/components/catalogue/CardActions';
 import { hasActiveFilters, pageCount, parseSearchFilters, searchQueryString, toServiceParams } from '@/components/catalogue/helpers';
@@ -50,6 +51,7 @@ export default async function CataloguePage({
       <p><Link href="/sourcing/new" locale={locale} className="btn btn-primary">{t6('new')}</Link></p>
       <p className="muted">{tc('price.note')}</p>
 
+      <FilterSheet label={t('search.filters')} active={filtered}>
       <form method="get" className="form catalogue-filters" role="search" aria-label={t('search.label')}>
         <div className="field">
           <label htmlFor="q">{t('search.q')}</label>
@@ -122,6 +124,7 @@ export default async function CataloguePage({
           ) : null}
         </div>
       </form>
+      </FilterSheet>
 
       {f.supplier ? (
         <p className="catalogue-active-filter">

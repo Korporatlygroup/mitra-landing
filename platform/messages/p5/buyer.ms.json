@@ -38,6 +38,7 @@
       "priceMin": "Harga terendah",
       "priceMax": "Harga tertinggi",
       "needCurrency": "Sila pilih mata wang untuk menapis mengikut harga. Penapis harga tidak digunakan.",
+      "filters": "Penapis",
       "apply": "Cari",
       "clear": "Kosongkan penapis",
       "onlySupplier": "Hanya produk daripada {name}",
