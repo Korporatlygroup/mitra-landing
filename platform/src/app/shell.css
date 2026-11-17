@@ -973,3 +973,17 @@ body:has(.focus-shell) > .pub-chrome {
 .org-btn-top .orgtxt strong, .org-btn-top .orgtxt small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .org-menu-top { left: auto; right: 0; width: 280px; }
 @media (max-width: 899px) { .org-btn-top .orgtxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .org-btn-top { padding: 4px; } }
+
+/* Admin menu: a Menu button on phones, the full column from 900px */
+.ad-headrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ad-toggle { display: none; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #4a1a2c; background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.ad-collapsible { display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 899px) {
+  .ad-toggle { display: inline-flex; align-items: center; }
+  .ad-side[data-open='false'] .ad-collapsible { display: none; }
+  .ad-side { flex-basis: 100%; padding-bottom: 12px; }
+  .ad-brand { padding-bottom: 4px; }
+  .ad-main { padding: 20px 16px 56px; }
+}
+.ad-toggle { white-space: nowrap; }
+.ad-brand > :first-child { flex: none; white-space: nowrap; }

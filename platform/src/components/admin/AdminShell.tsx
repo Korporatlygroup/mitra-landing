@@ -9,6 +9,7 @@ import { adminListProducts } from '@/server/services/biz-products';
 import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
 import { queueCounts } from '@/server/services/verification';
+import AdminSide from './AdminSide';
 import AdminNav, { type AdminGroup } from './AdminNav';
 
 /** Console shell for MITRA staff: dark menu with queue counts, then the page. Non-staff see the page as it is (it answers with its own refusal). */
@@ -73,7 +74,10 @@ export default async function AdminShell({ locale, children }: { locale: string;
 
   return (
     <div className="adm-shell">
-      <aside className="ad-side" aria-label={a('label')}>
+      <AdminSide
+        label={a('label')}
+        menuLabel={t('ws.openMenu')}
+        head={
         <div className="ad-brand">
           <Logo locale={locale} inverted href="/admin" label={a('brand')} />
           <span>
@@ -81,6 +85,8 @@ export default async function AdminShell({ locale, children }: { locale: string;
             <small>{a('sub')}</small>
           </span>
         </div>
+        }
+      >
         <AdminNav groups={groups} label={a('label')} />
         <div className="ad-signout">
           <form action={signOutAction}>
@@ -95,7 +101,7 @@ export default async function AdminShell({ locale, children }: { locale: string;
             <span>{t('nav.account')}</span>
           </Link>
         </div>
-      </aside>
+      </AdminSide>
       <div className="ad-main">{children}</div>
     </div>
   );

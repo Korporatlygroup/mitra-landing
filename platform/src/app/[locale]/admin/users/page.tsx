@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import MembersManager from '@/components/MembersManager';
+import PageHeader from '@/components/shared/PageHeader';
 import { getRolePermissions, listMembers, listPendingInvitations } from '@/server/services/orgs';
 import { requireSession } from '@/server/session';
 import { pageTitle } from '@/lib/metadata';
@@ -19,7 +20,7 @@ export default async function AdminUsersPage({ params }: { params: Promise<{ loc
   if (!mine || !perms.has('admin:users')) {
     return (
       <>
-        <h1>{t('usersTitle')}</h1>
+        <PageHeader title={t('usersTitle')} />
         <p role="alert" className="message message-error">
           {t('noAccess')}
         </p>
@@ -30,8 +31,7 @@ export default async function AdminUsersPage({ params }: { params: Promise<{ loc
   const [members, invitations] = await Promise.all([listMembers(s.supabase, mine.org.id), listPendingInvitations(s.supabase, mine.org.id)]);
   return (
     <>
-      <h1>{t('usersTitle')}</h1>
-      <p>{t('usersIntro')}</p>
+      <PageHeader title={t('usersTitle')} sub={t('usersIntro')} />
       <MembersManager locale={locale} org={mine.org} meId={s.user.id} myRole={mine.role} perms={perms} members={members} invitations={invitations} />
     </>
   );
