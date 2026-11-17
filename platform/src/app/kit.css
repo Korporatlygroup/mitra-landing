@@ -85,3 +85,18 @@
 .catalogue-card-title a:hover { color: var(--brand); }
 .catalogue-card .p5-price { color: var(--brand); }
 .catalogue-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }
+
+/* Phone width: Home search wraps (input on its own row, buttons below); Directory category chips scroll in one row instead of a tall wrapped block. */
+@media (max-width: 639px) {
+  .home-search { flex-wrap: wrap; padding: 8px 10px; }
+  .home-search input { flex: 1 1 calc(100% - 44px); }
+  .home-search .btn { flex: 1 1 40%; white-space: nowrap; }
+  .dir-search { flex-wrap: wrap; border-radius: 16px; padding: 6px 10px; row-gap: 6px; }
+  .dir-search input[type="search"] { flex: 1 1 calc(100% - 40px); }
+  .dir-search select { flex: 1 1 8rem; }
+  .dir-search .btn { flex: 1 1 6rem; }
+  .dir-filters .fchip-row { flex-wrap: nowrap; overflow-x: auto; max-width: 100%; padding-bottom: 6px; scroll-snap-type: x proximity; -webkit-overflow-scrolling: touch; }
+  .dir-filters .fchip { flex: none; scroll-snap-align: start; white-space: nowrap; }
+  .dir-filters { flex-wrap: wrap; }
+  .dir-filters nav { width: 100%; }
+}
