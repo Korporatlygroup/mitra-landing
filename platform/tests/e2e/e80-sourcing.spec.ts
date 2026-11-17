@@ -128,7 +128,7 @@ for (const locale of ['en', 'ta', 'ms'] as const) {
       [rfq, 'preferred_selected']))[0]!.n).toBe(1);
     await page.locator('#template-title').fill('Synthetic repeat list');
     await page.getByRole('button', { name: msg(locale, 'p6.saveTemplate') }).click();
-    await expect(page.getByText(msg(locale, 'p6.templateSaved'), { exact: true })).toBeVisible();
+    await expect(page.locator('.form-message-slot').filter({ hasText: msg(locale, 'p6.templateSaved') })).toBeVisible();
     await page.goto(`/${locale}/sourcing`);
     await page.getByRole('link', { name: msg(locale, 'p6.useTemplate') }).last().click();
     await expect(page.locator('#product-0')).toHaveValue('Synthetic cotton rolls');

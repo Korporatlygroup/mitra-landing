@@ -49,9 +49,12 @@ test('E22 step 2: bad SSM numbers are refused; both valid formats are accepted',
   await expect(page).toHaveURL(/step=2$/);
 
   for (const bad of ['123', 'ABCDEFGHIJKL', '12345678-A', '2020010123456', 'no number']) {
+    await page.goto(page.url()); // fresh page each round: an earlier round's late response must not overwrite what is typed now
+    await page.waitForLoadState('networkidle');
     await noNative(page);
     await fillStep2(page, { ssm: bad, businessType: 'sdn_bhd' });
     await next(page).click();
+    await page.waitForLoadState('networkidle');
     await expect(alertWith(page, t('errors.invalid_ssm')), `"${bad}" is refused`).toBeVisible();
     await expect(page.locator('#ssm_number')).toHaveValue(bad);
     await expect(page.locator('#business_type')).toHaveValue('sdn_bhd');
@@ -83,13 +86,18 @@ test('E22 step 3: missing state, bad postcode; typed values kept', async ({ page
   await expect(page.locator('#address_line')).toHaveValue('3 Jalan Satu');
 
   for (const bad of ['1234', '12ab5', 'abcde', '12 45']) {
+    await page.waitForLoadState('networkidle');
+    await page.waitForTimeout(400); // the previous round's response must be applied before typing again
     await fillStep3(page, { state: 'Selangor', postcode: bad });
     await next(page).click();
+    await page.waitForLoadState('networkidle');
     await expect(alertWith(page, t('errors.invalid_postcode')), `postcode "${bad}"`).toBeVisible();
     await expect(page.locator('#postcode')).toHaveValue(bad);
     await expect(page.locator('#state')).toHaveValue('Selangor');
     await expect(page.locator('#district')).toHaveValue('Klang');
   }
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(400);
   await fillStep3(page, { postcode: '47301' });
   await next(page).click();
   await expect(page).toHaveURL(/step=4$/);

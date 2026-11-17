@@ -104,9 +104,8 @@ test('B + C personalised matching, saving and self-reported application tracking
   test.setTimeout(240_000);
   await loginUi(page, owner, 'en');
   await page.goto('/en/business-help');
-  await expect(page.getByRole('heading', { level: 2, name: t('en', 'dash.recommended') })).toBeVisible();
-  await expect(page.getByRole('heading', { level: 2, name: t('en', 'dash.closing') })).toBeVisible();
-  await expect(page.getByRole('heading', { level: 2, name: t('en', 'dash.training') })).toBeVisible();
+  // The programmes page opens on the programmes with tabs (the older dashboard sections were replaced by the opportunities layout).
+  for (const k of ['tabRec', 'tabClosing', 'tabSaved']) await expect(page.getByRole('link', { name: new RegExp(`^${t('en', `opps.${k}`)}\\s*\\d*$`) })).toBeVisible();
 
   // Nothing answered: unknown is not satisfied. Organisation-only programmes are never recommended to a shop owner.
   await page.goto(`/en/business-help/find?org=${orgId}`);
@@ -171,9 +170,9 @@ test('B + C personalised matching, saving and self-reported application tracking
   // Revisit later: the stage and the date are still there, and the dashboard lists it under My applications.
   await page.reload();
   await expect(page.locator(`[data-programme="${slugs.grant}"] select[name=tracking_status]`)).toHaveValue('applied_externally');
-  await page.goto(`/en/business-help?org=${orgId}`);
-  const apps = page.locator('section').filter({ has: page.getByRole('heading', { level: 2, name: t('en', 'dash.applications') }) });
-  await expect(apps).toContainText(`Alpha Grant ${tag}`);
+  // (the older 'My applications' dashboard section is gone; the saved tab of the programmes page lists it)
+  await page.goto(`/en/business-help?tab=saved&org=${orgId}`);
+  await expect(page.locator('main')).toContainText(`Alpha Grant ${tag}`);
   await axeClean(page, 'dashboard');
 });
 
@@ -328,7 +327,7 @@ test('G multilingual: Tamil and Bahasa Melayu pages, the language switch keeps t
   await (await signedClient(owner)).client.rpc('gov_save_programme', { p_org: orgId, p_programme: ids.grant });
   await loginUi(page, owner, 'ms');
   await page.goto('/ms/business-help');
-  await expect(page.getByRole('heading', { level: 2, name: t('ms', 'dash.recommended') })).toBeVisible();
+  await expect(page.getByRole('link', { name: new RegExp(`^${t('ms', 'opps.tabRec')}\\s*\\d*$`) })).toBeVisible();
   await page.goto('/ta/business-help/saved');
   await expect(page.locator('main')).toContainText(t('ta', 'saved.reportedNote'));
   await axeClean(page, 'ta saved');

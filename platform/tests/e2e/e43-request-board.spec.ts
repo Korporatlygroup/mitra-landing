@@ -103,6 +103,7 @@ test('E43 buyer posts a board request; eligible seller finds, reads and answers;
   const url = new URL(page.url());
   const id = url.searchParams.get('id')!;
   await page.goto(`/en/requests/new?step=4&id=${id}`);
+  await page.waitForLoadState('networkidle'); // let the page hydrate before typing (slow runners)
   await page.locator('#description').fill('Lunch boxes for an office event, mixed menu, delivered by noon on the day.');
   await page.getByRole('button', { name: t('ob.next'), exact: true }).click();
   await expect(page).toHaveURL(/step=5&id=/);
