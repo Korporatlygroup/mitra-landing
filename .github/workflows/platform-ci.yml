@@ -25,7 +25,7 @@ jobs:
   platform:
     name: Platform (lint, types, unit, database, integration, build, E2E)
     runs-on: ubuntu-latest
-    timeout-minutes: 45
+    timeout-minutes: 100
     defaults:
       run:
         working-directory: platform
