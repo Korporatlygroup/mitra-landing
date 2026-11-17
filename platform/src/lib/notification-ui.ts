@@ -25,6 +25,8 @@ export const KNOWN_KINDS = new Set([
   'sourcing_sample_requested',
   'sourcing_document_uploaded',
   'sourcing_quote_reminder',
+  'join_requested',
+  'duplicate_flagged',
 ]);
 
 export const GOV_CATEGORIES = new Set(['new_match', 'opens', 'deadline', 'rule_change', 'unavailable', 'reminder', 'recheck']);
@@ -34,6 +36,8 @@ export function notificationTarget(n: NotificationRow): string | null {
   if (n.entity_type === 'gov_programme') return '/business-help/saved';
   if (n.entity_type === 'verification_claim' && n.org_id) return `/orgs/${n.org_id}/business/verification`;
   if (n.entity_type === 'listing' && n.org_id) return `/orgs/${n.org_id}/business/listing`;
+  if (n.entity_type === 'org_join_request' && n.org_id) return `/orgs/${n.org_id}/members`;
+  if (n.entity_type === 'organisation' && n.kind === 'duplicate.flagged') return '/admin/duplicates';
   if (n.entity_type === 'buyer_request' && n.entity_id) {
     return n.kind === 'request.invited' && n.org_id ? `/orgs/${n.org_id}/business/requests/${n.entity_id}` : `/requests/${n.entity_id}`;
   }

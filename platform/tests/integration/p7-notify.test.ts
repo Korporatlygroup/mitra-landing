@@ -48,7 +48,8 @@ afterAll(async () => {
   await sql(`delete from public.gov_saved where programme_id = $1`, [progId]);
   await sql(`delete from public.gov_programmes where id = $1`, [progId]);
   await sql(`delete from public.gov_sources where id = $1`, [sourceId]);
-  await sql(`delete from public.gov_agencies where name = 'Notify agency'`);
+  // Only agencies nothing references: an agency left behind by an earlier aborted run may still own sources and must not fail this teardown.
+  await sql(`delete from public.gov_agencies a where a.name = 'Notify agency' and not exists (select 1 from public.gov_sources s where s.agency_id = a.id)`);
 });
 
 const emit = (kind: string, version: number) => sql(`select private.gov_emit_events($1, $2, $3, '{amount_changed}')`, [progId, version, kind]);

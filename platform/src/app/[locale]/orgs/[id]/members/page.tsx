@@ -1,8 +1,11 @@
 import { getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import MembersManager from '@/components/MembersManager';
+import ActionForm from '@/components/ActionForm';
 import { Link } from '@/i18n/navigation';
 import { uuidSchema } from '@/lib/schemas';
+import { listJoinRequests } from '@/server/services/directory';
+import { resolveJoinRequestAction } from '../../join-actions';
 import { getOrg, getRolePermissions, listMembers, listPendingInvitations } from '@/server/services/orgs';
 import { requireSession } from '@/server/session';
 import { pageTitle } from '@/lib/metadata';
@@ -23,10 +26,12 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
 
   const perms = await getRolePermissions(s.supabase, mine.role);
   const canSeeInvites = perms.has(org.type === 'mitra' ? 'admin:users' : 'member:invite');
-  const [members, invitations] = await Promise.all([
+  const [members, invitations, joinReq] = await Promise.all([
     listMembers(s.supabase, id),
     canSeeInvites ? listPendingInvitations(s.supabase, id) : Promise.resolve([]),
+    canSeeInvites && org.type !== 'mitra' ? listJoinRequests(s.supabase, id) : Promise.resolve(null),
   ]);
+  const joinRequests = joinReq && joinReq.ok ? joinReq.data : [];
 
   return (
     <>
@@ -53,6 +58,40 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
         </p>
       ) : null}
       <MembersManager locale={locale} org={org} meId={s.user.id} myRole={mine.role} perms={perms} members={members} invitations={invitations} />
+      {canSeeInvites && org.type !== 'mitra' ? (
+        <section aria-labelledby="join-h" className="card" style={{ marginTop: 24 }}>
+          <h2 id="join-h" style={{ marginTop: 0 }}>
+            {t('members.joinTitle')}
+          </h2>
+          <p className="muted">{t('members.joinHint')}</p>
+          {joinRequests.length === 0 ? (
+            <p>{t('members.joinNone')}</p>
+          ) : (
+            <ul className="card-list">
+              {joinRequests.map((r) => (
+                <li key={r.id} className="card" style={{ boxShadow: 'none' }}>
+                  <strong>{r.requester_name}</strong> &middot; {r.requester_email}
+                  <p className="muted" style={{ margin: '2px 0' }}>
+                    {t(`members.joinStatus_${r.status}`)} &middot; <time dateTime={r.created_at}>{new Date(r.created_at).toLocaleDateString(locale)}</time>
+                  </p>
+                  {r.message ? <p style={{ whiteSpace: 'pre-line' }}>{r.message}</p> : null}
+                  {r.status === 'pending' ? (
+                    <div className="link-row">
+                      {(['invited', 'declined'] as const).map((d) => (
+                        <ActionForm key={d} action={resolveJoinRequestAction} submitLabel={t(d === 'invited' ? 'members.joinInvited' : 'members.joinDeclined')} variant="secondary">
+                          <input type="hidden" name="locale" value={locale} />
+                          <input type="hidden" name="requestId" value={r.id} />
+                          <input type="hidden" name="decision" value={d} />
+                        </ActionForm>
+                      ))}
+                    </div>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </section>
+      ) : null}
     </>
   );
 }

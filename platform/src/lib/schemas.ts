@@ -260,6 +260,16 @@ export const listingSaveSchema = z.object({
   public_email: shortText(254),
   show_phone: checkboxOrEmpty,
   show_email: checkboxOrEmpty,
+  // Public links and hours: only the shape is checked here; the database validates hosts, schemes and numbers.
+  link_whatsapp: shortText(30),
+  link_website: shortText(300),
+  link_facebook: shortText(300),
+  link_instagram: shortText(300),
+  link_tiktok: shortText(300),
+  link_linkedin: shortText(300),
+  link_youtube: shortText(300),
+  link_google_maps: shortText(300),
+  hours: shortText(300),
 });
 export const listingVersionSchema = z.object({ ...formBase, expectedVersion: intField });
 export const listingOrgSchema = z.object(formBase);

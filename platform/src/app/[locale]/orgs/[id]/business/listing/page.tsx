@@ -151,6 +151,20 @@ export default async function ListingEditorPage({ params }: { params: Promise<{ 
             <Field id="public_email" name="public_email" type="email" label={t('listing.publicEmail')} defaultValue={draft.public_email ?? ''} maxLength={254} />
           </fieldset>
 
+          <fieldset>
+            <legend>{t('listing.linksTitle')}</legend>
+            <p className="hint">{t('listing.linksHint')}</p>
+            <Field id="link_whatsapp" name="link_whatsapp" label={t('listing.linkWhatsapp')} defaultValue={draft.links?.whatsapp ?? ''} maxLength={30} autoComplete="off" />
+            <Field id="link_website" name="link_website" label={t('listing.linkWebsite')} defaultValue={draft.links?.website ?? ''} maxLength={300} autoComplete="url" />
+            <Field id="link_facebook" name="link_facebook" label={t('listing.linkFacebook')} defaultValue={draft.links?.facebook ?? ''} maxLength={300} autoComplete="off" />
+            <Field id="link_instagram" name="link_instagram" label={t('listing.linkInstagram')} defaultValue={draft.links?.instagram ?? ''} maxLength={300} autoComplete="off" />
+            <Field id="link_tiktok" name="link_tiktok" label={t('listing.linkTiktok')} defaultValue={draft.links?.tiktok ?? ''} maxLength={300} autoComplete="off" />
+            <Field id="link_linkedin" name="link_linkedin" label={t('listing.linkLinkedin')} defaultValue={draft.links?.linkedin ?? ''} maxLength={300} autoComplete="off" />
+            <Field id="link_youtube" name="link_youtube" label={t('listing.linkYoutube')} defaultValue={draft.links?.youtube ?? ''} maxLength={300} autoComplete="off" />
+            <Field id="link_google_maps" name="link_google_maps" label={t('listing.linkMaps')} defaultValue={draft.links?.google_maps ?? ''} maxLength={300} autoComplete="off" />
+            <Field id="hours" name="hours" label={t('listing.hoursLabel')} hint={t('listing.hoursHint')} defaultValue={draft.hours ?? ''} maxLength={300} />
+          </fieldset>
+
           <h2>{t('listing.servicesTitle')}</h2>
           <p>{t('listing.servicesHint')}</p>
           {Array.from({ length: serviceRows }, (_, i) => {

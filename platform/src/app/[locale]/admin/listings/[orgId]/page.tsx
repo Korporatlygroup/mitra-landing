@@ -4,6 +4,7 @@ import ActionForm from '@/components/ActionForm';
 import ListingView from '@/components/ListingView';
 import StatusChip from '@/components/StatusChip';
 import { Link } from '@/i18n/navigation';
+import type { ListingLinks } from '@/lib/links';
 import { pageTitle } from '@/lib/metadata';
 import { uuidSchema } from '@/lib/schemas';
 import { requireModerator } from '@/server/reviewer';
@@ -70,6 +71,8 @@ export default async function AdminListingReviewPage({ params }: { params: Promi
                 description: d.description ?? null,
                 phone: d.show_phone ? (d.public_phone ?? null) : null,
                 email: d.show_email ? (d.public_email ?? null) : null,
+                links: d.links as ListingLinks | undefined,
+                hours: d.hours ?? null,
                 reviewed: [],
                 accepting_requests: l.accepting_requests,
                 service_details: d.services ?? [],

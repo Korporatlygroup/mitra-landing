@@ -46,6 +46,8 @@ export interface ListingDetail extends ListingCard {
   description: string | null;
   phone: string | null;
   email: string | null;
+  links?: Partial<Record<'whatsapp' | 'website' | 'facebook' | 'instagram' | 'tiktok' | 'linkedin' | 'youtube' | 'google_maps', string>> | null;
+  hours?: string | null;
   service_details: ServiceDetail[];
   portfolio: { title: string; description: string | null; category_slug?: string | null; project_date?: string | null }[];
 }
@@ -79,6 +81,8 @@ export interface ListingDraft {
   show_email?: boolean;
   public_phone?: string | null;
   public_email?: string | null;
+  links?: Record<string, string | null>;
+  hours?: string | null;
   services?: DraftService[];
   portfolio?: { title: string; description: string | null; category_slug?: string | null; project_date?: string | null }[];
   profile?: { business_name: string; category_id: string; state: string | null; district: string | null };
@@ -458,4 +462,58 @@ export async function listEnquiries(db: Db, f: { buyerOrgIds?: string[]; sellerO
   if (f.sellerOrgId) q = q.eq('seller_org_id', f.sellerOrgId);
   const { data } = await q;
   return (data ?? []) as EnquiryRow[];
+}
+
+// ------------------------------------------------------------------------------------------------ duplicates and join requests
+
+export interface PublishedDuplicate {
+  slug: string;
+  name: string;
+  reason: 'ssm' | 'name';
+}
+
+/** Published businesses (public information only) that match this registration number or name. */
+export function findPublishedDuplicates(db: Db, ssm: string | null, name: string | null): Promise<Result<PublishedDuplicate[]>> {
+  return rpc<PublishedDuplicate[]>(db, 'find_published_duplicates', { p_ssm: ssm, p_name: name });
+}
+
+export function requestOrgMembership(db: Db, slug: string, message: string | null): Promise<Result<string>> {
+  return rpc<string>(db, 'request_org_membership', { p_slug: slug, p_message: message });
+}
+
+export interface JoinRequestRow {
+  id: string;
+  requester_name: string;
+  requester_email: string;
+  message: string | null;
+  status: 'pending' | 'invited' | 'declined';
+  created_at: string;
+}
+
+export function listJoinRequests(db: Db, org: string): Promise<Result<JoinRequestRow[]>> {
+  return rpc<JoinRequestRow[]>(db, 'list_join_requests', { p_org: org });
+}
+
+export function resolveJoinRequest(db: Db, request: string, decision: 'invited' | 'declined'): Promise<Result<null>> {
+  return rpc<null>(db, 'resolve_join_request', { p_request: request, p_decision: decision });
+}
+
+export interface DuplicateFlagRow {
+  id: string;
+  status: 'open' | 'dismissed' | 'confirmed';
+  reason: 'ssm' | 'name';
+  created_at: string;
+  org_id: string;
+  org_name: string;
+  other_org_id: string;
+  other_org_name: string;
+  note: string | null;
+}
+
+export function listDuplicateFlags(db: Db, status: DuplicateFlagRow['status'] = 'open'): Promise<Result<DuplicateFlagRow[]>> {
+  return rpc<DuplicateFlagRow[]>(db, 'list_duplicate_flags', { p_status: status });
+}
+
+export function resolveDuplicateFlag(db: Db, flag: string, decision: 'dismiss' | 'confirm', note: string): Promise<Result<null>> {
+  return rpc<null>(db, 'resolve_duplicate_flag', { p_flag: flag, p_decision: decision, p_note: note });
 }

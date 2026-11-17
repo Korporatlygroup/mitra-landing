@@ -11,6 +11,8 @@ import { catName } from '@/lib/category';
 import { pageTitle } from '@/lib/metadata';
 import { BUSINESS_TYPES, CLAIM_TYPES, MY_STATES, REP_ROLES } from '@/lib/schemas';
 import { requireBusinessContext } from '@/server/business-context';
+import { findPublishedDuplicates } from '@/server/services/directory';
+import { requestMembershipAction } from '../../../join-actions';
 import {
   applicableClaims,
   getBusinessPrivate,
@@ -201,6 +203,9 @@ export default async function OnboardingPage({
     );
   }
 
+  // Possible duplicates: only already-published businesses are shown (public information). Never blocks; the person can always continue.
+  const dupRes = profile && step >= 2 && step <= 3 ? await findPublishedDuplicates(db, profile.ssm_number ?? null, profile.business_name) : null;
+  const dups = dupRes && dupRes.ok ? dupRes.data : [];
   const unregistered = profile ? profile.registration_status !== 'registered' : false;
   const stepDefs = [
     { n: 1, title: t('ob.s1.title'), done: Boolean(profile), skip: false },
@@ -243,6 +248,24 @@ export default async function OnboardingPage({
         </nav>
         <div className="focus-main">
           <div className="focus-card">
+            {dups.length > 0 ? (
+              <section className="banner" role="note" aria-labelledby="dup-h">
+                <h2 id="dup-h" style={{ marginTop: 0, fontSize: '1.0625rem' }}>
+                  {t('orgs.dupTitle')}
+                </h2>
+                <p>{t('orgs.dupBody')}</p>
+                {dups.map((d) => (
+                  <ActionForm key={d.slug} action={requestMembershipAction} submitLabel={`${t('orgs.dupRequest')}: ${d.name}`} variant="secondary">
+                    <input type="hidden" name="locale" value={locale} />
+                    <input type="hidden" name="slug" value={d.slug} />
+                    <Field id={`dup-msg-${d.slug}`} name="message" label={t('orgs.dupMessage')} maxLength={500} />
+                  </ActionForm>
+                ))}
+                <p className="muted" style={{ marginBottom: 0 }}>
+                  {t('orgs.dupContinue')}
+                </p>
+              </section>
+            ) : null}
             {body}
             <p style={{ margin: 0 }}>
               <Link href={back} locale={locale} className="btn btn-secondary">

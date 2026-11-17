@@ -4,6 +4,7 @@ import ProfileLayout from '@/components/public/ProfileLayout';
 import Icon from '@/components/ui/Icon';
 import Tag, { initialsOf, paletteFor } from '@/components/ui/Tag';
 import { catName } from '@/lib/category';
+import { LINK_KINDS, safeLinkHref, whatsappHref, type ListingLinks } from '@/lib/links';
 import type { ReviewedClaim, ServiceDetail } from '@/server/services/directory';
 
 export interface PublicProduct {
@@ -26,6 +27,8 @@ export interface ListingViewData {
   description: string | null;
   phone: string | null;
   email: string | null;
+  links?: ListingLinks | null;
+  hours?: string | null;
   reviewed: ReviewedClaim[];
   accepting_requests: boolean;
   service_details: ServiceDetail[];
@@ -65,6 +68,19 @@ export default async function ListingView({
   const money = (cents: number) => `RM ${fmt.number(cents / 100, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
   const serves = data.serves_nationwide ? t('dir2.allMalaysia') : (data.serves_states ?? []).join(', ');
   const minOrders = data.service_details.filter((s) => s.min_order_qty).map((s) => `${s.min_order_qty} ${s.min_order_unit ?? ''}`.trim());
+
+  // Only well-formed https links to the expected hosts are rendered; anything else is dropped silently.
+  const labelOf: Record<string, string> = {
+    whatsapp: t('dir.whatsappLabel'), website: t('dir.websiteLabel'), facebook: t('dir.facebookLabel'), instagram: t('dir.instagramLabel'),
+    tiktok: t('dir.tiktokLabel'), linkedin: t('dir.linkedinLabel'), youtube: t('dir.youtubeLabel'), google_maps: t('dir.mapsLabel'),
+  };
+  const onlineLinks: { kind: string; label: string; href: string; shown: string }[] = [];
+  const wa = whatsappHref(data.links?.whatsapp);
+  if (wa) onlineLinks.push({ kind: 'whatsapp', label: labelOf.whatsapp!, href: wa, shown: data.links!.whatsapp! });
+  for (const kind of LINK_KINDS) {
+    const href = safeLinkHref(kind, data.links?.[kind]);
+    if (href) onlineLinks.push({ kind, label: labelOf[kind]!, href, shown: href.replace(/^https:\/\/(www\.)?/, '').replace(/\/$/, '') });
+  }
 
   const head = (
     <div style={palStyle}>
@@ -139,6 +155,29 @@ export default async function ListingView({
       ) : (
         <p style={{ margin: 0 }}>{t('dir.contactInApp')}</p>
       )}
+      {onlineLinks.length > 0 || data.hours ? (
+        <>
+          <h2 style={{ margin: '8px 0 0', fontSize: '1.25rem' }}>{t('dir.onlineTitle')}</h2>
+          <dl className="dl" style={{ margin: 0 }}>
+            {data.hours ? (
+              <>
+                <dt>{t('dir.hoursTitle')}</dt>
+                <dd>{data.hours}</dd>
+              </>
+            ) : null}
+            {onlineLinks.map((l) => (
+              <div key={l.kind} style={{ display: 'contents' }}>
+                <dt>{l.label}</dt>
+                <dd>
+                  <a href={l.href} target="_blank" rel="noopener noreferrer nofollow ugc" title={t('dir.externalNote')}>
+                    {l.shown}
+                  </a>
+                </dd>
+              </div>
+            ))}
+          </dl>
+        </>
+      ) : null}
     </div>
   );
 

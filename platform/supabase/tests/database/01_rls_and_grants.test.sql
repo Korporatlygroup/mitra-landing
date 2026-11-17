@@ -255,8 +255,10 @@ select is(
         'admin_news_save(p_id uuid, p_data jsonb, p_expected_version integer)', 'admin_news_set_status(p_id uuid, p_status text, p_publish_at timestamp with time zone, p_expected_version integer)',
         'dash_dismiss(p_org uuid, p_key text)', 'dash_active_dismissals(p_org uuid)',
         'set_marketing_consent(p_on boolean)', 'submit_privacy_request(p_type text, p_details text)', 'list_my_privacy_requests()',
-        'admin_list_privacy_requests(p_status text)', 'admin_update_privacy_request(p_id uuid, p_status text, p_note text)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 184 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls)');
+        'admin_list_privacy_requests(p_status text)', 'admin_update_privacy_request(p_id uuid, p_status text, p_note text)',
+        'list_duplicate_flags(p_status text)', 'resolve_duplicate_flag(p_flag uuid, p_decision text, p_note text)', 'find_published_duplicates(p_ssm text, p_name text)',
+        'request_org_membership(p_slug text, p_message text)', 'list_join_requests(p_org uuid)', 'resolve_join_request(p_request uuid, p_decision text)', 'set_email_notifications(p_on boolean)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 191 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 6 added by business links, duplicate flags and join requests)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -270,8 +272,8 @@ select is(
   (select array_agg(p.proname::text order by p.proname)
    from pg_proc p join pg_namespace n on n.oid = p.pronamespace
    where n.nspname = 'public' and has_function_privilege('service_role', p.oid, 'EXECUTE')),
-  array['bootstrap_first_admin', 'gov_claim_jobs', 'gov_complete_job', 'gov_dispatch_outbox', 'gov_enqueue_due_jobs', 'gov_enqueue_reminders', 'gov_fail_job', 'gov_job_source', 'gov_last_validators', 'gov_mark_email', 'gov_mark_missing', 'gov_mark_unchanged', 'gov_record_page', 'gov_submit_candidate', 'news_digest_candidates', 'news_digest_claim', 'news_digest_posts', 'news_digest_release', 'service_auth_attempt', 'service_complete_sourcing_cleanup', 'service_list_sourcing_cleanup', 'service_list_unscanned_documents', 'service_list_unscanned_product_media', 'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_queue_sourcing_cleanup', 'service_record_auth_event', 'service_record_rejected_upload', 'service_register_document', 'service_register_product_media', 'service_register_sourcing_document', 'service_register_supplier_document', 'service_send_sourcing_reminders', 'service_set_product_media_scan', 'service_set_scan_result', 'service_set_supplier_document_scan'],
-  'S7.8 service_role executes exactly the 36 allow-listed service_* / bootstrap / worker functions from public (8 up to Phase 4, 6 from Phase 5, 9 from Phase 6, 10 Phase 7 worker RPCs, 4 weekly digest RPCs)');
+  array['bootstrap_first_admin', 'claim_notification_emails', 'gov_claim_jobs', 'gov_complete_job', 'gov_dispatch_outbox', 'gov_enqueue_due_jobs', 'gov_enqueue_reminders', 'gov_fail_job', 'gov_job_source', 'gov_last_validators', 'gov_mark_email', 'gov_mark_missing', 'gov_mark_unchanged', 'gov_record_page', 'gov_submit_candidate', 'mark_notification_email', 'news_digest_candidates', 'news_digest_claim', 'news_digest_posts', 'news_digest_release', 'service_auth_attempt', 'service_complete_sourcing_cleanup', 'service_list_sourcing_cleanup', 'service_list_unscanned_documents', 'service_list_unscanned_product_media', 'service_list_unscanned_supplier_documents', 'service_org_recipient_emails', 'service_queue_sourcing_cleanup', 'service_record_auth_event', 'service_record_rejected_upload', 'service_register_document', 'service_register_product_media', 'service_register_sourcing_document', 'service_register_supplier_document', 'service_send_sourcing_reminders', 'service_set_product_media_scan', 'service_set_scan_result', 'service_set_supplier_document_scan'],
+  'S7.8 service_role executes exactly the 38 allow-listed service_* / bootstrap / worker functions from public (8 up to Phase 4, 6 from Phase 5, 9 from Phase 6, 10 Phase 7 worker RPCs, 4 weekly digest RPCs, 2 notification email RPCs)');
 
 select is_empty(
   $$ select p.oid::regprocedure::text from pg_proc p join pg_namespace n on n.oid = p.pronamespace
@@ -350,7 +352,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  88, 'S6.6 inventory: exactly the 88 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign, 1 privacy_requests; new tables must come with RLS tests)');
+  90, 'S6.6 inventory: exactly the 90 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign, 1 privacy_requests, email_preferences, org_join_requests; new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

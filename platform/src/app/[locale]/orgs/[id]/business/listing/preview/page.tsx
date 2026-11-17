@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import ListingView from '@/components/ListingView';
 import { Link } from '@/i18n/navigation';
+import type { ListingLinks } from '@/lib/links';
 import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { getOwnerListing } from '@/server/services/directory';
@@ -58,6 +59,8 @@ export default async function ListingPreviewPage({ params }: { params: Promise<{
           description: draft.description ?? null,
           phone: draft.show_phone ? (draft.public_phone ?? null) : null,
           email: draft.show_email ? (draft.public_email ?? null) : null,
+          links: draft.links as ListingLinks | undefined,
+          hours: draft.hours ?? null,
           reviewed,
           accepting_requests: listing.accepting_requests,
           service_details: draft.services ?? [],
