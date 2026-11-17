@@ -32,7 +32,7 @@ const hidden = new Set([!showInterviews && '#interviews'].filter(Boolean));
 export const navLinks = site.nav.filter((n) => !hidden.has(n.href));
 
 /** Links into the platform. Absolute URLs: they must never take part in the in-page scroll spy (no data-spy). */
-export const appLinks = site.app.links.map((l) => ({ label: l.label, href: `${site.app.origin}${l.path}` }));
+export const appLinks = site.app.links.map((l) => ({ label: l.label, href: `${site.app.origin}${l.path}`, cta: Boolean((l as { cta?: boolean }).cta) }));
 
 /** "Get started" section: cards that open the platform. */
 export const getStarted = {
