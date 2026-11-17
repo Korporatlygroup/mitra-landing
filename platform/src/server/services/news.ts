@@ -16,10 +16,14 @@ export interface NewsItem {
   language: NewsLanguage;
   deadline_on: string | null;
   published_at: string;
+  publisher?: string | null;
+  source_published_on?: string | null;
   saved: boolean;
 }
 export interface NewsDetail extends NewsItem {
   body: string;
+  source_url?: string | null;
+  retrieved_on?: string | null;
 }
 export interface NewsPrefs {
   grants: boolean;

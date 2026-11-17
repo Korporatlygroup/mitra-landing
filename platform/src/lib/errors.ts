@@ -39,6 +39,7 @@ export const KNOWN_MESSAGE_KEYS = [
   'invalid_postcode',
   'invalid_phone',
   'invalid_url',
+  'invalid_source',
   'invalid_url_domain',
   'invalid_whatsapp',
   'invalid_hours',

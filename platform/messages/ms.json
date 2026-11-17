@@ -353,6 +353,7 @@
     "invalid_state": "Sila pilih negeri.",
     "invalid_postcode": "Poskod mestilah 5 digit.",
     "invalid_phone": "Sila semak nombor telefon.",
+    "invalid_source": "Sila nyatakan penerbit dan pautan https ke sumber asal.",
     "invalid_url": "Sila masukkan alamat web yang sah bermula dengan https://.",
     "invalid_url_domain": "Alamat itu tidak dibenarkan untuk jenis pautan ini. Gunakan halaman perniagaan sendiri di laman yang dinyatakan.",
     "invalid_whatsapp": "Sila semak nombor WhatsApp (sertakan kod negara jika bukan nombor Malaysia).",

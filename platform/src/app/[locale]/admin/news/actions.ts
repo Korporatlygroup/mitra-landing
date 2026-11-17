@@ -19,6 +19,10 @@ const schema = z.object({
   language: z.enum(['en', 'ta', 'ms']),
   deadline_on: z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
   publish_at: z.preprocess((v) => (v === '' ? undefined : v), z.string().max(40).optional()),
+  publisher: z.preprocess((v) => (v === '' ? undefined : v), z.string().trim().max(120).optional()),
+  source_url: z.preprocess((v) => (v === '' ? undefined : v), z.string().trim().max(500).optional()),
+  source_published_on: z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
+  retrieved_on: z.preprocess((v) => (v === '' ? undefined : v), z.string().regex(/^\d{4}-\d{2}-\d{2}$/).optional()),
   intent: z.enum(['save', 'publish', 'draft', 'archive']),
 });
 
@@ -41,7 +45,8 @@ export async function saveNewsPostAction(_prev: FormState, f: FormData): Promise
   const saved = await adminSaveNews(
     supabase,
     d.id ?? null,
-    { title: d.title, summary: d.summary, body: d.body, category: d.category, language: d.language, deadline_on: d.deadline_on ?? '', publish_at: publishAt ?? '', sectors, states },
+    { title: d.title, summary: d.summary, body: d.body, category: d.category, language: d.language, deadline_on: d.deadline_on ?? '', publish_at: publishAt ?? '', sectors, states,
+      source_url: d.source_url ?? '', publisher: d.publisher ?? '', source_published_on: d.source_published_on ?? '', retrieved_on: d.retrieved_on ?? '' },
     d.version ?? null,
   );
   if (!saved.ok) return failure(saved.errorKey);

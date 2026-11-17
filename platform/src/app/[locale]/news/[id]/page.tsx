@@ -53,6 +53,18 @@ export default async function NewsPostPage({ params }: { params: Promise<{ local
         <p style={{ margin: '0 0 14px', fontSize: '1.0625rem', fontWeight: 600, lineHeight: 1.55 }}>{n.summary}</p>
         <div style={{ whiteSpace: 'pre-line', lineHeight: 1.75, color: '#2a3530' }}>{n.body}</div>
       </div>
+      {n.source_url && n.publisher && /^https:\/\//.test(n.source_url) ? (
+        <p className="muted" style={{ margin: 0, fontSize: '0.9375rem' }}>
+          {t('news2.sourceLine', {
+            publisher: n.publisher,
+            date: n.source_published_on ? fmt.dateTime(new Date(`${n.source_published_on}T00:00:00Z`), { dateStyle: 'long', timeZone: 'UTC' }) : '-',
+          })}{' '}
+          <a href={n.source_url} target="_blank" rel="noopener noreferrer nofollow">
+            {t('news2.sourceOpen')}
+          </a>
+          {n.retrieved_on ? ` · ${t('news2.retrieved', { date: fmt.dateTime(new Date(`${n.retrieved_on}T00:00:00Z`), { dateStyle: 'medium', timeZone: 'UTC' }) })}` : ''}
+        </p>
+      ) : null}
       {user ? (
         <form action={toggleSaveNewsAction}>
           <input type="hidden" name="postId" value={n.id} />

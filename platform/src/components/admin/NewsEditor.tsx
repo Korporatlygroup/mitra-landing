@@ -16,6 +16,10 @@ export interface EditorPost {
   language: 'en' | 'ta' | 'ms';
   deadline_on: string;
   publish_at: string;
+  source_url: string;
+  publisher: string;
+  source_published_on: string;
+  retrieved_on: string;
   sectors: string[];
   states: string[];
   status: 'draft' | 'published' | 'archived' | 'new';
@@ -83,6 +87,28 @@ export default function NewsEditor({ post, categories, states, sectorLabels }: {
           <input id="np-pub" name="publish_at" type="datetime-local" defaultValue={post.publish_at} />
         </div>
       </div>
+      <fieldset>
+        <legend>{t('fSourceTitle')}</legend>
+        <p className="hint">{t('fSourceHint')}</p>
+        <div className="field">
+          <label htmlFor="np-publisher">{t('fPublisher')}</label>
+          <input id="np-publisher" name="publisher" type="text" maxLength={120} defaultValue={post.publisher} />
+        </div>
+        <div className="field">
+          <label htmlFor="np-srcurl">{t('fSourceUrl')}</label>
+          <input id="np-srcurl" name="source_url" type="url" maxLength={500} placeholder="https://" defaultValue={post.source_url} />
+        </div>
+        <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
+          <div className="field" style={{ flex: '1 1 200px' }}>
+            <label htmlFor="np-srcdate">{t('fSourceDate')}</label>
+            <input id="np-srcdate" name="source_published_on" type="date" defaultValue={post.source_published_on} />
+          </div>
+          <div className="field" style={{ flex: '1 1 200px' }}>
+            <label htmlFor="np-retrieved">{t('fRetrievedOn')}</label>
+            <input id="np-retrieved" name="retrieved_on" type="date" defaultValue={post.retrieved_on} />
+          </div>
+        </div>
+      </fieldset>
       <fieldset>
         <legend>{t('fSectors')}</legend>
         <p className="hint">{t('allHint')}</p>

@@ -45,7 +45,7 @@ export default async function AdminNewsPostPage({
     );
   }
   const cats = await listCategories(s.supabase);
-  let post: EditorPost = { id: null, version: null, title: '', summary: '', body: '', category: 'grants', language: 'en', deadline_on: '', publish_at: '', sectors: [], states: [], status: 'new' };
+  let post: EditorPost = { id: null, version: null, title: '', summary: '', body: '', category: 'grants', language: 'en', deadline_on: '', publish_at: '', source_url: '', publisher: '', source_published_on: '', retrieved_on: '', sectors: [], states: [], status: 'new' };
   if (!isNew) {
     const r = await adminGetNews(s.supabase, id);
     if (!r.ok) notFound();
@@ -60,6 +60,10 @@ export default async function AdminNewsPostPage({
       language: d.language as EditorPost['language'],
       deadline_on: typeof d.deadline_on === 'string' ? d.deadline_on : '',
       publish_at: toLocalInput(d.publish_at),
+      source_url: typeof d.source_url === 'string' ? d.source_url : '',
+      publisher: typeof d.publisher === 'string' ? d.publisher : '',
+      source_published_on: typeof d.source_published_on === 'string' ? d.source_published_on : '',
+      retrieved_on: typeof d.retrieved_on === 'string' ? d.retrieved_on : '',
       sectors: (d.sectors as string[]) ?? [],
       states: (d.states as string[]) ?? [],
       status: d.status as EditorPost['status'],

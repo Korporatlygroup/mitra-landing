@@ -362,6 +362,7 @@
     "invalid_state": "Please choose a state.",
     "invalid_postcode": "The postcode must be 5 digits.",
     "invalid_phone": "Please check the phone number.",
+    "invalid_source": "Please give a publisher and an https link to the original source.",
     "invalid_url": "Please enter a valid web address starting with https://.",
     "invalid_url_domain": "That address is not allowed for this link type. Use the business’s own page on the named site.",
     "invalid_whatsapp": "Please check the WhatsApp number (include the country code if it is not a Malaysian number).",
