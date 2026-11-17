@@ -74,3 +74,14 @@
 .lcard-sub { display: block; color: var(--muted); font-size: 0.8125rem; }
 .lcard-desc { color: var(--muted); font-size: 0.875rem; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
 .lcard-tags { display: flex; flex-wrap: wrap; gap: 6px; }
+
+/* Products & Services cards: same card language as the rest of the kit (flat, 12px radius, brand border on hover, no lift). */
+.catalogue-card { border-radius: 12px; border: 1px solid var(--line); padding: 16px; gap: 8px; }
+.catalogue-card:hover { transform: none; border-color: var(--brand); box-shadow: var(--shadow-hover); }
+.catalogue-card .p5-thumb { border-radius: 8px; background: var(--brand-tint); }
+.catalogue-card .p5-thumb.catalogue-noimage { background: var(--brand-tint); border: 1px dashed var(--line-strong); }
+.catalogue-card-title { font-size: 1rem; line-height: 1.35; }
+.catalogue-card-title a { color: var(--ink); text-decoration: none; }
+.catalogue-card-title a:hover { color: var(--brand); }
+.catalogue-card .p5-price { color: var(--brand); }
+.catalogue-grid { grid-template-columns: repeat(auto-fill, minmax(min(100%, 17rem), 1fr)); }

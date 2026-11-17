@@ -6,7 +6,7 @@ import { uuidSchema } from '@/lib/schemas';
 import { getNews } from '@/server/services/news';
 import { getOptionalUser } from '@/server/session';
 import { toggleSaveNewsAction } from '../actions';
-import { NewsCategoryTile } from '@/components/workspace/NewsCategoryTile';
+import { CAT_STYLE } from '@/components/workspace/NewsCategoryTile';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { id } = await params;
@@ -32,24 +32,25 @@ export default async function NewsPostPage({ params }: { params: Promise<{ local
         <Icon name="back" size={16} stroke={2.2} />
         {t('news2.back')}
       </Link>
-      <div style={{ display: 'flex', gap: 18, alignItems: 'center', flexWrap: 'wrap' }}>
-        <NewsCategoryTile category={n.category} size={72} />
-        <div style={{ flex: 1, minWidth: 0 }}>
-          <span className="mut" style={{ fontSize: '0.8125rem' }}>
+      <header style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+        <div className="meta" style={{ display: 'flex', flexWrap: 'wrap', gap: '6px 12px', alignItems: 'center', color: 'var(--muted)', fontSize: '0.8125rem' }}>
+          <span className="chip-x brand">{t(`news2.${CAT_STYLE[n.category].label}`)}</span>
+          <span>
             {t('news2.published', { date: fmt.dateTime(new Date(n.published_at), { dateStyle: 'long', timeZone: 'Asia/Kuala_Lumpur' }) })}
             {n.states.length ? ` · ${n.states.join(', ')}` : ''}
           </span>
-          <h1 style={{ margin: '4px 0 0' }} lang={n.language}>
-            {n.title}
-          </h1>
         </div>
-      </div>
+        <h1 style={{ margin: 0, fontSize: 'clamp(1.5rem, 3vw, 2.125rem)', lineHeight: 1.25 }} lang={n.language}>
+          {n.title}
+        </h1>
+      </header>
+
       {n.deadline_on ? (
-        <span className="tag t-coral tag-lg" style={{ alignSelf: 'flex-start' }}>
+        <span className="chip-x gold" style={{ alignSelf: 'flex-start' }}>
           {t('news2.closes', { date: fmt.dateTime(new Date(`${n.deadline_on}T00:00:00Z`), { dateStyle: 'long', timeZone: 'UTC' }) })}
         </span>
       ) : null}
-      <div className="card" style={{ padding: 26 }} lang={n.language}>
+      <div className="card" style={{ padding: 'clamp(18px, 3vw, 32px)' }} lang={n.language}>
         <p style={{ margin: '0 0 14px', fontSize: '1.0625rem', fontWeight: 600, lineHeight: 1.55 }}>{n.summary}</p>
         <div style={{ whiteSpace: 'pre-line', lineHeight: 1.75, color: 'var(--text-2)' }}>{n.body}</div>
       </div>
