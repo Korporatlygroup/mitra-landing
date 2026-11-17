@@ -10,6 +10,7 @@ import { getNewsPrefs, listNews, newsDeadlines, NEWS_CATEGORIES, NEWS_PAGE, type
 import { getBusinessProfile, listCategories } from '@/server/services/verification';
 import { getWorkspace } from '@/server/workspace';
 import { toggleSaveNewsAction } from './actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'news2.title');
@@ -69,8 +70,7 @@ export default async function NewsPage({
     <div className="wide" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
       <div className="page-head" style={{ marginBottom: 0 }}>
         <div>
-          <h1>{t('news2.title')}</h1>
-          <p className="page-sub">{personal && sectorName && state ? t('news2.subFor', { category: sectorName, state }) : t('news2.subPublic')}</p>
+          <PageHeader title={t('news2.title')} sub={personal && sectorName && state ? t('news2.subFor', { category: sectorName, state }) : t('news2.subPublic')} />
         </div>
       </div>
 

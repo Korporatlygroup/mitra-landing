@@ -9,6 +9,8 @@ import { pageTitle } from '@/lib/metadata';
 import { getGovProfile, listGovProgrammes, listMyGovSaved } from '@/server/services/gov';
 import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.find.title');
@@ -73,87 +75,109 @@ export default async function FindPage({
 
   return (
     <>
-      <h1>{t('find.title')}</h1>
+      <PageHeader title={t('find.title')} />
       {one('saved') ? (
         <p role="status" className="message message-ok">
           {t('find.saved')}
         </p>
       ) : null}
-      <form action={`/${locale}/business-help/find`} method="get" role="search" aria-label={t('find.searchLabel')} className="link-row">
-        {need ? <input type="hidden" name="need" value={need} /> : null}
-        {category ? <input type="hidden" name="category" value={category} /> : null}
-        {org ? <input type="hidden" name="org" value={org.org.id} /> : null}
-        <label htmlFor="gov-q" className="p5b-sr">{t('find.searchLabel')}</label>
-        <input id="gov-q" name="q" type="search" maxLength={80} defaultValue={q} placeholder={t('find.searchPlaceholder')} />
-        <button type="submit" className="btn btn-secondary">{t('find.searchButton')}</button>
-      </form>
 
-      <nav aria-label={t('find.step1')} className="link-row">
-        <Link href={href({ need: null })} locale={locale} className={need ? 'btn btn-secondary' : 'btn btn-primary'} aria-current={need ? undefined : 'page'}>
-          {t('find.anyNeed')}
-        </Link>
-        {GOV_NEEDS.map((n) => (
-          <Link key={n} href={href({ need: n })} locale={locale} className={need === n ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={need === n ? 'page' : undefined}>
-            {t(`need.${n}`)}
-          </Link>
-        ))}
-      </nav>
-
-      <nav aria-label={t('find.categoryLabel')} className="link-row">
-        <Link href={href({ category: null })} locale={locale} className={category ? 'btn btn-secondary' : 'btn btn-primary'} aria-current={category ? undefined : 'page'}>
-          {t('find.anyCategory')}
-        </Link>
-        {CATEGORIES.map((c) => (
-          <Link key={c} href={href({ category: c })} locale={locale} className={category === c ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={category === c ? 'page' : undefined}>
-            {t(`category.${c}`)}
-          </Link>
-        ))}
-      </nav>
-
-      {!user ? (
-        <p>
-          <Link href={`/login?next=${encodeURIComponent(`/${locale}${href({})}`)}`} locale={locale}>
-            {t('find.signIn')}
-          </Link>
-        </p>
-      ) : !org ? (
-        <p>
-          <Link href="/orgs" locale={locale}>
-            {t('find.noOrg')}
-          </Link>
-        </p>
-      ) : (
-        <details open={!profile || profile.version === 0}>
-          <summary>{t('find.step2')}</summary>
-          {orgs.length > 1 ? (
-            <p className="link-row">
-              {orgs.map((m) => (
-                <Link key={m.org.id} href={`/business-help/find?org=${m.org.id}${need ? `&need=${need}` : ''}`} locale={locale} aria-current={m.org.id === org.org.id ? 'page' : undefined}>
-                  {m.org.name}
+      <div className="split-x split-x-left">
+        <aside className="stack-x" style={{ gap: 16 }} aria-label={t('find.step1')}>
+          <section className="acard" aria-labelledby="gov-need-h">
+            <h2 id="gov-need-h">{t('find.step1')}</h2>
+            <nav aria-label={t('find.step1')} className="fchip-row">
+              <Link href={href({ need: null })} locale={locale} className="fchip" aria-current={need ? undefined : 'page'}>
+                {t('find.anyNeed')}
+              </Link>
+              {GOV_NEEDS.map((n) => (
+                <Link key={n} href={href({ need: n })} locale={locale} className="fchip" aria-current={need === n ? 'page' : undefined}>
+                  {t(`need.${n}`)}
                 </Link>
               ))}
-            </p>
-          ) : null}
-          <ProfileForm locale={locale} orgId={org.org.id} profile={profile} need={need} />
-        </details>
-      )}
+            </nav>
+          </section>
 
-      <section aria-labelledby="gov-results-h">
-        <h2 id="gov-results-h">{t('find.step3')}</h2>
-        {!user ? <p className="muted">{t('match.signInNote')}</p> : null}
-        {ranked.length === 0 ? (
-          <p>{t('find.empty')}</p>
-        ) : (
-          <>
-            <p role="status">{t('find.count', { n: ranked.length })}</p>
-            <ul className="p5-grid catalogue-grid">
+          {!user ? (
+            <section className="acard">
+              <p style={{ margin: 0 }}>{t('match.signInNote')}</p>
+              <div>
+                <Link href={`/login?next=${encodeURIComponent(`/${locale}${href({})}`)}`} locale={locale} className="btn btn-primary btn-sm">
+                  {t('find.signIn')}
+                </Link>
+              </div>
+            </section>
+          ) : !org ? (
+            <section className="acard">
+              <div>
+                <Link href="/orgs" locale={locale} className="btn btn-primary btn-sm">
+                  {t('find.noOrg')}
+                </Link>
+              </div>
+            </section>
+          ) : (
+            <section className="acard" aria-labelledby="gov-profile-h">
+              <details open={!profile || profile.version === 0}>
+                <summary id="gov-profile-h" style={{ fontWeight: 700, cursor: 'pointer', minHeight: 32 }}>
+                  {t('find.step2')}
+                </summary>
+                {orgs.length > 1 ? (
+                  <p className="fchip-row" style={{ margin: '8px 0' }}>
+                    {orgs.map((m) => (
+                      <Link key={m.org.id} href={`/business-help/find?org=${m.org.id}${need ? `&need=${need}` : ''}`} locale={locale} className="fchip" aria-current={m.org.id === org.org.id ? 'page' : undefined}>
+                        {m.org.name}
+                      </Link>
+                    ))}
+                  </p>
+                ) : null}
+                <ProfileForm locale={locale} orgId={org.org.id} profile={profile} need={need} />
+              </details>
+            </section>
+          )}
+        </aside>
+
+        <section aria-labelledby="gov-results-h" style={{ minWidth: 0 }}>
+          <div className="sechead">
+            <h2 id="gov-results-h">{t('find.step3')}</h2>
+            <span className="mut" role="status" style={{ fontSize: '0.875rem' }}>
+              {t('find.count', { n: ranked.length })}
+            </span>
+          </div>
+          <form action={`/${locale}/business-help/find`} method="get" role="search" aria-label={t('find.searchLabel')} className="toolbar-x">
+            {need ? <input type="hidden" name="need" value={need} /> : null}
+            {category ? <input type="hidden" name="category" value={category} /> : null}
+            {org ? <input type="hidden" name="org" value={org.org.id} /> : null}
+            <div className="search-x">
+              <label htmlFor="gov-q" className="p5b-sr">
+                {t('find.searchLabel')}
+              </label>
+              <input id="gov-q" name="q" type="search" maxLength={80} defaultValue={q} placeholder={t('find.searchPlaceholder')} />
+            </div>
+            <button type="submit" className="btn btn-secondary btn-sm">
+              {t('find.searchButton')}
+            </button>
+          </form>
+          <nav aria-label={t('find.categoryLabel')} className="fchip-row" style={{ marginBottom: 16 }}>
+            <Link href={href({ category: null })} locale={locale} className="fchip" aria-current={category ? undefined : 'page'}>
+              {t('find.anyCategory')}
+            </Link>
+            {CATEGORIES.map((c) => (
+              <Link key={c} href={href({ category: c })} locale={locale} className="fchip" aria-current={category === c ? 'page' : undefined}>
+                {t(`category.${c}`)}
+              </Link>
+            ))}
+          </nav>
+          {ranked.length === 0 ? (
+            <EmptyState icon="money" title={t('find.empty')} text={t('find.step3')} />
+          ) : (
+            <ul className="xgrid xgrid-2" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
               {ranked.map(({ p, match }) => (
                 <ProgrammeCard key={p.id} p={p} locale={locale} match={user && org ? match : null} orgId={org?.org.id ?? null} signedIn={Boolean(user)} saved={savedIds.has(p.id)} />
               ))}
             </ul>
-          </>
-        )}
-      </section>
+          )}
+        </section>
+      </div>
     </>
   );
 }

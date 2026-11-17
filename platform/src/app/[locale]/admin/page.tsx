@@ -7,6 +7,7 @@ import { adminListNews } from '@/server/services/news';
 import { queueCounts } from '@/server/services/verification';
 import { requireSession } from '@/server/session';
 import { notFound } from 'next/navigation';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'adm2.overviewTitle');
@@ -37,8 +38,7 @@ export default async function AdminHomePage({ params }: { params: Promise<{ loca
     <>
       <div className="page-head" style={{ marginBottom: 0 }}>
         <div>
-          <h1>{t('adm2.overviewTitle')}</h1>
-          <p className="page-sub">{t('adm2.overviewSub')}</p>
+          <PageHeader title={t('adm2.overviewTitle')} sub={t('adm2.overviewSub')} />
         </div>
       </div>
       <div className="tiles">

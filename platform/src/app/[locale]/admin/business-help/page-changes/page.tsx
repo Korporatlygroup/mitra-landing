@@ -7,6 +7,7 @@ import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireGovAdmin } from '@/server/gov-admin-context';
 import { lineDiff } from '@/server/gov/page-monitor';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.admin.pc.title');
@@ -41,7 +42,7 @@ export default async function PageChangesPage({ params }: { params: Promise<{ lo
 
   return (
     <>
-      <h1>{t('pc.title')}</h1>
+      <PageHeader title={t('pc.title')} />
       <AdminHelpNav locale={locale} current="pageChanges" canReview={ctx.canReview} />
       <p>{t('pc.intro')}</p>
 

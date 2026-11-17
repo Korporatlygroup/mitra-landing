@@ -7,6 +7,7 @@ import { sellerLeadMetrics } from '@/server/services/enquiries';
 import ActionForm from '@/components/ActionForm';
 import { respondReferralAction } from '@/app/[locale]/enquiries/[id]/actions';
 import { openReferralEnquiryAction } from './actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p4.leadsTitle');
@@ -33,8 +34,7 @@ export default async function LeadsPage({ params }: { params: Promise<{ locale: 
   for (const row of activities.data ?? []) if (!latest.has(row.enquiry_id)) latest.set(row.enquiry_id, row);
   const m = metrics.ok ? metrics.data : null;
   return <>
-    <h1>{t('leadsTitle')}</h1>
-    <p>{t('metricsNote')}</p>
+    <PageHeader title={t('leadsTitle')} sub={t('metricsNote')} />
     {(referrals.data?.length ?? 0) > 0 ? <section className="card" aria-labelledby="referral-inbox-title">
       <h2 id="referral-inbox-title">{t('referralInbox')}</h2>
       <ul>{referrals.data!.map((r) => <li key={r.id}>

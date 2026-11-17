@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import PartnerNotifications from '@/components/partner/PartnerNotifications';
 import { pageTitle } from '@/lib/metadata';
 import { requirePartnerContext } from '@/server/partner-context';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.nav.notifications');
@@ -20,7 +21,7 @@ export default async function PartnerNotificationsPage({ params }: { params: Pro
   const items = (data ?? []) as { id: string; org_id: string | null; kind: string; entity_type: string | null; entity_id: string | null; created_at: string; read_at: string | null }[];
   return (
     <>
-      <h1>{t('title')}</h1>
+      <PageHeader title={t('title')} />
       {items.length === 0 ? <p>{t('none')}</p> : <PartnerNotifications locale={locale} orgId={id} items={items} />}
     </>
   );

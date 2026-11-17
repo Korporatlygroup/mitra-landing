@@ -9,6 +9,7 @@ import { resolveJoinRequestAction } from '../../join-actions';
 import { getOrg, getRolePermissions, listMembers, listPendingInvitations } from '@/server/services/orgs';
 import { requireSession } from '@/server/session';
 import { pageTitle } from '@/lib/metadata';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }) {
   return pageTitle((await params).locale, 'members.title');
@@ -46,17 +47,17 @@ export default async function MembersPage({ params }: { params: Promise<{ locale
           ))}
         </ul>
       </nav>
-      <h1>{org.name}</h1>
-      <p className="muted">
-        {t(`orgTypes.${org.type}`)} &middot; {t('orgs.role')}: {t(`roles.${mine.role}`)}
-      </p>
-      {org.type === 'business' ? (
-        <p>
-          <Link href={`/orgs/${id}/business`} locale={locale}>
-            {t('orgs.businessLink')}
-          </Link>
-        </p>
-      ) : null}
+      <PageHeader
+        title={org.name}
+        sub={`${t(`orgTypes.${org.type}`)} · ${t('orgs.role')}: ${t(`roles.${mine.role}`)}`}
+        actions={
+          org.type === 'business' ? (
+            <Link href={`/orgs/${id}/business`} locale={locale} className="btn btn-secondary">
+              {t('orgs.businessLink')}
+            </Link>
+          ) : undefined
+        }
+      />
       <MembersManager locale={locale} org={org} meId={s.user.id} myRole={mine.role} perms={perms} members={members} invitations={invitations} />
       {canSeeInvites && org.type !== 'mitra' ? (
         <section aria-labelledby="join-h" className="card" style={{ marginTop: 24 }}>

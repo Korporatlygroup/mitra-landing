@@ -8,6 +8,7 @@ import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireCatalogueAdmin } from '@/server/catalogue-admin-context';
 import { listSupplierReviews } from '@/server/services/p5-admin';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5admin.suppliers.title');
@@ -35,7 +36,7 @@ export default async function AdminSuppliersPage({
 
   return (
     <>
-      <h1>{t('suppliers.title')}</h1>
+      <PageHeader title={t('suppliers.title')} />
       <CatalogueAdminNav locale={locale} ctx={ctx} current="suppliers" />
       <p>{t('suppliers.intro')}</p>
       <nav aria-label={t('suppliers.filters')} className="link-row">

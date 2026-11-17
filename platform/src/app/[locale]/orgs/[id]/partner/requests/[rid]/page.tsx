@@ -13,6 +13,7 @@ import { requirePartnerContext } from '@/server/partner-context';
 import { markNotificationRead } from '@/server/services/verification';
 import { getPartnerRequest } from '@/server/services/p5-partner';
 import { respondRequestAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.requests.detailTitle');
@@ -52,7 +53,7 @@ export default async function RequestDetailPage({ params, searchParams }: { para
           {tt('backTo', { page: t('title') })}
         </Link>
       </p>
-      <h1>{q.reference}</h1>
+      <PageHeader title={q.reference} />
       <p>
         <StatusChip status={statusTone(q.status === 'submitted' ? 'previewed' : q.status)} label={q.status === 'submitted' ? t('statusNew') : tc(`status.sourcing.${q.status}`)} />
       </p>

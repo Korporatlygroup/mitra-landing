@@ -1,71 +1,71 @@
 # Premium V3: route inventory and status
 
-Source: the Next.js route tree under `platform/src/app/[locale]/` (about 110 pages). "Role" = who normally uses it. Status as of the commit that adds this file:
+Source: the Next.js route tree under `platform/src/app/[locale]/` (about 110 pages).
 
-- **Rebuilt**: structure changed (new layout built from the shared components).
-- **Partly**: some structural change, other parts still the old layout.
-- **Restyled**: only the global fonts, tokens and shell reach it.
-- **Todo**: planned replacement pattern is listed, not yet built.
+Status words used here (be strict about them):
 
-Shared components now in use: `PageHeader`, `TabsNav`, `StatusBadge`, `EmptyState`, `SectionHeader`, `MetricCard`, `DiscoveryCard`, `OpportunityCard`, `NewsCard`, `BusinessCard`, `FilterSheet`, `ProgrammeCard` (redesigned), `NotificationList` (redesigned). Layout helpers in `kit.css`: `xgrid-*`, `xgrid-m`, `split-x`, `rrow`, `acard`, `settings-x`.
+- **Rebuilt**: layout and structure were replaced with the shared kit (header, tabs, cards, tables, empty states, two-column layouts).
+- **Header + cards**: the page now uses the shared `PageHeader`, the flat card system and responsive card grids, but its inner form/list content is the same as before.
+- **Restyled**: only global fonts, tokens and the shell reach it.
+- **Not visually checked**: changed, but no screenshot was reviewed (the page needs data or a role the local test stack could not provide).
 
-## Public (logged-out and everyone)
+Shared kit: `PageHeader`, `TabsNav`, `StatusBadge`, `EmptyState`, `SectionHeader`, `MetricCard`, `DataTable`, `DiscoveryCard`, `OpportunityCard`, `NewsCard`, `BusinessCard`, `ProgrammeCard`, `FilterSheet`, `ConversationFilter`, `NotificationList`, `AdminSide`. CSS in `src/app/kit.css` (`xgrid-*`, `xgrid-m`, `split-x`, `rrow`, `acard`, `dtable`, `settings-x`, `fchip`).
 
-| Route | Role | Status | Pattern |
-|---|---|---|---|
-| `/` (landing redirect/home when signed out) | visitor | Restyled | discovery landing for the app |
-| `/directory` | everyone | Partly | search + chip row + card grid (done); filter sheet on mobile (todo) |
-| `/directory/[slug]` | everyone | Partly | cover/identity/tabs already existed; services, products and projects now cards (not visually evidenced: the screenshot fixture has none); contact still inside Overview |
-| `/news`, `/news/[id]` | everyone | Rebuilt (list), Partly (article) | editorial cards; article body sections (todo) |
-| `/business-help`, `/business-help/[slug]` | everyone | Rebuilt (list), Todo (detail) | searchable programme cards; detail page with eligibility, dates, source |
-| `/business-help/find`, `/business-help/saved`, `/business-help/settings` | owner / any signed-in | Todo | dedicated matching panel; saved cards; settings page |
-| `/catalogue` (Products from India) | buyer | Partly | cards + mobile Filters disclosure done; list header/summary (todo) |
-| `/catalogue/[id]`, `/catalogue/compare`, `/catalogue/saved`, `/catalogue/[id]/request`, `/catalogue/requests`, `/catalogue/requests/[id]` | buyer | Todo | detail with spec table, comparison table, saved grid, price-request form, request list |
-| `/search` | everyone | Todo | combined results tabs |
-| `/terms`, `/privacy`, `/cookies`, `/government-disclaimer`, `/marketplace-policy` | everyone | Restyled | reading layout with side contents |
-| `/complaints` | signed-in | Todo | support centre layout |
+## Public and discovery
 
-## Auth and onboarding
+| Route | Status |
+|---|---|
+| `/directory` | Rebuilt (cards, scrolling chips, phone search). No filter sheet. |
+| `/directory/[slug]` | Header + cards (cover, tabs existed; services/products/projects now cards; not visually checked with data) |
+| `/news`, `/news/[id]` | Rebuilt (list); article header rebuilt, body still one text block |
+| `/business-help` | Rebuilt |
+| `/business-help/find` | Rebuilt (two columns: need chips and profile on the left, results and search on the right) |
+| `/business-help/[slug]` | Header rebuilt (actions up top, chips, status); body sections still the old definition lists |
+| `/business-help/saved`, `/settings` | Header + cards |
+| `/catalogue` | Header + cards, phone Filters disclosure |
+| `/catalogue/[id]` | Header + cards (sections in cards; two-column buy box existed) |
+| `/catalogue/compare`, `/saved`, `/requests`, `/requests/[id]`, `/[id]/request` | Header + cards; saved has an empty state |
+| `/search`, `/complaints`, legal pages | Restyled |
 
-| Route | Role | Status | Pattern |
-|---|---|---|---|
-| `/login`, `/signup`, `/signup/check-email`, `/forgot-password`, `/reset-password` | visitor | Restyled | centred auth card (kept simple on purpose) |
-| `/list-your-business`, `/invite/[token]`, `/invite/partner/[token]` | visitor / invitee | Restyled | redirect or confirmation card |
-| `/mfa/enrol`, `/mfa/verify` | signed-in | Restyled | stepper card |
-| `/orgs`, `/orgs/new` | signed-in | Restyled | workspace list; create-workspace form |
-| `/orgs/[id]/members` | owner | Todo | team table with roles, invitations, confirmations |
-| `/orgs/[id]/business/onboarding` | owner | Todo | guided wizard (current 5 steps; 7-section UX target) |
+## Auth and workspace
 
-## Signed-in workspace
+| Route | Status |
+|---|---|
+| `/login`, `/signup`, `/forgot-password`, `/reset-password`, `/mfa/*`, `/invite/*` | Restyled (auth cards, left simple on purpose) |
+| `/` signed-in Home | Rebuilt |
+| `/requests` | Rebuilt |
+| `/requests/new` | Guided wizard already existed (5 steps, focus layout); only restyled |
+| `/requests/[id]` | Rebuilt (header, invited/suggested cards with status badges, summary panel, end-request panel) |
+| `/requests/[id]/quotes` | Rebuilt (comparison table; not visually checked: needs quotation data) |
+| `/enquiries`, `/enquiries/[id]` | Two-pane layout existed; added search, status chips, empty state |
+| `/notifications` | Rebuilt |
+| `/account` | Rebuilt (settings workspace) |
+| `/orgs`, `/orgs/[id]/members` | Members: header, role badge, invite and pending invitations in cards |
+| `/sourcing`, `/sourcing/new`, `/sourcing/[rfq]` | Header + cards |
+| `/orgs/[id]/business` (dashboard) | Header + cards; fixed a squeezed "median first reply" tile |
+| `/orgs/[id]/business/360` | Rebuilt |
+| `/orgs/[id]/business/onboarding` | Wizard existed (5 steps); added Review and finish, required/optional hints, compact phone stepper |
+| `/orgs/[id]/business/listing`, `/preview`, `/verification` | Header + cards; empty states for the "not started" gate; verification claims in cards |
+| `/orgs/[id]/business/leads`, `/requests`, `/requests/board`, `/requests/[requestId]`, `/products` | Header + cards |
 
-| Route | Role | Status | Pattern |
-|---|---|---|---|
-| `/` signed-in Home | all | Rebuilt | discovery dashboard |
-| `/requests` | buyer | **Rebuilt** | header, metrics, tabs, search, request cards, enquiries panel, empty state |
-| `/requests/[id]/quotes` | buyer | **Rebuilt** (no screenshot: needs quotation data) | responsive comparison table (stacked cards on phones), status badges, empty state |
-| `/requests/new`, `/requests/[id]` | buyer | Todo | guided form; detail with timeline |
-| `/enquiries`, `/enquiries/[id]` | buyer / seller | Partly | two-pane list + thread already existed; added conversation search, status chips, page header and empty state; thread not screenshotted (needs data); context panel (todo) |
-| `/notifications` | all | **Rebuilt** | All/Unread tabs, grouped list, empty state, link to settings |
-| `/account` | all | **Rebuilt** | Settings workspace: My account, Security, Notifications, Privacy, Data requests |
-| `/sourcing`, `/sourcing/new`, `/sourcing/[rfq]` | buyer | Todo | sourcing request list, form, detail |
-| `/orgs/[id]/business` (dashboard) | owner | Todo | operational dashboard |
-| `/orgs/[id]/business/360` | owner | **Rebuilt** | identity header, four metrics, grouped readiness with progress, next actions, assistance, opportunities, news |
-| `/orgs/[id]/business/listing`, `/listing/preview`, `/preview`, `/products`, `/verification`, `/leads`, `/requests`, `/requests/board`, `/requests/[requestId]` | owner | Todo | listing editor cards; products table; verification status page; request tables |
+## Partner (`/orgs/[id]/partner/*`)
 
-## Partner / supplier area (`/orgs/[id]/partner/*`, 17 pages)
+Home rebuilt (action cards, linked metric tiles). All other partner pages: header + cards. **Not visually checked**: a partner organisation must be approved by an administrator before these pages render, and my local screenshots only reached the approval gate.
 
-Todo for all: dashboard, products (list/new/edit/preview/detail), suppliers (list/new/edit/detail), import (upload + job), requests, sourcing, notifications, settings. Pattern: data tables for management, multi-step forms for creation, detail panels.
+## Administration
 
-## Administration (`/admin/*`, 27 pages)
+| Route | Status |
+|---|---|
+| `/admin/verification`, `/listings`, `/reviews`, `/duplicates`, `/reports`, `/audit`, `/users`, `/news` | Rebuilt |
+| `/admin/business-help` | Rebuilt (attention cards, stats, switches, sources, queue, programmes) |
+| `/admin` overview | Header + tiles (unchanged tile design) |
+| `/admin/business-help/sources`, `/review/[id]`, `/page-changes`, `/programmes/new`, `/programmes/[id]/edit` | Header only |
+| `/admin/catalogue/*`, `/admin/products`, `/admin/privacy-requests`, `/admin/sourcing`, `/admin/listings/[orgId]`, `/admin/verification/[claimId]`, `/admin/news/[id]` | Header + cards |
+| Admin menu | Collapses behind a Menu button on phones |
 
-| Route | Status | Pattern |
-|---|---|---|
-| `/admin` overview | Partly (proposals count and switches done) | summary cards + operational table |
-| `/admin/verification`, `/verification/[claimId]`, `/reviews`, `/listings`, `/listings/[orgId]`, `/duplicates`, `/reports`, `/users`, `/audit`, `/privacy-requests`, `/products`, `/sourcing` | Todo | review queue table + detail drawer + confirmation dialog |
-| `/admin/business-help/*` (programmes, sources, review, page-changes) | Todo | source status cards, field-level diff review |
-| `/admin/news`, `/admin/news/[id]` | Todo | drafts / published / archived tabs |
-| `/admin/catalogue/*` (partners, suppliers, products, imports, reports) | Todo | tables with status filters |
+## Known gaps
 
-## Remaining
-
-`[...rest]` (404), `error.tsx` and loading states are Restyled. Test coverage per route is in the PR description and the audit report.
+- No React Hook Form, TanStack Table, Recharts or Radix were added (no clear functional need; the kit is plain CSS).
+- No request activity timeline, no conversation context panel, no analytics charts.
+- Tamil/Malay layouts were not screenshotted; only the strings were added.
+- 1920 px and 360 px screenshots exist only for the pages in the main screenshot spec.

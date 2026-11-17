@@ -6,6 +6,7 @@ import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireCatalogueAdmin } from '@/server/catalogue-admin-context';
 import { catalogueStats } from '@/server/services/p5-admin';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5admin.home.title');
@@ -63,7 +64,7 @@ export default async function AdminCatalogueHome({ params }: { params: Promise<{
 
   return (
     <>
-      <h1>{t('home.title')}</h1>
+      <PageHeader title={t('home.title')} />
       <CatalogueAdminNav locale={locale} ctx={ctx} current="home" />
       <p>{t('home.intro')}</p>
 

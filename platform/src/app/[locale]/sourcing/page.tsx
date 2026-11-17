@@ -3,6 +3,7 @@ import { Link } from '@/i18n/navigation';
 import { eligibleBuyerOrgs } from '@/lib/buyer-orgs';
 import { listSourcingRfqs, listSourcingTemplates } from '@/server/services/p6-sourcing';
 import { requireSession } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export default async function SourcingHome({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -16,8 +17,7 @@ export default async function SourcingHome({ params }: { params: Promise<{ local
     ...item, org: orgs[index]!.org.id,
   })) : []);
   return <div className="container">
-    <h1>{t('title')}</h1>
-    <p>{t('intro')}</p>
+    <PageHeader title={t('title')} sub={t('intro')} />
     <nav aria-label={t('title')} className="link-row">
       <Link href="/catalogue" locale={locale} className="btn btn-secondary">{t('step1')}</Link>
       <Link href="/sourcing/new" locale={locale} className="btn btn-primary">{t('new')}</Link>

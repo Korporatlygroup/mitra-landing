@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { anonClient, createUser, signedClient, sql, uniq, type Signed, type TestUser } from './support/db';
+import { anonClient, createOrgAs, createUser, signedClient, sql, uniq, type Signed, type TestUser } from './support/db';
 import {
   card, changePrice, makeDraftProduct, makeModerator, makePartner, makeProduct, makeRejectedProduct, makeReviewer, makeSupplier, reinstateSupplier, requestsOfBuyer, suspendProduct, suspendSupplier, tb, unpublish,
   type Partner, type Product, type Supplier,
@@ -42,6 +42,7 @@ test.beforeAll(async () => {
   await suspendSupplier(moderator, supBad);
   buyer = await createUser('b61-buyer');
   other = await createUser('b61-other');
+  await createOrgAs(other, 'buyer', 'B61 Other Co'); // pages that need an organisation otherwise redirect instead of answering 404
   buyerClient = await signedClient(buyer);
   const org = await buyerClient.client.rpc('create_org', { p_type: 'buyer', p_name: `Buyer ${uniq('b')}` });
   expect(org.error).toBeNull();

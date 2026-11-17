@@ -4,6 +4,7 @@ import WorkspaceShell from '@/components/workspace/WorkspaceShell';
 import { Link } from '@/i18n/navigation';
 import { requireSession } from '@/server/session';
 import { pageTitle } from '@/lib/metadata';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'orgs.title');
@@ -18,7 +19,7 @@ export default async function OrgsPage({ params, searchParams }: { params: Promi
   return (
     <WorkspaceShell locale={locale}>
       <div className="page-head">
-        <h1>{t('orgs.title')}</h1>
+        <PageHeader title={t('orgs.title')} />
         <Link href="/orgs/new" className="btn btn-primary">
           {t('orgs.create')}
         </Link>

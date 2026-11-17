@@ -6,6 +6,8 @@ import { pageTitle } from '@/lib/metadata';
 import { CLAIM_TYPES } from '@/lib/schemas';
 import { requireBusinessContext } from '@/server/business-context';
 import { applicableClaims, getBusinessProfile, listClaims, listDocuments, listEvents } from '@/server/services/verification';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'ver.title');
@@ -28,8 +30,7 @@ export default async function VerificationPage({
   if (!ctx.canRead) {
     return (
       <>
-        <h1>{t('ver.title')}</h1>
-        <p>{t('biz.staffNoVerification')}</p>
+        <PageHeader title={t('ver.title')} sub={t('biz.staffNoVerification')} />
         <Link href={base} locale={locale}>
           {t('biz.title')}
         </Link>
@@ -44,8 +45,7 @@ export default async function VerificationPage({
 
   return (
     <>
-      <h1>{t('ver.title')}</h1>
-      <p>{t('ver.intro')}</p>
+      <PageHeader title={t('ver.title')} sub={t('ver.intro')} />
       {sp.sent === '1' ? (
         <p role="status" className="message message-ok">
           <strong>{t('common.done')}: </strong>
@@ -53,11 +53,7 @@ export default async function VerificationPage({
         </p>
       ) : null}
       {!profile ? (
-        <p>
-          <Link href={`${base}/onboarding?step=1`} locale={locale} className="btn btn-primary">
-            {t('biz.next.start')}
-          </Link>
-        </p>
+        <EmptyState icon="shield" title={t('biz.notStarted')} text={t('ver.intro')} action={{ href: `${base}/onboarding?step=1`, label: t('biz.next.start') }} />
       ) : null}
 
       {types.map((ct) => {
@@ -65,7 +61,7 @@ export default async function VerificationPage({
         const history = claim ? events.filter((e) => e.claim_id === claim.id) : [];
         const showReason = claim && ['needs_info', 'rejected'].includes(claim.status) && claim.decision_reason;
         return (
-          <article key={ct} aria-labelledby={`h-${ct}`}>
+          <article key={ct} aria-labelledby={`h-${ct}`} className="acard" style={{ marginBottom: 16 }}>
             <h2 id={`h-${ct}`}>
               {t(`claimTypes.${ct}`)} <StatusChip status={claim?.status ?? 'none'} label={t(`claimStatus.${claim?.status ?? 'none'}`)} />
             </h2>

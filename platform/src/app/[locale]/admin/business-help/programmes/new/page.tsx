@@ -5,6 +5,7 @@ import ProgrammeForm, { type FormSource } from '../../ProgrammeForm';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireGovAdmin } from '@/server/gov-admin-context';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.admin.manual.title');
@@ -27,7 +28,7 @@ export default async function NewProgrammePage({ params, searchParams }: { param
 
   return (
     <>
-      <h1>{t('manual.title')}</h1>
+      <PageHeader title={t('manual.title')} />
       <AdminHelpNav locale={locale} current="newProgramme" canReview={ctx.canReview} />
       <p>{t('manual.intro')}</p>
       <p role="note" className="card">

@@ -4,6 +4,7 @@ import ProductsView from '@/components/workspace/ProductsView';
 import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { listOrgProducts } from '@/server/services/biz-products';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'biz2.products.title');
@@ -16,7 +17,7 @@ export default async function ProductsPage({ params }: { params: Promise<{ local
   if (!ctx.canEdit) {
     return (
       <>
-        <h1>{t('biz2.products.title')}</h1>
+        <PageHeader title={t('biz2.products.title')} />
         <p className="message message-error" role="alert">
           {t('biz2.products.noAccess')}
         </p>

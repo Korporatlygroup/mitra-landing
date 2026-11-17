@@ -84,13 +84,13 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
       </div>
 
       {item.description ? (
-        <section aria-labelledby="desc-h">
+        <section aria-labelledby="desc-h" className="acard">
           <h2 id="desc-h">{t('detail.description')}</h2>
           <p style={{ whiteSpace: 'pre-line' }}>{item.description}</p>
         </section>
       ) : null}
 
-      <section aria-labelledby="tiers-h">
+      <section aria-labelledby="tiers-h" className="acard">
         <h2 id="tiers-h">{t('detail.tiersTitle')}</h2>
         {item.price_mode === 'request' || item.tiers.length === 0 ? (
           item.price_mode === 'fixed' && item.from_price !== null ? <p>{t('detail.fixedPriceNote')}</p> : <p>{tc('price.onRequest')}</p>
@@ -104,7 +104,7 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
       </section>
 
       {item.variants.length > 0 ? (
-        <section aria-labelledby="var-h">
+        <section aria-labelledby="var-h" className="acard">
           <h2 id="var-h">{t('detail.variants')}</h2>
           <div className="table-wrap">
             <table className="stack">
@@ -136,7 +136,7 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
       ) : null}
 
       {specEntries.length > 0 || item.packaging ? (
-        <section aria-labelledby="spec-h">
+        <section aria-labelledby="spec-h" className="acard">
           <h2 id="spec-h">{t('detail.specs')}</h2>
           <dl className="dl">
             {specEntries.map(([k, v]) => (
@@ -183,7 +183,7 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
         </p>
       </section>
 
-      <section aria-labelledby="rep-h">
+      <section aria-labelledby="rep-h" className="acard">
         <h2 id="rep-h">{t('report.title')}</h2>
         {user ? (
           <details>

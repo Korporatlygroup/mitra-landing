@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import { requireCatalogueAdmin } from '@/server/catalogue-admin-context';
 import { sourcingOperations } from '@/server/services/p6-sourcing';
+import PageHeader from '@/components/shared/PageHeader';
 
 export default async function SourcingOperationsPage({ params }: { params: Promise<{ locale: string }> }) {
   const { locale } = await params;
@@ -11,7 +12,7 @@ export default async function SourcingOperationsPage({ params }: { params: Promi
   if (!result.ok) return <p role="alert">{t('loadFailed')}</p>;
   const report = result.data;
   return <div className="container">
-    <h1>{t('operations')}</h1>
+    <PageHeader title={t('operations')} />
     <dl className="card">
       <dt>{t('allRequests')}</dt><dd>{report.total_requests}</dd>
       <dt>{t('status.awaiting_quotes')}</dt><dd>{report.awaiting_quotes}</dd>

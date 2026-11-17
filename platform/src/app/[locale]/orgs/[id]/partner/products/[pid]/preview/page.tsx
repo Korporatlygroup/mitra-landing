@@ -7,6 +7,7 @@ import { pageTitle } from '@/lib/metadata';
 import { uuidSchema } from '@/lib/schemas';
 import { requirePartnerContext } from '@/server/partner-context';
 import { getMyProduct, getSupplier } from '@/server/services/p5-partner';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.preview.title');
@@ -32,7 +33,7 @@ export default async function ProductPreviewPage({ params }: { params: Promise<{
           {tt('backTo', { page: p.name ?? p.sku })}
         </Link>
       </p>
-      <h1>{t('title')}</h1>
+      <PageHeader title={t('title')} />
       <ProductPreview
         locale={locale}
         draft={{ ...p.draft, sku: p.sku }}

@@ -14,6 +14,7 @@ import { getSupplier } from '@/server/services/p5-partner';
 import { SUPPLIER_REVIEW_CHECKS, type SupplierDraftData } from '@/server/services/p5-types';
 import { notFound } from 'next/navigation';
 import { reviewSupplierAction, suspendAction } from '../../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5admin.suppliers.detail.title');
@@ -48,7 +49,7 @@ export default async function AdminSupplierPage({
     return (
       <>
         {back}
-        <h1>{t('suppliers.detail.title')}</h1>
+        <PageHeader title={t('suppliers.detail.title')} />
         <p role="alert" className="message message-error" data-testid="supplier-unavailable">
           <strong>{t('common.error')}: </strong>
           {t('suppliers.detail.unavailable')}
@@ -95,7 +96,7 @@ export default async function AdminSupplierPage({
   return (
     <>
       {back}
-      <h1>{s.name ?? s.code}</h1>
+      <PageHeader title={s.name ?? s.code} />
       <CatalogueAdminNav locale={locale} ctx={ctx} current="suppliers" />
       <DoneBanner locale={locale} value={sp.done} />
       <p>

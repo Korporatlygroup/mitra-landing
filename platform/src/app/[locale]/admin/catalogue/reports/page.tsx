@@ -12,6 +12,7 @@ import { pageTitle } from '@/lib/metadata';
 import { requireCatalogueAdmin } from '@/server/catalogue-admin-context';
 import { listProductReports } from '@/server/services/p5-admin';
 import { handleReportAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5admin.reports.title');
@@ -42,7 +43,7 @@ export default async function AdminReportsPage({
 
   return (
     <>
-      <h1>{t('reports.title')}</h1>
+      <PageHeader title={t('reports.title')} />
       <CatalogueAdminNav locale={locale} ctx={ctx} current="reports" />
       <DoneBanner locale={locale} value={sp.done} />
       <p>{t('reports.intro')}</p>

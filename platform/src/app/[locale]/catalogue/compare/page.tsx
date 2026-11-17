@@ -9,6 +9,8 @@ import { pageTitle } from '@/lib/metadata';
 import { compareItems } from '@/server/services/p5-buyer';
 import type { CatalogueItemDetail } from '@/server/services/p5-types';
 import { getOptionalUser } from '@/server/session';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 function Row({
   label,
@@ -70,7 +72,7 @@ export default async function ComparePage({
 
   return (
     <>
-      <h1>{t('compare.title')}</h1>
+      <PageHeader title={t('compare.title')} />
       <p>
         <Link href="/catalogue" locale={locale}>
           {t('detail.back')}
@@ -78,15 +80,7 @@ export default async function ComparePage({
       </p>
 
       {!result || (result.ok && items.length === 0) || !result.ok ? (
-        <section aria-labelledby="cmp-empty-h">
-          <h2 id="cmp-empty-h">{result && !result.ok ? t('compare.errorTitle') : t('compare.emptyTitle')}</h2>
-          <p>{result && !result.ok ? t('compare.errorBody') : gone > 0 ? t('compare.allGone') : t('compare.emptyBody')}</p>
-          <p>
-            <Link href="/catalogue" locale={locale} className="btn btn-primary">
-              {t('compare.browse')}
-            </Link>
-          </p>
-        </section>
+        <EmptyState icon="list" title={result && !result.ok ? t('compare.errorTitle') : t('compare.emptyTitle')} text={result && !result.ok ? t('compare.errorBody') : gone > 0 ? t('compare.allGone') : t('compare.emptyBody')} action={{ href: '/catalogue', label: t('compare.browse') }} />
       ) : (
         <>
           <CompareSync entries={items.map((i) => ({ id: i.id, name: i.name }))} />

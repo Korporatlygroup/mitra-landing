@@ -7,6 +7,7 @@ import { statusTone } from '@/lib/partner-ui';
 import { requirePartnerContext } from '@/server/partner-context';
 import { listPartnerRequests } from '@/server/services/p5-partner';
 import type { SourcingStatus } from '@/server/services/p5-types';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.nav.requests');
@@ -41,8 +42,7 @@ export default async function RequestsPage({
 
   return (
     <>
-      <h1>{t('title')}</h1>
-      <p className="muted">{t('intro')}</p>
+      <PageHeader title={t('title')} sub={t('intro')} />
       <nav aria-label={t('filters')} className="link-row">
         <Link href={base} locale={locale} className={!status ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={!status ? 'page' : undefined}>
           {tt('all')}

@@ -8,6 +8,8 @@ import { pageTitle } from '@/lib/metadata';
 import { listSavedProducts } from '@/server/services/p5-buyer';
 import { requireSession } from '@/server/session';
 import { unsaveProductAction } from '../actions';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 const SAVED_PAGE_SIZE = 24;
 
@@ -36,22 +38,13 @@ export default async function SavedPage({
 
   return (
     <>
-      <h1>{t('saved.title')}</h1>
-      <p>{t('saved.intro')}</p>
+      <PageHeader title={t('saved.title')} sub={t('saved.intro')} />
       {!r.ok ? (
         <p className="message message-error" role="alert">
           {t('saved.error')}
         </p>
       ) : r.data.items.length === 0 ? (
-        <section aria-labelledby="sv-none-h">
-          <h2 id="sv-none-h">{t('saved.emptyTitle')}</h2>
-          <p>{t('saved.emptyBody')}</p>
-          <p>
-            <Link href="/catalogue" locale={locale} className="btn btn-primary">
-              {t('compare.browse')}
-            </Link>
-          </p>
-        </section>
+        <EmptyState icon="bookmark" title={t('saved.emptyTitle')} text={t('saved.emptyBody')} action={{ href: '/catalogue', label: t('compare.browse') }} />
       ) : (
         <>
           <p role="status">{t('saved.count', { n: r.data.total })}</p>

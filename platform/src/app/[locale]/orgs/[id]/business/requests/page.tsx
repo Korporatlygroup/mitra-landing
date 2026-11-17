@@ -4,6 +4,7 @@ import { enquiryColumn, type LeadCard } from '@/lib/leads';
 import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { listEnquiries, listSellerRequests, type SellerInboxRow } from '@/server/services/directory';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'biz2.board.title');
@@ -20,7 +21,7 @@ export default async function SellerInboxPage({ params }: { params: Promise<{ lo
   if (!ctx.perms.has('request:respond')) {
     return (
       <>
-        <h1>{t('biz2.board.title')}</h1>
+        <PageHeader title={t('biz2.board.title')} />
         <p className="message message-error" role="alert">
           {t('errors.forbidden')}
         </p>

@@ -66,7 +66,7 @@ for (const L of ['ta', 'ms'] as const) {
     await expect(page.getByRole('heading', { level: 1, name: t('saved.title') })).toBeVisible();
     await axeClean(page, `${L} saved`);
     await page.goto(`/${L}/catalogue/requests`);
-    await expect(page.getByRole('heading', { level: 2, name: t('requests.emptyTitle') })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: t('requests.emptyTitle') })).toBeVisible();
     await axeClean(page, `${L} my requests`);
   });
 }

@@ -12,6 +12,7 @@ import { requirePartnerContext } from '@/server/partner-context';
 import { getImport } from '@/server/services/p5-partner';
 import type { ImportKind } from '@/server/services/p5-types';
 import { cancelImportAction, commitImportAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.import.previewTitle');
@@ -71,7 +72,7 @@ export default async function ImportJobPage({
           {tt('backTo', { page: t('title') })}
         </Link>
       </p>
-      <h1>{done ? t('resultTitle') : t('previewTitle')}</h1>
+      <PageHeader title={done ? t('resultTitle') : t('previewTitle')} />
       <p>
         <strong>{job.file_name}</strong> <StatusChip status={statusTone(job.status)} label={tc(`status.import.${job.status}`)} />
         <span className="muted">

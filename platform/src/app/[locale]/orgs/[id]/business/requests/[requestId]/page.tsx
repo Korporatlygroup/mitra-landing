@@ -12,6 +12,7 @@ import { listCategories } from '@/server/services/verification';
 import { reportAction } from '@/app/[locale]/directory/actions';
 import { respondAction } from '../actions';
 import { catName } from '@/lib/category';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'inbox.detailTitle');
@@ -46,7 +47,7 @@ export default async function SellerRequestPage({ params }: { params: Promise<{ 
           {v.from_board ? t('board.title') : t('inbox.title')}
         </Link>
       </p>
-      {v.title ? <h1>{v.title}</h1> : <h1>{t('inbox.detailTitle')}</h1>}
+      {v.title ? <PageHeader title={v.title} /> : <PageHeader title={t('inbox.detailTitle')} />}
       <p>
         <StatusChip
           status={v.match_status === 'interested' || v.match_status === 'question' ? 'approved' : v.match_status === 'invited' && v.request_status === 'open' ? 'needs_info' : 'none'}

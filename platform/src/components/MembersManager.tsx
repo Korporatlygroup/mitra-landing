@@ -49,9 +49,11 @@ export default async function MembersManager({ locale, org, meId, myRole, perms,
 
   return (
     <>
-      <h2>{t('members.membersTitle')}</h2>
+      <div className="sechead">
+        <h2>{t('members.membersTitle')}</h2>
+      </div>
       {!canInvite && !canRemove && !canSetRole ? <p className="muted">{t('members.readOnly')}</p> : null}
-      <div className="table-wrap">
+      <div className="table-wrap" style={{ marginBottom: 28 }}>
         <table className="stack">
           <thead>
             <tr>
@@ -107,8 +109,9 @@ export default async function MembersManager({ locale, org, meId, myRole, perms,
       </div>
 
       {canInvite ? (
-        <>
-          <h2>{t('members.inviteTitle')}</h2>
+        <div className="xgrid xgrid-2" style={{ alignItems: 'start' }}>
+          <section className="acard" aria-labelledby="invite-h">
+          <h2 id="invite-h">{t('members.inviteTitle')}</h2>
           <ActionForm action={inviteAction} submitLabel={t('members.inviteSubmit')}>
             {hidden({})}
             <Field id="invite-email" name="email" type="email" label={t('members.inviteEmail')} required autoComplete="off" inputMode="email" maxLength={254} />
@@ -123,8 +126,10 @@ export default async function MembersManager({ locale, org, meId, myRole, perms,
               </select>
             </div>
           </ActionForm>
+          </section>
 
-          <h2>{t('members.pendingTitle')}</h2>
+          <section className="acard" aria-labelledby="pending-h">
+          <h2 id="pending-h">{t('members.pendingTitle')}</h2>
           {invitations.length === 0 ? (
             <p>{t('members.pendingNone')}</p>
           ) : (
@@ -144,7 +149,8 @@ export default async function MembersManager({ locale, org, meId, myRole, perms,
               ))}
             </ul>
           )}
-        </>
+          </section>
+        </div>
       ) : null}
     </>
   );

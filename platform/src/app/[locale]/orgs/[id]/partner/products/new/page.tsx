@@ -6,6 +6,7 @@ import { pageTitle } from '@/lib/metadata';
 import { todayIso } from '@/lib/partner-ui';
 import { requirePartnerContext } from '@/server/partner-context';
 import { listMySuppliers } from '@/server/services/p5-partner';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.products.addTitle');
@@ -35,7 +36,7 @@ export default async function NewProductPage({
           {tt('backTo', { page: t('title') })}
         </Link>
       </p>
-      <h1>{t('addTitle')}</h1>
+      <PageHeader title={t('addTitle')} />
       {!ctx.canManageCatalogue ? (
         <p className="message message-error">{t('readOnly')}</p>
       ) : approved.length === 0 ? (

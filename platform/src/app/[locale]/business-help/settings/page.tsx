@@ -5,6 +5,7 @@ import { REMINDER_DAY_CHOICES } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
 import { getGovPrefs } from '@/server/services/gov';
 import { requireSession } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.settings.title');
@@ -23,8 +24,7 @@ export default async function GovSettingsPage({ params }: { params: Promise<{ lo
   const paused = prefs?.paused_until && new Date(prefs.paused_until) > new Date() ? prefs.paused_until.slice(0, 10) : '';
   return (
     <>
-      <h1>{t('settings.title')}</h1>
-      <p>{t('settings.intro')}</p>
+      <PageHeader title={t('settings.title')} sub={t('settings.intro')} />
       <ActionForm action={setGovPrefsAction} submitLabel={t('settings.save')}>
         <fieldset>
           <legend>{t('settings.categories')}</legend>

@@ -12,6 +12,7 @@ import { pageTitle } from '@/lib/metadata';
 import { getGovProfile, getGovProgramme, listMyGovSaved } from '@/server/services/gov';
 import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 const SLUG = /^[a-z0-9-]{3,120}$/;
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
@@ -88,23 +89,57 @@ export default async function ProgrammePage({
 
   return (
     <>
-      <p>
-        <Link href="/business-help/find" locale={locale}>
-          {t('detail.back')}
-        </Link>
-      </p>
-      <h1>{p.name}</h1>
-      <p className="muted">
-        {t('card.agency')}: {p.agency} · {t('detail.version', { n: p.version_no })}
-      </p>
-      <p>
-        <span className="chip">{t(`category.${categoryOf({ category: d.category, funding_type: d.funding_type })}`)}</span> <StatusBadge locale={locale} input={statusInput} />
-        {d.beneficiary_type === 'organisation' ? (
+      <PageHeader
+        eyebrow={
+          <Link href="/business-help/find" locale={locale}>
+            {t('detail.back')}
+          </Link>
+        }
+        title={p.name}
+        sub={`${t('card.agency')}: ${p.agency} · ${t('detail.version', { n: p.version_no })}`}
+        actions={
           <>
-            {' '}
-            <span className="chip chip-warn">{t('match.for_organisations')}</span>
+            {org && answered ? (
+              <a href="#gov-match" className="btn btn-secondary">
+                {t('detail.checkButton')}
+              </a>
+            ) : org ? (
+              <Link href={`/business-help/find?org=${org.org.id}`} locale={locale} className="btn btn-secondary">
+                {t('detail.checkButton')}
+              </Link>
+            ) : (
+              <Link href={loginNext} locale={locale} className="btn btn-secondary">
+                {t('detail.checkButton')}
+              </Link>
+            )}
+            {user ? (
+              <QuickForm
+                action={saved ? unsaveMyProgrammeAction : saveMyProgrammeAction}
+                fields={{ programmeId: p.id }}
+                label={saved ? t('card.remove') : t('card.save')}
+                srName={p.name}
+              />
+            ) : null}
+            {canApplyOnline ? (
+              <a href={apply} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                {t('detail.applyOfficial')}
+              </a>
+            ) : info ? (
+              <a href={info} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
+                {t('detail.infoLink')}
+              </a>
+            ) : null}
           </>
-        ) : null}
+        }
+      />
+      <p className="pcard-chips" style={{ margin: '0 0 12px' }}>
+        <span className="chip-x brand">{t(`category.${categoryOf({ category: d.category, funding_type: d.funding_type })}`)}</span>
+        <StatusBadge locale={locale} input={statusInput} />
+        {d.beneficiary_type === 'organisation' ? <span className="chip-x gold">{t('match.for_organisations')}</span> : null}
+        <span className="mut" style={{ fontSize: '0.8125rem' }}>
+          {p.last_checked_at ? t('card.checked', { date: date(p.last_checked_at) }) : t('card.neverChecked')}
+          {p.last_verified_at ? ` · ${t('card.verified', { date: date(p.last_verified_at) })}` : ''}
+        </span>
       </p>
       {shown === 'closed' ? (
         <p className="message message-error" role="note">
@@ -115,42 +150,6 @@ export default async function ProgrammePage({
           {t('detail.stale')}
         </p>
       ) : null}
-      <p className="muted">
-        {p.last_checked_at ? t('card.checked', { date: date(p.last_checked_at) }) : t('card.neverChecked')}
-        {p.last_verified_at ? ` · ${t('card.verified', { date: date(p.last_verified_at) })}` : ''}
-      </p>
-      <div className="catalogue-action-row">
-        {org && answered ? (
-          <a href="#gov-match" className="btn btn-secondary">
-            {t('detail.checkButton')}
-          </a>
-        ) : org ? (
-          <Link href={`/business-help/find?org=${org.org.id}`} locale={locale} className="btn btn-secondary">
-            {t('detail.checkButton')}
-          </Link>
-        ) : (
-          <Link href={loginNext} locale={locale} className="btn btn-secondary">
-            {t('detail.checkButton')}
-          </Link>
-        )}
-        {canApplyOnline ? (
-          <a href={apply} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
-            {t('detail.applyOfficial')}
-          </a>
-        ) : info ? (
-          <a href={info} className="btn btn-primary" target="_blank" rel="noopener noreferrer">
-            {t('detail.infoLink')}
-          </a>
-        ) : null}
-        {user ? (
-          <QuickForm
-            action={saved ? unsaveMyProgrammeAction : saveMyProgrammeAction}
-            fields={{ programmeId: p.id }}
-            label={saved ? t('card.remove') : t('card.save')}
-            srName={p.name}
-          />
-        ) : null}
-      </div>
 
       <section aria-labelledby="gov-offer-h" className="card">
         <h2 id="gov-offer-h">{t('detail.offers')}</h2>
