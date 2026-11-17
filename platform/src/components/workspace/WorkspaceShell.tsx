@@ -58,13 +58,11 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       label: m('sBusiness'),
       items: isBiz
         ? [
-            { key: 'dash', href: bb, icon: 'store', label: m('dashboard'), match: [], exact: true },
-            { key: 'profile', href: `${bb}/onboarding`, icon: 'edit', label: m('profileEdit'), match: [`${bb}/onboarding`] },
+            { key: 'profile', href: bb, icon: 'store', label: m('profileEdit'), match: [`${bb}/onboarding`], exact: true },
             { key: 'listing', href: `${bb}/listing`, icon: 'eye', label: m('listing'), match: [`${bb}/listing`, `${bb}/preview`] },
             { key: 'products', href: `${bb}/products`, icon: 'box', label: m('products'), match: [`${bb}/products`] },
             ...(ws.canReadVerification ? [{ key: 'verification', href: `${bb}/verification`, icon: 'shield' as const, label: m('verification'), match: [`${bb}/verification`] }] : []),
             { key: 'team', href: `${base}/members`, icon: 'users', label: m('team'), match: [`${base}/members`] },
-            { key: 'switch', href: '/orgs', icon: 'grid', label: m('switchWorkspace'), match: ['/orgs'], exact: true },
           ]
         : isPartner
           ? [
@@ -74,13 +72,11 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
               { key: 'import', href: `${pb}/import`, icon: 'upload', label: t('p5partner.nav.import'), match: [`${pb}/import`] },
               { key: 'prequests', href: `${pb}/requests`, icon: 'board', label: t('p5partner.nav.requests'), match: [`${pb}/requests`] },
               { key: 'team', href: `${base}/members`, icon: 'users', label: m('team'), match: [`${base}/members`] },
-              { key: 'switch', href: '/orgs', icon: 'grid', label: m('switchWorkspace'), match: ['/orgs'], exact: true },
             ]
           : [
               // A buyer can start selling later with the same account: this opens the organisation form with "sell" preselected.
               ...(hasBusinessOrg ? [] : [{ key: 'sell', href: '/list-your-business', icon: 'store' as const, label: m('sellOnInok'), match: ['/orgs/new'] }]),
               ...(id ? [{ key: 'team', href: `${base}/members`, icon: 'users' as const, label: m('team'), match: [`${base}/members`] }] : []),
-              { key: 'switch', href: '/orgs', icon: 'grid', label: m('switchWorkspace'), match: ['/orgs'], exact: true },
             ],
     },
     {
@@ -88,7 +84,6 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       label: m('sSupport'),
       items: [
         { key: 'gov', href: '/business-help', icon: 'target', label: m('govHelp'), match: ['/business-help'], exact: true },
-        { key: 'find', href: '/business-help/find', icon: 'money', label: m('findAssistance'), match: ['/business-help/find'] },
         { key: 'saved', href: '/business-help/saved', icon: 'bookmark', label: m('savedAssistance'), match: ['/business-help/saved'] },
         { key: 'news', href: '/news', icon: 'news', label: m('news'), match: ['/news'] },
       ],
@@ -108,10 +103,13 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       label: m('sAdmin'),
       items: [
         { key: 'admin', href: '/admin', icon: 'shield', label: m('adminConsole'), match: [], exact: true },
-        { key: 'adminReviews', href: '/admin/verification', icon: 'check', label: m('adminReviews'), match: ['/admin/verification', '/admin/listings'] },
+        { key: 'adminReviews', href: '/admin/verification', icon: 'check', label: m('adminReviews'), match: ['/admin/verification'] },
+        { key: 'adminListings', href: '/admin/listings', icon: 'store', label: m('adminListings'), match: ['/admin/listings'] },
         { key: 'adminDup', href: '/admin/duplicates', icon: 'users', label: m('adminDuplicates'), match: ['/admin/duplicates'] },
         { key: 'adminProg', href: '/admin/business-help', icon: 'target', label: m('adminProgrammes'), match: ['/admin/business-help'] },
         { key: 'adminNews', href: '/admin/news', icon: 'news', label: m('adminNews'), match: ['/admin/news'] },
+        { key: 'adminUsers', href: '/admin/users', icon: 'users', label: m('adminUsers'), match: ['/admin/users'] },
+        { key: 'adminAudit', href: '/admin/audit', icon: 'list', label: m('adminAudit'), match: ['/admin/audit'] },
       ],
     });
   }
@@ -161,6 +159,7 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       orgName={ws.org?.name ?? null}
       orgInitials={ws.org ? initialsOf(ws.org.name) : ''}
       orgSub={orgSub}
+      allWorkspacesLabel={m('allWorkspaces')}
       orgs={ws.orgs.map((o) => ({ id: o.id, name: o.name, sub: t(`orgTypes.${o.type}`) }))}
       activeOrgId={ws.org?.id ?? null}
       groups={groups}

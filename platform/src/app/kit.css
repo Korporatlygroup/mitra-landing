@@ -7,7 +7,7 @@
 .sechead a { font-size: 0.875rem; font-weight: 600; }
 
 .xgrid { display: grid; gap: 16px; }
-.xgrid-4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.xgrid-4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 14rem), 1fr)); }
 .xgrid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
 .xgrid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
 

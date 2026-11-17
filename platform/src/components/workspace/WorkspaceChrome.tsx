@@ -48,6 +48,7 @@ export interface ChromeProps {
   orgInitials: string;
   orgSub: string;
   orgs: { id: string; name: string; sub: string }[];
+  allWorkspacesLabel: string;
   activeOrgId: string | null;
   groups: MenuGroup[];
   tabs: { key: string; href: string; icon: IconName; label: string }[];
@@ -179,6 +180,10 @@ export default function WorkspaceChrome(p: ChromeProps) {
                     <Link href="/orgs/new" className="pi" onClick={() => setOrgOpen(false)} style={{ color: 'var(--brand)', fontWeight: 700 }}>
                       <Icon name="plus" size={18} />
                       <span>{t('orgs.create')}</span>
+                    </Link>
+                    <Link href="/orgs" className="pi" onClick={() => setOrgOpen(false)}>
+                      <Icon name="grid" size={18} />
+                      <span>{p.allWorkspacesLabel}</span>
                     </Link>
                   </div>
                 ) : null}
