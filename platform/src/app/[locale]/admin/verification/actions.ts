@@ -11,7 +11,8 @@ import { getMailer } from '@/server/mailer';
 import * as priv from '@/server/privileged';
 import { scanBytes } from '@/server/scanner';
 import { rescanDepsFrom, rescanPending } from '@/server/services/documents';
-import { getMfaStatus } from '@/server/services/mfa';
+import { requiresMfa } from '@/lib/permissions';
+import { adminMfaRequired, getMfaStatus } from '@/server/services/mfa';
 import { getRolePermissions, listMyMemberships } from '@/server/services/orgs';
 import { decideClaim, getClaim, startReview } from '@/server/services/verification';
 import { buildDecisionEmail } from '@/server/verification-email';
@@ -88,7 +89,8 @@ export async function scanNowAction(): Promise<FormState> {
   if (!user) return failure('unauthenticated');
   const mine = (await listMyMemberships(supabase, user.id)).find((m) => m.org.type === 'mitra');
   const allowed = mine ? (await getRolePermissions(supabase, mine.role)).has('verification:review') : false;
-  if (!allowed || (await getMfaStatus(supabase)).currentLevel !== 'aal2') return failure('forbidden');
+  const mfaOk = mine && !requiresMfa(mine.role, mine.org.type, await adminMfaRequired(supabase)) ? true : (await getMfaStatus(supabase)).currentLevel === 'aal2';
+  if (!allowed || !mfaOk) return failure('forbidden');
 
   const summary = await rescanPending(rescanDepsFrom(priv, scanBytes));
   revalidatePath('/', 'layout');

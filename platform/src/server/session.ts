@@ -4,7 +4,7 @@ import type { Locale } from '@/i18n/routing';
 import { requiresMfa } from '@/lib/permissions';
 import { createClient as createClientUncached } from '@/lib/supabase/server';
 import { getProfile, type Profile } from './services/auth';
-import { getMfaStatus } from './services/mfa';
+import { adminMfaRequired, getMfaStatus } from './services/mfa';
 import { listMyMemberships, type MyMembership } from './services/orgs';
 
 export interface AppSession {
@@ -55,8 +55,8 @@ export async function requireSession(opts: {
   const next = encodeURIComponent(localePath(locale, path));
   if (error || !user) redirect(`${localePath(locale, '/login')}?next=${next}`);
 
-  const [profile, memberships] = await Promise.all([profileOnce(supabase, user.id), membershipsOnce(supabase, user.id)]);
-  const needsMfa = memberships.some((m) => requiresMfa(m.role, m.org.type));
+  const [profile, memberships, adminMfa] = await Promise.all([profileOnce(supabase, user.id), membershipsOnce(supabase, user.id), adminMfaRequired(supabase)]);
+  const needsMfa = memberships.some((m) => requiresMfa(m.role, m.org.type, adminMfa));
 
   const mfa = await getMfaStatus(supabase);
   const aal: 'aal1' | 'aal2' = mfa.currentLevel === 'aal2' ? 'aal2' : 'aal1';

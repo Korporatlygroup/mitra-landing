@@ -20,6 +20,12 @@ export async function getMfaStatus(supabase: Db): Promise<MfaStatus> {
   return { currentLevel, nextLevel: verifiedFactorId ? 'aal2' : 'aal1', verifiedFactorId };
 }
 
+/** The project's administrator MFA policy. Fails closed: any error means "required". */
+export async function adminMfaRequired(supabase: Db): Promise<boolean> {
+  const { data, error } = await supabase.rpc('admin_mfa_required');
+  return error ? true : data !== false;
+}
+
 export interface TotpEnrolment {
   factorId: string;
   qrCode: string;

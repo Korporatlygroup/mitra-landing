@@ -88,9 +88,12 @@ export function isAdminRole(role: string): boolean {
   return role.startsWith('admin_');
 }
 
-/** Mirrors private.requires_mfa. */
-export function requiresMfa(role: MemberRole, orgType: OrgType): boolean {
-  return isAdminRole(role) || (orgType === 'partner' && role === 'owner');
+/**
+ * Mirrors private.requires_mfa. `adminMfa` is the project's administrator policy (public.admin_mfa_required(); default true).
+ * Partner owners always need MFA.
+ */
+export function requiresMfa(role: MemberRole, orgType: OrgType, adminMfa = true): boolean {
+  return (isAdminRole(role) && adminMfa) || (orgType === 'partner' && role === 'owner');
 }
 
 export function roleHas(role: MemberRole, permission: string): boolean {

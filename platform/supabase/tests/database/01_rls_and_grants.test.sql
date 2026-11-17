@@ -257,8 +257,8 @@ select is(
         'set_marketing_consent(p_on boolean)', 'submit_privacy_request(p_type text, p_details text)', 'list_my_privacy_requests()',
         'admin_list_privacy_requests(p_status text)', 'admin_update_privacy_request(p_id uuid, p_status text, p_note text)',
         'list_duplicate_flags(p_status text)', 'resolve_duplicate_flag(p_flag uuid, p_decision text, p_note text)', 'find_published_duplicates(p_ssm text, p_name text)',
-        'request_org_membership(p_slug text, p_message text)', 'list_join_requests(p_org uuid)', 'resolve_join_request(p_request uuid, p_decision text)', 'set_email_notifications(p_on boolean)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 191 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 6 added by business links, duplicate flags and join requests)');
+        'request_org_membership(p_slug text, p_message text)', 'list_join_requests(p_org uuid)', 'resolve_join_request(p_request uuid, p_decision text)', 'set_email_notifications(p_on boolean)', 'admin_mfa_required()']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 192 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 1 administrator MFA policy read, 6 added by business links, duplicate flags and join requests)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
