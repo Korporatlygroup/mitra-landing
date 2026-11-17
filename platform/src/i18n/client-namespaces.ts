@@ -230,6 +230,7 @@ export const AREA_PATHS: Record<string, string[]> = {
 
 // What server actions can answer with (state.messageKey); an area that lists "@actions" gets all of these.
 export const ACTION_PATHS: string[] = [
+  "account.emailNotifSaved",
   "account.marketingSaved",
   "account.passwordChanged",
   "account.requestSent",

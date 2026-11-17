@@ -5,12 +5,12 @@ import { redirect } from 'next/navigation';
 import { failure, success, type FormState } from '@/lib/form-state';
 import { nonSecretValues, parseForm } from '@/lib/form';
 import { safeRedirectPath } from '@/lib/safe-redirect';
-import { changePasswordSchema, consentSchema, localeSchema, marketingSchema, privacyRequestSchema, profileSchema } from '@/lib/schemas';
+import { changePasswordSchema, consentSchema, emailNotificationsSchema, localeSchema, marketingSchema, privacyRequestSchema, profileSchema } from '@/lib/schemas';
 import { createClient } from '@/lib/supabase/server';
 import { recordAuthEvent } from '@/server/privileged';
 import { changePassword, signOut, updateProfile } from '@/server/services/auth';
 import { grantConsents } from '@/server/services/consent';
-import { setMarketingConsent, submitPrivacyRequest } from '@/server/services/privacy';
+import { setEmailNotifications, setMarketingConsent, submitPrivacyRequest } from '@/server/services/privacy';
 
 export async function signOutAction(formData: FormData): Promise<void> {
   const locale = localeSchema.catch('en').parse(formData.get('locale'));
@@ -64,6 +64,19 @@ export async function grantConsentAction(_prev: FormState, formData: FormData): 
   if (!r.ok) return failure(r.errorKey);
   revalidatePath('/', 'layout');
   redirect(safeRedirectPath(parsed.data.next, `/${parsed.data.locale}/account`));
+}
+
+/** Turns transactional email notifications (enquiries, quotations, requests, sourcing, decisions) on or off. Security emails are not affected. */
+export async function setEmailNotificationsAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const parsed = parseForm(emailNotificationsSchema, formData);
+  if (!parsed.ok) return failure(parsed.errorKey);
+  const supabase = await createClient();
+  const { data } = await supabase.auth.getUser();
+  if (!data.user) return failure('unauthenticated');
+  const r = await setEmailNotifications(supabase, parsed.data.notify);
+  if (!r.ok) return failure(r.errorKey);
+  revalidatePath(`/${parsed.data.locale}/account`);
+  return success('account.emailNotifSaved');
 }
 
 /** Turns the optional marketing consent on or off. Never affects access to any feature. */

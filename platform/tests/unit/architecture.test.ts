@@ -53,6 +53,7 @@ describe('privileged (service-role) boundary', () => {
       'setProductMediaScan',
       'listUnscannedProductMedia',
       // Phase 7: monitoring worker (whitelisted RPCs only)
+      'notifyEmailRpc',
       'govWorkerRpc',
     ]);
   });

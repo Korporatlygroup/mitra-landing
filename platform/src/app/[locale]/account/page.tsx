@@ -7,8 +7,8 @@ import { safeRedirectPath } from '@/lib/safe-redirect';
 import { hasCurrentConsents } from '@/server/services/consent';
 import { getMfaStatus } from '@/server/services/mfa';
 import { requireSession } from '@/server/session';
-import { hasMarketingConsent, listMyPrivacyRequests, PRIVACY_REQUEST_TYPES } from '@/server/services/privacy';
-import { changePasswordAction, grantConsentAction, setMarketingAction, signOutAction, submitPrivacyRequestAction, updateProfileAction } from './actions';
+import { hasEmailNotifications, hasMarketingConsent, listMyPrivacyRequests, PRIVACY_REQUEST_TYPES } from '@/server/services/privacy';
+import { changePasswordAction, grantConsentAction, setEmailNotificationsAction, setMarketingAction, signOutAction, submitPrivacyRequestAction, updateProfileAction } from './actions';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'account.title');
@@ -27,11 +27,12 @@ export default async function AccountPage({
   const t = await getTranslations({ locale, namespace: 'account' });
   const c = await getTranslations({ locale, namespace: 'consent' });
   const signup = await getTranslations({ locale, namespace: 'signup' });
-  const [mfa, consented, marketing, myRequests] = await Promise.all([
+  const [mfa, consented, marketing, myRequests, emailNotif] = await Promise.all([
     getMfaStatus(s.supabase),
     hasCurrentConsents(s.supabase, s.user.id),
     hasMarketingConsent(s.supabase, s.user.id),
     listMyPrivacyRequests(s.supabase),
+    hasEmailNotifications(s.supabase, s.user.id),
   ]);
   const next = safeRedirectPath(typeof sp.next === 'string' ? sp.next : null, '');
 
@@ -110,6 +111,12 @@ export default async function AccountPage({
           {signup('readPrivacy')}
         </Link>
       </p>
+      <h3>{t('emailNotifTitle')}</h3>
+      <p>{t('emailNotifIntro')}</p>
+      <ActionForm action={setEmailNotificationsAction} submitLabel={t('emailNotifSave')}>
+        <input type="hidden" name="locale" value={locale} />
+        <CheckField id="notify" name="notify" label={t('emailNotifLabel')} required={false} defaultChecked={emailNotif} />
+      </ActionForm>
       <h3>{t('marketingTitle')}</h3>
       <p>{t('marketingIntro')}</p>
       <ActionForm action={setMarketingAction} submitLabel={t('marketingSave')}>

@@ -8,7 +8,7 @@ import type { GovRpc } from './worker';
  */
 
 export interface MailerLike {
-  send(message: { to: string; subject: string; text: string }): Promise<void>;
+  send(message: { to: string; subject: string; text: string; html?: string; idempotencyKey?: string }): Promise<unknown>;
 }
 
 export interface NotifyDeps {

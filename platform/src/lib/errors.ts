@@ -32,6 +32,7 @@ export const KNOWN_MESSAGE_KEYS = [
   'user_not_found_or_unconfirmed',
   'consent_required',
   'invalid_consent',
+  'invalid_preference',
   'invalid_throttle',
   'invalid_ssm',
   'invalid_state',

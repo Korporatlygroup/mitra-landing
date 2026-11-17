@@ -108,6 +108,7 @@ export const totpCodeSchema = z
 export const profileSchema = z.object({ displayName: displayNameSchema, language: localeSchema });
 export const forgotPasswordSchema = z.object({ email: emailSchema });
 export const consentSchema = z.object({ acceptTerms: checkbox, acceptPrivacy: checkbox, locale: localeSchema, next: z.string().optional() });
+export const emailNotificationsSchema = z.object({ notify: optionalCheckbox, locale: localeSchema });
 export const marketingSchema = z.object({ marketing: optionalCheckbox, locale: localeSchema });
 export const privacyRequestSchema = z.object({
   type: z.enum(['access', 'correction', 'deletion', 'portability', 'consent_withdrawal', 'complaint', 'other'], 'invalid_request_type'),

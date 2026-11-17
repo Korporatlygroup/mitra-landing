@@ -13,6 +13,7 @@
   "vars": { "SITE_URL": "https://app.inok.my", "ACCESS_GATE": "required" },
   "routes": [{ "pattern": "app.inok.my", "custom_domain": true }],
   "limits": { "cpu_ms": 30000 },
+  "triggers": { "crons": ["*/2 * * * *"] },
   "workers_dev": true,
   "preview_urls": false
 }

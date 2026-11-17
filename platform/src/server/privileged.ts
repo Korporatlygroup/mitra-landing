@@ -385,6 +385,22 @@ const GOV_WORKER_RPCS = [
   'news_digest_candidates', 'news_digest_posts', 'news_digest_claim', 'news_digest_release',
 ] as const;
 
+const NOTIFY_EMAIL_RPCS = ['claim_notification_emails', 'mark_notification_email'] as const;
+
+/** Delivery job for transactional notification email: only the two service-role queue functions can be called through this. */
+export async function notifyEmailRpc(
+  name: (typeof NOTIFY_EMAIL_RPCS)[number],
+  args: Record<string, unknown> = {},
+): Promise<{ data: unknown; error: { code?: string; message: string } | null }> {
+  if (!NOTIFY_EMAIL_RPCS.includes(name)) return { data: null, error: { message: 'rpc_not_allowed' } };
+  try {
+    const { data, error } = await serviceClient().rpc(name, args);
+    return { data, error: error ? { code: error.code, message: error.message } : null };
+  } catch {
+    return { data: null, error: { message: 'worker_unavailable' } };
+  }
+}
+
 export async function govWorkerRpc(
   name: (typeof GOV_WORKER_RPCS)[number],
   args: Record<string, unknown> = {},

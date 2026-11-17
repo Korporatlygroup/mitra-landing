@@ -24,6 +24,17 @@ export async function hasMarketingConsent(supabase: Db, userId: string): Promise
   return (data ?? []).length > 0;
 }
 
+/** Transactional email notifications are ON unless the person switched them off (no row means on). */
+export async function hasEmailNotifications(supabase: Db, userId: string): Promise<boolean> {
+  const { data } = await supabase.from('email_preferences').select('transactional').eq('user_id', userId).maybeSingle();
+  return data ? data.transactional === true : true;
+}
+
+export async function setEmailNotifications(supabase: Db, on: boolean): Promise<Result<null>> {
+  const { error } = await supabase.rpc('set_email_notifications', { p_on: on });
+  return error ? failFrom(error) : ok(null);
+}
+
 export async function setMarketingConsent(supabase: Db, on: boolean): Promise<Result<null>> {
   const { error } = await supabase.rpc('set_marketing_consent', { p_on: on });
   return error ? failFrom(error) : ok(null);

@@ -37,6 +37,13 @@ function presentedKey(request) {
 }
 
 export default {
+  // Cron Trigger (see wrangler config): runs the transactional notification email job inside this same Worker. The request goes straight to
+  // the application handler (not through the public gate) and carries the job secret, so only this code path can start a run.
+  async scheduled(_event, env, ctx) {
+    if (!env.CRON_SECRET || !env.SITE_URL) return;
+    const req = new Request(`${env.SITE_URL}/api/v1/jobs/notify`, { method: 'POST', headers: { authorization: `Bearer ${env.CRON_SECRET}` } });
+    ctx.waitUntil(app.fetch(req, env, ctx).then(async (r) => { if (!r.ok) console.error('notify job failed', { status: r.status }); }));
+  },
   async fetch(request, env, ctx) {
     if (env.ACCESS_GATE === 'required') {
       const path = new URL(request.url).pathname;
