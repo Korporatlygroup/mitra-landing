@@ -50,8 +50,12 @@ test('E6 audit page lists login, org, membership, invitation, mfa and bootstrap 
   await page.locator('#action').selectOption('');
   await page.getByRole('button', { name: t('admin.filterApply'), exact: true }).click();
   expect(new Set((await page.locator('tbody tr td:nth-child(2)').allInnerTexts()).map((s) => s.trim())).size).toBeGreaterThan(1);
+  // Other specs and the integration tests legitimately withdraw consent (marketing opt-out, migration 225), so this action is not
+  // guaranteed to have no rows in a shared database. Assert the filter either way: all rows match it, or the empty message shows.
   await page.goto('/en/admin/audit?action=consent.withdrawn');
-  await expect(page.locator('main')).toContainText(t('admin.empty'));
+  const withdrawn = (await page.locator('tbody tr td:nth-child(2)').allInnerTexts()).map((x) => x.trim());
+  if (withdrawn.length === 0) await expect(page.locator('main')).toContainText(t('admin.empty'));
+  else expect(new Set(withdrawn)).toEqual(new Set(['consent.withdrawn']));
 });
 
 test('E6 the audit list is read-only: no form can change entries', async ({ page }) => {
