@@ -203,6 +203,102 @@
     "admin_ops": "Operations administrator",
     "admin_super": "Super administrator"
   },
+  "b360": {
+    "title": "My Business 360°",
+    "overview": "Your business at a glance",
+    "verification": "Verification",
+    "verified": "{n} item(s) approved",
+    "needsInfo": "More information needed",
+    "notVerified": "Not reviewed yet",
+    "completion": "Profile completion",
+    "completionHint": "{done} of {total} checks done",
+    "liveProducts": "Live products and services",
+    "openEnquiries": "Enquiries to answer",
+    "quotesSent": "Quotations sent",
+    "unread": "Unread notifications",
+    "buyingRequests": "Open buying requests",
+    "tasks": "Actions for you",
+    "nextTitle": "Recommended next actions",
+    "nextNone": "Nothing needs your attention right now.",
+    "done": "Done",
+    "task": {
+      "info": "INOK asked for more information on your verification.",
+      "requests": "{n} new buyer request(s) match your business.",
+      "followUps": "{n} quotation follow-up(s) are due.",
+      "enquiries": "{n} enquiry(ies) are waiting for your reply.",
+      "unread": "You have {n} unread notification(s).",
+      "assist": "Answer a few questions to see assistance that may suit your business."
+    },
+    "check": {
+      "profile": {
+        "label": "Business details saved",
+        "todo": "Add your business details"
+      },
+      "registration": {
+        "label": "Registration details",
+        "todo": "Complete your registration details"
+      },
+      "location": {
+        "label": "Location",
+        "todo": "Add your state and district"
+      },
+      "address": {
+        "label": "Private address on file",
+        "todo": "Add your address (kept private)"
+      },
+      "representative": {
+        "label": "Authorised person named",
+        "todo": "Name the person who acts for the business"
+      },
+      "description": {
+        "label": "Headline and description written",
+        "todo": "Write your headline and description"
+      },
+      "links": {
+        "label": "WhatsApp, website or social link added",
+        "todo": "Add a WhatsApp number or a link"
+      },
+      "products": {
+        "label": "A product or service listed",
+        "todo": "List a product or service"
+      },
+      "verified": {
+        "label": "At least one verification item approved",
+        "todo": "Submit your verification"
+      },
+      "published": {
+        "label": "Public profile published",
+        "todo": "Submit your profile for review"
+      }
+    },
+    "assist": {
+      "title": "Assistance that may suit you",
+      "note": "Matched with the rules published by each agency, using only answers you gave. Nothing here means a programme has approved you.",
+      "noProfile": "We need a few answers about your business to compare it with programmes.",
+      "answer": "Answer the questions",
+      "none": "No published programme is available yet.",
+      "amountNone": "Amount not published",
+      "official": "Official page"
+    },
+    "readiness": {
+      "title": "Readiness actions",
+      "note": "These checks come from your saved profile and listing. A full readiness assessment is not available yet."
+    },
+    "training": {
+      "title": "Training",
+      "none": "No published training programme yet."
+    },
+    "market": {
+      "title": "Marketplace opportunities",
+      "none": "No new buyer request matches your business right now.",
+      "untitled": "Buyer request",
+      "all": "All requests"
+    },
+    "news": {
+      "title": "Latest relevant news",
+      "none": "No published news yet."
+    }
+  },
   "dupAdmin": {
     "title": "Possible duplicate businesses",
     "intro": "Pairs that share a registration number or a very similar name. Nothing is merged or deleted from here: record whether it is a real duplicate so the team can act.",

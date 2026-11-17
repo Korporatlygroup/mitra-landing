@@ -203,6 +203,102 @@
     "admin_ops": "Pentadbir operasi",
     "admin_super": "Pentadbir utama"
   },
+  "b360": {
+    "title": "Perniagaan Saya 360°",
+    "overview": "Perniagaan anda sekilas pandang",
+    "verification": "Pengesahan",
+    "verified": "{n} item diluluskan",
+    "needsInfo": "Maklumat lanjut diperlukan",
+    "notVerified": "Belum disahkan",
+    "completion": "Kelengkapan profil",
+    "completionHint": "{done} daripada {total} semakan selesai",
+    "liveProducts": "Produk dan perkhidmatan aktif",
+    "openEnquiries": "Pertanyaan untuk dijawab",
+    "quotesSent": "Sebut harga dihantar",
+    "unread": "Pemberitahuan belum dibaca",
+    "buyingRequests": "Permintaan pembelian terbuka",
+    "tasks": "Tindakan untuk anda",
+    "nextTitle": "Tindakan seterusnya yang disyorkan",
+    "nextNone": "Tiada apa-apa yang memerlukan perhatian anda sekarang.",
+    "done": "Selesai",
+    "task": {
+      "info": "INOK meminta maklumat lanjut untuk pengesahan anda.",
+      "requests": "{n} permintaan pembeli baharu sepadan dengan perniagaan anda.",
+      "followUps": "{n} tindakan susulan sebut harga telah tiba.",
+      "enquiries": "{n} pertanyaan menunggu balasan anda.",
+      "unread": "Anda ada {n} pemberitahuan belum dibaca.",
+      "assist": "Jawab beberapa soalan untuk melihat bantuan yang mungkin sesuai."
+    },
+    "check": {
+      "profile": {
+        "label": "Butiran perniagaan disimpan",
+        "todo": "Tambah butiran perniagaan"
+      },
+      "registration": {
+        "label": "Butiran pendaftaran",
+        "todo": "Lengkapkan butiran pendaftaran"
+      },
+      "location": {
+        "label": "Lokasi",
+        "todo": "Tambah negeri dan daerah"
+      },
+      "address": {
+        "label": "Alamat peribadi direkodkan",
+        "todo": "Tambah alamat anda (dirahsiakan)"
+      },
+      "representative": {
+        "label": "Orang yang dibenarkan dinamakan",
+        "todo": "Namakan orang yang bertindak bagi pihak perniagaan"
+      },
+      "description": {
+        "label": "Tajuk dan penerangan ditulis",
+        "todo": "Tulis tajuk dan penerangan"
+      },
+      "links": {
+        "label": "WhatsApp, laman web atau pautan sosial ditambah",
+        "todo": "Tambah nombor WhatsApp atau pautan"
+      },
+      "products": {
+        "label": "Produk atau perkhidmatan disenaraikan",
+        "todo": "Senaraikan produk atau perkhidmatan"
+      },
+      "verified": {
+        "label": "Sekurang-kurangnya satu item pengesahan diluluskan",
+        "todo": "Hantar pengesahan anda"
+      },
+      "published": {
+        "label": "Profil awam diterbitkan",
+        "todo": "Hantar profil anda untuk semakan"
+      }
+    },
+    "assist": {
+      "title": "Bantuan yang mungkin sesuai",
+      "note": "Dipadankan dengan syarat yang diterbitkan setiap agensi, hanya menggunakan jawapan yang anda beri. Tiada apa di sini bermaksud program telah meluluskan anda.",
+      "noProfile": "Kami perlukan beberapa jawapan tentang perniagaan anda untuk membandingkannya dengan program.",
+      "answer": "Jawab soalan",
+      "none": "Belum ada program yang diterbitkan.",
+      "amountNone": "Jumlah tidak diterbitkan",
+      "official": "Laman rasmi"
+    },
+    "readiness": {
+      "title": "Tindakan kesediaan",
+      "note": "Semakan ini datang daripada profil dan penyenaraian yang anda simpan. Penilaian kesediaan penuh belum tersedia."
+    },
+    "training": {
+      "title": "Latihan",
+      "none": "Belum ada program latihan yang diterbitkan."
+    },
+    "market": {
+      "title": "Peluang pasaran",
+      "none": "Tiada permintaan pembeli baharu yang sepadan dengan perniagaan anda sekarang.",
+      "untitled": "Permintaan pembeli",
+      "all": "Semua permintaan"
+    },
+    "news": {
+      "title": "Berita relevan terkini",
+      "none": "Belum ada berita diterbitkan."
+    }
+  },
   "dupAdmin": {
     "title": "Kemungkinan perniagaan pendua",
     "intro": "Pasangan yang berkongsi nombor pendaftaran atau nama yang sangat serupa. Tiada apa-apa digabungkan atau dipadam dari sini: rekodkan sama ada ia pendua sebenar supaya pasukan boleh bertindak.",

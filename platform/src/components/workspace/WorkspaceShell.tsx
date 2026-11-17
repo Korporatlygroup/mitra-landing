@@ -24,7 +24,14 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
 
   if (ws.kind === 'business' && id) {
     groups = [
-      { key: 'top', label: null, items: [{ key: 'home', href: `${base}/business`, icon: 'home', label: m('home'), match: [], exact: true }] },
+      {
+        key: 'top',
+        label: null,
+        items: [
+          { key: 'home', href: `${base}/business`, icon: 'home', label: m('home'), match: [], exact: true },
+          { key: 'b360', href: `${base}/business/360`, icon: 'target', label: m('b360'), match: [`${base}/business/360`] },
+        ],
+      },
       {
         key: 'customers',
         label: m('customers'),
