@@ -1,0 +1,68 @@
+/* INOK UI kit: shared page and card building blocks (premium v3). Tokens come from globals.css; no new colours here. */
+.pagehead { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; margin-bottom: 4px; }
+.pagehead h1 { margin: 0; }
+.pagehead p { margin: 4px 0 0; color: var(--muted); font-size: 0.9375rem; }
+.sechead { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin: 0 0 12px; }
+.sechead h2 { margin: 0; font-size: 1.1875rem; }
+.sechead a { font-size: 0.875rem; font-weight: 600; }
+
+.xgrid { display: grid; gap: 16px; }
+.xgrid-4 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+.xgrid-3 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 18rem), 1fr)); }
+.xgrid-2 { grid-template-columns: repeat(auto-fit, minmax(min(100%, 24rem), 1fr)); }
+
+/* discovery card: one icon, one title, one sentence, one action */
+.dcard { display: flex; flex-direction: column; gap: 8px; padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; color: var(--ink); text-decoration: none; transition: border-color 0.15s, box-shadow 0.15s; }
+.dcard:hover, .dcard:focus-visible { border-color: var(--brand); box-shadow: var(--shadow-hover); }
+.dcard-ico { width: 40px; height: 40px; border-radius: 10px; background: var(--brand-tint); color: var(--brand); display: inline-flex; align-items: center; justify-content: center; }
+.dcard h3 { margin: 4px 0 0; font-size: 1rem; }
+.dcard p { margin: 0; color: var(--muted); font-size: 0.875rem; flex: 1; }
+.dcard-go { display: inline-flex; align-items: center; gap: 6px; color: var(--brand); font-weight: 600; font-size: 0.875rem; }
+
+/* opportunity (programme) card */
+.ocard { display: flex; flex-direction: column; gap: 8px; padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.ocard h3 { margin: 0; font-size: 1rem; line-height: 1.35; }
+.ocard h3 a { color: var(--ink); text-decoration: none; }
+.ocard h3 a:hover { color: var(--brand); }
+.ocard .meta { color: var(--muted); font-size: 0.8125rem; display: flex; flex-wrap: wrap; gap: 4px 10px; }
+.ocard-foot { margin-top: auto; padding-top: 8px; display: flex; gap: 8px; flex-wrap: wrap; }
+
+/* news card */
+.ncard { display: flex; flex-direction: column; gap: 6px; padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.ncard h3 { margin: 0; font-size: 1rem; line-height: 1.35; }
+.ncard h3 a { color: var(--ink); text-decoration: none; }
+.ncard h3 a:hover { color: var(--brand); }
+.ncard p { margin: 0; color: var(--muted); font-size: 0.875rem; }
+.ncard .meta { color: var(--muted); font-size: 0.8125rem; display: flex; flex-wrap: wrap; gap: 4px 10px; align-items: center; }
+
+/* listing card (business) */
+.lcard { display: flex; flex-direction: column; gap: 10px; padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+.lcard-top { display: flex; gap: 12px; align-items: center; }
+.lcard-mono { width: 44px; height: 44px; border-radius: 10px; background: var(--brand-tint); color: var(--brand); font-weight: 700; display: inline-flex; align-items: center; justify-content: center; flex: none; }
+.lcard h3 { margin: 0; font-size: 1rem; }
+.lcard h3 a { color: var(--ink); text-decoration: none; }
+.lcard h3 a:hover { color: var(--brand); }
+.lcard p { margin: 0; color: var(--muted); font-size: 0.875rem; }
+
+/* metric card */
+.mcard { padding: 16px 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; gap: 2px; }
+.mcard b { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.2; }
+.mcard span { color: var(--muted); font-size: 0.8125rem; }
+
+/* status / action card */
+.acard { padding: 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; display: flex; flex-direction: column; gap: 10px; }
+.acard-bar { height: 8px; border-radius: 999px; background: var(--tag-gray-bg); overflow: hidden; }
+.acard-bar > i { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
+
+/* empty state */
+.empty-x { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 6px; padding: 28px 20px; background: #fff; border: 1px dashed var(--line-strong); border-radius: 12px; }
+.empty-x-ico { width: 44px; height: 44px; border-radius: 12px; background: var(--tag-gray-bg); color: var(--muted); display: inline-flex; align-items: center; justify-content: center; }
+.empty-x h3 { margin: 4px 0 0; font-size: 1rem; }
+.empty-x p { margin: 0; color: var(--muted); font-size: 0.875rem; max-width: 32rem; }
+.empty-x .btn { margin-top: 8px; }
+
+.chip-x { display: inline-flex; align-items: center; gap: 4px; padding: 2px 10px; border-radius: 999px; background: var(--tag-gray-bg); color: var(--tag-gray); font-size: 0.75rem; font-weight: 600; }
+.chip-x.brand { background: var(--brand-tint); color: var(--brand); }
+.chip-x.green { background: var(--tag-green-bg); color: var(--tag-green); }
+.chip-x.gold { background: var(--tag-gold-bg); color: var(--tag-gold); }
+@media (max-width: 639px) { .dcard, .ocard, .ncard, .lcard, .acard { padding: 16px; } }
