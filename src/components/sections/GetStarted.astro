@@ -1,0 +1,28 @@
+---
+import { getStarted } from '../../lib/content';
+---
+
+<section class="gs" id="get-started" aria-labelledby="gs-h">
+  <div class="container">
+    <h2 id="gs-h" data-reveal>{getStarted.heading}</h2>
+    <p class="gs__body" data-reveal style="--d:60">{getStarted.body}</p>
+    <ul class="gs__cards">
+      {getStarted.cards.map((c, i) => (
+        <li class="gs__card" data-reveal style={`--d:${100 + i * 80}`}>
+          <h3>{c.title}</h3>
+          <p>{c.text}</p>
+          <a class={c.style === 'primary' ? 'btn btn--primary' : 'btn btn--secondary'} href={c.href} rel="noopener">{c.cta}</a>
+        </li>
+      ))}
+    </ul>
+  </div>
+</section>
+
+<style>
+  .gs { padding: clamp(2.5rem, 6vw, 4.5rem) 0; background: var(--surface, transparent); }
+  .gs__body { max-width: 46rem; margin: 0.5rem 0 1.5rem; color: var(--ink-2, inherit); }
+  .gs__cards { list-style: none; margin: 0; padding: 0; display: grid; gap: 1rem; grid-template-columns: repeat(auto-fit, minmax(min(100%, 17rem), 1fr)); }
+  .gs__card { padding: 1.25rem; border: 1px solid var(--line, rgba(0, 0, 0, 0.12)); border-radius: 14px; display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; }
+  .gs__card h3 { margin: 0; }
+  .gs__card p { margin: 0 0 0.5rem; flex: 1; }
+</style>

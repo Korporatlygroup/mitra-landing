@@ -1011,6 +1011,15 @@
       ]
     }
   },
+  "getStarted": {
+    "heading": "Get started with INOK",
+    "body": "One account lets you find businesses, ask for quotations and list your own business. Sign up with your email, confirm it from the link we send, and you land inside INOK.",
+    "cards": [
+      { "title": "List your business", "text": "Free to list. Create your account, confirm your email and tell us about your business.", "cta": "List your business", "path": "/en/list-your-business", "style": "primary" },
+      { "title": "Find a business", "text": "Browse reviewed Malaysian Indian businesses and send an enquiry.", "cta": "Explore businesses", "path": "/en/directory", "style": "secondary" },
+      { "title": "Already have an account?", "text": "Sign in to continue where you left off.", "cta": "Sign in", "path": "/en/login", "style": "secondary" }
+    ]
+  },
   "app": {
     "_note": "Links into the INOK platform (app.inok.my). English entry points; the platform offers Bahasa Melayu (/ms) and Tamil (/ta) from its own language switch.",
     "origin": "https://app.inok.my",

@@ -33,3 +33,10 @@ export const navLinks = site.nav.filter((n) => !hidden.has(n.href));
 
 /** Links into the platform. Absolute URLs: they must never take part in the in-page scroll spy (no data-spy). */
 export const appLinks = site.app.links.map((l) => ({ label: l.label, href: `${site.app.origin}${l.path}` }));
+
+/** "Get started" section: cards that open the platform. */
+export const getStarted = {
+  heading: site.getStarted.heading,
+  body: site.getStarted.body,
+  cards: site.getStarted.cards.map((c) => ({ ...c, href: `${site.app.origin}${c.path}` })),
+};
