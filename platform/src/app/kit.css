@@ -267,3 +267,13 @@ a.chip-x:hover { background: var(--brand-tint); color: var(--brand); }
 .fchip:hover { border-color: var(--brand); }
 .fchip[aria-current='page'], .fchip[aria-current='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
 @media (max-width: 639px) { .fchip-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .fchip { flex: none; white-space: nowrap; } }
+
+/* Brand mark image (replaces the old "IN" tile) */
+.logo-img { display: block; width: auto; height: 42px; flex: none; }
+.logo-sm .logo-img { height: 40px; }
+.logo-inv .logo-img { background: #fff; border-radius: 10px; padding: 3px; height: 40px; }
+
+/* Brand mark image (replaces the old "IN" tile) */
+.logo-img { display: block; width: auto; height: 42px; flex: none; }
+.logo-sm .logo-img { height: 40px; }
+.logo-inv .logo-img { background: #fff; border-radius: 10px; padding: 3px; height: 40px; }
