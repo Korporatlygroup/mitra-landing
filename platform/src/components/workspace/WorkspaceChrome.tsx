@@ -55,10 +55,10 @@ export interface ChromeProps {
   unread: number;
   bell: BellItem[];
   searchAction: string | null;
+  /** Collapsed state read from the cookie on the server, so the first paint already matches the person's choice (no flash, no reset on navigation). */
+  initialCollapsed?: boolean;
   children: ReactNode;
 }
-
-const STORE = 'inok.ws.collapsed';
 
 function Popover({ label, icon, dot, children, labelledCount }: { label: string; icon: IconName; dot?: boolean; children: (close: () => void) => ReactNode; labelledCount?: number }) {
   const [open, setOpen] = useState(false);
@@ -77,7 +77,7 @@ function Popover({ label, icon, dot, children, labelledCount }: { label: string;
 export default function WorkspaceChrome(p: ChromeProps) {
   const t = useTranslations();
   const path = usePathname();
-  const [collapsed, setCollapsed] = useState(false);
+  const [collapsed, setCollapsed] = useState(Boolean(p.initialCollapsed));
   const [mobileOpen, setMobileOpen] = useState(false);
   const [createOpen, setCreateOpen] = useState(false);
   const [orgOpen, setOrgOpen] = useState(false);
@@ -85,15 +85,6 @@ export default function WorkspaceChrome(p: ChromeProps) {
   const createRef = usePopover(createOpen, () => setCreateOpen(false));
   const orgRef = usePopover(orgOpen, () => setOrgOpen(false));
 
-  useEffect(() => {
-    // The stored choice can only be read in the browser, after hydration, so the server and first client render agree.
-    try {
-      // eslint-disable-next-line react-hooks/set-state-in-effect
-      setCollapsed(localStorage.getItem(STORE) === '1');
-    } catch {
-      /* storage can be blocked; the menu stays open */
-    }
-  }, []);
   const [seenPath, setSeenPath] = useState(path);
   if (seenPath !== path) {
     setSeenPath(path);
@@ -115,11 +106,8 @@ export default function WorkspaceChrome(p: ChromeProps) {
 
   const toggle = () => {
     setCollapsed((c) => {
-      try {
-        localStorage.setItem(STORE, c ? '0' : '1');
-      } catch {
-        /* ignore */
-      }
+      // A cookie (not browser storage) so the server renders the same state on the next page: the menu changes only when the person clicks the toggle.
+      document.cookie = `inok_sb=${c ? '0' : '1'}; path=/; max-age=31536000; samesite=lax`;
       return !c;
     });
   };

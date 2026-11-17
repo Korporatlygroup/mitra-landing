@@ -112,7 +112,7 @@ export default async function ListingView({
         </p>
       ) : null}
       <h2 style={{ margin: 0, fontSize: '1.25rem' }}>{t('dir.about')}</h2>
-      {data.description ? <p style={{ margin: 0, whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.7, color: '#2a3530' }}>{data.description}</p> : <p className="mut">{t('dir.noServices')}</p>}
+      {data.description ? <p style={{ margin: 0, whiteSpace: 'pre-line', fontSize: '1rem', lineHeight: 1.7, color: 'var(--text-2)' }}>{data.description}</p> : <p className="mut">{t('dir.noServices')}</p>}
       {data.portfolio.length > 0 ? (
         <>
           <h2 style={{ margin: '8px 0 0', fontSize: '1.25rem' }}>{t('dir.portfolio')}</h2>

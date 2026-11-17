@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import { getFormatter, getTranslations } from 'next-intl/server';
-import { saveGovProgrammeAction, unsaveGovProgrammeAction } from '../actions';
+import { saveMyProgrammeAction, unsaveMyProgrammeAction } from '../actions';
 import QuickForm from '@/components/catalogue/QuickForm';
 import MatchExplanation from '@/components/gov/MatchExplanation';
 import StatusBadge from '@/components/gov/StatusBadge';
@@ -9,7 +9,7 @@ import { matchProgramme } from '@/lib/gov-matching';
 import { categoryOf, displayStatus } from '@/lib/gov-status';
 import { eligibleAssistOrgs, formatRm, safeHttpsUrl, textLang } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
-import { getGovProfile, getGovProgramme, listGovSaved } from '@/server/services/gov';
+import { getGovProfile, getGovProgramme, listMyGovSaved } from '@/server/services/gov';
 import { listMyMemberships } from '@/server/services/orgs';
 import { getOptionalUser } from '@/server/session';
 
@@ -51,7 +51,7 @@ export default async function ProgrammePage({
   const org = (wanted ? orgs.find((m) => m.org.id === wanted) : null) ?? orgs[0] ?? null;
   const profileRes = org ? await getGovProfile(supabase, org.org.id) : null;
   const profile = profileRes?.ok ? profileRes.data : null;
-  const savedRes = org ? await listGovSaved(supabase, org.org.id) : null;
+  const savedRes = user ? await listMyGovSaved(supabase) : null;
   const saved = Boolean(savedRes?.ok && savedRes.data.some((s) => s.programme_id === p.id));
   const match = org
     ? matchProgramme(
@@ -142,10 +142,10 @@ export default async function ProgrammePage({
             {t('detail.infoLink')}
           </a>
         ) : null}
-        {org ? (
+        {user ? (
           <QuickForm
-            action={saved ? unsaveGovProgrammeAction : saveGovProgrammeAction}
-            fields={{ orgId: org.org.id, programmeId: p.id }}
+            action={saved ? unsaveMyProgrammeAction : saveMyProgrammeAction}
+            fields={{ programmeId: p.id }}
             label={saved ? t('card.remove') : t('card.save')}
             srName={p.name}
           />

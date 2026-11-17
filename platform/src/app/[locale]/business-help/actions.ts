@@ -2,11 +2,14 @@
 
 import { revalidatePath } from 'next/cache';
 import { redirect } from 'next/navigation';
+import { z } from 'zod';
 import { formToObject, nonSecretValues } from '@/lib/form';
 import { failure, success, type FormState } from '@/lib/form-state';
-import { REMINDER_DAY_CHOICES, govPrefsSchema, govProfileSchema, govSaveSchema, govTrackingSchema } from '@/lib/gov-ui';
+import { REMINDER_DAY_CHOICES, eligibleAssistOrgs, govPrefsSchema, govProfileSchema, govSaveSchema, govTrackingSchema } from '@/lib/gov-ui';
+import { uuidSchema } from '@/lib/schemas';
 import { actionUser } from '@/server/action-user';
-import { saveGovProfile, saveGovProgramme, setGovPrefs, unsaveGovProgramme, updateGovTracking } from '@/server/services/gov';
+import { saveGovProfile, saveGovProgramme, saveMyGovProgramme, setGovPrefs, unsaveGovProgramme, unsaveMyGovProgramme, updateGovTracking } from '@/server/services/gov';
+import { listMyMemberships } from '@/server/services/orgs';
 
 const localeOf = (raw: Record<string, string>) => (['en', 'ta', 'ms'].includes(raw.locale ?? '') ? (raw.locale as string) : 'en');
 
@@ -48,6 +51,35 @@ export async function saveGovProgrammeAction(_prev: FormState, formData: FormDat
   if (!r.ok) return failure(r.errorKey);
   revalidatePath('/', 'layout');
   return success('gov.ok.saved');
+}
+
+const myProgrammeSchema = z.object({ programmeId: uuidSchema });
+
+/** Bookmark a programme for the signed-in person. No business is needed; a business that tracks applications is kept in step when there is one. */
+export async function saveMyProgrammeAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const p = myProgrammeSchema.safeParse(formToObject(formData));
+  if (!p.success) return failure('invalid_data');
+  const { supabase, user } = await actionUser();
+  if (!user) return failure('unauthenticated');
+  const r = await saveMyGovProgramme(supabase, p.data.programmeId);
+  if (!r.ok) return failure(r.errorKey);
+  const org = eligibleAssistOrgs(await listMyMemberships(supabase, user.id))[0];
+  if (org) await saveGovProgramme(supabase, org.org.id, p.data.programmeId);
+  revalidatePath('/', 'layout');
+  return success('gov.ok.saved');
+}
+
+export async function unsaveMyProgrammeAction(_prev: FormState, formData: FormData): Promise<FormState> {
+  const p = myProgrammeSchema.safeParse(formToObject(formData));
+  if (!p.success) return failure('invalid_data');
+  const { supabase, user } = await actionUser();
+  if (!user) return failure('unauthenticated');
+  const r = await unsaveMyGovProgramme(supabase, p.data.programmeId);
+  if (!r.ok) return failure(r.errorKey);
+  const org = eligibleAssistOrgs(await listMyMemberships(supabase, user.id))[0];
+  if (org) await unsaveGovProgramme(supabase, org.org.id, p.data.programmeId);
+  revalidatePath('/', 'layout');
+  return success('gov.ok.removed');
 }
 
 export async function unsaveGovProgrammeAction(_prev: FormState, formData: FormData): Promise<FormState> {
