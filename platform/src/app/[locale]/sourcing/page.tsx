@@ -15,7 +15,7 @@ export default async function SourcingHome({ params }: { params: Promise<{ local
   const templates = savedLists.flatMap((list, index) => list.ok ? list.data.map((item) => ({
     ...item, org: orgs[index]!.org.id,
   })) : []);
-  return <main className="container">
+  return <div className="container">
     <h1>{t('title')}</h1>
     <p>{t('intro')}</p>
     <nav aria-label={t('title')} className="link-row">
@@ -33,5 +33,5 @@ export default async function SourcingHome({ params }: { params: Promise<{ local
         <p><Link href={`/sourcing/new?template=${item.id}&org=${item.org}`} locale={locale}
           className="btn btn-secondary">{t('useTemplate')}</Link></p>
       </li>)}</ul></section> : null}
-  </main>;
+  </div>;
 }
