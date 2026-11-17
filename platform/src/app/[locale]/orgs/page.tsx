@@ -25,6 +25,20 @@ export default async function OrgsPage({ params }: { params: Promise<{ locale: s
       {s.memberships.length === 0 ? (
         <div className="empty">
           <strong>{t('orgs.none')}</strong>
+          <h2 style={{ marginTop: 16 }}>{t('orgs.purposeTitle')}</h2>
+          <p>{t('orgs.purposeIntro')}</p>
+          <ul className="card-list" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 16rem), 1fr))' }}>
+            {(['buy', 'sell', 'both'] as const).map((p) => (
+              <li key={p} className="card">
+                <h3 style={{ marginTop: 0 }}>
+                  <Link href={`/orgs/new?purpose=${p}`} locale={locale}>
+                    {t(`orgs.purpose${p === 'buy' ? 'Buy' : p === 'sell' ? 'Sell' : 'Both'}`)}
+                  </Link>
+                </h3>
+                <p className="muted" style={{ margin: 0 }}>{t(`orgs.purpose${p === 'buy' ? 'Buy' : p === 'sell' ? 'Sell' : 'Both'}Hint`)}</p>
+              </li>
+            ))}
+          </ul>
         </div>
       ) : (
         <ul className="card-list" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(min(100%, 20rem), 1fr))' }}>

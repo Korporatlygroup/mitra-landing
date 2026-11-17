@@ -168,7 +168,16 @@
     "nameLabel": "Name",
     "nameHint": "2 to 160 characters. Buyers can use their own name.",
     "submit": "Create",
-    "businessLink": "Business profile and verification"
+    "businessLink": "Business profile and verification",
+    "purposeTitle": "How will you use INOK?",
+    "purposeIntro": "You can do both with one account, and add the other later. Nothing here is permanent.",
+    "purposeBuy": "I want to buy",
+    "purposeBuyHint": "Find businesses, post requests and compare quotations.",
+    "purposeSell": "I want to sell",
+    "purposeSellHint": "Create a business profile, answer requests and send quotations. Listings are reviewed before they appear publicly.",
+    "purposeBoth": "Both",
+    "purposeBothHint": "One business account can buy from others and sell to customers. You can switch between buying and selling at any time.",
+    "purposeNote": "A business organisation can both buy and sell. You can also add an individual buyer or another business later."
   },
   "orgTypes": {
     "business": "Business",

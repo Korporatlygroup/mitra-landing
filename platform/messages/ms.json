@@ -168,7 +168,16 @@
     "nameLabel": "Nama",
     "nameHint": "2 hingga 160 aksara. Pembeli boleh menggunakan nama sendiri.",
     "submit": "Buat",
-    "businessLink": "Profil perniagaan dan semakan"
+    "businessLink": "Profil perniagaan dan semakan",
+    "purposeTitle": "Bagaimana anda akan menggunakan INOK?",
+    "purposeIntro": "Anda boleh melakukan kedua-duanya dengan satu akaun dan menambah yang satu lagi kemudian. Tiada apa di sini kekal.",
+    "purposeBuy": "Saya mahu membeli",
+    "purposeBuyHint": "Cari perniagaan, hantar permintaan dan bandingkan sebut harga.",
+    "purposeSell": "Saya mahu menjual",
+    "purposeSellHint": "Wujudkan profil perniagaan, jawab permintaan dan hantar sebut harga. Penyenaraian disemak sebelum dipaparkan kepada umum.",
+    "purposeBoth": "Kedua-duanya",
+    "purposeBothHint": "Satu akaun perniagaan boleh membeli daripada pihak lain dan menjual kepada pelanggan. Anda boleh bertukar antara membeli dan menjual pada bila-bila masa.",
+    "purposeNote": "Organisasi perniagaan boleh membeli dan menjual. Anda juga boleh menambah pembeli individu atau perniagaan lain kemudian."
   },
   "orgTypes": {
     "business": "Perniagaan",

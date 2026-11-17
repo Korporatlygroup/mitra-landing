@@ -33,6 +33,8 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
           { key: 'messages', href: '/enquiries', icon: 'message', label: m('messages'), match: ['/enquiries'] },
         ],
       },
+      // One account can also BUY: a business organisation may post requests and send enquiries (the database allows request:post for it).
+      { key: 'buying', label: m('buying'), items: [{ key: 'myRequests', href: '/requests', icon: 'board', label: m('myRequests'), match: ['/requests'] }] },
       {
         key: 'business',
         label: m('business'),
@@ -71,6 +73,7 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
       { key: 'product', href: `${base}/business/products?new=1`, tag: t('ws.newTag'), tone: 'green', title: t('ws.createProduct'), sub: t('ws.createProductSub') },
       { key: 'quote', href: `${base}/business/requests`, tag: t('ws.newTag'), tone: 'gold', title: t('ws.createQuote'), sub: t('ws.createQuoteSub') },
       { key: 'message', href: '/enquiries', tag: t('ws.newTag'), tone: 'blue', title: t('ws.createMessage'), sub: t('ws.createMessageSub') },
+      { key: 'request', href: '/requests/new', tag: t('ws.newTag'), tone: 'gold', title: m('post'), sub: t('dir2.canTFindSub') },
     ];
     searchAction = `/${locale}/search`;
   } else if (ws.kind === 'partner' && id) {
@@ -126,6 +129,8 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
         label: null,
         items: [
           ...(id ? [{ key: 'team', href: `${base}/members`, icon: 'users' as const, label: m('team'), match: [`${base}/members`] }] : []),
+          // A buyer can start selling later with the same account: this opens the organisation form with "sell" preselected.
+          ...(ws.orgs.some((o) => o.type === 'business') ? [] : [{ key: 'sell', href: '/orgs/new?purpose=sell', icon: 'store' as const, label: m('sellOnInok'), match: ['/orgs/new'] }]),
           { key: 'account', href: '/account', icon: 'settings', label: m('settings'), match: ['/account'] },
         ],
       },

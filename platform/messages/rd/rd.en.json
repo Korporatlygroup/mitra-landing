@@ -488,7 +488,9 @@
       "import": "Import catalogue",
       "buyerRequests": "Buyer requests",
       "account": "My account",
-      "post": "Post a request"
+      "post": "Post a request",
+      "buying": "Buying",
+      "sellOnInok": "Sell on INOK"
     },
     "partnerLabel": "Partner organisation",
     "buyerLabel": "Buyer account",

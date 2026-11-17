@@ -488,7 +488,9 @@
       "import": "Import katalog",
       "buyerRequests": "Permintaan pembeli",
       "account": "Akaun saya",
-      "post": "Hantar permintaan"
+      "post": "Hantar permintaan",
+      "buying": "Membeli",
+      "sellOnInok": "Jual di INOK"
     },
     "partnerLabel": "Organisasi rakan kongsi",
     "buyerLabel": "Akaun pembeli",
