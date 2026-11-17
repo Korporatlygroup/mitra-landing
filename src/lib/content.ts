@@ -30,3 +30,6 @@ export const showInterviews = readyInterviews.length > 0 || readySeries.length >
 /** Nav links, minus sections that are currently hidden. */
 const hidden = new Set([!showInterviews && '#interviews'].filter(Boolean));
 export const navLinks = site.nav.filter((n) => !hidden.has(n.href));
+
+/** Links into the platform. Absolute URLs: they must never take part in the in-page scroll spy (no data-spy). */
+export const appLinks = site.app.links.map((l) => ({ label: l.label, href: `${site.app.origin}${l.path}` }));
