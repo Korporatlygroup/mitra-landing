@@ -567,6 +567,7 @@
   flex-direction: column;
   gap: 10px;
 }
+.col > p.mut { color: #475569; }
 .col-h {
   margin: 0;
   font-size: 0.9375rem;
