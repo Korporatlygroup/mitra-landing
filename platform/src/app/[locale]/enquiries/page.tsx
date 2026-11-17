@@ -1,5 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import ConversationList from '@/components/messages/ConversationList';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 import { pageTitle } from '@/lib/metadata';
 import { requireSession } from '@/server/session';
 
@@ -15,12 +17,7 @@ export default async function MessagesPage({ params }: { params: Promise<{ local
   const list = await ConversationList({ db: s.supabase, locale });
   return (
     <div className="wide">
-      <div className="page-head">
-        <div>
-          <h1>{t('biz2.messages.title')}</h1>
-          <p className="page-sub">{t('biz2.messages.sub')}</p>
-        </div>
-      </div>
+      <PageHeader title={t('biz2.messages.title')} sub={t('biz2.messages.sub')} />
       {list ? (
         <div className="msg-wrap">
           <div className="card msg-left">{list}</div>
@@ -29,10 +26,7 @@ export default async function MessagesPage({ params }: { params: Promise<{ local
           </div>
         </div>
       ) : (
-        <div className="empty">
-          <strong>{t('biz2.messages.none')}</strong>
-          <span className="mut">{t('biz2.messages.noneBody')}</span>
-        </div>
+        <EmptyState icon="message" title={t('biz2.messages.none')} text={t('biz2.messages.noneBody')} action={{ href: '/directory', label: t('biz2.messages.explore') }} />
       )}
     </div>
   );

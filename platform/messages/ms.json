@@ -1578,6 +1578,25 @@
       "quantity": "kuantiti",
       "scope": "skop",
       "expired_or_inactive": "kesahihan atau status"
+    },
+    "backToRequest": "Kembali ke permintaan",
+    "noQuoteHint": "Apabila perniagaan menghantar sebut harga, ia akan muncul di sini, bersebelahan.",
+    "quoteStatus": {
+      "sent": "Dihantar",
+      "accepted": "Diterima",
+      "declined": "Ditolak",
+      "withdrawn": "Ditarik balik",
+      "expired": "Tamat tempoh"
+    },
+    "col": {
+      "seller": "Perniagaan",
+      "scope": "Skop",
+      "quantity": "Kuantiti",
+      "total": "Jumlah",
+      "valid": "Sah sehingga",
+      "status": "Keadaan",
+      "action": "Tindakan",
+      "multiple": "Beberapa item"
     }
   },
   "gov": {

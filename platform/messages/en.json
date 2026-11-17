@@ -1578,6 +1578,25 @@
       "quantity": "quantity",
       "scope": "scope",
       "expired_or_inactive": "validity or status"
+    },
+    "backToRequest": "Back to request",
+    "noQuoteHint": "When businesses send a quotation it appears here, side by side.",
+    "quoteStatus": {
+      "sent": "Sent",
+      "accepted": "Accepted",
+      "declined": "Declined",
+      "withdrawn": "Withdrawn",
+      "expired": "Expired"
+    },
+    "col": {
+      "seller": "Business",
+      "scope": "Scope",
+      "quantity": "Quantity",
+      "total": "Total",
+      "valid": "Valid until",
+      "status": "Status",
+      "action": "Action",
+      "multiple": "Several items"
     }
   },
   "gov": {

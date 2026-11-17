@@ -180,7 +180,10 @@
       "list": "Conversations",
       "pick": "Choose a conversation to read it.",
       "viewRequest": "View request",
-      "quote": "Quote"
+      "quote": "Quote",
+      "search": "Search conversations",
+      "noMatch": "No conversation matches",
+      "explore": "Explore businesses"
     },
     "products": {
       "title": "Products & services",

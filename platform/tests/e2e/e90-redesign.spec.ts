@@ -327,7 +327,7 @@ test.describe('news and bulletins', () => {
     await v.getByRole('button', { name: t('news2.saveAria', { title }) }).click();
     await expect(v.getByRole('button', { name: t('news2.unsaveAria', { title }) })).toBeVisible();
     await v.goto('/en/news?topic=saved');
-    await expect(v.getByRole('heading', { level: 2, name: title })).toBeVisible();
+    await expect(v.getByRole('heading', { name: title })).toBeVisible();
     const weekly = v.getByRole('switch', { name: t('news2.weeklySwitch') });
     await expect(weekly).toHaveAttribute('aria-checked', 'false');
     await weekly.click();

@@ -180,7 +180,10 @@
       "list": "Perbualan",
       "pick": "Pilih perbualan untuk membacanya.",
       "viewRequest": "Lihat permintaan",
-      "quote": "Sebut harga"
+      "quote": "Sebut harga",
+      "search": "Cari perbualan",
+      "noMatch": "Tiada perbualan sepadan",
+      "explore": "Terokai perniagaan"
     },
     "products": {
       "title": "Produk & perkhidmatan",

@@ -17,7 +17,10 @@ test('screenshots of the signed-in screens', async ({ page }, info) => {
   await loginUi(page, u, 'en');
   await createOrgUi(page, 'business', 'Kedai Aisha', 'en');
   const orgId = page.url().match(/orgs\/([0-9a-f-]{36})/)![1]!;
+  await page.goto('/en/directory');
+  const profileHref = (await page.locator('a.lcard-link').first().getAttribute('href')) ?? '/en/directory';
   const screens: [string, string][] = [
+    ['profile', profileHref],
     ['home', '/en'],
     ['assistance', '/en/business-help'],
     ['assistance-saved', '/en/business-help/saved'],
@@ -25,6 +28,7 @@ test('screenshots of the signed-in screens', async ({ page }, info) => {
     ['directory', '/en/directory'],
     ['products', '/en/catalogue'],
     ['requests', '/en/requests'],
+    ['messages', '/en/enquiries'],
     ['notifications', '/en/notifications'],
     ['settings-account', '/en/account'],
     ['settings-security', '/en/account?section=security'],

@@ -15,7 +15,7 @@ Shared components now in use: `PageHeader`, `TabsNav`, `StatusBadge`, `EmptyStat
 |---|---|---|---|
 | `/` (landing redirect/home when signed out) | visitor | Restyled | discovery landing for the app |
 | `/directory` | everyone | Partly | search + chip row + card grid (done); filter sheet on mobile (todo) |
-| `/directory/[slug]` | everyone | Todo | company-page header, tabs (About, Services, Contact) |
+| `/directory/[slug]` | everyone | Partly | cover/identity/tabs already existed; services, products and projects now cards (not visually evidenced: the screenshot fixture has none); contact still inside Overview |
 | `/news`, `/news/[id]` | everyone | Rebuilt (list), Partly (article) | editorial cards; article body sections (todo) |
 | `/business-help`, `/business-help/[slug]` | everyone | Rebuilt (list), Todo (detail) | searchable programme cards; detail page with eligibility, dates, source |
 | `/business-help/find`, `/business-help/saved`, `/business-help/settings` | owner / any signed-in | Todo | dedicated matching panel; saved cards; settings page |
@@ -42,8 +42,9 @@ Shared components now in use: `PageHeader`, `TabsNav`, `StatusBadge`, `EmptyStat
 |---|---|---|---|
 | `/` signed-in Home | all | Rebuilt | discovery dashboard |
 | `/requests` | buyer | **Rebuilt** | header, metrics, tabs, search, request cards, enquiries panel, empty state |
-| `/requests/new`, `/requests/[id]`, `/requests/[id]/quotes` | buyer | Todo | guided form; detail with timeline; quotations table |
-| `/enquiries`, `/enquiries/[id]` | buyer / seller | Partly (list+thread existed) | conversation list + thread; context panel (todo) |
+| `/requests/[id]/quotes` | buyer | **Rebuilt** (no screenshot: needs quotation data) | responsive comparison table (stacked cards on phones), status badges, empty state |
+| `/requests/new`, `/requests/[id]` | buyer | Todo | guided form; detail with timeline |
+| `/enquiries`, `/enquiries/[id]` | buyer / seller | Partly | two-pane list + thread already existed; added conversation search, status chips, page header and empty state; thread not screenshotted (needs data); context panel (todo) |
 | `/notifications` | all | **Rebuilt** | All/Unread tabs, grouped list, empty state, link to settings |
 | `/account` | all | **Rebuilt** | Settings workspace: My account, Security, Notifications, Privacy, Data requests |
 | `/sourcing`, `/sourcing/new`, `/sourcing/[rfq]` | buyer | Todo | sourcing request list, form, detail |
