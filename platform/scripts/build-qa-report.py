@@ -110,12 +110,12 @@ story += [Paragraph("1. Executive summary", H1),
             "across visitor, buyer, seller, partner and administrator roles, English, Bahasa Melayu and Tamil, and seven viewport widths. All eight populated-journey tests passed on the final run.", P),
   Paragraph("What is evidenced", H2),
   Paragraph("- A buyer and a seller, in separate browser sessions, held the exact scripted conversation; the seller built and sent a real quotation (MYR 320.00 for 100 boxes) and the buyer accepted it. Database checks confirmed message order, senders, organisations and the final quotation status, and that an unrelated buyer and an unrelated seller both receive 404 for the thread.<br/>"
-            "- The visual defects found while reviewing the populated screens were fixed and re-captured: the catalogue filter panel, the quotation form fields, a duplicated button label and status badges splitting inside tables.<br/>"
+            "- The visual defects found while reviewing the populated screens (by me and by three review sub-agents) were fixed and re-captured: the catalogue filter panel, quotation form fields, a duplicated button label, status badges and audit codes splitting inside tables, the review decision control, and Tamil words and buttons breaking mid-word.<br/>"
             "- Permission checks: a buyer cannot open the admin console or another business's workspace (404); an expired session returns to sign-in.<br/>"
             "- Bounded load tests (5, 10 and 20 concurrent sessions) completed with zero failed requests or sessions; measured figures are in section 21.", P),
   Paragraph("What is not claimed", H2),
   Paragraph("- Nothing here was run against production or a deployed staging environment; no fabricated data exists in production. The demo seed is for local/staging only.<br/>"
-            "- Page redesign beyond the four fixes was not performed in this pass: several detail pages still use the shared header with plain cards (listed in section 25).<br/>"
+            "- Page redesign beyond the fixes listed in section 19 was not performed in this pass: several detail pages still use the shared header with plain cards (listed in section 25).<br/>"
             "- The load tests ran on one machine that also hosted the database and the browsers, so absolute numbers are indicative only.<br/>"
             "- The deployment pipeline for these changes has not been run. Merging or deploying requires CI and explicit authorisation.", P), PageBreak()]
 
@@ -233,9 +233,9 @@ story += [table([["Area", "Status", "Evidence / notes"],
   ["Load tests (HTTP and real browsers)", "PASSED (no failures)", "Section 21; local production build"],
   ["Unit tests", "PASSED", "1028 passed in 45 files (vitest --project unit), local"],
   ["Typecheck and lint of changed files", "PASSED", "tsc --noEmit clean; eslint clean on changed files"],
-  ["Full regression e2e (about 100 specs, mobile and desktop, 4 shards)", "PENDING ON CI", "Runs on PR 16; see section 2 for the status at generation time. Release 06c7d30 passed the same CI before it was deployed"],
-  ["Database and RLS tests (pgTAP, integration)", "PENDING ON CI", "Part of the CI 'checks' job; no database or policy was changed in this PR"],
-  ["Dependency audit gate", "PENDING ON CI", "Section 24"],
+  ["Full regression e2e (about 100 specs, mobile and desktop, 4 shards)", "PASSED ON CI (commit 9aea58d)", "All 4 shards green on PR 16 at 9aea58d. The later commit 9f8fd4e (CSS and test-only changes) re-runs the same pipeline; its result is not in this PDF"],
+  ["Database and RLS tests (pgTAP, integration)", "PASSED ON CI (commit 9aea58d)", "Part of the CI 'checks' job; no database or policy was changed in this PR"],
+  ["Dependency audit gate", "PASSED ON CI", "Section 24; CI run on commit 9aea58d"],
   ["Accessibility", "PARTIAL", "axe checks exist in older e2e specs; not re-run as a separate audit here"],
   ["Email-dependent flows (invitations)", "BLOCKED locally", "No local mail provider"],
   ["Deployed staging or production verification", "NOT RUN", "Not part of this pass; requires authorisation"],
@@ -285,7 +285,7 @@ story += [PageBreak()]
 
 story += [Paragraph("24. Dependency advisory and audit gate", H1),
   Paragraph("Advisory GHSA-fc5q-39xc-vjpf (picomatch, affected versions up to 4.0.7): as of this report no patched version exists (latest published is 4.0.7). The user-approved narrow exception is unchanged: that single advisory id, expiring 2027-01-15, fail-closed, raw npm audit report kept as a CI artifact. "
-            "The exception was not widened and no override or force-fix was used. picomatch and @parcel/watcher are not in the deployed Worker bundle (recorded in the risk assessment document). The audit gate runs in the PR 16 CI job; its result is part of the status shown in section 2.", P), PageBreak()]
+            "The exception was not widened and no override or force-fix was used. picomatch and @parcel/watcher are not in the deployed Worker bundle (recorded in the risk assessment document). The audit gate ran in the PR 16 CI job and passed on commit 9aea58d (section 2).", P), PageBreak()]
 
 story += [Paragraph("25. Bugs fixed, and what remains", H1),
   Paragraph("Fixed in this pass: the visual defects in section 19, including those found by the sub-agent review (audit action codes and review decision control, Tamil mid-word breaks and clipped Tamil buttons, short labels breaking inside a word, and stale step captures in the evidence). Test-side fixes (not product changes): message key lookups and the partner two-step secret exposed by the seed helper, so the partner journey can sign in.", P),
