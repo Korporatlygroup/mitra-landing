@@ -72,9 +72,15 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await expect(bp.locator('a.lcard-link').filter({ hasText: biz.name })).toBeVisible();
   await shot(bp, { role: 'buyer', journey: J, step: '01-buyer-discovers-supplier', title: 'Buyer searches for a packaging supplier', expected: 'Supplier appears in results', observed: 'INOK Demo Packaging Supplies listed' , widths: WIDTHS_ALL});
   await bp.locator('a.lcard-link').filter({ hasText: biz.name }).click();
+  await expect(bp.getByRole('heading', { level: 1 })).toHaveText(biz.name);
   await shot(bp, { role: 'buyer', journey: J, step: '02-buyer-opens-profile', title: 'Buyer opens the seller profile', expected: 'Profile with Send enquiry', observed: 'Profile shown', widths: WIDTHS_ALL });
   const m1 = 'Hello, I need 100 custom packaging boxes for my business. Can you provide pricing and delivery details?';
+  await bp.waitForFunction(() => {
+    const b = [...document.querySelectorAll('button')].find((x) => x.textContent?.trim() === 'Send enquiry');
+    return Boolean(b && Object.keys(b).some((k) => k.startsWith('__reactProps')));
+  }, null, { timeout: 30_000 }); // React has attached its handlers to the button
   await bp.getByRole('button', { name: t('dir2.send'), exact: true }).first().click();
+  await expect(bp.locator('#enq-topic')).toBeVisible({ timeout: 30_000 });
   await bp.locator('#enq-topic').fill('100 custom packaging boxes');
   await bp.locator('#enq-qty').fill('100');
   await bp.locator('#enq-details').fill(m1);
