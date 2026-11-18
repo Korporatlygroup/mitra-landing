@@ -4,7 +4,7 @@ import type { Page } from '@playwright/test';
 
 // Screenshot evidence for the QA report. Real browser captures only (page.screenshot); nothing is edited afterwards.
 // Files: docs/qa-evidence/<role>/<journey>/<step>__<lang>__<width>.png and one line per file in docs/qa-evidence/index.jsonl.
-export const EVIDENCE_DIR = path.join(import.meta.dirname, '..', '..', '..', 'docs', 'qa-evidence');
+export const EVIDENCE_DIR = process.env.QA_EVIDENCE_DIR ?? path.join(import.meta.dirname, '..', '..', '..', 'docs', 'qa-evidence');
 export const ENABLED = process.env.QA === '1';
 export const WIDTHS_ALL = [360, 390, 768, 1024, 1280, 1440, 1920];
 export const WIDTHS_PAIR = [390, 1280];

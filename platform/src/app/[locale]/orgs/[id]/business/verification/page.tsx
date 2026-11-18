@@ -95,7 +95,7 @@ export default async function VerificationPage({
                   <li key={e.id}>
                     <strong>{t(`events.${e.event}`)}</strong>
                     <br />
-                    <span className="muted">{fmt.dateTime(new Date(e.at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</span>
+                    <span className="muted">{fmt.dateTime(new Date(e.at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' })} MYT</span>
                   </li>
                 ))}
               </ol>

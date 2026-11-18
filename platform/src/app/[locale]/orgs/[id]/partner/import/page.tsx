@@ -39,7 +39,7 @@ export default async function ImportPage({
   const jobs = history.ok ? history.data.items : [];
   const total = history.ok ? history.data.total : 0;
   const PAGE = 20;
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC';
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' }) + ' MYT';
 
   return (
     <>

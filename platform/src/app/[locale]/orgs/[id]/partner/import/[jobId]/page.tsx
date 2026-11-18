@@ -53,7 +53,7 @@ export default async function ImportJobPage({
   const created = q('created');
   const updated = q('updated');
   const skipped = q('skipped');
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC';
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' }) + ' MYT';
   const update = job.mode === 'create_or_update';
   const hidden = (
     <>

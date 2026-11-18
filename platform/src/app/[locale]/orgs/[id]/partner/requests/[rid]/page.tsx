@@ -42,7 +42,7 @@ export default async function RequestDetailPage({ params, searchParams }: { para
     getTranslations({ locale, namespace: 'p5partner.common' }),
     getFormatter({ locale }),
   ]);
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC';
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' }) + ' MYT';
   const open = q.status === 'submitted';
   const base = `/orgs/${id}/partner/requests`;
 

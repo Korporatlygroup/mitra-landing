@@ -46,7 +46,7 @@ function Form({ p, onDone }: { p: AdminBizProduct; onDone: () => void }) {
 }
 
 /** Queue of business products waiting for MITRA, with a right-hand review drawer. */
-export default function ProductReview({ items }: { items: (AdminBizProduct & { priceText: string })[] }) {
+export default function ProductReview({ items }: { items: (AdminBizProduct & { priceText: string; statusLabel: string })[] }) {
   const t = useTranslations('adm2.products');
   const ta = useTranslations('adm2');
   const tw = useTranslations('ws');
@@ -77,7 +77,7 @@ export default function ProductReview({ items }: { items: (AdminBizProduct & { p
                 </td>
                 <td>{p.priceText}</td>
                 <td>
-                  <span className={`tag t-${p.status === 'live' ? 'green' : p.status === 'in_review' ? 'gold' : 'gray'}`}>{p.status}</span>
+                  <span className={`tag t-${p.status === 'live' ? 'green' : p.status === 'in_review' ? 'gold' : 'gray'}`}>{p.statusLabel}</span>
                 </td>
                 <td>
                   {p.status === 'in_review' ? (

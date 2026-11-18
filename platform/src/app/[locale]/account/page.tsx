@@ -1,4 +1,5 @@
 import { getTranslations } from 'next-intl/server';
+import ScrollStrip from '@/components/shared/ScrollStrip';
 import ActionForm from '@/components/ActionForm';
 import { CheckField, Field, SelectField } from '@/components/Field';
 import PageHeader from '@/components/shared/PageHeader';
@@ -74,7 +75,7 @@ export default async function AccountPage({
       )}
 
       <div className="settings-x">
-        <nav className="snav" aria-label={t('navLabel')}>
+        <ScrollStrip className="snav" label={t('navLabel')}>
           {SECTIONS.map((k) => (
             <Link key={k} href={`/account${k === 'account' && !next ? '' : `?section=${k}${nextQs}`}`} className="snav-i" aria-current={section === k ? 'page' : undefined}>
               {t(NAV_LABEL[k])}
@@ -86,7 +87,7 @@ export default async function AccountPage({
               {t('signOut')}
             </button>
           </form>
-        </nav>
+        </ScrollStrip>
 
         <div className="settings-main">
           <div className="sechead" style={{ marginBottom: 4 }}>

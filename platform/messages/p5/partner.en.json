@@ -3,11 +3,12 @@
     "nav": {
       "label": "Partner sections",
       "menu": "Menu",
-      "home": "Home",
+      "home": "Partner overview",
       "suppliers": "Suppliers",
       "products": "Products",
       "import": "Import Catalogue",
-      "requests": "Buyer Requests",
+      "requests": "Buyer price requests",
+      "requestsShort": "Requests",
       "notifications": "Notifications",
       "settings": "Settings"
     },

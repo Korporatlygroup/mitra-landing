@@ -1,5 +1,6 @@
 import { randomUUID } from 'node:crypto';
-import { getTranslations } from 'next-intl/server';
+import { getLocale, getTranslations } from 'next-intl/server';
+import { formatMyt } from '@/lib/time';
 import ActionForm from '@/components/ActionForm';
 import { calculateQuote } from '@/server/services/quote-calculation';
 import { getEnquiryWorkspace } from '@/server/services/enquiries';
@@ -14,6 +15,7 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId }: {
 }) {
   const t = await getTranslations('p4');
   const tc = await getTranslations('enq');
+  const locale = await getLocale();
   const w = await getEnquiryWorkspace(db, enquiryId);
   const latest = w.versions.find((version) => version.id === w.quote?.current_version_id);
   const draft = w.draft;
@@ -35,7 +37,7 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId }: {
           const mine = fromBuyer === (side === 'buyer');
           return <div key={m.id} className={mine ? 'bub me' : 'bub them'}>
             {m.body}
-            <time className="bub-meta" dateTime={m.created_at}>{fromBuyer ? tc('buyer') : tc('seller')} · {new Date(m.created_at).toLocaleString()}</time>
+            <time className="bub-meta" dateTime={m.created_at}>{fromBuyer ? tc('buyer') : tc('seller')} · {formatMyt(m.created_at, locale)}</time>
           </div>;
         }) : <p className="mut">{t('noMessages')}</p>}
       </div>

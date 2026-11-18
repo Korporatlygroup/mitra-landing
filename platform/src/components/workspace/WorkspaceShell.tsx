@@ -132,7 +132,7 @@ export default async function WorkspaceShell({ locale, orgId, children }: { loca
     tabs = [
       { key: 'home', href: '/', icon: 'home', label: t('ws.tabHome') },
       { key: 'products', href: `${pb}/products`, icon: 'box', label: t('ws.tabProducts') },
-      { key: 'requests', href: `${pb}/requests`, icon: 'board', label: t('ws.tabLeads') },
+      { key: 'requests', href: `${pb}/requests`, icon: 'board', label: t('p5partner.nav.requestsShort') },
       { key: 'suppliers', href: `${pb}/suppliers`, icon: 'store', label: m('suppliers') },
     ];
     create = [

@@ -49,7 +49,7 @@ export default async function PartnerNotifications({ locale, orgId, items }: { l
               {t(`kinds.${KINDS.has(key) ? key : 'other'}`)}
             </p>
             <p className="muted" style={{ margin: '0 0 8px' }}>
-              {fmt.dateTime(new Date(n.created_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC
+              {fmt.dateTime(new Date(n.created_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' })} MYT
             </p>
             <div className="link-row">
               {href ? (
