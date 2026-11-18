@@ -48,7 +48,7 @@ export default async function ProductOverviewPage({
   // The reason the reviewer gave, from the revision that needs changes (or the product itself when it was refused).
   const feedback = pend && (pend.status === 'changes_requested' || pend.status === 'rejected') ? pend.reason : p.status === 'changes_requested' || p.status === 'rejected' ? (p.revisions.find((x) => x.reason)?.reason ?? null) : null;
   const supplierOk = sup.ok && sup.data.status === 'approved';
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC';
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' }) + ' MYT';
   const hidden = (
     <>
       <input type="hidden" name="locale" value={locale} />

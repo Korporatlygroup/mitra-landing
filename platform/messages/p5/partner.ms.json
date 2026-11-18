@@ -3,11 +3,12 @@
     "nav": {
       "label": "Bahagian rakan kongsi",
       "menu": "Menu",
-      "home": "Laman utama",
+      "home": "Gambaran rakan kongsi",
       "suppliers": "Pembekal",
       "products": "Produk",
       "import": "Import Katalog",
-      "requests": "Permintaan Pembeli",
+      "requests": "Permintaan harga pembeli",
+      "requestsShort": "Permintaan",
       "notifications": "Pemberitahuan",
       "settings": "Tetapan"
     },

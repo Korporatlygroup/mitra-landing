@@ -42,7 +42,7 @@ export default async function ConversationList({ db, locale, activeId }: { db: D
               <span style={{ display: 'flex', justifyContent: 'space-between', gap: 8 }}>
                 <strong className="ellipsis">{r.topic}</strong>
                 <span className="mut" style={{ fontSize: '0.75rem', whiteSpace: 'nowrap' }}>
-                  {fmt.dateTime(new Date(l?.at ?? r.created_at), { day: 'numeric', month: 'short', timeZone: 'UTC' })}
+                  {fmt.dateTime(new Date(l?.at ?? r.created_at), { day: 'numeric', month: 'short', timeZone: 'Asia/Kuala_Lumpur' })}
                 </span>
               </span>
               <span className="mut ellipsis" style={{ display: 'block', fontSize: '0.8125rem' }}>

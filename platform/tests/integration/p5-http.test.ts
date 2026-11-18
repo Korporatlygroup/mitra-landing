@@ -268,7 +268,7 @@ d('partner section and entry points', () => {
     const r = await get(`/en/orgs/${orgA}/partner`, cookieA);
     expect(r.status).toBe(200);
     const html = await r.text();
-    for (const label of ['Home', 'Suppliers', 'Products', 'Import Catalogue', 'Buyer Requests', 'Notifications', 'Settings']) expect(html, label).toContain(label);
+    for (const label of ['Partner overview', 'Suppliers', 'Products', 'Import Catalogue', 'Buyer price requests', 'Notifications', 'Settings']) expect(html, label).toContain(label);
     expect(html).toContain(`/en/orgs/${orgA}/partner/suppliers`);
     expect(html).toContain('partner-nav');
     expect((await get(`/en/orgs/${orgA}/partner`, cookieB)).status).toBe(404);

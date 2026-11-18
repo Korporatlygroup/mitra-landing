@@ -28,14 +28,11 @@ export default async function CataloguePage({
 }) {
   const { locale } = await params;
   const f = parseSearchFilters(await searchParams);
-  const t = await getTranslations({ locale, namespace: 'p5buyer' });
-  const tc = await getTranslations({ locale, namespace: 'p5common' });
-  const t6 = await getTranslations({ locale, namespace: 'p6' });
-  const { supabase, user } = await getOptionalUser();
+  const [t, tc, t6, { supabase, user }] = await Promise.all([getTranslations({ locale, namespace: 'p5buyer' }), getTranslations({ locale, namespace: 'p5common' }), getTranslations({ locale, namespace: 'p6' }), getOptionalUser()]);
 
-  const result = supabase ? await searchCatalogue(supabase, toServiceParams(f, CATALOGUE_PAGE_SIZE)) : null;
+  // The search and the signed-in user's saved ids do not depend on each other: ask for both at once.
+  const [result, saved] = await Promise.all([supabase ? searchCatalogue(supabase, toServiceParams(f, CATALOGUE_PAGE_SIZE)) : Promise.resolve(null), savedIdSet(supabase, Boolean(user))]);
   const data = result?.ok ? result.data : null;
-  const saved = await savedIdSet(supabase, Boolean(user));
   const pages = data ? pageCount(data.total, CATALOGUE_PAGE_SIZE) : 1;
   const filtered = hasActiveFilters(f);
   const nextPath = `/${locale}/catalogue${searchQueryString(f, { page: f.page })}`;

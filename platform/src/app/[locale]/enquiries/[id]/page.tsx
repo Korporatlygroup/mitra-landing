@@ -68,7 +68,7 @@ export default async function EnquiryPage({ params }: { params: Promise<{ locale
                 )}
               </dd>
               <dt>{t('enq.started')}</dt>
-              <dd>{fmt.dateTime(new Date(e.created_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' })} UTC</dd>
+              <dd>{fmt.dateTime(new Date(e.created_at), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' })} MYT</dd>
               <dt>{t('enq.origin')}</dt>
               <dd>{t(`enq.origins.${e.origin}`)}</dd>
               <dt>{t('enq.status')}</dt>

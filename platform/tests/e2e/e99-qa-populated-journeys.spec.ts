@@ -109,6 +109,9 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await bp.goto(url);
   await bp.waitForLoadState('networkidle');
   await expect(bp.locator('main')).toContainText(m2);
+  // Times of day are shown in Malaysia time, labelled, in the same format everywhere (messages and the 'Started' line)
+  await expect(bp.locator('.bub-meta').first()).toContainText(/MYT$/);
+  await expect(bp.locator('main')).toContainText(/\d{1,2}:\d{2}.*MYT/);
   await shot(bp, { role: 'buyer', journey: J, step: '07-buyer-receives-response', title: 'Buyer receives the seller response', expected: 'Seller reply visible', observed: 'Thread shows the reply', widths: WIDTHS_ALL });
   const m3 = 'The size is 30 × 20 × 15 cm, corrugated cardboard, delivery to Kuala Lumpur.';
   await bp.locator('#reply-body').fill(m3);
@@ -193,7 +196,10 @@ test('J2/J3 buyer: dashboard, requests, saved product, price request, notificati
   await shot(page, { role: 'buyer', journey: 'j3-buyer-dashboard', step: '03-catalogue-signed-in', title: 'Products from India (signed in)', expected: 'Filter panel and product cards', observed: 'Catalogue renders', widths: WIDTHS_ALL });
   await page.goto(`/en/catalogue/${pack.id}`);
   const save = page.getByRole('button', { name: tb('en', 'save.save') }).first();
-  await save.click();
+  await expect(async () => {
+    await save.click();
+    await expect(page.getByRole('button', { name: tb('en', 'save.remove') }).first()).toBeVisible({ timeout: 4_000 });
+  }).toPass({ timeout: 30_000 });
   await page.goto('/en/catalogue/saved');
   await expect(page.locator('main')).toContainText('Corrugated packaging box');
   await shot(page, { role: 'buyer', journey: 'j3-buyer-dashboard', step: '04-saved-products', title: 'Saved products', expected: 'The saved product is listed', observed: 'Packaging box listed', widths: WIDTHS_ALL });
@@ -303,6 +309,8 @@ test('J6 government assistance: published demonstration programmes, filters, det
   await page.goto(`/en/business-help/${slugs[1]}`);
   const saveBtn = page.getByRole('button', { name: msg('en', 'gov.card.save') }).first();
   await saveBtn.click();
+  await page.waitForLoadState('networkidle');
+  await page.waitForTimeout(1500); // the save is a server action: let it finish before leaving the page
   await page.goto('/en/business-help/saved');
   await expect(page.locator('main')).toContainText('Working-capital Financing');
   await shot(page, { role: 'seller', journey: 'j6-government-assistance', step: '05-saved', title: 'Saved programmes', expected: 'The saved programme is listed', observed: 'Saved list shows it' });

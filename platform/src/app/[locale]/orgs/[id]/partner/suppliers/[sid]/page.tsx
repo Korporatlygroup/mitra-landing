@@ -53,7 +53,7 @@ export default async function SupplierDetailPage({
         : null;
   const live = d.live;
   const priv = d.private;
-  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'UTC' }) + ' UTC';
+  const when = (iso: string) => fmt.dateTime(new Date(iso), { dateStyle: 'medium', timeStyle: 'short', timeZone: 'Asia/Kuala_Lumpur' }) + ' MYT';
 
   return (
     <>
