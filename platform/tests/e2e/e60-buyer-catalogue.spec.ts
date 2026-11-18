@@ -63,6 +63,8 @@ test('E60 buyer journey: search, filter, compare, save, request a price, sign ou
   await axeClean(page, 'search');
 
   // ---- filters: currency + price range, MOQ, and a search with no result
+  const filtersBtn = page.locator('.fsheet-btn'); // on phones the filters sit behind a Filters button
+  if (await filtersBtn.isVisible()) await filtersBtn.click();
   await page.locator('#currency').selectOption('USD');
   await page.locator('#price_max').fill('100');
   await page.getByRole('button', { name: t('search.apply'), exact: true }).click();

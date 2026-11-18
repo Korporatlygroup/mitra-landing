@@ -252,7 +252,7 @@ a.chip-x:hover { background: var(--brand-tint); color: var(--brand); }
 .card-list > li { min-width: 0; }
 .acard > h2:first-child { margin: 0; font-size: 1.0625rem; }
 .metric-head { flex-wrap: wrap; }
-.metric-label, .metric-big { overflow-wrap: normal; word-break: normal; }
+.metric-label, .metric-big { overflow-wrap: anywhere; }
 .metric-big { font-size: 1.625rem; }
 
 /* Organisation switcher row on the team page: quiet chips, brand tint for the current one */
@@ -263,10 +263,10 @@ a.chip-x:hover { background: var(--brand-tint); color: var(--brand); }
 /* Two-column page with the narrow column first (filters/profile left, results right) */
 .split-x-left { }
 @media (min-width: 1100px) { .split-x.split-x-left { grid-template-columns: 22rem minmax(0, 1fr); } }
-.fchip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
-.fchip:hover { border-color: var(--brand); }
-.fchip[aria-current='page'], .fchip[aria-current='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
-@media (max-width: 639px) { .fchip-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .fchip { flex: none; white-space: nowrap; } }
+.split-x-left .fchip { display: inline-flex; align-items: center; min-height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--line); background: #fff; color: var(--ink); font-size: 0.875rem; font-weight: 600; text-decoration: none; }
+.split-x-left .fchip:hover { border-color: var(--brand); }
+.split-x-left .fchip[aria-current='page'], .split-x-left .fchip[aria-current='true'] { background: var(--ink); color: #fff; border-color: var(--ink); }
+@media (max-width: 639px) { .split-x-left .fchip-row { flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; } .split-x-left .fchip { flex: none; white-space: nowrap; } }
 
 /* Brand mark image (replaces the old "IN" tile) */
 .logo-img { display: block; width: auto; height: 42px; flex: none; }
@@ -277,3 +277,14 @@ a.chip-x:hover { background: var(--brand-tint); color: var(--brand); }
 .logo-img { display: block; width: auto; height: 42px; flex: none; }
 .logo-sm .logo-img { height: 40px; }
 .logo-inv .logo-img { background: #fff; border-radius: 10px; padding: 3px; height: 40px; }
+
+/* Phone tab bar: long labels (Tamil) must shrink, never widen the page */
+.tabbar a, .tabbar button { min-width: 0; padding: 0 2px; }
+.tabbar a, .tabbar button { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 100%; }
+
+/* Phone header actions: never wider than the screen, whatever the language (Tamil labels are long) */
+@media (max-width: 479px) {
+  .ws-top-actions { flex-wrap: wrap; max-width: 100%; min-width: 0; gap: 6px; }
+  .ws-top-actions .btn-gold { max-width: 7.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 10px; }
+  .org-btn-top { max-width: 3.25rem; overflow: hidden; }
+}

@@ -112,11 +112,11 @@ for (const locale of ['en', 'ta'] as const satisfies readonly Locale[]) {
     await expect(op.getByRole('heading', { level: 2, name: new RegExp(t('claimTypes.business_registration')) })).toContainText(t('claimStatus.approved'));
     await op.goto(`/${locale}/notifications`);
     await expect(op.getByRole('heading', { level: 1 })).toHaveText(t('notifications.title'));
-    const item = op.locator('li.card').filter({ hasText: t('notifications.kinds.verification_approved') });
+    const item = op.locator('li.nrow').filter({ hasText: t('notifications.kinds.verification_approved') });
     await expect(item).toContainText(t('notifications.new'));
     await expect(item.getByRole('link', { name: t('notifications.open') })).toBeVisible();
     await item.getByRole('button', { name: t('notifications.markRead'), exact: true }).click();
-    await expect(op.locator('li.card').filter({ hasText: t('notifications.kinds.verification_approved') })).not.toContainText(t('notifications.new'));
+    await expect(op.locator('li.nrow').filter({ hasText: t('notifications.kinds.verification_approved') })).not.toContainText(t('notifications.new'));
     await op.goto(`/${locale}/orgs/${sub.orgId}/business/preview`);
     await expect(op.locator('main')).toContainText(locale === 'en' ? /Documents reviewed by INOK on .+ for: business registration details/ : t('claimScope.business_registration'));
     await ctx.close();
@@ -153,7 +153,7 @@ test('E24 reject with a reason, owner fixes and resubmits; the history shows bot
   await expect(article).toContainText(t('claimStatus.rejected'));
   await expect(article.locator('[role=note]')).toContainText(`${t('ver.reasonTitle')}: ${reason}`);
   await op.goto('/en/notifications');
-  await expect(op.locator('li.card').filter({ hasText: t('notifications.kinds.verification_rejected') })).toBeVisible();
+  await expect(op.locator('li.nrow').filter({ hasText: t('notifications.kinds.verification_rejected') })).toBeVisible();
 
   // Fix and send again with a new document.
   await submitClaimUi(op, 'en', sub.orgId, sub.ct, { file: smallPdf('fixed'), resubmit: true, note: 'Clearer scan attached' });
@@ -195,7 +195,7 @@ test('E24 request more information, owner resubmits, the item returns to the que
   await expect(article).toContainText(t('claimStatus.needs_info'));
   await expect(article.locator('[role=note]')).toContainText(reason);
   await op.goto('/en/notifications');
-  await expect(op.locator('li.card').filter({ hasText: t('notifications.kinds.verification_info_requested') })).toBeVisible();
+  await expect(op.locator('li.nrow').filter({ hasText: t('notifications.kinds.verification_info_requested') })).toBeVisible();
   await op.goto(orgPath('en', sub.orgId));
   await expect(op.locator('main')).toContainText(t('biz.next.fix'));
   await submitClaimUi(op, 'en', sub.orgId, sub.ct, { file: smallPdf('page2'), resubmit: true });
