@@ -9,6 +9,7 @@ import { adminGetNews, NEWS_CATEGORIES } from '@/server/services/news';
 import { getRolePermissions } from '@/server/services/orgs';
 import { listCategories } from '@/server/services/verification';
 import { requireSession } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'news2.admin.title');
@@ -73,7 +74,7 @@ export default async function AdminNewsPostPage({
     <>
       <div className="page-head" style={{ marginBottom: 0 }}>
         <div>
-          <h1>{isNew ? t('news2.admin.newPost') : post.title}</h1>
+          <PageHeader title={isNew ? t('news2.admin.newPost') : post.title} />
           {sp.saved ? (
             <p className="message message-ok" role="status">
               {t('news2.admin.saved')}

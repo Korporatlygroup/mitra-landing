@@ -4,6 +4,7 @@ import { pageTitle } from '@/lib/metadata';
 import { adminListPrivacyRequests } from '@/server/services/privacy';
 import { requireSession } from '@/server/session';
 import { handlePrivacyRequestAction } from './actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'account.requestsAdminTitle');
@@ -19,7 +20,7 @@ export default async function AdminPrivacyRequestsPage({ params }: { params: Pro
   if (!list.ok) {
     return (
       <>
-        <h1>{t('requestsAdminTitle')}</h1>
+        <PageHeader title={t('requestsAdminTitle')} />
         <p role="alert" className="message message-error">
           {a('noAccess')}
         </p>
@@ -29,8 +30,7 @@ export default async function AdminPrivacyRequestsPage({ params }: { params: Pro
   const rows = [...list.data, ...(inProgress.ok ? inProgress.data : [])];
   return (
     <>
-      <h1>{t('requestsAdminTitle')}</h1>
-      <p>{t('requestsAdminIntro')}</p>
+      <PageHeader title={t('requestsAdminTitle')} sub={t('requestsAdminIntro')} />
       {rows.length === 0 ? <p>{t('requestsNone')}</p> : null}
       {rows.map((r) => (
         <section key={r.id} className="card" data-testid="privacy-request">

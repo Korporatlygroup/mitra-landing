@@ -95,8 +95,8 @@ test.describe.serial('business workspace journey', () => {
     await expect(page.getByRole('link', { name: t('biz2.home.sProductsA') })).toBeVisible();
     await expect(page.getByRole('progressbar').first()).toBeVisible();
     // The side menu marks the current page and lists the groups.
-    await expect(page.getByRole('link', { name: t('ws.menu.home'), exact: true })).toHaveAttribute('aria-current', 'page');
-    for (const k of ['requests', 'messages', 'products', 'listing', 'verification', 'govHelp', 'news']) {
+    await expect(page.getByRole('link', { name: t('ws.menu.profileEdit'), exact: true })).toHaveAttribute('aria-current', 'page');
+    for (const k of ['customerRequests', 'enquiries', 'products', 'listing', 'verification', 'govHelp', 'news']) {
       await expect(page.getByRole('navigation', { name: t('ws.workspace') }).getByRole('link', { name: t(`ws.menu.${k}`), exact: true })).toBeVisible();
     }
     // A card can be dismissed and stays dismissed after a reload.
@@ -327,7 +327,7 @@ test.describe('news and bulletins', () => {
     await v.getByRole('button', { name: t('news2.saveAria', { title }) }).click();
     await expect(v.getByRole('button', { name: t('news2.unsaveAria', { title }) })).toBeVisible();
     await v.goto('/en/news?topic=saved');
-    await expect(v.getByRole('heading', { level: 2, name: title })).toBeVisible();
+    await expect(v.getByRole('heading', { name: title })).toBeVisible();
     const weekly = v.getByRole('switch', { name: t('news2.weeklySwitch') });
     await expect(weekly).toHaveAttribute('aria-checked', 'false');
     await weekly.click();
@@ -406,8 +406,8 @@ test.describe('phone size', () => {
     await expect(page.getByRole('heading', { level: 1, name: t('biz2.products.title') })).toBeVisible();
     await expectNoHorizontalScroll(page);
     await page.getByRole('navigation', { name: t('ws.tabs') }).getByRole('link', { name: t('ws.tabHome'), exact: true }).click();
-    await expect(page).toHaveURL(new RegExp(`/orgs/${orgId}/business$`));
-    await axe(page, 'business home phone');
+    await expect(page).toHaveURL(/\/en$/); // the Home tab opens the signed-in Home
+    await axe(page, 'home phone');
     await page.goto('/en');
     await expectNoHorizontalScroll(page);
   });

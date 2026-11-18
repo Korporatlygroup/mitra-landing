@@ -1,6 +1,8 @@
 import { getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
 import { CheckField, Field, SelectField } from '@/components/Field';
+import PageHeader from '@/components/shared/PageHeader';
+import StatusBadge from '@/components/shared/StatusBadge';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { safeRedirectPath } from '@/lib/safe-redirect';
@@ -14,6 +16,12 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'account.title');
 }
 
+const SECTIONS = ['account', 'security', 'notifications', 'privacy', 'data'] as const;
+type Section = (typeof SECTIONS)[number];
+const NAV_LABEL: Record<Section, string> = { account: 'navAccount', security: 'navSecurity', notifications: 'navNotifications', privacy: 'navPrivacy', data: 'navData' };
+const HINT: Record<Section, string> = { account: 'accountHint', security: 'securityHint', notifications: 'notifHint', privacy: 'privacyHint', data: 'dataHint' };
+
+/** Settings workspace: one section per view (secondary navigation on the left, a scrolling row on phones). The consent prompt stays on top of every section. */
 export default async function AccountPage({
   params,
   searchParams,
@@ -35,18 +43,19 @@ export default async function AccountPage({
     hasEmailNotifications(s.supabase, s.user.id),
   ]);
   const next = safeRedirectPath(typeof sp.next === 'string' ? sp.next : null, '');
+  const section: Section = (SECTIONS as readonly string[]).includes(String(sp.section)) ? (sp.section as Section) : 'account';
+  const nextQs = next ? `&next=${encodeURIComponent(next)}` : '';
 
   return (
     <>
-      <h1>{t('title')}</h1>
-      <p>
-        <strong>{t('emailLabel')}:</strong> {s.user.email}
-      </p>
+      <PageHeader title={t('title')} sub={t('sub')} />
 
       {consented ? null : (
-        <section aria-labelledby="consent-title">
-          <h2 id="consent-title">{c('title')}</h2>
-          <p>{c('intro')}</p>
+        <section aria-labelledby="consent-title" className="acard" style={{ marginBottom: 20 }}>
+          <h2 id="consent-title" style={{ margin: 0 }}>
+            {c('title')}
+          </h2>
+          <p style={{ margin: 0 }}>{c('intro')}</p>
           <ActionForm action={grantConsentAction} submitLabel={c('submit')}>
             <input type="hidden" name="locale" value={locale} />
             <input type="hidden" name="next" value={next} />
@@ -64,98 +73,173 @@ export default async function AccountPage({
         </section>
       )}
 
-      <h2>{t('profileTitle')}</h2>
-      {sp.saved === '1' ? (
-        <p role="status" className="message message-ok">
-          {t('saved')}
-        </p>
-      ) : null}
-      <ActionForm action={updateProfileAction} submitLabel={t('save')}>
-        <Field id="displayName" name="displayName" label={t('displayName')} defaultValue={s.profile.display_name} required maxLength={120} autoComplete="name" />
-        <SelectField id="language" name="language" label={t('language')} defaultValue={s.profile.language}>
-          <option value="en">English</option>
-          <option value="ta">தமிழ்</option>
-          <option value="ms">Bahasa Melayu</option>
-        </SelectField>
-      </ActionForm>
-
-      <h2>{t('passwordTitle')}</h2>
-      <ActionForm action={changePasswordAction} submitLabel={t('changePassword')}>
-        <input type="hidden" name="locale" value={locale} />
-        <Field
-          id="password"
-          name="password"
-          type="password"
-          label={t('newPassword')}
-          hint={t('passwordHint')}
-          required
-          autoComplete="new-password"
-          minLength={10}
-          maxLength={72}
-        />
-      </ActionForm>
-
-      <h2>{t('mfaTitle')}</h2>
-      <p>{mfa.verifiedFactorId ? t('mfaOn') : t('mfaOff')}</p>
-      {mfa.verifiedFactorId ? null : (
-        <p>
-          <Link href="/mfa/enrol" locale={locale} className="btn btn-secondary">
-            {t('mfaSetUp')}
-          </Link>
-        </p>
-      )}
-
-      <h2 id="privacy-title">{t('privacyTitle')}</h2>
-      <p>
-        <Link href="/privacy" locale={locale}>
-          {signup('readPrivacy')}
-        </Link>
-      </p>
-      <h3>{t('emailNotifTitle')}</h3>
-      <p>{t('emailNotifIntro')}</p>
-      <ActionForm action={setEmailNotificationsAction} submitLabel={t('emailNotifSave')}>
-        <input type="hidden" name="locale" value={locale} />
-        <CheckField id="notify" name="notify" label={t('emailNotifLabel')} required={false} defaultChecked={emailNotif} />
-      </ActionForm>
-      <h3>{t('marketingTitle')}</h3>
-      <p>{t('marketingIntro')}</p>
-      <ActionForm action={setMarketingAction} submitLabel={t('marketingSave')}>
-        <input type="hidden" name="locale" value={locale} />
-        <CheckField id="marketing" name="marketing" label={signup('acceptMarketing')} required={false} defaultChecked={marketing} />
-      </ActionForm>
-      <h3>{t('requestsTitle')}</h3>
-      <p>{t('requestsIntro')}</p>
-      <ActionForm action={submitPrivacyRequestAction} submitLabel={t('requestSubmit')}>
-        <input type="hidden" name="locale" value={locale} />
-        <SelectField id="request-type" name="type" label={t('requestType')} defaultValue="access">
-          {PRIVACY_REQUEST_TYPES.map((k) => (
-            <option key={k} value={k}>
-              {t(`requestTypes.${k}`)}
-            </option>
+      <div className="settings-x">
+        <nav className="snav" aria-label={t('navLabel')}>
+          {SECTIONS.map((k) => (
+            <Link key={k} href={`/account${k === 'account' && !next ? '' : `?section=${k}${nextQs}`}`} className="snav-i" aria-current={section === k ? 'page' : undefined}>
+              {t(NAV_LABEL[k])}
+            </Link>
           ))}
-        </SelectField>
-        <div className="field">
-          <label htmlFor="request-details">{t('requestDetails')}</label>
-          <textarea id="request-details" name="details" required maxLength={2000} rows={4} />
+          <form action={signOutAction} className="snav-out">
+            <input type="hidden" name="locale" value={locale} />
+            <button type="submit" className="btn btn-ghost btn-sm">
+              {t('signOut')}
+            </button>
+          </form>
+        </nav>
+
+        <div className="settings-main">
+          <div className="sechead" style={{ marginBottom: 4 }}>
+            <h2 id="settings-h">{t(NAV_LABEL[section])}</h2>
+          </div>
+          <p className="mut" style={{ margin: '0 0 16px', fontSize: '0.875rem' }}>
+            {t(HINT[section])}
+          </p>
+
+          {section === 'account' ? (
+            <section className="acard" aria-labelledby="profile-h">
+              <h3 id="profile-h" style={{ margin: 0 }}>
+                {t('profileTitle')}
+              </h3>
+              <p className="mut" style={{ margin: 0, fontSize: '0.875rem' }}>
+                {t('signedInAs')} <strong>{s.user.email}</strong>
+              </p>
+              {sp.saved === '1' ? (
+                <p role="status" className="message message-ok">
+                  {t('saved')}
+                </p>
+              ) : null}
+              <ActionForm action={updateProfileAction} submitLabel={t('save')}>
+                <Field id="displayName" name="displayName" label={t('displayName')} defaultValue={s.profile.display_name} required maxLength={120} autoComplete="name" />
+                <SelectField id="language" name="language" label={t('language')} defaultValue={s.profile.language}>
+                  <option value="en">English</option>
+                  <option value="ta">தமிழ்</option>
+                  <option value="ms">Bahasa Melayu</option>
+                </SelectField>
+              </ActionForm>
+            </section>
+          ) : null}
+
+          {section === 'security' ? (
+            <div className="stack-x">
+              <section className="acard" aria-labelledby="pw-h">
+                <h3 id="pw-h" style={{ margin: 0 }}>
+                  {t('passwordTitle')}
+                </h3>
+                <ActionForm action={changePasswordAction} submitLabel={t('changePassword')}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <Field id="password" name="password" type="password" label={t('newPassword')} hint={t('passwordHint')} required autoComplete="new-password" minLength={10} maxLength={72} />
+                </ActionForm>
+              </section>
+              <section className="acard" aria-labelledby="mfa-h">
+                <div className="rrow-top">
+                  <h3 id="mfa-h" style={{ margin: 0 }}>
+                    {t('mfaTitle')}
+                  </h3>
+                  <StatusBadge label={mfa.verifiedFactorId ? t('mfaStateOn') : t('mfaStateOff')} tone={mfa.verifiedFactorId ? 'green' : 'neutral'} />
+                </div>
+                <p style={{ margin: 0 }}>{mfa.verifiedFactorId ? t('mfaOn') : t('mfaOff')}</p>
+                {mfa.verifiedFactorId ? null : (
+                  <div>
+                    <Link href="/mfa/enrol" locale={locale} className="btn btn-secondary">
+                      {t('mfaSetUp')}
+                    </Link>
+                  </div>
+                )}
+              </section>
+            </div>
+          ) : null}
+
+          {section === 'notifications' ? (
+            <div className="stack-x">
+              <section className="acard" aria-labelledby="en-h">
+                <h3 id="en-h" style={{ margin: 0 }}>
+                  {t('emailNotifTitle')}
+                </h3>
+                <p style={{ margin: 0 }}>{t('emailNotifIntro')}</p>
+                <ActionForm action={setEmailNotificationsAction} submitLabel={t('emailNotifSave')}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <CheckField id="notify" name="notify" label={t('emailNotifLabel')} required={false} defaultChecked={emailNotif} />
+                </ActionForm>
+              </section>
+              <section className="acard" aria-labelledby="mk-h">
+                <h3 id="mk-h" style={{ margin: 0 }}>
+                  {t('marketingTitle')}
+                </h3>
+                <p style={{ margin: 0 }}>{t('marketingIntro')}</p>
+                <ActionForm action={setMarketingAction} submitLabel={t('marketingSave')}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <CheckField id="marketing" name="marketing" label={signup('acceptMarketing')} required={false} defaultChecked={marketing} />
+                </ActionForm>
+              </section>
+            </div>
+          ) : null}
+
+          {section === 'privacy' ? (
+            <section className="acard" aria-labelledby="privacy-title">
+              <h3 id="privacy-title" style={{ margin: 0 }}>
+                {t('privacyTitle')}
+              </h3>
+              <p style={{ margin: 0 }}>{t('privacyHint')}</p>
+              <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                <li>
+                  <Link href="/privacy" locale={locale}>
+                    {signup('readPrivacy')}
+                  </Link>
+                </li>
+                <li>
+                  <Link href="/terms" locale={locale}>
+                    {signup('readTerms')}
+                  </Link>
+                </li>
+              </ul>
+            </section>
+          ) : null}
+
+          {section === 'data' ? (
+            <div className="stack-x">
+              <section className="acard" aria-labelledby="dr-h">
+                <h3 id="dr-h" style={{ margin: 0 }}>
+                  {t('requestsTitle')}
+                </h3>
+                <p style={{ margin: 0 }}>{t('requestsIntro')}</p>
+                <ActionForm action={submitPrivacyRequestAction} submitLabel={t('requestSubmit')}>
+                  <input type="hidden" name="locale" value={locale} />
+                  <SelectField id="request-type" name="type" label={t('requestType')} defaultValue="access">
+                    {PRIVACY_REQUEST_TYPES.map((k) => (
+                      <option key={k} value={k}>
+                        {t(`requestTypes.${k}`)}
+                      </option>
+                    ))}
+                  </SelectField>
+                  <div className="field">
+                    <label htmlFor="request-details">{t('requestDetails')}</label>
+                    <textarea id="request-details" name="details" required maxLength={2000} rows={4} />
+                  </div>
+                </ActionForm>
+              </section>
+              {myRequests.length ? (
+                <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }} data-testid="my-privacy-requests">
+                  {myRequests.map((r) => (
+                    <li key={r.id} className="rrow">
+                      <div className="rrow-top">
+                        <strong>{t(`requestTypes.${r.request_type}`)}</strong>
+                        <StatusBadge label={t(`requestStatus.${r.status}`)} />
+                      </div>
+                      <div className="meta">
+                        <span>
+                          {t('requestDue')} {r.due_at.slice(0, 10)}
+                        </span>
+                      </div>
+                      {r.response_note ? <p style={{ margin: 0 }}>{r.response_note}</p> : null}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+          ) : null}
         </div>
-      </ActionForm>
-      {myRequests.length ? (
-        <ul className="plain-list" data-testid="my-privacy-requests">
-          {myRequests.map((r) => (
-            <li key={r.id}>
-              <strong>{t(`requestTypes.${r.request_type}`)}</strong> — {t(`requestStatus.${r.status}`)} ({t('requestDue')} {r.due_at.slice(0, 10)})
-              {r.response_note ? <> — {r.response_note}</> : null}
-            </li>
-          ))}
-        </ul>
-      ) : null}
-
-      <form action={signOutAction}>
-        <input type="hidden" name="locale" value={locale} />
-        <button type="submit" className="btn btn-secondary">
-          {t('signOut')}
-        </button>
-      </form>
+      </div>
     </>
   );
 }

@@ -4,6 +4,7 @@ import SupplierWizard from '@/components/partner/SupplierWizard';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requirePartnerContext } from '@/server/partner-context';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.suppliers.addTitle');
@@ -22,7 +23,7 @@ export default async function NewSupplierPage({ params }: { params: Promise<{ lo
           {tt('backTo', { page: t('title') })}
         </Link>
       </p>
-      <h1>{t('addTitle')}</h1>
+      <PageHeader title={t('addTitle')} />
       {ctx.canManageSuppliers ? <SupplierWizard locale={locale} orgId={id} detail={null} step={1} /> : <p className="message message-error">{t('readOnly')}</p>}
     </>
   );

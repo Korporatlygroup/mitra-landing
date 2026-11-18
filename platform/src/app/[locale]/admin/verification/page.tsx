@@ -1,7 +1,11 @@
 import { getTranslations } from 'next-intl/server';
 import ClaimReview from '@/components/admin/ClaimReview';
 import RouteDrawer from '@/components/admin/RouteDrawer';
-import StatusChip from '@/components/StatusChip';
+import DataTable from '@/components/shared/DataTable';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
+import StatusBadge, { type BadgeTone } from '@/components/shared/StatusBadge';
+import TabsNav from '@/components/shared/TabsNav';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { claimStatusFilterSchema, uuidSchema } from '@/lib/schemas';
@@ -13,7 +17,9 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 }
 
 const STATUSES = ['submitted', 'in_review', 'needs_info', 'approved', 'rejected', 'stale', 'withdrawn'] as const;
+const TONE: Record<string, BadgeTone> = { submitted: 'brand', in_review: 'gold', needs_info: 'gold', approved: 'green', rejected: 'red', stale: 'red', withdrawn: 'neutral' };
 
+/** Business verification queue: status tabs with counts, a table of claims (oldest waiting highlighted), and the review in a drawer so the list stays in view. */
 export default async function AdminVerificationPage({
   params,
   searchParams,
@@ -29,7 +35,7 @@ export default async function AdminVerificationPage({
   if (!canReview) {
     return (
       <>
-        <h1>{t('adminVer.title')}</h1>
+        <PageHeader title={t('adminVer.title')} />
         <p role="alert" className="message message-error">
           {t('adminVer.noAccess')}
         </p>
@@ -46,76 +52,50 @@ export default async function AdminVerificationPage({
 
   return (
     <>
-      <div className="page-head" style={{ marginBottom: 0 }}>
-        <div>
-          <h1>{t('adminVer.title')}</h1>
-          <p className="page-sub">{t('adm2.queueSub')}</p>
-        </div>
-      </div>
+      <PageHeader title={t('adminVer.title')} sub={t('adm2.queueSub')} />
 
-      <nav aria-label={t('adminVer.filterLabel')} className="tiles">
-        <Link href="/admin/verification?status=open" className="tile" aria-current={filter === 'open' ? 'true' : undefined}>
-          <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
-            {t('adminVer.filterOpen')}
-          </span>
-          <span className="tile-n">{openCount}</span>
-        </Link>
-        {STATUSES.map((s) => (
-          <Link key={s} href={`/admin/verification?status=${s}`} className="tile" aria-current={filter === s ? 'true' : undefined}>
-            <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
-              {t(`claimStatus.${s}`)}
-            </span>
-            <span className="tile-n">{counts[s] ?? 0}</span>
-          </Link>
-        ))}
-        <Link href="/admin/verification?status=all" className="tile" aria-current={filter === 'all' ? 'true' : undefined}>
-          <span className="mut" style={{ fontWeight: 700, fontSize: '0.8125rem' }}>
-            {t('adminVer.filterAll')}
-          </span>
-        </Link>
-      </nav>
+      <TabsNav
+        label={t('adminVer.filterLabel')}
+        items={[
+          { href: '/admin/verification?status=open', label: t('adminVer.filterOpen'), count: openCount, active: filter === 'open' },
+          ...STATUSES.map((s) => ({ href: `/admin/verification?status=${s}`, label: t(`claimStatus.${s}`), count: counts[s] ?? 0, active: filter === s })),
+          { href: '/admin/verification?status=all', label: t('adminVer.filterAll'), active: filter === 'all' },
+        ]}
+      />
 
       {items.length === 0 ? (
-        <div className="empty">
-          <strong>{t('adminVer.empty')}</strong>
-        </div>
+        <EmptyState icon="shield" title={t('adminVer.empty')} text={t('adm2.queueSub')} />
       ) : (
-        <div className="table-wrap">
-          <table className="stack">
-            <thead>
-              <tr>
-                <th scope="col">{t('adminVer.business')}</th>
-                <th scope="col">{t('adminVer.claim')}</th>
-                <th scope="col">{t('adminVer.status')}</th>
-                <th scope="col">{t('adm2.waiting')}</th>
-                <th scope="col">
-                  <span className="visually-hidden">{t('adminVer.open')}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((c) => (
-                <tr key={c.id} className={claimParam.success && claimParam.data === c.id ? 'sel' : undefined}>
-                  <td data-label={t('adminVer.business')}>
-                    <strong>{c.org_name}</strong>
-                  </td>
-                  <td data-label={t('adminVer.claim')}>{t(`claimTypes.${c.claim_type}`)}</td>
-                  <td data-label={t('adminVer.status')}>
-                    <StatusChip status={c.status} label={t(`claimStatus.${c.status}`)} />
-                  </td>
-                  <td data-label={t('adm2.waiting')} style={c.age_days !== null && c.age_days >= 3 ? { color: 'var(--tag-coral)', fontWeight: 700 } : undefined}>
-                    {c.age_days === null ? '-' : t('adminVer.ageDays', { days: c.age_days })}
-                  </td>
-                  <td>
-                    <Link href={`/admin/verification?status=${filter}&claim=${c.id}`} className="btn btn-secondary btn-sm" aria-label={`${t('adm2.review')}: ${c.org_name}`}>
-                      {t('adm2.review')}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption={t('adminVer.title')}
+          columns={[
+            { key: 'business', label: t('adminVer.business') },
+            { key: 'claim', label: t('adminVer.claim') },
+            { key: 'status', label: t('adminVer.status') },
+            { key: 'waiting', label: t('adm2.waiting') },
+            { key: 'action', label: t('adm2.review') },
+          ]}
+          rows={items.map((c) => ({
+            id: c.id,
+            highlight: claimParam.success && claimParam.data === c.id,
+            cells: {
+              business: <strong>{c.org_name}</strong>,
+              claim: t(`claimTypes.${c.claim_type}`),
+              status: <StatusBadge label={t(`claimStatus.${c.status}`)} tone={TONE[c.status] ?? 'neutral'} />,
+              waiting:
+                c.age_days === null ? (
+                  '-'
+                ) : (
+                  <span style={c.age_days >= 3 ? { color: 'var(--tag-coral)', fontWeight: 700 } : undefined}>{t('adminVer.ageDays', { days: c.age_days })}</span>
+                ),
+              action: (
+                <Link href={`/admin/verification?status=${filter}&claim=${c.id}`} className="btn btn-secondary btn-sm" aria-label={`${t('adm2.review')}: ${c.org_name}`}>
+                  {t('adm2.review')}
+                </Link>
+              ),
+            },
+          }))}
+        />
       )}
 
       {claimParam.success ? (

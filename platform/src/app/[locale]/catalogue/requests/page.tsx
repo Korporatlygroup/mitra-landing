@@ -7,6 +7,8 @@ import { formatDate } from '@/lib/p5-format';
 import { getSourcingRequest, listMySourcingRequests } from '@/server/services/p5-buyer';
 import type { SourcingRequestRow } from '@/server/services/p5-types';
 import { requireSession } from '@/server/session';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 const PAGE = 25;
 
@@ -48,25 +50,26 @@ export default async function MyProductRequestsPage({
 
   return (
     <>
-      <h1>{t('requests.title')}</h1>
-      <p>{t('requests.intro')}</p>
-      <p className="link-row">
-        <Link href="/catalogue" locale={locale} className="btn btn-primary">
-          {tc('buttons.findProducts')}
-        </Link>
-        <Link href="/catalogue/saved" locale={locale} className="btn btn-secondary">
-          {t('nav.saved')}
-        </Link>
-      </p>
+      <PageHeader
+        title={t('requests.title')}
+        sub={t('requests.intro')}
+        actions={
+          <>
+          <Link href="/catalogue" locale={locale} className="btn btn-primary">
+            {tc('buttons.findProducts')}
+          </Link>
+          <Link href="/catalogue/saved" locale={locale} className="btn btn-secondary">
+            {t('nav.saved')}
+          </Link>
+          </>
+        }
+      />
       {failed ? (
         <p className="message message-error" role="alert">
           {t('requests.error')}
         </p>
       ) : rows.length === 0 ? (
-        <section aria-labelledby="rq-none-h">
-          <h2 id="rq-none-h">{t('requests.emptyTitle')}</h2>
-          <p>{t('requests.emptyBody')}</p>
-        </section>
+        <EmptyState icon="list" title={t('requests.emptyTitle')} text={t('requests.emptyBody')} />
       ) : (
         <ul className="card-list" aria-label={t('requests.title')}>
           {rows.map((r) => {

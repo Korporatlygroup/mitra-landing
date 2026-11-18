@@ -17,6 +17,8 @@ import {
   unpublishListingAction,
   withdrawListingAction,
 } from './actions';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'listing.title');
@@ -43,11 +45,8 @@ export default async function ListingEditorPage({ params }: { params: Promise<{ 
   if (!profile) {
     return (
       <>
-        <h1>{t('listing.title')}</h1>
-        <p>{t('listing.needProfile')}</p>
-        <Link href={`${base}/onboarding?step=1`} locale={locale} className="btn btn-primary">
-          {t('biz.next.start')}
-        </Link>
+        <PageHeader title={t('listing.title')} sub={t('listing.needProfile')} />
+        <EmptyState icon="store" title={t('biz.notStarted')} text={t('listing.needProfile')} action={{ href: `${base}/onboarding?step=1`, label: t('biz.next.start') }} />
       </>
     );
   }
@@ -76,8 +75,7 @@ export default async function ListingEditorPage({ params }: { params: Promise<{ 
           {t('listing.back')}
         </Link>
       </p>
-      <h1>{t('listing.title')}</h1>
-      <p>{t('listing.intro')}</p>
+      <PageHeader title={t('listing.title')} sub={t('listing.intro')} />
 
       <section aria-labelledby="st-h" className="card">
         <h2 id="st-h" style={{ marginTop: 0 }}>

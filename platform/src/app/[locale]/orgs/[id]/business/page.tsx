@@ -15,6 +15,7 @@ import { listOrgProducts } from '@/server/services/biz-products';
 import { getWorkspace } from '@/server/workspace';
 import { applicableClaims, getBusinessPrivate, getBusinessProfile, getRepresentative, getVerificationSummary, listCategories, recommendNextStep } from '@/server/services/verification';
 import { dismissCardAction } from './home-actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'biz2.home.title');
@@ -132,7 +133,7 @@ export default async function BusinessHomePage({ params }: { params: Promise<{ l
           <span className="mut" style={{ fontSize: '0.875rem', fontWeight: 600 }}>
             {fmt.dateTime(now, { weekday: 'long', day: 'numeric', month: 'long', timeZone: MY })}
           </span>
-          <h1>{t(`biz2.home.${greetKey}`, { name: firstName })}</h1>
+          <PageHeader title={t(`biz2.home.${greetKey}`, { name: firstName })} />
           <span className="mut" style={{ fontSize: '0.95rem' }}>
             {t('biz2.home.summary', { n: newOnes.length, m: ws?.unread ?? 0 })}
           </span>

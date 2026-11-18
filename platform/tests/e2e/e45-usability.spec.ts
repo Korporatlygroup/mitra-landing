@@ -109,7 +109,7 @@ test('E45b buyer: saves a request for later, returns to it, finishes; a viewer c
 
   // back on the list: the unfinished request is there and says where to continue
   await expect(page).toHaveURL(/\/en\/requests$/);
-  const card = page.locator('li.card').filter({ hasText: `Wedding cake ${tag}` });
+  const card = page.locator('li.rrow').filter({ hasText: `Wedding cake ${tag}` });
   await expect(card).toContainText(t('req.draftNote'));
   await card.getByRole('link').first().click();
   await expect(page).toHaveURL(/requests\/new\?step=2&id=|requests\/new\?.*id=/);

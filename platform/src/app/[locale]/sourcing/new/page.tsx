@@ -6,6 +6,7 @@ import { MY_STATES, PRODUCT_CATEGORY_SLUGS } from '@/lib/schemas';
 import { getCatalogueItem } from '@/server/services/p5-buyer';
 import { listSourcingPartners, listSourcingTemplates, repeatSourcingRfq } from '@/server/services/p6-sourcing';
 import { requireSession } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export default async function NewSourcingPage({
   params, searchParams,
@@ -37,8 +38,7 @@ export default async function NewSourcingPage({
     quantity: String(catalogue.data.moq), specification: '',
   }] : undefined;
   return <div className="container">
-    <h1>{t('new')}</h1>
-    <p>{t('intro')}</p>
+    <PageHeader title={t('new')} sub={t('intro')} />
     {!orgs.length ? <p className="message message-error">
       <Link href="/orgs" locale={locale}>{t('yourBusiness')}</Link>
     </p> : !partnersResult.ok || !partnersResult.data.length ? <p className="message message-error">{t('partners')}</p> :

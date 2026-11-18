@@ -5,6 +5,7 @@ import AdminHelpNav from '../AdminHelpNav';
 import ActionForm from '@/components/ActionForm';
 import { pageTitle } from '@/lib/metadata';
 import { requireGovAdmin } from '@/server/gov-admin-context';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.admin.src.title');
@@ -65,7 +66,7 @@ export default async function SourcesPage({ params }: { params: Promise<{ locale
 
   return (
     <>
-      <h1>{t('src.title')}</h1>
+      <PageHeader title={t('src.title')} />
       <AdminHelpNav locale={locale} current="sources" canReview={ctx.canReview} />
       <p>{t('src.intro')}</p>
       <p>{t('src.noRecheck')}</p>

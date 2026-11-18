@@ -9,6 +9,7 @@ import { productEditable, todayIso } from '@/lib/partner-ui';
 import { uuidSchema } from '@/lib/schemas';
 import { requirePartnerContext } from '@/server/partner-context';
 import { getMyProduct, listMySuppliers } from '@/server/services/p5-partner';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.products.editTitle');
@@ -43,7 +44,7 @@ export default async function EditProductPage({
           {tt('backTo', { page: p.name ?? p.sku })}
         </Link>
       </p>
-      <h1>{t('editTitle')}</h1>
+      <PageHeader title={t('editTitle')} />
       {sp.saved ? (
         <p className="message message-ok" role="status">
           {tt('saved')}

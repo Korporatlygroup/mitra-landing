@@ -5,6 +5,7 @@ import { pageTitle } from '@/lib/metadata';
 import { adminListProducts } from '@/server/services/biz-products';
 import { getRolePermissions } from '@/server/services/orgs';
 import { requireSession } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'adm2.products.title');
@@ -20,7 +21,7 @@ export default async function AdminProductsPage({ params, searchParams }: { para
   if (!perms.has('listing:review')) {
     return (
       <>
-        <h1>{t('adm2.products.title')}</h1>
+        <PageHeader title={t('adm2.products.title')} />
         <p className="message message-error" role="alert">
           {t('adm2.products.noAccess')}
         </p>
@@ -35,8 +36,7 @@ export default async function AdminProductsPage({ params, searchParams }: { para
     <>
       <div className="page-head" style={{ marginBottom: 0 }}>
         <div>
-          <h1>{t('adm2.products.title')}</h1>
-          <p className="page-sub">{t('adm2.products.sub')}</p>
+          <PageHeader title={t('adm2.products.title')} sub={t('adm2.products.sub')} />
         </div>
       </div>
       <div className="tiles">

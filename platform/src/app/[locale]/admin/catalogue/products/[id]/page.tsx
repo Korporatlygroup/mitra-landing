@@ -15,6 +15,7 @@ import { uuidSchema } from '@/lib/schemas';
 import { requireCatalogueAdmin } from '@/server/catalogue-admin-context';
 import { getProductForReview } from '@/server/services/p5-admin';
 import { reviewProductAction, suspendAction } from '../../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5admin.products.detail.title');
@@ -48,7 +49,7 @@ export default async function AdminProductPage({
     return (
       <>
         {back}
-        <h1>{t('products.detail.title')}</h1>
+        <PageHeader title={t('products.detail.title')} />
         <p role="alert" className="message message-error" data-testid="product-unavailable">
           <strong>{t('common.error')}: </strong>
           {t('products.detail.unavailable')}
@@ -78,7 +79,7 @@ export default async function AdminProductPage({
   return (
     <>
       {back}
-      <h1>{name}</h1>
+      <PageHeader title={name} />
       <CatalogueAdminNav locale={locale} ctx={ctx} current="products" />
       <DoneBanner locale={locale} value={sp.done} />
       <p>

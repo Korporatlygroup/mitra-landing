@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
+import ConversationFilter from './ConversationFilter';
 import { initialsOf, paletteFor } from '@/components/ui/Tag';
 import { Link } from '@/i18n/navigation';
 import type { Db } from '@/server/services/result';
@@ -27,12 +28,13 @@ export default async function ConversationList({ db, locale, activeId }: { db: D
 
   if (sorted.length === 0) return null;
   return (
+    <ConversationFilter label={t('biz2.messages.search')} noMatch={t('biz2.messages.noMatch')}>
     <nav aria-label={t('biz2.messages.list')} className="chat-list">
       {sorted.map((r) => {
         const pal = paletteFor(r.id);
         const l = last.get(r.id);
         return (
-          <Link key={r.id} href={`/enquiries/${r.id}`} className="chat" aria-current={r.id === activeId ? 'page' : undefined}>
+          <Link key={r.id} href={`/enquiries/${r.id}`} className="chat" data-chat={`${r.topic} ${l?.body ?? r.opening_note ?? ''}`} aria-current={r.id === activeId ? 'page' : undefined}>
             <span className="av" style={{ background: pal.tint, color: pal.c1 }} aria-hidden="true">
               {initialsOf(r.topic)}
             </span>
@@ -46,10 +48,14 @@ export default async function ConversationList({ db, locale, activeId }: { db: D
               <span className="mut ellipsis" style={{ display: 'block', fontSize: '0.8125rem' }}>
                 {l?.body ?? r.opening_note ?? t(`enq.statuses.${r.status}`)}
               </span>
+              <span className="chip-x" style={{ marginTop: 4 }}>
+                {t(`enq.statuses.${r.status}`)}
+              </span>
             </span>
           </Link>
         );
       })}
     </nav>
+    </ConversationFilter>
   );
 }

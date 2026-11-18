@@ -66,7 +66,7 @@ const card = (page: import('@playwright/test').Page, s: string) => page.locator(
 test('E80 anonymous: browse, see published facts and evidence dates, no account needed; nothing claims approval', async ({ page }) => {
   await page.goto('/en/business-help');
   await expect(page.getByRole('heading', { level: 1, name: t('en', 'opps.title') })).toBeVisible();
-  for (const k of ['tabAll', 'tabRec', 'tabNew', 'tabClosing', 'tabSaved']) await expect(page.getByRole('link', { name: t('en', `opps.${k}`), exact: true })).toBeVisible();
+  for (const k of ['tabAll', 'tabRec', 'tabNew', 'tabClosing', 'tabSaved']) await expect(page.getByRole('link', { name: new RegExp(`^${t('en', `opps.${k}`)}\\s*\\d*$`) })).toBeVisible();
   await expect(page.locator('main')).toContainText(t('en', 'independent'));
   await axeClean(page, 'en home');
 

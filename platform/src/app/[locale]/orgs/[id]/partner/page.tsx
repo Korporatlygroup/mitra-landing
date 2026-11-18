@@ -4,6 +4,8 @@ import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requirePartnerContext } from '@/server/partner-context';
 import { listMyProducts, listMySuppliers, listPartnerRequests } from '@/server/services/p5-partner';
+import PageHeader from '@/components/shared/PageHeader';
+import Icon from '@/components/ui/Icon';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.nav.home');
@@ -45,56 +47,51 @@ export default async function PartnerHomePage({ params }: { params: Promise<{ lo
 
   return (
     <>
-      <h1>{t('title', { name: ctx.profile?.display_name ?? ctx.org.name })}</h1>
-      <p className="muted">{t('intro')}</p>
+      <PageHeader title={t('title', { name: ctx.profile?.display_name ?? ctx.org.name })} sub={t('intro')} />
 
       {next ? (
-        <p className="next-step" data-testid="next-step">
+        <p className="acard" data-testid="next-step" style={{ marginBottom: 20, borderColor: 'var(--brand)', background: 'var(--brand-tint)' }}>
           {t(`next.${next}`)}
         </p>
       ) : null}
 
-      <h2>{t('actionsTitle')}</h2>
-      <ul className="p5-grid" aria-label={t('actionsTitle')}>
-        <li>
-          <Link className="big-link" href={`/orgs/${id}/partner/suppliers/new`} locale={locale}>
-            {tc('buttons.addSupplier')}
-          </Link>
-        </li>
-        <li>
-          <Link className="big-link" href={`/orgs/${id}/partner/products/new`} locale={locale}>
-            {tc('buttons.addProduct')}
-          </Link>
-        </li>
-        <li>
-          <Link className="big-link" href={`/orgs/${id}/partner/import`} locale={locale}>
-            {t('uploadCatalogue')}
-          </Link>
-        </li>
-        <li>
-          <Link className="big-link" href={`/orgs/${id}/partner/requests`} locale={locale}>
-            {tc('buttons.viewRequests')}
-          </Link>
-        </li>
-        <li>
-          <Link className="big-link" href={`/orgs/${id}/partner/sourcing`} locale={locale}>
-            {t6('partnerRequests')}
-          </Link>
-        </li>
+      <div className="sechead">
+        <h2>{t('actionsTitle')}</h2>
+      </div>
+      <ul className="xgrid xgrid-3" aria-label={t('actionsTitle')} style={{ listStyle: 'none', padding: 0, margin: '0 0 28px' }}>
+        {(
+          [
+            { href: `/orgs/${id}/partner/suppliers/new`, icon: 'store', label: tc('buttons.addSupplier') },
+            { href: `/orgs/${id}/partner/products/new`, icon: 'box', label: tc('buttons.addProduct') },
+            { href: `/orgs/${id}/partner/import`, icon: 'upload', label: t('uploadCatalogue') },
+            { href: `/orgs/${id}/partner/requests`, icon: 'board', label: tc('buttons.viewRequests') },
+            { href: `/orgs/${id}/partner/sourcing`, icon: 'layers', label: t6('partnerRequests') },
+          ] as const
+        ).map((x) => (
+          <li key={x.href}>
+            <Link className="dcard big-link" href={x.href} locale={locale}>
+              <span className="dcard-ico" aria-hidden="true">
+                <Icon name={x.icon} size={22} />
+              </span>
+              <h3>{x.label}</h3>
+              <span className="dcard-go">
+                <Icon name="forward" size={16} />
+              </span>
+            </Link>
+          </li>
+        ))}
       </ul>
 
-      <h2>{t('countsTitle')}</h2>
-      <ul className="p5-grid" aria-label={t('countsTitle')}>
+      <div className="sechead">
+        <h2>{t('countsTitle')}</h2>
+      </div>
+      <ul className="xgrid-m" aria-label={t('countsTitle')} style={{ listStyle: 'none', padding: 0, margin: 0 }}>
         {stats.map((s) => (
-          <li key={s.key} className="card" data-testid={`stat-${s.key}`}>
-            <p className="p5-stat" style={{ margin: 0 }}>
-              {s.value ?? '-'}
-            </p>
-            <p style={{ margin: 0 }}>
-              <Link href={s.href} locale={locale}>
-                {t(`stats.${s.key}`)}
-              </Link>
-            </p>
+          <li key={s.key} data-testid={`stat-${s.key}`}>
+            <Link href={s.href} locale={locale} className="mcard mcard-link">
+              <b>{s.value ?? '-'}</b>
+              <span>{t(`stats.${s.key}`)}</span>
+            </Link>
           </li>
         ))}
       </ul>

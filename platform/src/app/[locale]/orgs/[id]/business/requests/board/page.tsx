@@ -7,6 +7,7 @@ import { requireBusinessContext } from '@/server/business-context';
 import { BOARD_PAGE_SIZE, listBoardRequests } from '@/server/services/directory';
 import { listCategories } from '@/server/services/verification';
 import { catName } from '@/lib/category';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'board.title');
@@ -30,7 +31,7 @@ export default async function RequestBoardPage({
   if (!ctx.perms.has('request:respond')) {
     return (
       <>
-        <h1>{t('board.title')}</h1>
+        <PageHeader title={t('board.title')} />
         <p className="message message-error" role="alert">
           {t('errors.forbidden')}
         </p>
@@ -61,8 +62,7 @@ export default async function RequestBoardPage({
           {t('inbox.title')}
         </Link>
       </p>
-      <h1>{t('board.title')}</h1>
-      <p>{t('board.intro')}</p>
+      <PageHeader title={t('board.title')} sub={t('board.intro')} />
 
       <form method="get" className="card" aria-label={t('board.apply')}>
         <div className="field">

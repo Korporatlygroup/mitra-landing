@@ -91,8 +91,9 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await adminLogin(adminPage);
   await adminPage.goto('/en/admin/reviews');
   await expect(adminPage.locator('main')).toContainText(reviewText);
-  const reviewCard = adminPage.locator('li.card').filter({ hasText: reviewText });
+  const reviewCard = adminPage.locator('li.rrow').filter({ hasText: reviewText });
   const reviewId = await reviewCard.locator('input[name=reviewId]').inputValue();
+  await reviewCard.locator('summary').click(); // the decision form is collapsed until opened
   await reviewCard.locator('textarea[name=reason]').fill('Specific and relevant enquiry feedback.');
   await reviewCard.getByRole('button', { name: t('p4.decideReview') }).click();
   await expect.poll(async () => (await sql<{ status: string }>('select status from public.business_reviews where id=$1', [reviewId]))[0]?.status).toBe('published');
@@ -103,7 +104,8 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await page.getByRole('button', { name: t('p4.sendResponse') }).click();
   await expect(page.locator('main')).toContainText('Thank you for the clear request.');
   await adminPage.goto('/en/admin/reviews');
-  const responseCard = adminPage.locator('li.card').filter({ hasText: reviewText }).filter({ hasText: 'Thank you for the clear request.' });
+  const responseCard = adminPage.locator('li.rrow').filter({ hasText: reviewText }).filter({ hasText: 'Thank you for the clear request.' });
+  await responseCard.locator('summary').click();
   await responseCard.locator('textarea[name=reason]').fill('Relevant and respectful business response.');
   await responseCard.getByRole('button', { name: t('p4.decideReview') }).click();
   await expect.poll(async () => (await sql<{ seller_response_status: string }>('select seller_response_status from public.business_reviews where id=$1', [reviewId]))[0]?.seller_response_status).toBe('published');

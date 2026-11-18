@@ -11,6 +11,7 @@ import { requireModerator } from '@/server/reviewer';
 import { getOwnerListing, listListingEvents } from '@/server/services/directory';
 import { listCategories } from '@/server/services/verification';
 import { reviewListingAction, suspendListingAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'adminList.reviewTitle');
@@ -49,7 +50,7 @@ export default async function AdminListingReviewPage({ params }: { params: Promi
           {t('adminList.title')}
         </Link>
       </p>
-      <h1>{prof?.business_name ?? l.live_name ?? t('adminList.reviewTitle')}</h1>
+      <PageHeader title={prof?.business_name ?? l.live_name ?? t('adminList.reviewTitle')} />
       <p>
         <StatusChip status={pending ? 'needs_info' : l.live_status === 'published' ? 'approved' : l.live_status === 'suspended' ? 'rejected' : 'none'} label={`${t(`listing.live.${l.live_status}`)} / ${t(`listing.review.${l.review_status}`)}`} />
       </p>

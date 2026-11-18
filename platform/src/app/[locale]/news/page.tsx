@@ -1,7 +1,7 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import BulletinPrefs from '@/components/workspace/BulletinPrefs';
 import Icon from '@/components/ui/Icon';
-import { CAT_STYLE, NewsCategoryTile } from '@/components/workspace/NewsCategoryTile';
+import { CAT_STYLE } from '@/components/workspace/NewsCategoryTile';
 import { Link } from '@/i18n/navigation';
 import { catName } from '@/lib/category';
 import { pageTitle } from '@/lib/metadata';
@@ -10,6 +10,7 @@ import { getNewsPrefs, listNews, newsDeadlines, NEWS_CATEGORIES, NEWS_PAGE, type
 import { getBusinessProfile, listCategories } from '@/server/services/verification';
 import { getWorkspace } from '@/server/workspace';
 import { toggleSaveNewsAction } from './actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'news2.title');
@@ -64,14 +65,12 @@ export default async function NewsPage({
     ...NEWS_CATEGORIES.map((c) => ({ key: c, label: t(`news2.${CAT_STYLE[c].label}`) })),
     ...(user ? [{ key: 'saved', label: t('news2.chipSaved') }] : []),
   ];
-  const langName = (l: string) => (l === 'ta' ? t('common.langTa') : l === 'ms' ? t('common.langMs') : t('common.langEn'));
 
   return (
     <div className="wide" style={{ display: 'flex', flexDirection: 'column', gap: 22 }}>
       <div className="page-head" style={{ marginBottom: 0 }}>
         <div>
-          <h1>{t('news2.title')}</h1>
-          <p className="page-sub">{personal && sectorName && state ? t('news2.subFor', { category: sectorName, state }) : t('news2.subPublic')}</p>
+          <PageHeader title={t('news2.title')} sub={personal && sectorName && state ? t('news2.subFor', { category: sectorName, state }) : t('news2.subPublic')} />
         </div>
       </div>
 
@@ -91,27 +90,29 @@ export default async function NewsPage({
               <span className="mut">{topic === 'saved' ? t('news2.emptySaved') : t('news2.emptyBody')}</span>
             </div>
           ) : (
-            <ul className="card-list">
-              {data.items.map((n) => (
-                <li key={n.id} className="card news-card">
-                  <NewsCategoryTile category={n.category} />
-                  <div style={{ flex: 1, minWidth: 0, display: 'flex', flexDirection: 'column', gap: 6 }}>
-                    <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', alignItems: 'center' }}>
-                      {matches(n) ? <span className="tag t-green">{t('news2.matches')}</span> : null}
-                      <span className="mut" style={{ fontSize: '0.8125rem' }}>
-                        {[t('news2.published', { date: fmt.dateTime(new Date(n.published_at), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' }) }), n.states.length ? n.states.join(', ') : null, n.language !== locale ? t('news2.langTag', { lang: langName(n.language) }) : null]
-                          .filter(Boolean)
-                          .join(' · ')}
+            <>
+              {(() => {
+                const item = (n: NewsItem, featured: boolean) => (
+                  <article key={n.id} className={`ncard${featured ? ' ncard-feature' : ''}`}>
+                    <div className="meta">
+                      <span className="chip-x brand">{t(`news2.${CAT_STYLE[n.category].label}`)}</span>
+                      {matches(n) ? <span className="chip-x green">{t('news2.matches')}</span> : null}
+                      <span>
+                        {[n.publisher, fmt.dateTime(new Date(n.published_at), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'Asia/Kuala_Lumpur' }), ...n.states.filter(Boolean)].filter(Boolean).join(' · ')}
                       </span>
                     </div>
-                    <h2 style={{ margin: 0, fontSize: '1.125rem', lineHeight: 1.3 }}>
-                      <Link href={`/news/${n.id}`} style={{ color: 'inherit', textDecoration: 'none' }}>
-                        {n.title}
-                      </Link>
-                    </h2>
-                    <p style={{ margin: 0, color: 'var(--text-2)', fontSize: '0.9375rem', lineHeight: 1.5 }}>{n.summary}</p>
+                    {featured ? (
+                      <h2 style={{ margin: 0, fontSize: '1.375rem', lineHeight: 1.3 }}>
+                        <Link href={`/news/${n.id}`}>{n.title}</Link>
+                      </h2>
+                    ) : (
+                      <h3>
+                        <Link href={`/news/${n.id}`}>{n.title}</Link>
+                      </h3>
+                    )}
+                    <p>{n.summary}</p>
                     {n.deadline_on ? (
-                      <span className="tag t-coral" style={{ alignSelf: 'flex-start' }}>
+                      <span className="chip-x gold" style={{ alignSelf: 'flex-start' }}>
                         {t('news2.closes', { date: fmt.dateTime(new Date(`${n.deadline_on}T00:00:00Z`), { day: 'numeric', month: 'short', year: 'numeric', timeZone: 'UTC' }) })}
                       </span>
                     ) : null}
@@ -131,10 +132,18 @@ export default async function NewsPage({
                         </form>
                       ) : null}
                     </div>
-                  </div>
-                </li>
-              ))}
-            </ul>
+                  </article>
+                );
+                const [first, ...rest] = data.items;
+                const showFeature = page === 1 && topic !== 'saved' && Boolean(first);
+                return (
+                  <>
+                    {showFeature && first ? item(first, true) : null}
+                    <div className="xgrid xgrid-2">{(showFeature ? rest : data.items).map((n) => item(n, false))}</div>
+                  </>
+                );
+              })()}
+            </>
           )}
           {pages > 1 ? (
             <nav aria-label={t('dir.pages')} className="dir-pages">

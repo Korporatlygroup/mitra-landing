@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { hasLocale, NextIntlClientProvider } from 'next-intl';
 import { getMessages, getTranslations } from 'next-intl/server';
-import { Inter, Noto_Sans_Tamil } from 'next/font/google';
+import { Geist, Noto_Sans_Tamil, Plus_Jakarta_Sans } from 'next/font/google';
 import { notFound } from 'next/navigation';
 import type { ReactNode } from 'react';
 import SiteFooter from '@/components/SiteFooter';
@@ -14,8 +14,11 @@ import '../globals.css';
 import '../ui.css';
 import '../shell.css';
 import '../pages.css';
+import '../kit.css';
 
-const inter = Inter({ subsets: ['latin', 'latin-ext'], variable: '--font-inter', display: 'swap' });
+// Body and controls: Geist. Headings: Plus Jakarta Sans. Tamil falls back to Noto Sans Tamil (neither Latin face covers Tamil script).
+const geist = Geist({ subsets: ['latin', 'latin-ext'], variable: '--font-geist', display: 'swap' });
+const jakarta = Plus_Jakarta_Sans({ subsets: ['latin', 'latin-ext'], weight: ['500', '600', '700'], variable: '--font-jakarta', display: 'swap' });
 const tamil = Noto_Sans_Tamil({ subsets: ['tamil'], weight: ['400', '500', '600', '700'], variable: '--font-tamil', display: 'swap' });
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }): Promise<Metadata> {
@@ -42,7 +45,7 @@ export default async function LocaleLayout({ children, params }: { children: Rea
   }
 
   return (
-    <html lang={locale} className={`${inter.variable} ${tamil.variable}`}>
+    <html lang={locale} className={`${geist.variable} ${jakarta.variable} ${tamil.variable}`}>
       <body>
         <NextIntlClientProvider locale={locale} messages={pickMessages(messages as Record<string, unknown>, BASE_PATHS) as never}>
           <a className="skip-link" href="#main">

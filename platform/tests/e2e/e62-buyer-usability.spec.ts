@@ -1,5 +1,5 @@
 import { expect, test } from '@playwright/test';
-import { createUser, signedClient, sql, uniq, type TestUser } from './support/db';
+import { createOrgAs, createUser, signedClient, sql, uniq, type TestUser } from './support/db';
 import { errorText } from './support/ui';
 import { axeClean, card, daysAgo, makePartner, makeProduct, makeReviewer, makeSupplier, requestsOfBuyer, tb, tcm, type Product } from './support/p5-buyer';
 import { loginUi } from './support/ui';
@@ -20,6 +20,7 @@ test.beforeAll(async () => {
   p2 = await makeProduct(sup, reviewer, { name: `Usable Scarf ${tag}`, moq: 5, currency: 'USD', mode: 'fixed', unitPrice: '9.00' });
   old = await makeProduct(sup, reviewer, { name: `Old Statement ${tag}`, moq: 5, availabilityOn: daysAgo(150), priceOn: daysAgo(150) });
   buyer = await createUser('b62-buyer');
+  await createOrgAs(buyer, 'buyer', 'B62 Buyer Co'); // actions need an organisation
 });
 
 for (const L of ['ta', 'ms'] as const) {
@@ -65,7 +66,7 @@ for (const L of ['ta', 'ms'] as const) {
     await expect(page.getByRole('heading', { level: 1, name: t('saved.title') })).toBeVisible();
     await axeClean(page, `${L} saved`);
     await page.goto(`/${L}/catalogue/requests`);
-    await expect(page.getByRole('heading', { level: 2, name: t('requests.emptyTitle') })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 3, name: t('requests.emptyTitle') })).toBeVisible();
     await axeClean(page, `${L} my requests`);
   });
 }
@@ -88,7 +89,7 @@ test('E62 mistakes: invalid quantity, session ending mid-form, repeated submissi
   await loginUi(page, buyer, L);
   await page.goto(`/${L}/catalogue/${p2.id}/request`);
   await page.waitForLoadState('networkidle');
-  await page.locator('main form').evaluate((f: HTMLFormElement) => (f.noValidate = true));
+  await page.locator('main form.form').evaluate((f: HTMLFormElement) => (f.noValidate = true));
   await page.locator('#destinationState').selectOption('Kedah');
   for (const bad of ['1.5', '0', 'abc']) {
     await page.locator('#quantity').evaluate((el: HTMLInputElement, v: string) => { el.type = 'text'; el.value = v; }, bad);

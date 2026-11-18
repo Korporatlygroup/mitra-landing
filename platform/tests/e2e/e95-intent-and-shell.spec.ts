@@ -69,7 +69,7 @@ test.describe('One shell, a real Home, and the details gate', () => {
 
     await page.goto('/en');
     await expect(page.getByRole('heading', { level: 1, name: /Intent Tester/ })).toBeVisible();
-    for (const k of ['actionsTitle', 'newsTitle', 'govTitle', 'marketTitle', 'activityTitle']) {
+    for (const k of ['actionsTitle', 'newsTitle', 'govTitle', 'marketTitle']) {
       await expect(page.getByRole('heading', { level: 2, name: t(`apphome.${k}`) })).toBeVisible();
     }
     await expect(page.getByRole('heading', { name: t('apphome.startTitle') })).toBeVisible(); // no organisation yet: the invitation to fill in details

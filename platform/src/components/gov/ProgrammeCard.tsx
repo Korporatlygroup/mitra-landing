@@ -36,46 +36,42 @@ export default async function ProgrammeCard({
   const statusInput = { publication_state: 'published', verification_status: p.verification_status, application_status: p.application_status, closes_on: p.closes_on, is_stale: p.is_stale };
   const shown = displayStatus(statusInput);
   const apply = p.application_channel === 'online' && p.application_status !== 'closed' && shown !== 'closed' ? safeHttpsUrl(p.application_url) : null;
+  const dates = p.opens_on || p.closes_on ? [p.opens_on ? t('card.opens', { date: date(p.opens_on) }) : null, p.closes_on ? t('card.closes', { date: date(p.closes_on) }) : null].filter(Boolean).join(' · ') : t('card.noDates');
+  const to = `/business-help/${p.slug}${orgId ? `?org=${orgId}` : ''}`;
   return (
-    <li className="card catalogue-card" data-programme={p.slug}>
-      <h2 className="catalogue-card-title">{p.name}</h2>
-      <p className="muted" style={{ margin: 0 }}>
+    <li className="ocard pcard" data-programme={p.slug}>
+      <p className="pcard-agency">
         {t('card.agency')}: {p.agency_name}
       </p>
-      <p style={{ margin: '4px 0' }}>
-        <span className="chip">{t(`category.${categoryOf(p)}`)}</span>{' '}
+      <h2 className="pcard-title">
+        <Link href={to} locale={locale}>
+          {p.name}
+        </Link>
+      </h2>
+      <p className="pcard-chips">
+        <span className="chip-x brand">{t(`category.${categoryOf(p)}`)}</span>
         <StatusBadge locale={locale} input={statusInput} />
-        {p.beneficiary_type === 'organisation' ? (
-          <>
-            {' '}
-            <span className="chip chip-warn">{t('match.for_organisations')}</span>
-          </>
-        ) : null}
+        {p.beneficiary_type === 'organisation' ? <span className="chip-x gold">{t('match.for_organisations')}</span> : null}
+        {p.is_stale ? <span className="chip-x red">{t('card.staleShort')}</span> : null}
       </p>
       {match ? (
-        <p style={{ margin: '4px 0' }}>
-          <strong>{t(`match.${match.label}`)}</strong>
-          <br />
-          <span className="muted">{t(`match.explain.${match.label}`)}</span>
+        <p className="pcard-match">
+          <strong>{t(`match.${match.label}`)}</strong> <span className="muted">{t(`match.explain.${match.label}`)}</span>
         </p>
       ) : null}
-      <dl className="catalogue-facts">
-        <dt>{t('card.amount')}</dt>
-        <dd>{amount}</dd>
-        <dt>{t('card.importantDates')}</dt>
-        <dd>{p.opens_on || p.closes_on ? [p.opens_on ? t('card.opens', { date: date(p.opens_on) }) : null, p.closes_on ? t('card.closes', { date: date(p.closes_on) }) : null].filter(Boolean).join(' · ') : t('card.noDates')}</dd>
+      <dl className="pcard-facts">
+        <div>
+          <dt>{t('card.amount')}</dt>
+          <dd>{amount}</dd>
+        </div>
+        <div>
+          <dt>{t('card.importantDates')}</dt>
+          <dd>{dates}</dd>
+        </div>
       </dl>
-      <p className="muted" style={{ margin: 0 }}>
-        {p.last_checked_at ? t('card.checked', { date: date(p.last_checked_at) }) : t('card.neverChecked')}
-        {p.last_verified_at ? ` · ${t('card.verified', { date: date(p.last_verified_at) })}` : ''}
-      </p>
-      {p.is_stale ? (
-        <p className="message message-error" role="note" style={{ margin: '4px 0' }}>
-          {t('card.stale')}
-        </p>
-      ) : null}
-      <div className="catalogue-card-actions">
-        <Link href={`/business-help/${p.slug}${orgId ? `?org=${orgId}` : ''}`} locale={locale} className="btn btn-primary">
+      <p className="muted pcard-checked">{p.last_checked_at ? t('card.checked', { date: date(p.last_checked_at) }) : t('card.neverChecked')}</p>
+      <div className="ocard-foot">
+        <Link href={to} locale={locale} className="btn btn-primary btn-sm">
           {t('card.details')}
           <span className="p5b-sr">: {p.name}</span>
         </Link>
@@ -88,7 +84,7 @@ export default async function ProgrammeCard({
           />
         ) : null}
         {apply ? (
-          <a href={apply} className="btn btn-secondary" target="_blank" rel="noopener noreferrer">
+          <a href={apply} className="btn btn-ghost btn-sm" target="_blank" rel="noopener noreferrer">
             {t('card.apply')}
             <span className="p5b-sr">: {p.name}</span>
           </a>

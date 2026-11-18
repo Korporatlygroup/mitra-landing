@@ -1,7 +1,7 @@
 import AxeBuilder from '@axe-core/playwright';
 import { expect, test, type Page } from '@playwright/test';
 import { createBusinessOwner, orgPath } from './support/biz';
-import { createUser, sql, uniq, type TestUser } from './support/db';
+import { createOrgAs, createUser, sql, uniq, type TestUser } from './support/db';
 import { msg } from './support/i18n';
 import { expectNoHorizontalScroll, freshContext, loginUi, logoutUi } from './support/ui';
 
@@ -75,6 +75,7 @@ test('E43 buyer posts a board request; eligible seller finds, reads and answers;
 
   // ---------------- buyer: wizard, with a mistake first ----------------
   const buyer = await createUser('brdb', { name: 'Buyer Board' });
+  await createOrgAs(buyer, 'buyer', 'Board Buyer Co'); // actions need an organisation
   await loginUi(page, buyer, 'en');
   await page.goto('/en/requests/new');
   await page.locator('#title').fill(title);
@@ -102,6 +103,7 @@ test('E43 buyer posts a board request; eligible seller finds, reads and answers;
   const url = new URL(page.url());
   const id = url.searchParams.get('id')!;
   await page.goto(`/en/requests/new?step=4&id=${id}`);
+  await page.waitForLoadState('networkidle'); // let the page hydrate before typing (slow runners)
   await page.locator('#description').fill('Lunch boxes for an office event, mixed menu, delivered by noon on the day.');
   await page.getByRole('button', { name: t('ob.next'), exact: true }).click();
   await expect(page).toHaveURL(/step=5&id=/);
@@ -195,6 +197,7 @@ test('E43b an invitation-only request never appears on the board, and an anonymo
   const seller = await createBusinessOwner('brdq');
   await publishSeller(seller.owner, seller.orgId, `Caterer ${tag}`, 'food-beverage', ['Selangor'], reviewer.id);
   const buyer = await createUser('brdpb', { name: 'Buyer Private' });
+  await createOrgAs(buyer, 'buyer', 'Private Buyer Co'); // actions need an organisation
   await loginUi(page, buyer, 'en');
   await page.goto('/en/requests/new');
   await page.locator('#title').fill(`Private dinner ${tag}`);

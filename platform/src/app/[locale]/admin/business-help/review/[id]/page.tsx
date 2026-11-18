@@ -5,6 +5,7 @@ import ActionForm from '@/components/ActionForm';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireGovAdmin } from '@/server/gov-admin-context';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.admin.review');
@@ -55,7 +56,7 @@ export default async function ReviewPage({ params }: { params: Promise<{ locale:
           {t('detail.back')}
         </Link>
       </p>
-      <h1>{c.name ?? '—'}</h1>
+      <PageHeader title={c.name ?? '—'} />
       <p>
         <span className="chip">{t(`admin.kinds.${p.kind}`)}</span>{' '}
         {(p.flags as string[]).map((f) => (

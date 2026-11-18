@@ -13,6 +13,7 @@ import { listPartnerOrgs } from '@/server/services/p5-admin';
 import type { PartnerStatus } from '@/server/services/p5-types';
 import { Link } from '@/i18n/navigation';
 import { partnerDecisionAction, provisionPartnerAction, resendInvitationAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5admin.partners.title');
@@ -44,7 +45,7 @@ export default async function AdminPartnersPage({
 
   return (
     <>
-      <h1>{t('partners.title')}</h1>
+      <PageHeader title={t('partners.title')} />
       <CatalogueAdminNav locale={locale} ctx={ctx} current="partners" />
       <DoneBanner locale={locale} value={sp.done} />
       <p>{t('partners.intro')}</p>

@@ -102,7 +102,7 @@ for (const tick of [false, true]) {
     await confirmEmailUi(page, email);
     await context.clearCookies();
     await loginUi(page, { email, password }, 'en');
-    await page.goto('/en/account');
+    await page.goto('/en/account?section=notifications');
     const box = page.locator('#marketing');
     if (tick) await expect(box).toBeChecked(); else await expect(box).not.toBeChecked();
     if (tick) await box.uncheck(); else await box.check();
@@ -124,7 +124,7 @@ test('E92 a signed-in user sends a data request; it is isolated, rate-limited, a
   const user = await createUser('e92-req', { name: 'Request Person' });
   const other = await createUser('e92-other');
   await loginUi(page, user, 'en');
-  await page.goto('/en/account');
+  await page.goto('/en/account?section=data');
   await page.locator('#request-type').selectOption('access');
   await page.locator('#request-details').fill('Please send me a copy of the personal data you hold about me.');
   await page.locator('form:has(#request-details) button[type=submit]').click();
@@ -161,7 +161,7 @@ test('E92 a signed-in user sends a data request; it is isolated, rate-limited, a
   await expect.poll(async () => (await sql<{ status: string }>(`select status from public.privacy_requests where id = $1`, [rows[0]!.id]))[0]!.status).toBe('completed');
   const audit = await sql<{ action: string }>(`select action from public.audit_log where entity_id = $1 order by id`, [rows[0]!.id]);
   expect(audit.map((a) => a.action)).toEqual(['privacy.request.submitted', 'privacy.request.completed']);
-  await page.goto('/en/account');
+  await page.goto('/en/account?section=data');
   await expect(page.getByTestId('my-privacy-requests')).toContainText('A copy was sent');
   await actx.close();
 });

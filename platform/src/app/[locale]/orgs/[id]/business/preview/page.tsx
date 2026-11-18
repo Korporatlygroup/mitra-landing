@@ -4,6 +4,8 @@ import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { getBusinessProfile, getVerificationSummary, listCategories } from '@/server/services/verification';
 import { catName } from '@/lib/category';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'preview.title');
@@ -26,11 +28,8 @@ export default async function PreviewPage({ params }: { params: Promise<{ locale
   if (!profile) {
     return (
       <>
-        <h1>{t('preview.title')}</h1>
-        <p>{t('biz.notStarted')}</p>
-        <Link href={`${base}/onboarding?step=1`} locale={locale} className="btn btn-primary">
-          {t('biz.next.start')}
-        </Link>
+        <PageHeader title={t('preview.title')} sub={t('biz.notStarted')} />
+        <EmptyState icon="store" title={t('biz.notStarted')} text={t('preview.title')} action={{ href: `${base}/onboarding?step=1`, label: t('biz.next.start') }} />
       </>
     );
   }
@@ -42,7 +41,7 @@ export default async function PreviewPage({ params }: { params: Promise<{ locale
 
   return (
     <>
-      <h1>{t('preview.title')}</h1>
+      <PageHeader title={t('preview.title')} />
       <p className="banner" role="note">
         {t('preview.banner')}
       </p>

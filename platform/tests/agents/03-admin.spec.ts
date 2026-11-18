@@ -51,10 +51,10 @@ test('administrator reviews the seller listing; the seller then appears in the p
     await v.goto('/en/directory');
     await v.page.locator('#q').fill('AGENT Seller');
     await v.page.getByRole('button', { name: t('dir.search'), exact: true }).click();
-    await expect(v.page.locator('ul.biz-grid a.biz').filter({ hasText: name })).toBeVisible();
+    await expect(v.page.locator('ul.biz-grid a.lcard-link').filter({ hasText: name })).toBeVisible();
   });
   await v.check('admin-review', 'public profile does not show the private street address or SSM number', async () => {
-    await v.page.locator('ul.biz-grid a.biz').filter({ hasText: name }).click();
+    await v.page.locator('ul.biz-grid a.lcard-link').filter({ hasText: name }).click();
     const txt = await v.page.locator('main').innerText();
     expect(txt).not.toContain('Jalan Ujian Satu');
     expect(txt).not.toContain('202001099999');

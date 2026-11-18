@@ -9,6 +9,7 @@ import { pageTitle } from '@/lib/metadata';
 import { directoryFilterSchema, MY_STATES } from '@/lib/schemas';
 import { searchListings, PAGE_SIZE, type ListingCard, type SearchResult } from '@/server/services/directory';
 import { getOptionalUser } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'dir.title');
@@ -73,7 +74,7 @@ export default async function DirectoryPage({
     <div className="wide dir">
       <div className="dir-head">
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
-          <h1>{t('dir.title')}</h1>
+          <PageHeader title={t('dir.title')} />
           {data ? (
             <span className="mut" style={{ fontSize: '0.95rem' }} aria-live="polite">
               <strong style={{ color: 'var(--ink)' }}>{t('dir2.results', { n: data.total })}</strong>

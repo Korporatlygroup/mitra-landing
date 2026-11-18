@@ -8,6 +8,7 @@ import { supplierEditable, supplierUnderReview } from '@/lib/partner-ui';
 import { uuidSchema } from '@/lib/schemas';
 import { requirePartnerContext } from '@/server/partner-context';
 import { getSupplier } from '@/server/services/p5-partner';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.suppliers.editTitle');
@@ -40,7 +41,7 @@ export default async function EditSupplierPage({
           {tt('backTo', { page: d.name ?? t('unnamed') })}
         </Link>
       </p>
-      <h1>{t('editTitle')}</h1>
+      <PageHeader title={t('editTitle')} />
       {sp.saved ? (
         <p className="message message-ok" role="status">
           {tt('saved')}

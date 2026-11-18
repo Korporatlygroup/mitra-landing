@@ -6,6 +6,7 @@ import { pageTitle } from '@/lib/metadata';
 import { statusTone } from '@/lib/partner-ui';
 import { requirePartnerContext } from '@/server/partner-context';
 import { listMySuppliers } from '@/server/services/p5-partner';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.nav.suppliers');
@@ -23,8 +24,7 @@ export default async function SuppliersPage({ params }: { params: Promise<{ loca
   const base = `/orgs/${id}/partner/suppliers`;
   return (
     <>
-      <h1>{t('title')}</h1>
-      <p className="muted">{t('intro')}</p>
+      <PageHeader title={t('title')} sub={t('intro')} />
       {ctx.canManageSuppliers ? (
         <p>
           <Link href={`${base}/new`} locale={locale} className="btn btn-primary">

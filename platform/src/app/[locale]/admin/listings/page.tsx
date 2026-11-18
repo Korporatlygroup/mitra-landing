@@ -1,4 +1,8 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
+import DataTable from '@/components/shared/DataTable';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
+import TabsNav from '@/components/shared/TabsNav';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireModerator } from '@/server/reviewer';
@@ -11,6 +15,7 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
 const FILTERS = ['pending', 'live', 'suspended'] as const;
 type Filter = (typeof FILTERS)[number];
 
+/** Listing moderation: tabs per state, a table, and links to the related queues (reports, reviews, duplicates). */
 export default async function AdminListingsPage({
   params,
   searchParams,
@@ -26,7 +31,7 @@ export default async function AdminListingsPage({
   if (!canReviewListings) {
     return (
       <>
-        <h1>{t('adminList.title')}</h1>
+        <PageHeader title={t('adminList.title')} />
         <p role="alert" className="message message-error">
           {t('adminList.noAccess')}
         </p>
@@ -39,53 +44,47 @@ export default async function AdminListingsPage({
 
   return (
     <>
-      <h1>{t('adminList.title')}</h1>
-      <p>{t('adminList.intro')}</p>
-      <nav aria-label={t('adminList.filters')} className="link-row">
-        {FILTERS.map((f) => (
-          <Link key={f} href={`/admin/listings?status=${f}`} locale={locale} className={f === filter ? 'btn btn-primary' : 'btn btn-secondary'} aria-current={f === filter ? 'page' : undefined}>
-            {t(`adminList.filter.${f}`)}
-          </Link>
-        ))}
-        <Link href="/admin/reports" locale={locale}>
-          {t('adminList.reportsLink')}
-        </Link>
-        <Link href="/admin/reviews" locale={locale}>{t('p4.moderateReviews')}</Link>
-        <Link href="/admin/duplicates" locale={locale}>
-          {t('dupAdmin.title')}
-        </Link>
-      </nav>
+      <PageHeader
+        title={t('adminList.title')}
+        sub={t('adminList.intro')}
+        actions={
+          <>
+            <Link href="/admin/reports" locale={locale} className="btn btn-secondary btn-sm">
+              {t('adminList.reportsLink')}
+            </Link>
+            <Link href="/admin/reviews" locale={locale} className="btn btn-secondary btn-sm">
+              {t('p4.moderateReviews')}
+            </Link>
+            <Link href="/admin/duplicates" locale={locale} className="btn btn-secondary btn-sm">
+              {t('dupAdmin.title')}
+            </Link>
+          </>
+        }
+      />
+      <TabsNav label={t('adminList.filters')} items={FILTERS.map((f) => ({ href: `/admin/listings?status=${f}`, label: t(`adminList.filter.${f}`), active: f === filter }))} />
       {items.length === 0 ? (
-        <p>{t('adminList.empty')}</p>
+        <EmptyState icon="store" title={t('adminList.empty')} text={t('adminList.intro')} />
       ) : (
-        <div className="table-wrap">
-          <table className="stack">
-            <thead>
-              <tr>
-                <th scope="col">{t('adminList.business')}</th>
-                <th scope="col">{t('adminList.when')}</th>
-                <th scope="col">
-                  <span className="visually-hidden">{t('adminList.open')}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {items.map((l) => (
-                <tr key={l.org_id}>
-                  <td data-label={t('adminList.business')}>{nameOf(l)}</td>
-                  <td data-label={t('adminList.when')}>
-                    {filter === 'pending' && l.submitted_at ? fmt.dateTime(new Date(l.submitted_at), { dateStyle: 'medium', timeZone: 'UTC' }) : fmt.dateTime(new Date(l.updated_at), { dateStyle: 'medium', timeZone: 'UTC' })}
-                  </td>
-                  <td>
-                    <Link href={`/admin/listings/${l.org_id}`} locale={locale}>
-                      {t('adminList.open')}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption={t('adminList.title')}
+          columns={[
+            { key: 'business', label: t('adminList.business') },
+            { key: 'when', label: t('adminList.when') },
+            { key: 'action', label: t('adminList.open') },
+          ]}
+          rows={items.map((l) => ({
+            id: l.org_id,
+            cells: {
+              business: <strong>{nameOf(l)}</strong>,
+              when: fmt.dateTime(new Date(filter === 'pending' && l.submitted_at ? l.submitted_at : l.updated_at), { dateStyle: 'medium', timeZone: 'UTC' }),
+              action: (
+                <Link href={`/admin/listings/${l.org_id}`} locale={locale} className="btn btn-secondary btn-sm">
+                  {t('adminList.open')}
+                </Link>
+              ),
+            },
+          }))}
+        />
       )}
     </>
   );

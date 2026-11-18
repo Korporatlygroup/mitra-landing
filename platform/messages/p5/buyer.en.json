@@ -38,6 +38,7 @@
       "priceMin": "Lowest price",
       "priceMax": "Highest price",
       "needCurrency": "Please choose a currency to filter by price. The price filter was not used.",
+      "filters": "Filters",
       "apply": "Search",
       "clear": "Clear filters",
       "onlySupplier": "Only products from {name}",

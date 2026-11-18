@@ -964,3 +964,38 @@ body:has(.focus-shell) > .pub-chrome {
 .pub-foot .mut {
   color: #d1d5db;
 }
+
+/* Workspace switcher lives in the header (premium v3). */
+.org-btn-top { display: inline-flex; align-items: center; gap: 8px; min-height: 40px; margin: 0; padding: 4px 10px 4px 4px; border-radius: 10px; background: #fff; color: var(--ink); cursor: pointer; text-decoration: none; max-width: 240px; font: inherit; text-align: left; }
+.org-btn-top:hover, .org-btn-top:focus-visible { border-color: var(--brand); }
+.org-btn-top .org-init { width: 30px; height: 30px; border-radius: 8px; }
+.org-btn-top .orgtxt { min-width: 0; line-height: 1.2; }
+.org-btn-top .orgtxt strong, .org-btn-top .orgtxt small { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.org-menu-top { left: auto; right: 0; width: 280px; }
+@media (max-width: 899px) { .org-btn-top .orgtxt { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; } .org-btn-top { padding: 4px; } }
+
+/* Admin menu: a Menu button on phones, the full column from 900px */
+.ad-headrow { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.ad-toggle { display: none; min-height: 40px; padding: 0 14px; border-radius: 10px; border: 1px solid #4a1a2c; background: transparent; color: #fff; font: inherit; font-weight: 700; cursor: pointer; }
+.ad-collapsible { display: flex; flex-direction: column; gap: 2px; }
+@media (max-width: 899px) {
+  .ad-toggle { display: inline-flex; align-items: center; }
+  .ad-side[data-open='false'] .ad-collapsible { display: none; }
+  .ad-side { flex-basis: 100%; padding-bottom: 12px; }
+  .ad-brand { padding-bottom: 4px; }
+  .ad-main { padding: 20px 16px 56px; }
+}
+.ad-toggle { white-space: nowrap; }
+.ad-brand > :first-child { flex: none; white-space: nowrap; }
+
+/* Onboarding stepper: a compact scrolling row on phones */
+@media (max-width: 767px) {
+  .focus-body { padding: 16px 16px 48px; gap: 16px; }
+  .focus-steps { flex-direction: row; overflow-x: auto; flex: 1 1 100%; border-radius: 14px; padding: 6px; scrollbar-width: none; }
+  .focus-steps::-webkit-scrollbar { display: none; }
+  .focus-step { width: auto; flex: none; min-height: 44px; padding: 6px 10px; }
+  .focus-step small { display: none; }
+  .focus-step strong { font-size: 0.8125rem; white-space: nowrap; }
+  .focus-card { padding: 20px; border-radius: 16px; }
+  .focus-card h1 { font-size: 1.5rem; }
+}

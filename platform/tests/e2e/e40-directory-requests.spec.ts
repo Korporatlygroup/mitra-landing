@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { createBusinessOwner, createReviewer, onboardUi, orgPath, reviewerGoto } from './support/biz';
 import { createUser, signedClient, sql, uniq } from './support/db';
 import { msg } from './support/i18n';
-import { expectNoHorizontalScroll, freshContext, loginUi, logoutUi } from './support/ui';
+import { createOrgUi, expectNoHorizontalScroll, freshContext, loginUi, logoutUi } from './support/ui';
 
 // E40: Phase 3 end to end. A seller publishes through MITRA review, a buyer finds the business and posts a request,
 // invites the seller, the seller answers, and an enquiry persists. Isolation is checked from other accounts.
@@ -91,7 +91,7 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await ap.goto('/en/directory');
   await ap.locator('#q').fill(tag);
   await ap.getByRole('button', { name: t('dir.search'), exact: true }).click();
-  const card = ap.locator('a.biz').filter({ hasText: bizName });
+  const card = ap.locator('a.lcard-link').filter({ hasText: bizName });
   await expect(card).toBeVisible();
   await expect(card).toContainText(t('dir2.inReview'));
   await expectNoHorizontalScroll(ap);
@@ -106,6 +106,7 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   // ---------------- buyer: posts a request through the wizard ----------------
   const buyer = await createUser('p3b', { name: 'Buyer P3' });
   await loginUi(ap, buyer, 'en');
+  await createOrgUi(ap, 'buyer', 'Buyer P3 Co');
   await ap.goto('/en/requests/new');
   await axe(ap, 'wizard step 1');
   await ap.locator('#title').fill(reqTitle);
@@ -164,8 +165,8 @@ test('E40 seller publishes, buyer posts a request and invites, seller replies, e
   await logoutUi(ap);
   await loginUi(ap, buyer, 'en');
   await ap.goto('/en/requests');
-  await expect(ap.locator('li.card').filter({ hasText: reqTitle }).filter({ hasText: t('req.counts', { invited: '1', interested: '1', declined: '0' }) })).toHaveCount(1);
-  await expect(ap.locator('li.card').filter({ hasText: reqTitle }).filter({ hasText: t('enq.statuses.open') })).toHaveCount(2); // the request and its enquiry both persist
+  await expect(ap.locator('li.rrow').filter({ hasText: reqTitle }).filter({ hasText: t('req.counts', { invited: '1', interested: '1', declined: '0' }) })).toHaveCount(1);
+  await expect(ap.locator('li.rrow').filter({ hasText: reqTitle }).filter({ hasText: t('enq.statuses.open') })).toHaveCount(2); // the request and its enquiry both persist
   await ap.goto(`/en/requests/${requestId}`);
   const mc = ap.locator('[data-testid=match-card]').filter({ hasText: bizName });
   await expect(mc).toContainText(t('match.status.interested'));
@@ -284,14 +285,14 @@ test('E41 moderation: changes requested, resubmitted, approved, then suspended a
   const pub = await freshContext(browser, page);
   const pp = await pub.newPage();
   await pp.goto(`/en/directory?q=${encodeURIComponent(bizName)}`);
-  await expect(pp.locator('a.biz').filter({ hasText: bizName })).toBeVisible();
+  await expect(pp.locator('a.lcard-link').filter({ hasText: bizName })).toBeVisible();
 
   // Editing the live page keeps the approved version public until re-approved.
   const v2 = Number((await sql(`select draft_version from public.business_listings where org_id = $1`, [seller.orgId]))[0]!.draft_version);
   expect((await sc.client.rpc('save_listing_draft', { p_org: seller.orgId, p_data: { headline: 'A brand new headline that is not reviewed' }, p_expected_version: v2 })).error).toBeNull();
   await pp.reload();
-  await expect(pp.locator('a.biz').filter({ hasText: bizName })).toContainText('Catering for small events');
-  await expect(pp.locator('a.biz').filter({ hasText: bizName })).not.toContainText('A brand new headline');
+  await expect(pp.locator('a.lcard-link').filter({ hasText: bizName })).toContainText('Catering for small events');
+  await expect(pp.locator('a.lcard-link').filter({ hasText: bizName })).not.toContainText('A brand new headline');
 
   // Suspend from the admin page; the public listing disappears and the seller is told.
   await page.goto(`/en/admin/listings/${seller.orgId}`);

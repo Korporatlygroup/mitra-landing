@@ -30,7 +30,7 @@ export async function PriceTiers({
   return (
     <div className="price-tiers">
       {groups.map((g) => (
-        <div className="table-wrap" key={g.variantSku ?? 'all'}>
+        <div className="table-wrap" key={g.variantSku ?? 'all'} tabIndex={0} role="region" aria-label={g.variantLabel ? t('tiers.captionVariant', { variant: g.variantLabel, currency }) : t('tiers.caption', { currency })}>
           <table className="price-tier-table">
             <caption>
               {g.variantLabel ? t('tiers.captionVariant', { variant: g.variantLabel, currency }) : t('tiers.caption', { currency })}

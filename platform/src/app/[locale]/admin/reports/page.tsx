@@ -1,6 +1,8 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
 import { SelectField } from '@/components/Field';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireModerator } from '@/server/reviewer';
@@ -19,7 +21,7 @@ export default async function AdminReportsPage({ params }: { params: Promise<{ l
   if (!canReviewListings && !canModerateRequests) {
     return (
       <>
-        <h1>{t('adminList.reportsTitle')}</h1>
+        <PageHeader title={t('adminList.reportsTitle')} />
         <p role="alert" className="message message-error">
           {t('adminList.noAccess')}
         </p>
@@ -33,19 +35,21 @@ export default async function AdminReportsPage({ params }: { params: Promise<{ l
 
   return (
     <>
-      <h1>{t('adminList.reportsTitle')}</h1>
-      <p>{t('adminList.reportsIntro')}</p>
-      <p>
-        <Link href="/admin/listings" locale={locale}>
-          {t('adminList.title')}
-        </Link>
-      </p>
+      <PageHeader
+        title={t('adminList.reportsTitle')}
+        sub={t('adminList.reportsIntro')}
+        actions={
+          <Link href="/admin/listings" locale={locale} className="btn btn-secondary">
+            {t('adminList.title')}
+          </Link>
+        }
+      />
       {cards.length === 0 ? (
-        <p>{t('adminList.noReports')}</p>
+        <EmptyState icon="flag" title={t('adminList.noReports')} text={t('adminList.reportsIntro')} />
       ) : (
-        <ul className="card-list">
+        <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
           {cards.map(({ r, req }) => (
-            <li key={r.id} className="card" data-testid="report-card">
+            <li key={r.id} className="rrow" data-testid="report-card">
               <h2 style={{ marginTop: 0, fontSize: '1.1rem' }}>
                 {r.target_type === 'listing' ? t('adminList.reportListing') : t('adminList.reportRequest')} · {t(`rep.reasons.${r.reason}`)}
               </h2>

@@ -116,12 +116,12 @@ export default async function ListingView({
       {data.portfolio.length > 0 ? (
         <>
           <h2 style={{ margin: '8px 0 0', fontSize: '1.25rem' }}>{t('dir.portfolio')}</h2>
-          <ul className="card-list">
+          <ul className="xgrid xgrid-2" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
             {data.portfolio.map((p, i) => (
-              <li key={`${p.title}-${i}`} className="card" style={{ boxShadow: 'none' }}>
-                <strong>{p.title}</strong>
+              <li key={`${p.title}-${i}`} className="ocard svc-card">
+                <h3>{p.title}</h3>
                 {p.category_slug || p.project_date ? (
-                  <p className="muted" style={{ margin: '2px 0 0' }}>
+                  <p className="mut svc-meta">
                     {[
                       p.category_slug ? msgCategory(p.category_slug) : null,
                       p.project_date ? fmt.dateTime(new Date(`${p.project_date}T00:00:00Z`), { month: 'long', year: 'numeric', timeZone: 'UTC' }) : null,
@@ -130,7 +130,7 @@ export default async function ListingView({
                       .join(' · ')}
                   </p>
                 ) : null}
-                {p.description ? <p style={{ margin: '4px 0 0' }}>{p.description}</p> : null}
+                {p.description ? <p className="svc-desc">{p.description}</p> : null}
               </li>
             ))}
           </ul>
@@ -183,38 +183,26 @@ export default async function ListingView({
 
   const products = data.products ?? [];
   const services = (
-    <div className="card" style={{ padding: '10px 26px 16px' }}>
-      {data.service_details.length === 0 && products.length === 0 ? <p>{t('dir.noServices')}</p> : null}
-      {products.map((p) => (
-        <div key={p.id} className="svc-row">
-          <span>
-            <strong>{p.name}</strong>
-            {p.description ? (
-              <span className="mut" style={{ display: 'block', fontSize: '0.875rem', marginTop: 4 }}>
-                {p.description}
+    <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+      {data.service_details.length === 0 && products.length === 0 ? <p className="mut">{t('dir.noServices')}</p> : null}
+      <ul className="xgrid xgrid-2" style={{ listStyle: 'none', margin: 0, padding: 0 }}>
+        {products.map((p) => (
+          <li key={p.id} className="ocard svc-card">
+            <h3>{p.name}</h3>
+            {p.description ? <p className="mut svc-desc">{p.description}</p> : null}
+            <div className="svc-foot">
+              <span className="chip-x brand">
+                {p.ask_for_quote || p.price_cents === null ? t('biz2.products.askQuote') : `${t('biz2.products.from')} ${money(p.price_cents)}${p.unit ? ` / ${p.unit}` : ''}`}
               </span>
-            ) : null}
-            {p.min_order ? (
-              <span className="mut" style={{ display: 'block', fontSize: '0.875rem', marginTop: 4 }}>
-                {t('biz2.products.minOrder', { n: p.min_order })}
-              </span>
-            ) : null}
-          </span>
-          <strong style={{ whiteSpace: 'nowrap' }}>
-            {p.ask_for_quote || p.price_cents === null ? t('biz2.products.askQuote') : `${t('biz2.products.from')} ${money(p.price_cents)}${p.unit ? ` / ${p.unit}` : ''}`}
-          </strong>
-        </div>
-      ))}
-      {data.service_details.map((s, i) => (
-        <div key={`${s.name}-${i}`} className="svc-row">
-          <span>
-            <strong>{s.name}</strong>
-            {s.description ? (
-              <span className="mut" style={{ display: 'block', fontSize: '0.875rem', marginTop: 4 }}>
-                {s.description}
-              </span>
-            ) : null}
-            <span className="mut" style={{ display: 'block', fontSize: '0.875rem', marginTop: 4 }}>
+              {p.min_order ? <span className="chip-x">{t('biz2.products.minOrder', { n: p.min_order })}</span> : null}
+            </div>
+          </li>
+        ))}
+        {data.service_details.map((s, i) => (
+          <li key={`${s.name}-${i}`} className="ocard svc-card">
+            <h3>{s.name}</h3>
+            {s.description ? <p className="mut svc-desc">{s.description}</p> : null}
+            <p className="mut svc-meta">
               {[
                 s.nationwide ? t('dir.allMalaysia') : s.areas.join(', '),
                 s.min_order_qty ? `${t('dir.minOrder')}: ${s.min_order_qty} ${s.min_order_unit ?? ''}`.trim() : null,
@@ -223,13 +211,15 @@ export default async function ListingView({
               ]
                 .filter(Boolean)
                 .join(' · ')}
-            </span>
-          </span>
-          <strong style={{ whiteSpace: 'nowrap' }}>{t('biz2.products.askQuote')}</strong>
-        </div>
-      ))}
+            </p>
+            <div className="svc-foot">
+              <span className="chip-x brand">{t('biz2.products.askQuote')}</span>
+            </div>
+          </li>
+        ))}
+      </ul>
       {data.service_details.length > 0 ? (
-        <p className="muted" style={{ fontSize: '0.875rem' }}>
+        <p className="muted" style={{ fontSize: '0.875rem', margin: 0 }}>
           {t('dir.statedByBusiness')}
         </p>
       ) : null}

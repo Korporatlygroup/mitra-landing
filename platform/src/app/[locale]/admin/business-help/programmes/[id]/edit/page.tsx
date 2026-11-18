@@ -5,6 +5,7 @@ import ProgrammeForm, { type FormInitial } from '../../../ProgrammeForm';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { requireGovAdmin } from '@/server/gov-admin-context';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.admin.manual.titleEdit');
@@ -28,7 +29,7 @@ export default async function EditProgrammePage({ params }: { params: Promise<{ 
 
   return (
     <>
-      <h1>{t('manual.titleEdit')}</h1>
+      <PageHeader title={t('manual.titleEdit')} />
       <AdminHelpNav locale={locale} current="home" canReview={ctx.canReview} />
       <p>
         <Link href="/admin/business-help" locale={locale}>

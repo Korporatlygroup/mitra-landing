@@ -9,6 +9,7 @@ import { eligibleAssistOrgs, TRACKING_STATUSES } from '@/lib/gov-ui';
 import { pageTitle } from '@/lib/metadata';
 import { listGovSaved, listMyGovSaved } from '@/server/services/gov';
 import { requireSession } from '@/server/session';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'gov.saved.title');
@@ -40,8 +41,7 @@ export default async function SavedPage({
 
   return (
     <>
-      <h1>{t('saved.title')}</h1>
-      <p>{t('saved.intro')}</p>
+      <PageHeader title={t('saved.title')} sub={t('saved.intro')} />
       <p className="muted">{t('saved.note')}</p>
       <section aria-labelledby="gov-me-h">
         <h2 id="gov-me-h">{t('opps.mySaved')}</h2>

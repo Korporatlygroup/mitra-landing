@@ -6,6 +6,7 @@ import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { getOwnerListing } from '@/server/services/directory';
 import { getBusinessProfile, getVerificationSummary, listCategories } from '@/server/services/verification';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'listing.previewTitle');
@@ -28,8 +29,7 @@ export default async function ListingPreviewPage({ params }: { params: Promise<{
   if (!profile || !draft || !draft.headline) {
     return (
       <>
-        <h1>{t('listing.previewTitle')}</h1>
-        <p>{t('listing.previewEmpty')}</p>
+        <PageHeader title={t('listing.previewTitle')} sub={t('listing.previewEmpty')} />
         <Link href={back} locale={locale} className="btn btn-primary">
           {t('listing.title')}
         </Link>

@@ -11,6 +11,7 @@ import { uuidSchema } from '@/lib/schemas';
 import { requirePartnerContext } from '@/server/partner-context';
 import { getSupplier } from '@/server/services/p5-partner';
 import { withdrawSupplierAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.suppliers.detailTitle');
@@ -61,7 +62,7 @@ export default async function SupplierDetailPage({
           {tt('backTo', { page: t('title') })}
         </Link>
       </p>
-      <h1>{d.name ?? t('unnamed')}</h1>
+      <PageHeader title={d.name ?? t('unnamed')} />
       <p>
         <StatusChip status={statusTone(d.status)} label={tc(`status.supplier.${d.status}`)} /> <span className="muted">&middot; {t('code')}: {d.code}</span>
       </p>

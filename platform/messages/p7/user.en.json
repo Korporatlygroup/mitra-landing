@@ -33,7 +33,18 @@
       "mySavedNone": "You have not saved any programme yet.",
       "browse": "Browse programmes",
       "trackNeedsBusiness": "Add a business to also track your applications.",
-      "filters": "Views"
+      "filters": "Views",
+      "search": "Search programmes or agencies",
+      "searchBtn": "Search",
+      "typeLabel": "Type",
+      "typeAll": "All types",
+      "noMatch": "No programmes match",
+      "noMatchBody": "Try another word or a different type.",
+      "clear": "Clear filters",
+      "matchTitle": "Find assistance that suits your business",
+      "matchText": "Answer a few questions and see programmes that may fit, with the reasons. Optional.",
+      "matchCta": "Start matching",
+      "results": "{n} programmes"
     },
     "dstatus": {
       "open": "Open",

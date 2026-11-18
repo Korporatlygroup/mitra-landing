@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation';
 import ActionForm from '@/components/ActionForm';
 import ClaimDocuments from '@/components/ClaimDocuments';
 import { Field, SelectField } from '@/components/Field';
+import StatusBadge from '@/components/shared/StatusBadge';
 import Icon from '@/components/ui/Icon';
 import Logo from '@/components/ui/Logo';
 import LivePreview from '@/components/workspace/LivePreview';
@@ -39,10 +40,11 @@ export default async function OnboardingPage({
 }) {
   const { locale, id } = await params;
   const sp = await searchParams;
+  const isReview = sp.step === 'review';
   const raw = Number(typeof sp.step === 'string' ? sp.step : '1');
-  const step = Number.isInteger(raw) && raw >= 1 && raw <= TOTAL ? raw : 1;
+  const step = isReview ? TOTAL : Number.isInteger(raw) && raw >= 1 && raw <= TOTAL ? raw : 1;
 
-  const ctx = await requireBusinessContext(locale, id, `/onboarding?step=${step}`);
+  const ctx = await requireBusinessContext(locale, id, isReview ? '/onboarding?step=review' : `/onboarding?step=${step}`);
   const db = ctx.session.supabase;
   const t = await getTranslations({ locale });
   const base = `/orgs/${id}/business`;
@@ -63,7 +65,7 @@ export default async function OnboardingPage({
   if (!profile && step > 1) redirect(`/${locale}${base}/onboarding?step=1`);
   if (step === 2 && profile && profile.registration_status !== 'registered') redirect(`/${locale}${base}/onboarding?step=3`);
 
-  const back = step > 1 ? `${base}/onboarding?step=${step === 3 && profile?.registration_status !== 'registered' ? 1 : step - 1}` : base;
+  const back = isReview ? `${base}/onboarding?step=${TOTAL}` : step > 1 ? `${base}/onboarding?step=${step === 3 && profile?.registration_status !== 'registered' ? 1 : step - 1}` : base;
   const hidden = (
     <>
       <input type="hidden" name="locale" value={locale} />
@@ -73,7 +75,77 @@ export default async function OnboardingPage({
   const secondary = { label: t('ob.later'), value: 'later' };
 
   let body: React.ReactNode;
-  if (step === 1) {
+  if (isReview) {
+    const [claims] = await Promise.all([listClaims(db, id)]);
+    const cat0 = categories.find((c) => c.id === profile?.category_id);
+    const registered = profile?.registration_status === 'registered';
+    const sections: { key: string; title: string; done: boolean; skip?: boolean; lines: string[]; step: number }[] = [
+      { key: 'identity', title: t('ob.s1.title'), done: Boolean(profile), step: 1, lines: [profile?.business_name ?? '', cat0 ? catName(locale, cat0) : '', profile ? (registered ? t('ob.s1.yes') : t('ob.s1.no')) : ''].filter(Boolean) },
+      { key: 'registration', title: t('ob.s2.title'), done: Boolean(profile?.ssm_number), skip: Boolean(profile) && !registered, step: 2, lines: [profile?.ssm_number ?? '', profile?.business_type ? t(`businessTypes.${profile.business_type}`) : ''].filter(Boolean) },
+      { key: 'location', title: t('ob.s3.title'), done: Boolean(profile?.state), step: 3, lines: [[profile?.district, profile?.state].filter(Boolean).join(', '), priv?.address_line ? t('onb2.addressSaved') : ''].filter(Boolean) },
+      { key: 'rep', title: t('ob.s4.title'), done: Boolean(rep?.full_name), step: 4, lines: [rep?.full_name ?? '', rep?.role_title ? t(`repRoles.${rep.role_title}`) : ''].filter(Boolean) },
+    ];
+    body = (
+      <>
+        <h1>{t('onb2.reviewTitle')}</h1>
+        <p style={{ margin: 0 }}>{t('onb2.reviewSub')}</p>
+        <ul className="stack-x" style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+          {sections.map((s) => (
+            <li key={s.key} className="rrow">
+              <div className="rrow-top">
+                <h2 style={{ margin: 0, fontSize: '1rem' }}>{s.title}</h2>
+                <StatusBadge label={s.skip ? t('onb2.skipped') : s.done ? t('onb2.done') : t('onb2.todo')} tone={s.skip ? 'neutral' : s.done ? 'green' : 'gold'} />
+              </div>
+              {s.skip ? null : s.lines.length > 0 ? <p className="mut" style={{ margin: 0 }}>{s.lines.join(' · ')}</p> : <p className="mut" style={{ margin: 0 }}>{t('onb2.notAdded')}</p>}
+              {s.skip ? null : (
+                <div className="rrow-foot">
+                  <Link href={`${base}/onboarding?step=${s.step}`} locale={locale} className="btn btn-secondary btn-sm">
+                    {t('onb2.edit')}
+                    <span className="p5b-sr">: {s.title}</span>
+                  </Link>
+                </div>
+              )}
+            </li>
+          ))}
+          <li className="rrow">
+            <div className="rrow-top">
+              <h2 style={{ margin: 0, fontSize: '1rem' }}>{t('ob.s5.title')}</h2>
+              <StatusBadge label={claims.length ? t('onb2.done') : t('onb2.todo')} tone={claims.length ? 'green' : 'gold'} />
+            </div>
+            {claims.length > 0 ? (
+              <p className="pcard-chips" style={{ margin: 0 }}>
+                {claims.map((c) => (
+                  <StatusBadge key={c.id} label={`${t(`claimTypes.${c.claim_type}`)}: ${t(`claimStatus.${c.status}`)}`} tone={c.status === 'approved' ? 'green' : c.status === 'rejected' || c.status === 'needs_info' ? 'gold' : 'brand'} />
+                ))}
+              </p>
+            ) : (
+              <p className="mut" style={{ margin: 0 }}>{t('onb2.notAdded')}</p>
+            )}
+            <div className="rrow-foot">
+              <Link href={`${base}/onboarding?step=${TOTAL}`} locale={locale} className="btn btn-secondary btn-sm">
+                {t('onb2.edit')}
+                <span className="p5b-sr">: {t('ob.s5.title')}</span>
+              </Link>
+              <Link href={`${base}/verification`} locale={locale} className="btn btn-ghost btn-sm">
+                {t('biz.openVerification')}
+              </Link>
+            </div>
+          </li>
+        </ul>
+        <section className="acard" aria-labelledby="ob-next-h">
+          <h2 id="ob-next-h" style={{ margin: 0, fontSize: '1.0625rem' }}>
+            {t('onb2.listingTitle')}
+          </h2>
+          <p className="mut" style={{ margin: 0 }}>{t('onb2.listingText')}</p>
+          <div>
+            <Link href={`${base}/listing`} locale={locale} className="btn btn-primary">
+              {t('onb2.listingCta')}
+            </Link>
+          </div>
+        </section>
+      </>
+    );
+  } else if (step === 1) {
     body = (
       <>
         <h1>{t('ob.s1.title')}</h1>
@@ -202,7 +274,10 @@ export default async function OnboardingPage({
             />
           );
         })}
-        <p style={{ margin: 0 }}>
+        <p className="btn-row" style={{ margin: 0 }}>
+          <Link href={`${base}/onboarding?step=review`} locale={locale} className="btn btn-primary">
+            {t('onb2.toReview')}
+          </Link>
           <Link href={`${base}/verification`} locale={locale} className="btn btn-secondary">
             {t('biz.openVerification')}
           </Link>
@@ -216,11 +291,12 @@ export default async function OnboardingPage({
   const dups = dupRes && dupRes.ok ? dupRes.data : [];
   const unregistered = profile ? profile.registration_status !== 'registered' : false;
   const stepDefs = [
-    { n: 1, title: t('ob.s1.title'), done: Boolean(profile), skip: false },
-    { n: 2, title: t('ob.s2.title'), done: Boolean(profile?.ssm_number), skip: unregistered },
-    { n: 3, title: t('ob.s3.title'), done: Boolean(profile?.state), skip: false },
-    { n: 4, title: t('ob.s4.title'), done: Boolean(rep?.full_name), skip: false },
-    { n: 5, title: t('ob.s5.title'), done: false, skip: false },
+    { n: 1, key: '1', title: t('ob.s1.title'), done: Boolean(profile), skip: false, req: t('onb2.req1') },
+    { n: 2, key: '2', title: t('ob.s2.title'), done: Boolean(profile?.ssm_number), skip: unregistered, req: t('onb2.req2') },
+    { n: 3, key: '3', title: t('ob.s3.title'), done: Boolean(profile?.state), skip: false, req: t('onb2.req3') },
+    { n: 4, key: '4', title: t('ob.s4.title'), done: Boolean(rep?.full_name), skip: false, req: t('onb2.req4') },
+    { n: 5, key: '5', title: t('ob.s5.title'), done: false, skip: false, req: t('onb2.req5') },
+    { n: 6, key: 'review', title: t('onb2.reviewTitle'), done: false, skip: false, req: t('onb2.req6') },
   ];
   const cat = categories.find((c) => c.id === profile?.category_id);
 
@@ -233,7 +309,7 @@ export default async function OnboardingPage({
             <div className="bar" role="progressbar" aria-valuemin={1} aria-valuemax={TOTAL} aria-valuenow={step} aria-label={t('ob.progressLabel')}>
               <div style={{ width: `${(step / TOTAL) * 100}%` }} />
             </div>
-            <span id="progress-label">{t('ob.stepOf', { n: step, total: TOTAL })}</span>
+            <span id="progress-label">{isReview ? t('onb2.reviewStep') : t('ob.stepOf', { n: step, total: TOTAL })}</span>
           </div>
           <Link href={base} locale={locale} className="btn btn-ghost btn-sm">
             {t('onb2.saveExit')}
@@ -243,13 +319,21 @@ export default async function OnboardingPage({
       <div className="focus-body">
         <nav aria-label={t('onb2.stepsLabel')} className="focus-steps">
           {stepDefs.map((d) => (
-            <Link key={d.n} href={`${base}/onboarding?step=${d.n}`} locale={locale} className={`focus-step${d.done ? ' done' : ''}`} aria-current={d.n === step ? 'step' : undefined}>
+            <Link
+              key={d.n}
+              href={`${base}/onboarding?step=${d.key}`}
+              locale={locale}
+              className={`focus-step${d.done ? ' done' : ''}`}
+              aria-current={(d.key === 'review' ? isReview : !isReview && d.n === step) ? 'step' : undefined}
+            >
               <span className="dot" aria-hidden="true">
                 {d.done && d.n !== step ? <Icon name="check" size={14} stroke={3} /> : d.n}
               </span>
               <span>
                 <strong>{d.title}</strong>
-                <small>{d.skip ? t('onb2.skipped') : d.done ? t('onb2.done') : t('onb2.todo')}</small>
+                <small>
+                  {d.key === 'review' ? d.req : `${d.skip ? t('onb2.skipped') : d.done ? t('onb2.done') : t('onb2.todo')} · ${d.req}`}
+                </small>
               </span>
             </Link>
           ))}

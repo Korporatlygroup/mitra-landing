@@ -1,4 +1,9 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
+import DataTable from '@/components/shared/DataTable';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
+import StatusBadge, { type BadgeTone } from '@/components/shared/StatusBadge';
+import TabsNav from '@/components/shared/TabsNav';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { adminListNews } from '@/server/services/news';
@@ -9,8 +14,15 @@ export async function generateMetadata({ params }: { params: Promise<{ locale: s
   return pageTitle((await params).locale, 'news2.admin.title');
 }
 
-export default async function AdminNewsPage({ params }: { params: Promise<{ locale: string }> }) {
+const KINDS = ['draft', 'scheduled', 'published', 'archived'] as const;
+type Kind = (typeof KINDS)[number];
+const TONE: Record<Kind, BadgeTone> = { draft: 'gold', scheduled: 'brand', published: 'green', archived: 'neutral' };
+const LABEL: Record<Kind, string> = { draft: 'sDraft', scheduled: 'sScheduled', published: 'sPublished', archived: 'sArchived' };
+
+/** News administration: tabs per state with counts, a table, and the editor on the next page. Nothing publishes from this list. */
+export default async function AdminNewsPage({ params, searchParams }: { params: Promise<{ locale: string }>; searchParams: Promise<{ status?: string }> }) {
   const { locale } = await params;
+  const sp = await searchParams;
   const s = await requireSession({ locale, path: '/admin/news' });
   const t = await getTranslations({ locale });
   const fmt = await getFormatter({ locale });
@@ -19,7 +31,7 @@ export default async function AdminNewsPage({ params }: { params: Promise<{ loca
   if (!perms.has('programme:publish')) {
     return (
       <>
-        <h1>{t('news2.admin.title')}</h1>
+        <PageHeader title={t('news2.admin.title')} />
         <p className="message message-error" role="alert">
           {t('news2.admin.noAccess')}
         </p>
@@ -28,60 +40,57 @@ export default async function AdminNewsPage({ params }: { params: Promise<{ loca
   }
   const res = await adminListNews(s.supabase);
   const rows = res.ok ? res.data : [];
-  const label = (r: (typeof rows)[number]) =>
-    r.status === 'published' ? (r.live ? t('news2.admin.sPublished') : t('news2.admin.sScheduled')) : r.status === 'archived' ? t('news2.admin.sArchived') : t('news2.admin.sDraft');
-  const tone = (r: (typeof rows)[number]) => (r.status === 'published' ? (r.live ? 'green' : 'blue') : r.status === 'archived' ? 'gray' : 'gold');
+  const kindOf = (r: (typeof rows)[number]): Kind => (r.status === 'published' ? (r.live ? 'published' : 'scheduled') : r.status === 'archived' ? 'archived' : 'draft');
+  const counts: Record<Kind, number> = { draft: 0, scheduled: 0, published: 0, archived: 0 };
+  for (const r of rows) counts[kindOf(r)] += 1;
+  const tab = (KINDS as readonly string[]).includes(String(sp.status)) ? (sp.status as Kind) : null;
+  const shown = tab ? rows.filter((r) => kindOf(r) === tab) : rows;
   const catLabel = (c: string) => t(`news2.chip${c[0]!.toUpperCase()}${c.slice(1)}`);
   return (
     <>
-      <div className="page-head" style={{ marginBottom: 0 }}>
-        <div>
-          <h1>{t('news2.admin.title')}</h1>
-          <p className="page-sub">{t('news2.admin.sub')}</p>
-        </div>
-        <Link href="/admin/news/new" className="btn btn-primary">
-          {t('news2.admin.newPost')}
-        </Link>
-      </div>
-      {rows.length === 0 ? (
-        <div className="empty">
-          <strong>{t('news2.admin.none')}</strong>
-        </div>
+      <PageHeader
+        title={t('news2.admin.title')}
+        sub={t('news2.admin.sub')}
+        actions={
+          <Link href="/admin/news/new" className="btn btn-primary">
+            {t('news2.admin.newPost')}
+          </Link>
+        }
+      />
+      <TabsNav
+        label={t('news2.admin.title')}
+        items={[
+          { href: '/admin/news', label: t('dir2.all'), count: rows.length, active: tab === null },
+          ...KINDS.map((k) => ({ href: `/admin/news?status=${k}`, label: t(`news2.admin.${LABEL[k]}`), count: counts[k], active: tab === k })),
+        ]}
+      />
+      {shown.length === 0 ? (
+        <EmptyState icon="news" title={t('news2.admin.none')} text={t('news2.admin.sub')} action={{ href: '/admin/news/new', label: t('news2.admin.newPost') }} />
       ) : (
-        <div className="table-wrap">
-          <table className="stack">
-            <thead>
-              <tr>
-                <th scope="col">{t('news2.admin.colTitle')}</th>
-                <th scope="col">{t('news2.admin.colCategory')}</th>
-                <th scope="col">{t('news2.admin.colStatus')}</th>
-                <th scope="col">{t('news2.admin.colUpdated')}</th>
-                <th scope="col">
-                  <span className="sr">{t('news2.admin.edit')}</span>
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {rows.map((r) => (
-                <tr key={r.id}>
-                  <td data-label={t('news2.admin.colTitle')}>
-                    <strong>{r.title}</strong>
-                  </td>
-                  <td data-label={t('news2.admin.colCategory')}>{catLabel(r.category)}</td>
-                  <td data-label={t('news2.admin.colStatus')}>
-                    <span className={`tag t-${tone(r)}`}>{label(r)}</span>
-                  </td>
-                  <td data-label={t('news2.admin.colUpdated')}>{fmt.dateTime(new Date(r.updated_at), { dateStyle: 'medium', timeZone: 'Asia/Kuala_Lumpur' })}</td>
-                  <td>
-                    <Link href={`/admin/news/${r.id}`} className="btn btn-secondary btn-sm" aria-label={`${t('news2.admin.edit')}: ${r.title}`}>
-                      {t('news2.admin.edit')}
-                    </Link>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <DataTable
+          caption={t('news2.admin.title')}
+          columns={[
+            { key: 'title', label: t('news2.admin.colTitle') },
+            { key: 'category', label: t('news2.admin.colCategory') },
+            { key: 'status', label: t('news2.admin.colStatus') },
+            { key: 'updated', label: t('news2.admin.colUpdated') },
+            { key: 'action', label: t('news2.admin.edit') },
+          ]}
+          rows={shown.map((r) => ({
+            id: r.id,
+            cells: {
+              title: <strong>{r.title}</strong>,
+              category: catLabel(r.category),
+              status: <StatusBadge label={t(`news2.admin.${LABEL[kindOf(r)]}`)} tone={TONE[kindOf(r)]} />,
+              updated: fmt.dateTime(new Date(r.updated_at), { dateStyle: 'medium', timeZone: 'Asia/Kuala_Lumpur' }),
+              action: (
+                <Link href={`/admin/news/${r.id}`} className="btn btn-secondary btn-sm" aria-label={`${t('news2.admin.edit')}: ${r.title}`}>
+                  {t('news2.admin.edit')}
+                </Link>
+              ),
+            },
+          }))}
+        />
       )}
     </>
   );

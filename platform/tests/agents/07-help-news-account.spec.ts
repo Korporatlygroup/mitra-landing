@@ -81,12 +81,14 @@ test('account, consent, privacy requests and language', async ({ browser }) => {
   const b = await Agent.create(browser, 'buyerA');
   await b.login();
   await b.check('account', 'account page shows name, language, password change and consent controls', async () => {
-    await b.goto('/en/account');
+    await b.goto('/en/account?section=security');
     await expectNoRawKeys(b.page);
     await expect(b.page.locator('main').last()).toContainText(/password/i);
+    await b.goto('/en/account?section=notifications');
     await expect(b.page.locator('main').last()).toContainText(/consent|privacy|marketing/i);
   });
   await b.check('account', 'password change refuses a weak password', async () => {
+    await b.goto('/en/account?section=security');
     const pw = b.page.locator('input[type=password]').first();
     if (await pw.count()) {
       await b.page.evaluate(() => document.querySelectorAll('main form').forEach((f) => f.setAttribute('novalidate', '')));
@@ -99,7 +101,7 @@ test('account, consent, privacy requests and language', async ({ browser }) => {
     } else throw new Error('no password form found');
   });
   await b.check('privacy', 'privacy request (access/erasure) form is reachable and explains the process', async () => {
-    await b.goto('/en/account');
+    await b.goto('/en/account?section=data');
     const txt = await b.page.locator('main').last().innerText();
     cover('privacy', 'privacy request controls on the account page', /request|erase|delete|export|download/i.test(txt) ? 'pass' : 'fail', 'search account page for data-rights controls');
   });

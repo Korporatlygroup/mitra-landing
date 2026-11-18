@@ -22,8 +22,8 @@ permissions:
   contents: read
 
 jobs:
-  platform:
-    name: Platform (lint, types, unit, database, integration, build, E2E)
+  checks:
+    name: Platform checks (lint, types, unit, database, integration, build, audit)
     runs-on: ubuntu-latest
     timeout-minutes: 45
     defaults:
@@ -90,14 +90,10 @@ jobs:
           fi
           exit $fail
 
-      - name: Install Playwright browsers
-        run: npx playwright install --with-deps chromium
-
-      - name: End-to-end tests
-        run: npm run test:e2e
-
-      - name: Dependency audit (fails on high or critical)
-        run: npm audit --audit-level=high
+      # Same strictness as `npm audit --audit-level=high` (any high or critical advisory fails), with ONE owner-approved, dated exception
+      # (GHSA-fc5q-39xc-vjpf, expires 2027-01-15; see docs/security). Fails closed on an unparsable report. The raw report is kept as an artifact.
+      - name: Dependency audit (fails on high or critical; one dated exception in scripts/audit-gate.mjs)
+        run: node scripts/audit-gate.mjs
 
       - name: Stop local Supabase
         if: always()
@@ -107,13 +103,77 @@ jobs:
         if: always()
         uses: actions/upload-artifact@v4
         with:
-          name: platform-test-reports
+          name: platform-check-reports
           path: |
             platform/reports/
             platform/playwright-report/
             platform/test-results/
           if-no-files-found: ignore
           retention-days: 14
+
+  e2e:
+    name: E2E shard ${{ matrix.shard }} of 4
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        shard: [1, 2, 3, 4]
+    defaults:
+      run:
+        working-directory: platform
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: platform/package-lock.json
+
+      - name: Install dependencies
+        run: npm ci
+
+      # Each shard runs on its own runner with its own local Supabase stack, so the shared-database rule (one worker) still holds inside a shard.
+      - name: Start local Supabase
+        run: npx supabase start
+
+      - name: Write local env file (local demo keys only)
+        run: node scripts/write-local-env.mjs
+
+      - name: Install Playwright browsers
+        run: npx playwright install --with-deps chromium
+
+      - name: End-to-end tests (shard ${{ matrix.shard }}/4)
+        run: npx playwright test --shard=${{ matrix.shard }}/4
+
+      - name: Stop local Supabase
+        if: always()
+        run: npx supabase stop --no-backup
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: platform-e2e-reports-shard-${{ matrix.shard }}
+          path: |
+            platform/playwright-report/
+            platform/test-results/
+          if-no-files-found: ignore
+          retention-days: 14
+
+  platform:
+    name: Platform (lint, types, unit, database, integration, build, E2E)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    needs: [checks, e2e]
+    if: always()
+    steps:
+      - name: Require every platform job to pass
+        run: |
+          echo "checks: ${{ needs.checks.result }}"
+          echo "e2e: ${{ needs.e2e.result }}"
+          [ "${{ needs.checks.result }}" = "success" ] && [ "${{ needs.e2e.result }}" = "success" ]
 
   landing:
     name: Astro landing page still builds

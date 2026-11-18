@@ -8,6 +8,7 @@ import { eligibleBuyerOrgs } from '@/lib/buyer-orgs';
 import { MY_STATES } from '@/lib/schemas';
 import { requireSession } from '@/server/session';
 import { loadItem } from '../../data';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string; id: string }> }) {
   const { locale, id } = await params;
@@ -34,7 +35,7 @@ export default async function RequestPricePage({ params }: { params: Promise<{ l
           {t('request.backToProduct')}
         </Link>
       </p>
-      <h1>{t('request.title')}</h1>
+      <PageHeader title={t('request.title')} />
       <section aria-labelledby="req-prod-h" className="card">
         <h2 id="req-prod-h" style={{ marginTop: 0, fontSize: '1.15rem' }}>
           {item.name}

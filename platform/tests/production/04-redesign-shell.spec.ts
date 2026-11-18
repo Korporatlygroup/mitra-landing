@@ -26,7 +26,7 @@ test('sidebar keeps 248px across modules, collapses only on request, remembers i
   await a.check('prod-shell', 'Home is a hub: search and the key sections', async () => {
     await a.goto('/en');
     await expect(a.page.getByRole('search').first()).toBeVisible();
-    for (const k of ['actionsTitle', 'newsTitle', 'govTitle', 'marketTitle', 'activityTitle']) await expect(a.page.getByRole('heading', { level: 2, name: t(`apphome.${k}`) })).toBeVisible();
+    for (const k of ['workspaceTitle', 'newsTitle', 'govTitle', 'marketTitle']) await expect(a.page.getByRole('heading', { level: 2, name: t(`apphome.${k}`) })).toBeVisible();
   });
   await a.check('prod-shell', 'collapse is by click only and survives navigation', async () => {
     await a.goto('/en/catalogue');

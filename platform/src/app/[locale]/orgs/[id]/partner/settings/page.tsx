@@ -9,6 +9,8 @@ import { statusTone } from '@/lib/partner-ui';
 import { requirePartnerContext } from '@/server/partner-context';
 import { listMembers, listPendingInvitations } from '@/server/services/orgs';
 import { saveProfileAction } from './actions';
+import EmptyState from '@/components/shared/EmptyState';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.nav.settings');
@@ -25,7 +27,7 @@ export default async function PartnerSettingsPage({ params }: { params: Promise<
   const profile = ctx.profile;
   return (
     <>
-      <h1>{t('title')}</h1>
+      <PageHeader title={t('title')} />
 
       <section aria-labelledby="profile-h">
         <h2 id="profile-h">{t('profileTitle')}</h2>
@@ -60,15 +62,7 @@ export default async function PartnerSettingsPage({ params }: { params: Promise<
         <MembersManager locale={locale} org={ctx.org} meId={ctx.session.user.id} myRole={ctx.role} perms={ctx.perms} members={members} invitations={invitations} />
       </section>
 
-      <section aria-labelledby="lang-h">
-        <h2 id="lang-h">{t('languageTitle')}</h2>
-        <p>{t('languageBody')}</p>
-        <p>
-          <Link href="/account" locale={locale} className="btn btn-secondary">
-            {t('languageLink')}
-          </Link>
-        </p>
-      </section>
+      <EmptyState icon="list" title={t('languageTitle')} text={t('languageBody')} action={{ href: '/account', label: t('languageLink') }} />
     </>
   );
 }

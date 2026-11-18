@@ -48,6 +48,7 @@ export interface ChromeProps {
   orgInitials: string;
   orgSub: string;
   orgs: { id: string; name: string; sub: string }[];
+  allWorkspacesLabel: string;
   activeOrgId: string | null;
   groups: MenuGroup[];
   tabs: { key: string; href: string; icon: IconName; label: string }[];
@@ -150,6 +151,53 @@ export default function WorkspaceChrome(p: ChromeProps) {
             </Link>
           </nav>
           <div className="ws-top-actions">
+            {p.orgName ? (
+              <div className="pop-anchor" ref={orgRef}>
+                <button type="button" className="org-btn org-btn-top" aria-expanded={orgOpen} aria-haspopup="true" onClick={() => setOrgOpen((v) => !v)}>
+                  <span className="org-init" aria-hidden="true">
+                    {p.orgInitials}
+                  </span>
+                  <span className="orgtxt" style={{ flex: 1, minWidth: 0 }}>
+                    <strong>{p.orgName}</strong>
+                    <small>{p.orgSub}</small>
+                  </span>
+                  {p.orgs.length > 1 ? <Icon name="chevron" size={16} /> : null}
+                </button>
+                {orgOpen ? (
+                  <div className="org-menu org-menu-top">
+                    {p.orgs.map((o) => (
+                      <form key={o.id} action={switchOrgAction}>
+                        <input type="hidden" name="orgId" value={o.id} />
+                        <input type="hidden" name="locale" value={p.locale} />
+                        <button type="submit" className="pi" aria-current={o.id === p.activeOrgId ? 'true' : undefined}>
+                          <span>
+                            <strong>{o.name}</strong>
+                            <span className="mut">{o.sub}</span>
+                          </span>
+                        </button>
+                      </form>
+                    ))}
+                    <Link href="/orgs/new" className="pi" onClick={() => setOrgOpen(false)} style={{ color: 'var(--brand)', fontWeight: 700 }}>
+                      <Icon name="plus" size={18} />
+                      <span>{t('orgs.create')}</span>
+                    </Link>
+                    <Link href="/orgs" className="pi" onClick={() => setOrgOpen(false)}>
+                      <Icon name="grid" size={18} />
+                      <span>{p.allWorkspacesLabel}</span>
+                    </Link>
+                  </div>
+                ) : null}
+              </div>
+            ) : (
+              <Link href="/orgs/new" className="org-btn org-btn-top">
+                <span className="org-init" aria-hidden="true">
+                  <Icon name="plus" size={18} />
+                </span>
+                <span className="orgtxt" style={{ flex: 1 }}>
+                  <strong>{t('orgs.create')}</strong>
+                </span>
+              </Link>
+            )}
             {p.create.length > 0 ? (
               <div className="pop-anchor" ref={createRef}>
                 <button type="button" className="btn btn-gold btn-sm" aria-expanded={createOpen} aria-haspopup="true" onClick={() => setCreateOpen((v) => !v)}>
@@ -214,49 +262,6 @@ export default function WorkspaceChrome(p: ChromeProps) {
       <div className="ws-body">
         {mobileOpen ? <button type="button" className="scrim" aria-label={t('ws.close')} tabIndex={-1} onClick={() => setMobileOpen(false)} /> : null}
         <aside className={`ws-side${collapsed ? ' mini' : ''}${mobileOpen ? ' open' : ''}`} aria-label={t('ws.workspace')}>
-          {p.orgName ? (
-            <div className="pop-anchor" ref={orgRef}>
-              <button type="button" className="sl org-btn" aria-expanded={orgOpen} aria-haspopup="true" onClick={() => setOrgOpen((v) => !v)}>
-                <span className="org-init" aria-hidden="true">
-                  {p.orgInitials}
-                </span>
-                <span className="orgtxt" style={{ flex: 1, minWidth: 0 }}>
-                  <strong>{p.orgName}</strong>
-                  <small>{p.orgSub}</small>
-                </span>
-                {p.orgs.length > 1 ? <Icon name="chevron" size={16} /> : null}
-              </button>
-              {orgOpen ? (
-                <div className="org-menu">
-                  {p.orgs.map((o) => (
-                    <form key={o.id} action={switchOrgAction}>
-                      <input type="hidden" name="orgId" value={o.id} />
-                      <input type="hidden" name="locale" value={p.locale} />
-                      <button type="submit" className="pi" aria-current={o.id === p.activeOrgId ? 'true' : undefined}>
-                        <span>
-                          <strong>{o.name}</strong>
-                          <span className="mut">{o.sub}</span>
-                        </span>
-                      </button>
-                    </form>
-                  ))}
-                  <Link href="/orgs/new" className="pi" onClick={() => setOrgOpen(false)} style={{ color: 'var(--brand)', fontWeight: 700 }}>
-                    <Icon name="plus" size={18} />
-                    <span>{t('orgs.create')}</span>
-                  </Link>
-                </div>
-              ) : null}
-            </div>
-          ) : (
-            <Link href="/orgs/new" className="sl org-btn">
-              <span className="org-init" aria-hidden="true">
-                <Icon name="plus" size={18} />
-              </span>
-              <span className="orgtxt" style={{ flex: 1 }}>
-                <strong>{t('orgs.create')}</strong>
-              </span>
-            </Link>
-          )}
           <nav aria-label={t('ws.workspace')} style={{ display: 'contents' }}>
             {p.groups.map((g) => (
               <div key={g.key} style={{ display: 'contents' }}>

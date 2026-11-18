@@ -10,6 +10,7 @@ import { uuidSchema } from '@/lib/schemas';
 import { requirePartnerContext } from '@/server/partner-context';
 import { getMyProduct, getSupplier } from '@/server/services/p5-partner';
 import { publishProductAction, submitProductAction, unpublishProductAction } from '../actions';
+import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
   return pageTitle((await params).locale, 'p5partner.products.detailTitle');
@@ -63,7 +64,7 @@ export default async function ProductOverviewPage({
           {tt('backTo', { page: t('title') })}
         </Link>
       </p>
-      <h1>{p.name ?? p.sku}</h1>
+      <PageHeader title={p.name ?? p.sku} />
       <p>
         <StatusChip status={statusTone(p.status)} label={tc(`status.product.${p.status}`)} />{' '}
         <span className="muted">
