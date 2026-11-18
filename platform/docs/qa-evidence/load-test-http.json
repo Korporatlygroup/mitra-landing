@@ -1,0 +1,222 @@
+{
+  "base": "http://127.0.0.1:3613",
+  "when": "2026-11-18T04:32:26.090Z",
+  "paths": [
+    "/en",
+    "/en/directory",
+    "/en/directory?q=packaging",
+    "/en/catalogue",
+    "/en/business-help",
+    "/en/news",
+    "/ms",
+    "/ta/directory",
+    "/en/signup"
+  ],
+  "secondsPerLevel": 30,
+  "results": [
+    {
+      "concurrency": 5,
+      "durationSeconds": 30,
+      "requests": 3352,
+      "errors": 0,
+      "errorRatePct": 0,
+      "requestsPerSecond": 111.7,
+      "p50ms": 42,
+      "p95ms": 74,
+      "p99ms": 94,
+      "maxMs": 170,
+      "perPath": {
+        "/en/directory": {
+          "n": 372,
+          "p50": 39,
+          "p95": 58,
+          "errors": 0
+        },
+        "/ms": {
+          "n": 374,
+          "p50": 49,
+          "p95": 74,
+          "errors": 0
+        },
+        "/ta/directory": {
+          "n": 373,
+          "p50": 43,
+          "p95": 66,
+          "errors": 0
+        },
+        "/en/catalogue": {
+          "n": 373,
+          "p50": 66,
+          "p95": 95,
+          "errors": 0
+        },
+        "/en/signup": {
+          "n": 372,
+          "p50": 27,
+          "p95": 45,
+          "errors": 0
+        },
+        "/en/directory?q=packaging": {
+          "n": 372,
+          "p50": 38,
+          "p95": 59,
+          "errors": 0
+        },
+        "/en/business-help": {
+          "n": 372,
+          "p50": 41,
+          "p95": 60,
+          "errors": 0
+        },
+        "/en/news": {
+          "n": 372,
+          "p50": 37,
+          "p95": 56,
+          "errors": 0
+        },
+        "/en": {
+          "n": 372,
+          "p50": 49,
+          "p95": 75,
+          "errors": 0
+        }
+      }
+    },
+    {
+      "concurrency": 10,
+      "durationSeconds": 30,
+      "requests": 3634,
+      "errors": 0,
+      "errorRatePct": 0,
+      "requestsPerSecond": 121.1,
+      "p50ms": 77,
+      "p95ms": 136,
+      "p99ms": 170,
+      "maxMs": 217,
+      "perPath": {
+        "/en/signup": {
+          "n": 403,
+          "p50": 55,
+          "p95": 78,
+          "errors": 0
+        },
+        "/en/directory?q=packaging": {
+          "n": 406,
+          "p50": 72,
+          "p95": 104,
+          "errors": 0
+        },
+        "/en/directory": {
+          "n": 404,
+          "p50": 73,
+          "p95": 108,
+          "errors": 0
+        },
+        "/en/business-help": {
+          "n": 404,
+          "p50": 74,
+          "p95": 109,
+          "errors": 0
+        },
+        "/ms": {
+          "n": 404,
+          "p50": 86,
+          "p95": 121,
+          "errors": 0
+        },
+        "/en/catalogue": {
+          "n": 406,
+          "p50": 129,
+          "p95": 179,
+          "errors": 0
+        },
+        "/en/news": {
+          "n": 403,
+          "p50": 70,
+          "p95": 105,
+          "errors": 0
+        },
+        "/en": {
+          "n": 402,
+          "p50": 88,
+          "p95": 129,
+          "errors": 0
+        },
+        "/ta/directory": {
+          "n": 402,
+          "p50": 75,
+          "p95": 106,
+          "errors": 0
+        }
+      }
+    },
+    {
+      "concurrency": 20,
+      "durationSeconds": 30,
+      "requests": 3517,
+      "errors": 0,
+      "errorRatePct": 0,
+      "requestsPerSecond": 117,
+      "p50ms": 158,
+      "p95ms": 280,
+      "p99ms": 352,
+      "maxMs": 441,
+      "perPath": {
+        "/en/signup": {
+          "n": 390,
+          "p50": 119,
+          "p95": 180,
+          "errors": 0
+        },
+        "/en/directory": {
+          "n": 394,
+          "p50": 158,
+          "p95": 219,
+          "errors": 0
+        },
+        "/en/directory?q=packaging": {
+          "n": 391,
+          "p50": 153,
+          "p95": 219,
+          "errors": 0
+        },
+        "/en/business-help": {
+          "n": 391,
+          "p50": 156,
+          "p95": 217,
+          "errors": 0
+        },
+        "/en/news": {
+          "n": 391,
+          "p50": 140,
+          "p95": 195,
+          "errors": 0
+        },
+        "/ta/directory": {
+          "n": 388,
+          "p50": 162,
+          "p95": 234,
+          "errors": 0
+        },
+        "/en": {
+          "n": 392,
+          "p50": 167,
+          "p95": 234,
+          "errors": 0
+        },
+        "/ms": {
+          "n": 389,
+          "p50": 171,
+          "p95": 238,
+          "errors": 0
+        },
+        "/en/catalogue": {
+          "n": 391,
+          "p50": 273,
+          "p95": 368,
+          "errors": 0
+        }
+      }
+    }
+  ]
+}
