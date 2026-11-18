@@ -13,9 +13,12 @@ import { appLinks, navLinks } from '../../lib/content';
 
     {/* Desktop: plain links, visible without JS. */}
     <nav class="nav__desktop" aria-label="Primary">
-      <ul>
+      <ul class="nav__sections">
         {navLinks.map((n) => <li><a href={n.href} data-spy={n.href}>{n.label}</a></li>)}
-        {appLinks.map((n) => <li><a href={n.href} rel="noopener" class={n.cta ? "nav__cta" : undefined}>{n.label}</a></li>)}
+      </ul>
+      {/* Platform entry points sit apart, at the far right: Sign in, then the Explore Businesses call-to-action. */}
+      <ul class="nav__app">
+        {appLinks.map((n) => <li><a href={n.href} rel="noopener" class={n.cta ? "nav__cta" : "nav__signin"}>{n.label}</a></li>)}
       </ul>
     </nav>
 
@@ -25,7 +28,9 @@ import { appLinks, navLinks } from '../../lib/content';
       <nav aria-label="Primary (mobile)">
         <ul>
           {navLinks.map((n) => <li><a href={n.href}>{n.label}</a></li>)}
-          {appLinks.map((n) => <li><a href={n.href} rel="noopener" class={n.cta ? "nav__cta" : undefined}>{n.label}</a></li>)}
+        </ul>
+        <ul class="nav__app-m">
+          {appLinks.map((n) => <li><a href={n.href} rel="noopener" class={n.cta ? "nav__cta" : "nav__signin"}>{n.label}</a></li>)}
         </ul>
       </nav>
     </details>
@@ -52,11 +57,14 @@ import { appLinks, navLinks } from '../../lib/content';
   .nav ul { list-style: none; margin: 0; padding: 0; }
   .nav__desktop { display: none; }
   .nav__desktop ul { display: flex; gap: 0.25rem; }
+  .nav__desktop { flex: 1; align-items: center; justify-content: flex-end; gap: 1.25rem; }
+  .nav__desktop .nav__app { align-items: center; gap: 0.5rem; padding-left: 1.25rem; border-left: 1px solid var(--border); }
   .nav__desktop a {
     position: relative; display: block; padding: 0.5rem 0.8rem; border-radius: 999px;
     font-size: 0.95rem; font-weight: 600; color: var(--text-muted); text-decoration: none;
     transition: color 0.2s ease, background-color 0.2s ease;
   }
+  .nav__desktop a.nav__signin { border: 1px solid var(--border); color: var(--text); }
   .nav__desktop a.nav__cta { background: var(--brand); color: var(--brand-ink); font-weight: 700; }
   .nav__desktop a.nav__cta:hover { background: var(--brand); filter: brightness(0.95); }
   .nav__desktop a:hover { color: var(--text); background: var(--surface-2); }
@@ -73,11 +81,15 @@ import { appLinks, navLinks } from '../../lib/content';
   .nav__mobile nav { position: absolute; inset: var(--nav-h) 0 auto; background: var(--bg); border-bottom: 1px solid var(--border); box-shadow: 0 20px 30px -20px rgb(0 0 0 / 0.3); }
   .nav__mobile ul { padding: 0.5rem var(--gutter) 1.25rem; }
   .nav__mobile a { display: block; padding: 0.8rem 0; border-bottom: 1px solid var(--border); text-decoration: none; font: 650 1.15rem/1.2 var(--font-display); }
+  .nav__mobile .nav__app-m { display: flex; gap: 0.75rem; padding-top: 0; }
+  .nav__mobile .nav__app-m li { flex: 1; }
+  .nav__mobile .nav__app-m a { text-align: center; border: 1px solid var(--border); border-radius: 999px; padding: 0.75rem 1rem; font-size: 1rem; }
+  .nav__mobile .nav__app-m a.nav__cta { background: var(--brand); color: var(--brand-ink); border-color: transparent; font-weight: 700; }
   .nav__mobile[open] nav { animation: menu-in 0.35s var(--ease-out); }
   @keyframes menu-in { from { opacity: 0; transform: translateY(-8px); } }
 
-  @media (min-width: 900px) {
-    .nav__desktop { display: block; }
+  @media (min-width: 1180px) {
+    .nav__desktop { display: flex; }
     .nav__mobile { display: none; }
   }
 </style>
