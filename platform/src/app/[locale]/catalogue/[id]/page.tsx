@@ -78,7 +78,7 @@ export default async function ProductPage({ params }: { params: Promise<{ locale
           <AvailabilityNote status={item.availability_status} confirmedOn={item.availability_confirmed_on} outdated={item.availability_outdated} locale={locale} />
           <div className="catalogue-card-actions">
             <CardActions id={item.id} name={item.name} locale={locale} signedIn={Boolean(user)} saved={saved} nextPath={`/${locale}/catalogue/${id}`} />
-            <Link href={`/sourcing/new?product=${item.id}`} locale={locale} className="btn btn-secondary">{t6('send')}</Link>
+            <Link href={`/sourcing/new?product=${item.id}`} locale={locale} className="btn btn-secondary">{t6('startSourcing')}</Link>
           </div>
         </section>
       </div>

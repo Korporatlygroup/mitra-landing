@@ -1,0 +1,135 @@
+{
+  "when": "2026-11-18T04:32:57.363Z",
+  "note": "local production build, real browsers, one machine for server, database and clients",
+  "results": [
+    {
+      "concurrency": 5,
+      "wallSeconds": 2,
+      "failures": [],
+      "perStep": {
+        "sign-in": {
+          "n": 5,
+          "p50": 627,
+          "p95": 640,
+          "max": 640
+        },
+        "home": {
+          "n": 5,
+          "p50": 181,
+          "p95": 181,
+          "max": 181
+        },
+        "directory-search": {
+          "n": 5,
+          "p50": 184,
+          "p95": 185,
+          "max": 185
+        },
+        "catalogue": {
+          "n": 5,
+          "p50": 519,
+          "p95": 522,
+          "max": 522
+        },
+        "requests": {
+          "n": 5,
+          "p50": 323,
+          "p95": 331,
+          "max": 331
+        },
+        "notifications": {
+          "n": 5,
+          "p50": 92,
+          "p95": 278,
+          "max": 278
+        }
+      }
+    },
+    {
+      "concurrency": 10,
+      "wallSeconds": 3.5,
+      "failures": [],
+      "perStep": {
+        "sign-in": {
+          "n": 10,
+          "p50": 1273,
+          "p95": 1286,
+          "max": 1286
+        },
+        "home": {
+          "n": 10,
+          "p50": 272,
+          "p95": 294,
+          "max": 294
+        },
+        "directory-search": {
+          "n": 10,
+          "p50": 300,
+          "p95": 377,
+          "max": 377
+        },
+        "catalogue": {
+          "n": 10,
+          "p50": 793,
+          "p95": 946,
+          "max": 946
+        },
+        "requests": {
+          "n": 10,
+          "p50": 459,
+          "p95": 473,
+          "max": 473
+        },
+        "notifications": {
+          "n": 10,
+          "p50": 142,
+          "p95": 439,
+          "max": 439
+        }
+      }
+    },
+    {
+      "concurrency": 20,
+      "wallSeconds": 12.1,
+      "failures": [],
+      "perStep": {
+        "sign-in": {
+          "n": 20,
+          "p50": 1700,
+          "p95": 1896,
+          "max": 1896
+        },
+        "home": {
+          "n": 20,
+          "p50": 540,
+          "p95": 570,
+          "max": 570
+        },
+        "directory-search": {
+          "n": 20,
+          "p50": 2622,
+          "p95": 3162,
+          "max": 3162
+        },
+        "catalogue": {
+          "n": 20,
+          "p50": 4687,
+          "p95": 5670,
+          "max": 5670
+        },
+        "requests": {
+          "n": 20,
+          "p50": 1561,
+          "p95": 5437,
+          "max": 5437
+        },
+        "notifications": {
+          "n": 20,
+          "p50": 308,
+          "p95": 740,
+          "max": 740
+        }
+      }
+    }
+  ]
+}

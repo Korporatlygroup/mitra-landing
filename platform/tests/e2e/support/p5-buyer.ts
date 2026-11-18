@@ -18,13 +18,14 @@ export const daysAgo = (n: number) => new Date(Date.now() - n * 86_400_000).toIS
 /** A real 1x1 PNG, so the media route has something to serve. */
 export const PNG_1X1 = Buffer.from('iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==', 'base64');
 
-async function enrol(s: Signed): Promise<void> {
+async function enrol(s: Signed): Promise<string> {
   const { data, error } = await s.client.auth.mfa.enroll({ factorType: 'totp', friendlyName: uniq('totp') });
   if (error || !data) throw new Error(`mfa.enroll failed: ${error?.message}`);
   const ch = await s.client.auth.mfa.challenge({ factorId: data.id });
   if (ch.error || !ch.data) throw new Error(`mfa.challenge failed: ${ch.error?.message}`);
   const v = await s.client.auth.mfa.verify({ factorId: data.id, challengeId: ch.data.id, code: totp(data.totp.secret) });
   if (v.error) throw new Error(`mfa.verify failed: ${v.error.message}`);
+  return data.totp.secret;
 }
 
 /** A MITRA reviewer (admin_review) at aal2, for approving suppliers and products. Setup only. */
@@ -49,6 +50,7 @@ export interface Partner {
   user: TestUser;
   org: string;
   s: Signed;
+  secret?: string;
 }
 
 /** An APPROVED partner organisation with its owner (MFA done). MITRA approval is setup-by-SQL here; the approval flow has its own tests. */
@@ -58,11 +60,11 @@ export async function makePartner(prefix = 'p5b-partner'): Promise<Partner> {
   const created = await s.client.rpc('create_org', { p_type: 'partner', p_name: `Partner ${uniq(prefix)}` });
   if (created.error) throw new Error(`create_org failed: ${created.error.message}`);
   const org = String(created.data);
-  await enrol(s);
+  const secret = await enrol(s);
   const profile = await s.client.rpc('save_partner_profile', { p_org: org, p_display_name: 'Synthetic partner', p_contact_email: `${uniq('p')}@example.test` });
   if (profile.error) throw new Error(`save_partner_profile failed: ${profile.error.message}`);
   await sql(`update public.partner_profiles set status = 'approved', decided_at = now() where org_id = $1`, [org]);
-  return { user, org, s };
+  return { user, org, s, secret };
 }
 
 export interface Supplier {
@@ -129,6 +131,8 @@ export interface ProductSpec {
   packaging?: string;
   description?: string;
   image?: boolean;
+  /** A real PNG to upload instead of the 1x1 test pixel (used by the demo seed so product cards look realistic). */
+  imageBuffer?: Buffer;
   publish?: boolean;
 }
 export interface Product {
@@ -164,12 +168,12 @@ export async function makeProduct(sup: Supplier, reviewer: Signed, spec: Product
   if (spec.image) {
     const file = `${uniq('img').replace(/-/g, '')}.png`;
     const path = `products/${p.org}/${id}/${file}`;
-    const up = await serviceClient().storage.from('catalogue-media').upload(path, PNG_1X1, { contentType: 'image/png', upsert: false });
+    const up = await serviceClient().storage.from('catalogue-media').upload(path, spec.imageBuffer ?? PNG_1X1, { contentType: 'image/png', upsert: false });
     if (up.error) throw new Error(`image upload failed: ${up.error.message}`);
     mediaId = String(
       must(
         await serviceClient().rpc('service_register_product_media', {
-          p_org: p.org, p_user: p.user.id, p_product: id, p_mime: 'image/png', p_size: PNG_1X1.length, p_sha256: createHash('sha256').update(PNG_1X1).digest('hex'),
+          p_org: p.org, p_user: p.user.id, p_product: id, p_mime: 'image/png', p_size: (spec.imageBuffer ?? PNG_1X1).length, p_sha256: createHash('sha256').update(spec.imageBuffer ?? PNG_1X1).digest('hex'),
           p_storage_path: path, p_scan_status: 'clean', p_scan_engine: 'e2e', p_alt: `Alt text for ${spec.name}`,
         }),
         'service_register_product_media',

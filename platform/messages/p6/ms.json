@@ -15,6 +15,7 @@
     "deliveryState": "Negeri penghantaran", "deliveryCity": "Bandar (pilihan)", "neededBy": "Perlu sebelum (pilihan)",
     "note": "Butiran lanjut (pilihan)", "partners": "Pilih rakan untuk dihubungi",
     "partnerHint": "Hanya rakan yang anda pilih menerima permintaan ini. Tawaran mereka dirahsiakan antara satu sama lain.",
+    "startSourcing": "Mulakan permintaan sumber",
     "send": "Minta harga", "requestUpdated": "Permintaan dikemas kini", "cancel": "Batalkan permintaan",
     "close": "Tutup permintaan", "request": "Permintaan harga", "items": "Produk",
     "matches": "Produk yang mungkin sesuai", "matchNote": "Produk ini sepadan dengan kategori, unit dan kuantiti minimum. Sahkan kesesuaian dengan rakan.",

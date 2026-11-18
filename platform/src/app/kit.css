@@ -288,3 +288,41 @@ a.chip-x:hover { background: var(--brand-tint); color: var(--brand); }
   .ws-top-actions .btn-gold { max-width: 7.5rem; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 0 10px; }
   .org-btn-top { max-width: 3.25rem; overflow: hidden; }
 }
+
+/* Conversation workspace forms (quotation builder, replies, lead tracking, review): same control styling as .field forms */
+.msg-right form label, .conv form label { display: block; font-weight: 600; font-size: 0.875rem; margin: 12px 0 4px; }
+.msg-right form input:not([type='hidden']):not([type='checkbox']):not([type='radio']), .msg-right form select, .msg-right form textarea,
+.conv form input:not([type='hidden']):not([type='checkbox']):not([type='radio']), .conv form select, .conv form textarea {
+  width: 100%; min-height: 44px; border: 1px solid var(--line-strong); border-radius: 10px; padding: 8px 12px; font: inherit; background: #fff; box-sizing: border-box; color: var(--ink);
+}
+.msg-right form textarea { min-height: 88px; }
+.msg-right form fieldset { display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr)); gap: 0 12px; border: 1px solid var(--line); border-radius: 12px; padding: 4px 16px 16px; margin: 14px 0; }
+.msg-right form fieldset legend { font-weight: 700; font-size: 0.9375rem; padding: 0 6px; }
+.msg-right form fieldset .field { min-width: 0; }
+.msg-right form fieldset .field:first-of-type { grid-column: 1 / -1; }
+.msg-right form details { margin-top: 10px; }
+.msg-right form details summary { cursor: pointer; font-weight: 600; min-height: 36px; display: flex; align-items: center; }
+
+/* Products from India: filters as one compact panel on wide screens so the products come first */
+@media (min-width: 900px) {
+  .form.catalogue-filters, .catalogue-filters { max-width: none; display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); gap: 4px 16px; align-items: start; padding: 16px 20px; background: #fff; border: 1px solid var(--line); border-radius: 12px; }
+  .catalogue-filters > .field:first-child { grid-column: span 5; }
+  .catalogue-filters > .catalogue-filter-grid { grid-column: span 7; }
+  .catalogue-filters > .catalogue-price-filter, .catalogue-filters > .message, .catalogue-filters > .link-row { grid-column: 1 / -1; }
+  .catalogue-filters .catalogue-price-filter { padding: 6px 16px 12px; }
+}
+
+/* Table cells may wrap long text, but status badges and row buttons must not split mid-word */
+.dtable .chip-x, .dtable .btn { white-space: nowrap; overflow-wrap: normal; }
+
+/* Audit log: action codes stay whole; review decision control looks like a control */
+.dtable code { white-space: nowrap; overflow-wrap: normal; }
+.rgroup > summary { display: inline-flex; align-items: center; min-height: 40px; padding: 0 14px; border: 1px solid var(--line-strong, #cbd5e1); border-radius: 999px; background: #fff; font-weight: 600; cursor: pointer; }
+.rgroup > summary:hover { border-color: var(--brand); color: var(--brand); }
+.rgroup[open] > summary { margin-bottom: 10px; }
+
+/* Tamil: long words must not be cut mid-word, and buttons wrap instead of clipping; short labels (dt) never break inside a word */
+dt { overflow-wrap: normal; word-break: normal; }
+:lang(ta) h1, :lang(ta) h2, :lang(ta) .dtable td, :lang(ta) .chip-x, :lang(ta) .pcard-facts dd, :lang(ta) .nrow-title { overflow-wrap: break-word; word-break: keep-all; hyphens: manual; }
+:lang(ta) .btn { word-break: keep-all; overflow-wrap: normal; white-space: normal; text-align: center; line-height: 1.35; height: auto; min-height: 44px; padding-top: 8px; padding-bottom: 8px; }
+@media (max-width: 480px) { :lang(ta) h1 { font-size: 1.375rem; line-height: 1.35; } }

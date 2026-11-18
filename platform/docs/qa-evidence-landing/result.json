@@ -1,0 +1,222 @@
+{
+  "desktop-1280": {
+    "text": "INOK Idhu Namme Oru Kedai Programme MITRA Results Journey Interviews Gallery Partners Contact Explore Businesses",
+    "links": [
+      {
+        "t": "INOKIdhu Namme Oru Kedai",
+        "h": "#top",
+        "v": true
+      },
+      {
+        "t": "Programme",
+        "h": "#about",
+        "v": true
+      },
+      {
+        "t": "MITRA",
+        "h": "#mitra",
+        "v": true
+      },
+      {
+        "t": "Results",
+        "h": "#results",
+        "v": true
+      },
+      {
+        "t": "Journey",
+        "h": "#journey",
+        "v": true
+      },
+      {
+        "t": "Interviews",
+        "h": "#interviews",
+        "v": true
+      },
+      {
+        "t": "Gallery",
+        "h": "#gallery",
+        "v": true
+      },
+      {
+        "t": "Partners",
+        "h": "#partners",
+        "v": true
+      },
+      {
+        "t": "Contact",
+        "h": "#contact",
+        "v": true
+      },
+      {
+        "t": "Explore Businesses",
+        "h": "https://app.inok.my/en/directory",
+        "v": true
+      },
+      {
+        "t": "Programme",
+        "h": "#about",
+        "v": false
+      },
+      {
+        "t": "MITRA",
+        "h": "#mitra",
+        "v": false
+      },
+      {
+        "t": "Results",
+        "h": "#results",
+        "v": false
+      },
+      {
+        "t": "Journey",
+        "h": "#journey",
+        "v": false
+      },
+      {
+        "t": "Interviews",
+        "h": "#interviews",
+        "v": false
+      },
+      {
+        "t": "Gallery",
+        "h": "#gallery",
+        "v": false
+      },
+      {
+        "t": "Partners",
+        "h": "#partners",
+        "v": false
+      },
+      {
+        "t": "Contact",
+        "h": "#contact",
+        "v": false
+      },
+      {
+        "t": "Explore Businesses",
+        "h": "https://app.inok.my/en/directory",
+        "v": false
+      }
+    ],
+    "overflow": 0,
+    "signIn": false,
+    "getStarted": false
+  },
+  "mobile-390": {
+    "text": "INOK",
+    "links": [
+      {
+        "t": "INOKIdhu Namme Oru Kedai",
+        "h": "#top",
+        "v": true
+      },
+      {
+        "t": "Programme",
+        "h": "#about",
+        "v": false
+      },
+      {
+        "t": "MITRA",
+        "h": "#mitra",
+        "v": false
+      },
+      {
+        "t": "Results",
+        "h": "#results",
+        "v": false
+      },
+      {
+        "t": "Journey",
+        "h": "#journey",
+        "v": false
+      },
+      {
+        "t": "Interviews",
+        "h": "#interviews",
+        "v": false
+      },
+      {
+        "t": "Gallery",
+        "h": "#gallery",
+        "v": false
+      },
+      {
+        "t": "Partners",
+        "h": "#partners",
+        "v": false
+      },
+      {
+        "t": "Contact",
+        "h": "#contact",
+        "v": false
+      },
+      {
+        "t": "Explore Businesses",
+        "h": "https://app.inok.my/en/directory",
+        "v": false
+      },
+      {
+        "t": "Programme",
+        "h": "#about",
+        "v": true
+      },
+      {
+        "t": "MITRA",
+        "h": "#mitra",
+        "v": true
+      },
+      {
+        "t": "Results",
+        "h": "#results",
+        "v": true
+      },
+      {
+        "t": "Journey",
+        "h": "#journey",
+        "v": true
+      },
+      {
+        "t": "Interviews",
+        "h": "#interviews",
+        "v": true
+      },
+      {
+        "t": "Gallery",
+        "h": "#gallery",
+        "v": true
+      },
+      {
+        "t": "Partners",
+        "h": "#partners",
+        "v": true
+      },
+      {
+        "t": "Contact",
+        "h": "#contact",
+        "v": true
+      },
+      {
+        "t": "Explore Businesses",
+        "h": "https://app.inok.my/en/directory",
+        "v": true
+      }
+    ],
+    "overflow": 0,
+    "signIn": false,
+    "getStarted": false,
+    "menuLinks": [
+      "Skip to content",
+      "INOKIdhu Namme Oru Kedai",
+      "Partner with us",
+      "Watch highlights",
+      "Get started",
+      "List your business",
+      "Explore businesses",
+      "Sign in",
+      "Run INOK for your community",
+      "See the evidence",
+      "See a sample answer sheet",
+      "PINKY MUASharmila · Visit the site ↗"
+    ]
+  }
+}

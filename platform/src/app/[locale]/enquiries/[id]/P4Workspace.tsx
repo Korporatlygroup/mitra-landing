@@ -84,10 +84,10 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId }: {
           {[1,2,3,4,5].map((n) => {
             const line = draftLines[n-1] ?? {};
             return <fieldset key={n}><legend>{t('description')} {n}</legend>
-              <label htmlFor={`description${n}`}>{t('description')}</label><input id={`description${n}`} name={`description${n}`} maxLength={500} required={n===1} defaultValue={field(line.description)} />
-              <label htmlFor={`quantity${n}`}>{t('quantity')}</label><input id={`quantity${n}`} name={`quantity${n}`} inputMode="decimal" required={n===1} defaultValue={field(line.quantity)} />
-              <label htmlFor={`unit${n}`}>{t('unit')}</label><input id={`unit${n}`} name={`unit${n}`} maxLength={40} required={n===1} defaultValue={field(line.unit)} />
-              <label htmlFor={`unitPrice${n}`}>{t('unitPrice')}</label><input id={`unitPrice${n}`} name={`unitPrice${n}`} inputMode="decimal" required={n===1} defaultValue={field(line.unit_price)} />
+              <div className="field"><label htmlFor={`description${n}`}>{t('description')}</label><input id={`description${n}`} name={`description${n}`} maxLength={500} required={n===1} defaultValue={field(line.description)} /></div>
+              <div className="field"><label htmlFor={`quantity${n}`}>{t('quantity')}</label><input id={`quantity${n}`} name={`quantity${n}`} inputMode="decimal" required={n===1} defaultValue={field(line.quantity)} /></div>
+              <div className="field"><label htmlFor={`unit${n}`}>{t('unit')}</label><input id={`unit${n}`} name={`unit${n}`} maxLength={40} required={n===1} defaultValue={field(line.unit)} /></div>
+              <div className="field"><label htmlFor={`unitPrice${n}`}>{t('unitPrice')}</label><input id={`unitPrice${n}`} name={`unitPrice${n}`} inputMode="decimal" required={n===1} defaultValue={field(line.unit_price)} /></div>
             </fieldset>;
           })}
           <label htmlFor="validUntil">{t('validUntil')}</label><input id="validUntil" type="date" name="validUntil" required defaultValue={field(draft?.valid_until).slice(0,10)} />

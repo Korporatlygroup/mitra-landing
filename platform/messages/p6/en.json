@@ -27,6 +27,7 @@
     "note": "More details (optional)",
     "partners": "Choose partners to ask",
     "partnerHint": "Only the partners you choose receive this request. Their offers stay private from each other.",
+    "startSourcing": "Start a sourcing request",
     "send": "Request a price", "requestUpdated": "Request updated", "cancel": "Cancel request", "close": "Close request",
     "request": "Price request",
     "items": "Products",
