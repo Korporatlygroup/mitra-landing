@@ -1,0 +1,174 @@
+{
+  "when": "2026-11-18T05:57:56.995Z",
+  "note": "local production build, one machine runs server, database and clients",
+  "htmlBytesSignedIn": 204166,
+  "imagesOnPage": 40,
+  "serverRenderSignedIn": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "nonOk": 0,
+      "p50": 38,
+      "p95": 75,
+      "max": 75
+    },
+    {
+      "concurrency": 5,
+      "requests": 40,
+      "nonOk": 0,
+      "p50": 126,
+      "p95": 141,
+      "max": 142
+    },
+    {
+      "concurrency": 10,
+      "requests": 80,
+      "nonOk": 0,
+      "p50": 209,
+      "p95": 241,
+      "max": 248
+    },
+    {
+      "concurrency": 20,
+      "requests": 160,
+      "nonOk": 0,
+      "p50": 388,
+      "p95": 473,
+      "max": 481
+    }
+  ],
+  "serverRenderSignedOut": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "nonOk": 0,
+      "p50": 27,
+      "p95": 28,
+      "max": 28
+    },
+    {
+      "concurrency": 5,
+      "requests": 40,
+      "nonOk": 0,
+      "p50": 79,
+      "p95": 88,
+      "max": 89
+    },
+    {
+      "concurrency": 10,
+      "requests": 80,
+      "nonOk": 0,
+      "p50": 139,
+      "p95": 230,
+      "max": 237
+    },
+    {
+      "concurrency": 20,
+      "requests": 160,
+      "nonOk": 0,
+      "p50": 294,
+      "p95": 472,
+      "max": 479
+    }
+  ],
+  "imageEndpoint": [
+    {
+      "concurrency": 1,
+      "requests": 8,
+      "nonOk": 0,
+      "p50": 12,
+      "p95": 58,
+      "max": 58
+    },
+    {
+      "concurrency": 5,
+      "requests": 40,
+      "nonOk": 0,
+      "p50": 15,
+      "p95": 66,
+      "max": 66
+    },
+    {
+      "concurrency": 10,
+      "requests": 80,
+      "nonOk": 0,
+      "p50": 26,
+      "p95": 42,
+      "max": 45
+    },
+    {
+      "concurrency": 20,
+      "requests": 160,
+      "nonOk": 0,
+      "p50": 56,
+      "p95": 101,
+      "max": 126
+    }
+  ],
+  "browser": [
+    {
+      "concurrency": 1,
+      "imagesBlocked": false,
+      "domContentLoadedP50": 66,
+      "domContentLoadedP95": 66,
+      "loadP50": 142,
+      "loadP95": 142
+    },
+    {
+      "concurrency": 1,
+      "imagesBlocked": true,
+      "domContentLoadedP50": 62,
+      "domContentLoadedP95": 62,
+      "loadP50": 167,
+      "loadP95": 167
+    },
+    {
+      "concurrency": 5,
+      "imagesBlocked": false,
+      "domContentLoadedP50": 187,
+      "domContentLoadedP95": 231,
+      "loadP50": 275,
+      "loadP95": 280
+    },
+    {
+      "concurrency": 5,
+      "imagesBlocked": true,
+      "domContentLoadedP50": 182,
+      "domContentLoadedP95": 197,
+      "loadP50": 301,
+      "loadP95": 323
+    },
+    {
+      "concurrency": 10,
+      "imagesBlocked": false,
+      "domContentLoadedP50": 384,
+      "domContentLoadedP95": 502,
+      "loadP50": 930,
+      "loadP95": 1178
+    },
+    {
+      "concurrency": 10,
+      "imagesBlocked": true,
+      "domContentLoadedP50": 509,
+      "domContentLoadedP95": 573,
+      "loadP50": 897,
+      "loadP95": 956
+    },
+    {
+      "concurrency": 20,
+      "imagesBlocked": false,
+      "domContentLoadedP50": 1075,
+      "domContentLoadedP95": 7142,
+      "loadP50": 12211,
+      "loadP95": 12542
+    },
+    {
+      "concurrency": 20,
+      "imagesBlocked": true,
+      "domContentLoadedP50": 1170,
+      "domContentLoadedP95": 3950,
+      "loadP50": 12491,
+      "loadP95": 12606
+    }
+  ]
+}
