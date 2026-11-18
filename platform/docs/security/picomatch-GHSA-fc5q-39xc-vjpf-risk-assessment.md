@@ -1,6 +1,6 @@
 # Risk assessment: picomatch ReDoS (GHSA-fc5q-39xc-vjpf) in the dependency audit
 
-Status: **proposal for explicit approval. No exception has been applied.** The CI audit step is unchanged (`npm audit --audit-level=high`) and currently fails because of this advisory.
+Status: **APPROVED by the owner on 2026-11-18 (narrow, temporary exception for GHSA-fc5q-39xc-vjpf only, expiring 2027-01-15) and implemented** in `platform/scripts/audit-gate.mjs` and the CI audit step. Before approval the audit step was `npm audit --audit-level=high` and failed because of this advisory.
 Date of assessment: 2026-11-18. Project: `platform/` (INOK). Scope examined: lockfile, installed tree, the generated Cloudflare Worker bundle (`.open-next/`), upstream release data.
 
 ## 1. The advisory
@@ -73,6 +73,13 @@ If approved, apply it narrowly:
 
 Alternative the approver may prefer: keep CI strict and wait for a patched picomatch (the release would be blocked until then).
 
-## 9. Decision requested
+## 9. Decision and implementation
 
-Approve or reject the exception in section 8. Until a decision is recorded, the audit step remains unchanged and the release remains blocked by that one failing check.
+The owner approved the exception in section 8 on 2026-11-18. Implementation:
+
+- `scripts/audit-gate.mjs` runs `npm audit --json`, writes the raw report to `reports/npm-audit-raw.json` (uploaded as the `platform-check-reports` CI artifact) and evaluates it.
+- Exceptions are per advisory id (never per package). A different advisory on the same package still fails. Anything high or critical that is not on the list fails.
+- The exception is valid strictly before **2027-01-15**; on that date the gate fails again.
+- The gate fails closed: unparsable output, an unexpected report version/shape, an advisory without an id, or a high finding with no advisory behind it all fail the job.
+- Unit tests (`tests/unit/audit-gate.test.ts`) cover the exception, a second advisory on the same package, a critical advisory, expiry on and after the date, and the fail-closed cases.
+- To remove the exception: delete the `EXCEPTIONS` entry once a patched picomatch is released and installed.

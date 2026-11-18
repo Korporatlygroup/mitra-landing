@@ -90,8 +90,10 @@ jobs:
           fi
           exit $fail
 
-      - name: Dependency audit (fails on high or critical)
-        run: npm audit --audit-level=high
+      # Same strictness as `npm audit --audit-level=high` (any high or critical advisory fails), with ONE owner-approved, dated exception
+      # (GHSA-fc5q-39xc-vjpf, expires 2027-01-15; see docs/security). Fails closed on an unparsable report. The raw report is kept as an artifact.
+      - name: Dependency audit (fails on high or critical; one dated exception in scripts/audit-gate.mjs)
+        run: node scripts/audit-gate.mjs
 
       - name: Stop local Supabase
         if: always()
