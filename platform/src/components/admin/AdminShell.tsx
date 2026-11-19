@@ -39,6 +39,7 @@ export default async function AdminShell({ locale, children }: { locale: string;
       items: [
         { key: 'verification', href: '/admin/verification', label: a('verification'), icon: 'shield', match: ['/admin/verification'], count: waiting || undefined },
         { key: 'listings', href: '/admin/listings', label: a('listings'), icon: 'store', match: ['/admin/listings'], count: listings.length || undefined },
+        { key: 'issues', href: '/admin/issues', label: a('orderIssues'), icon: 'flag', match: ['/admin/issues'] },
         { key: 'products', href: '/admin/products', label: a('products'), icon: 'box', match: ['/admin/products'], count: products.ok && products.data.length ? products.data.length : undefined },
         { key: 'reviews', href: '/admin/reviews', label: a('reviewsReports'), icon: 'flag', match: ['/admin/reviews', '/admin/reports'] },
       ],

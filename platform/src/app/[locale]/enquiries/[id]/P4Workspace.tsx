@@ -3,6 +3,7 @@ import { getFormatter, getLocale, getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
 import QuoteDialog from '@/components/deals/QuoteDialog';
 import { Link } from '@/i18n/navigation';
+import { decodeIssueNote } from '@/lib/issue-note';
 import { formatMyt } from '@/lib/time';
 import { listDealEvents } from '@/server/services/deals';
 import { getEnquiryWorkspace, type QuoteVersionRow } from '@/server/services/enquiries';
@@ -30,6 +31,7 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId, sel
   const tc = await getTranslations('enq');
   const locale = await getLocale();
   const fmt = await getFormatter({ locale });
+  const noteText = (n: string) => { const x = decodeIssueNote(n); return x.reason ? `${d(`ir_${x.reason}`)}: ${x.details}` : n; };
   const [w, events] = await Promise.all([getEnquiryWorkspace(db, enquiryId, before), listDealEvents(db, enquiryId)]);
   const draft = w.draft;
   const draftLines = Array.isArray(draft?.lines) ? (draft.lines as Record<string, unknown>[]) : [];
@@ -167,7 +169,7 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId, sel
           }
           if (it.kind === 'quote') return quoteCard(it.version, it.id);
           return <p key={it.id} className="deal-event" data-event={it.event}>
-            <span>{d(`ev_${it.event.replace('.', '_')}`)}{it.note ? ` · ${it.note}` : ''}</span>
+            <span>{d(`ev_${it.event.replace('.', '_')}`)}{it.note ? ` · ${noteText(it.note)}` : ''}</span>
             <time dateTime={it.at}>{formatMyt(it.at, locale)}</time>
             {it.event === 'order.created' && it.orderId ? <Link href={`/orders/${it.orderId}`} className="btn btn-secondary btn-sm">{d('viewOrder')}</Link> : null}
           </p>;

@@ -1908,6 +1908,7 @@
     "navComplaints": "புகார்கள் மற்றும் சமூக நெறிகள்"
   },
   "adm": {
-    "privacyRequests": "தரவு கோரிக்கைகள்"
+    "privacyRequests": "தரவு கோரிக்கைகள்",
+    "orderIssues": "ஆர்டர் சிக்கல்கள்"
   }
 }

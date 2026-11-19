@@ -3,6 +3,7 @@ import { notFound } from 'next/navigation';
 import ActionForm from '@/components/ActionForm';
 import StatusBadge from '@/components/shared/StatusBadge';
 import { Link } from '@/i18n/navigation';
+import { decodeIssueNote, ISSUE_REASONS } from '@/lib/issue-note';
 import { pageTitle } from '@/lib/metadata';
 import { uuidSchema } from '@/lib/schemas';
 import { formatMyt } from '@/lib/time';
@@ -29,6 +30,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
   const side = parties.data.you_are;
   const events = (await listDealEvents(s.supabase, o.enquiry_id)).filter((e) => e.order_id === o.id);
   const money = (v: string) => { const [w, f = ''] = String(v).split('.'); return `${w}.${f.padEnd(2, '0')}`; };
+  const noteText = (n: string) => { const x = decodeIssueNote(n); return x.reason ? `${d(`ir_${x.reason}`)}: ${x.details}` : n; };
   const tone = o.status === 'completed' ? 'green' : o.status === 'disputed' ? 'red' : o.status === 'cancelled' ? 'neutral' : 'gold';
   const mine: { action: OrderAction; note?: 'required' | 'optional' }[] = [];
   if (side === 'seller' && o.status === 'agreed') mine.push({ action: 'start' });
@@ -78,6 +80,18 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
           {mine.map((m) => (
             <ActionForm key={m.action} action={orderActionAction} submitLabel={d(`act_${m.action}`)} variant={m.action === 'dispute' || m.action === 'cancel' ? 'secondary' : 'primary'}>
               <input type="hidden" name="orderId" value={o.id} /><input type="hidden" name="action" value={m.action} />
+              {m.action === 'dispute' ? (
+                <>
+                  <p className="mut">{d('issueHelp')}</p>
+                  <div className="field">
+                    <label htmlFor="issue-reason">{d('issueReason')}</label>
+                    <select id="issue-reason" name="reason" required defaultValue="">
+                      <option value="" disabled>{d('issueReasonChoose')}</option>
+                      {ISSUE_REASONS.map((r) => <option key={r} value={r}>{d(`ir_${r}`)}</option>)}
+                    </select>
+                  </div>
+                </>
+              ) : null}
               {m.note ? (
                 <div className="field">
                   <label htmlFor={`note-${m.action}`}>{m.action === 'mark_delivered' ? d('evidence') : m.action === 'dispute' ? d('issueNote') : d('cancelNote')}</label>
@@ -93,7 +107,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
         <h2 id="o-act">{d('activity')}</h2>
         <ol className="deal-timeline">
           {events.map((e) => (
-            <li key={e.id}><strong>{d(`ev_${e.kind.replace('.', '_')}`)}</strong>{e.note ? <span> · {e.note}</span> : null}<time className="mut" dateTime={e.created_at}> · {formatMyt(e.created_at, locale)}</time></li>
+            <li key={e.id}><strong>{d(`ev_${e.kind.replace('.', '_')}`)}</strong>{e.note ? <span> · {noteText(e.note)}</span> : null}<time className="mut" dateTime={e.created_at}> · {formatMyt(e.created_at, locale)}</time></li>
           ))}
         </ol>
       </section>

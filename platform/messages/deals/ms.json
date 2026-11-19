@@ -139,7 +139,19 @@
     "homeFindText": "Lihat apa yang pelanggan minta.",
     "homeDealsText": "Mesej, sebut harga, permintaan dan pesanan.",
     "homeDetailsText": "Perniagaan anda secara terperinci: kesediaan, semakan dan langkah seterusnya.",
-    "homeOpen": "Buka"
+    "homeOpen": "Buka",
+    "issueHelp": "Cuba selesaikan dengan pihak lain dahulu. INOK tidak memutuskan siapa yang betul dan tidak memegang atau memindahkan wang. Laporan anda direkodkan pada perjanjian ini, pihak lain dimaklumkan, dan kakitangan INOK boleh melihatnya.",
+    "issueReason": "Apa yang tidak kena?",
+    "issueReasonChoose": "Pilih",
+    "ir_not_delivered": "Tidak dihantar",
+    "ir_not_as_agreed": "Tidak seperti dipersetujui",
+    "ir_no_show": "Pihak lain tidak hadir",
+    "ir_other": "Lain-lain",
+    "issuesTitle": "Isu pesanan",
+    "issuesIntro": "Perjanjian yang dilaporkan ada isu oleh pembeli atau penjual. Senarai ini baca sahaja: INOK tidak memutuskan siapa yang betul di sini dan tidak mengendalikan wang.",
+    "issuesEmpty": "Tiada isu dilaporkan.",
+    "issuesNoAccess": "Anda tiada akses kepada senarai ini.",
+    "reportedBy": "Dilaporkan oleh: {who}"
   },
   "errors": {
     "order_not_open": "Perjanjian ini tidak boleh diubah lagi.",

@@ -37,6 +37,15 @@ async function rpc<T>(db: Db, name: string, args: Record<string, unknown>): Prom
   const { data, error } = await db.rpc(name, args);
   return error ? failFrom(error) : ok(data as T);
 }
+export interface OrderIssueRow {
+  id: string; reference: string; enquiry_id: string; currency: string; total: string; buyer_name: string; seller_name: string;
+  reported_at: string; note: string | null; reported_by: 'buyer' | 'seller';
+}
+/** INOK staff (report:view) only: agreements with a reported issue. Read only; the database answers not_found to anyone else. */
+export async function listOrderIssues(db: Db): Promise<Result<OrderIssueRow[]>> {
+  const { data, error } = await db.rpc('admin_order_issues', { p_limit: 100 });
+  return error ? failFrom(error) : ok((data ?? []) as OrderIssueRow[]);
+}
 export const orderAction = (db: Db, orderId: string, action: OrderAction, note: string | null) => rpc<string>(db, 'order_action', { p_order: orderId, p_action: action, p_note: note });
 export const setOrderDetails = (db: Db, orderId: string, serviceDate: string | null, depositNote: string | null) =>
   rpc<null>(db, 'set_order_details', { p_order: orderId, p_service_date: serviceDate, p_deposit_note: depositNote });
