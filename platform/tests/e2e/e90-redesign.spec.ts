@@ -4,6 +4,7 @@ import { actorGoto, createAdmin } from './support/p5-admin';
 import { claimOf, createBusinessOwner, createReviewer, onboardUi, reviewerGoto, submittedBusiness } from './support/biz';
 import { createUser, sql, uniq, type TestUser } from './support/db';
 import { msg } from './support/i18n';
+import { dl, openPanelSection, openQuoteEditor } from './support/deals-ui';
 import { expectNoHorizontalScroll, freshContext, loginUi } from './support/ui';
 
 // E90: the redesign. Every new control is used for real: the public home and directory, the owner dashboard, products and services
@@ -238,11 +239,11 @@ test.describe.serial('business workspace journey', () => {
 
     // Messages: the list, then a reply shows as a bubble on the right.
     await page.goto('/en/enquiries');
-    await expect(page.getByRole('heading', { level: 1, name: t('biz2.messages.title') })).toBeVisible();
+    await expect(page.getByRole('heading', { level: 1, name: dl('myDeals') })).toBeVisible();
     await page.getByRole('navigation', { name: t('biz2.messages.list') }).getByRole('link', { name: new RegExp(`100 polo shirts ${tag}`) }).click();
     await expect(page.getByRole('heading', { level: 1 })).toHaveText(`100 polo shirts ${tag}`);
     await page.getByLabel('Reply').or(page.locator('#reply-body')).fill('We can do navy collars by next Friday.');
-    await page.getByRole('button', { name: msg('en', 'p4.sendReply'), exact: true }).click();
+    await page.getByRole('button', { name: dl('send'), exact: true }).click();
     await expect(page.locator('.bub.me', { hasText: 'navy collars' })).toBeVisible();
     await page.screenshot({ path: 'test-results/redesign/messages.png', fullPage: true });
     await axe(page, 'messages');

@@ -27,6 +27,17 @@ export const KNOWN_KINDS = new Set([
   'sourcing_quote_reminder',
   'join_requested',
   'duplicate_flagged',
+  'quote_sent',
+  'quote_revision_requested',
+  'quote_accepted',
+  'quote_declined',
+  'quote_withdrawn',
+  'order_created',
+  'order_in_progress',
+  'order_buyer_confirmation_pending',
+  'order_completed',
+  'order_cancelled',
+  'order_disputed',
 ]);
 
 export const GOV_CATEGORIES = new Set(['new_match', 'opens', 'deadline', 'rule_change', 'unavailable', 'reminder', 'recheck']);
@@ -41,6 +52,7 @@ export function notificationTarget(n: NotificationRow): string | null {
   if (n.entity_type === 'buyer_request' && n.entity_id) {
     return n.kind === 'request.invited' && n.org_id ? `/orgs/${n.org_id}/business/requests/${n.entity_id}` : `/requests/${n.entity_id}`;
   }
+  if (n.entity_type === 'order' && n.entity_id) return `/orders/${n.entity_id}`;
   if (n.entity_type === 'enquiry' && n.entity_id) return `/enquiries/${n.entity_id}`;
   if (n.entity_type === 'sourcing_rfq' && n.entity_id && n.org_id) return `/sourcing/${n.entity_id}?partner=${n.org_id}`;
   return null;

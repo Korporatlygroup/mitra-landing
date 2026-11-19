@@ -4,6 +4,7 @@ import { tb } from './support/p5-buyer';
 import { actorGoto, call, createAdmin } from './support/p5-admin';
 import { sql } from './support/db';
 import { msg } from './support/i18n';
+import { dl, openPanelSection, openQuoteEditor } from './support/deals-ui';
 import { freshContext, loginUi } from './support/ui';
 import { seedDemo, type DemoData } from './support/demo-seed';
 import { ENABLED, WIDTHS_ALL, shot } from './support/qa-evidence';
@@ -101,7 +102,7 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await shot(page, { role: 'seller', journey: J, step: '05-seller-reads-first-message', title: 'Seller reads the buyer message', expected: 'First message visible in the thread', observed: 'Opening note shown', widths: WIDTHS_ALL });
   const m2 = 'Yes, we can supply them. Could you confirm the dimensions, material and delivery location?';
   await page.locator('#reply-body').fill(m2);
-  await page.getByRole('button', { name: t('p4.sendReply') }).click();
+  await page.getByRole('button', { name: dl('send') }).click();
   await expect(page.locator('main')).toContainText(m2);
   await shot(page, { role: 'seller', journey: J, step: '06-seller-replies', title: 'Seller replies', expected: 'Reply appears as the seller message', observed: 'Reply persisted and shown' });
 
@@ -115,7 +116,7 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await shot(bp, { role: 'buyer', journey: J, step: '07-buyer-receives-response', title: 'Buyer receives the seller response', expected: 'Seller reply visible', observed: 'Thread shows the reply', widths: WIDTHS_ALL });
   const m3 = 'The size is 30 × 20 × 15 cm, corrugated cardboard, delivery to Kuala Lumpur.';
   await bp.locator('#reply-body').fill(m3);
-  await bp.getByRole('button', { name: t('p4.sendReply') }).click();
+  await bp.getByRole('button', { name: dl('send') }).click();
   await expect(bp.locator('main')).toContainText(m3);
 
   // 8-9 seller answers and prepares + submits the quotation
@@ -123,8 +124,9 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await expect(page.locator('main')).toContainText(m3);
   const m4 = 'Thank you. I have prepared a quotation for your request. Please review the price and delivery terms.';
   await page.locator('#reply-body').fill(m4);
-  await page.getByRole('button', { name: t('p4.sendReply') }).click();
+  await page.getByRole('button', { name: dl('send') }).click();
   await expect(page.locator('main')).toContainText(m4);
+  await openQuoteEditor(page);
   await page.locator('#scope').fill('100 custom corrugated boxes, 30 x 20 x 15 cm, delivered to Kuala Lumpur');
   await page.locator('#description1').fill('Corrugated packaging box');
   await page.locator('#quantity1').fill('100');
@@ -135,7 +137,7 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await shot(page, { role: 'seller', journey: J, step: '08-seller-creates-quotation', title: 'Seller prepares the quotation', expected: 'Quotation form with scope, line item, validity, delivery', observed: 'Form filled', widths: WIDTHS_ALL });
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();
-  await expect(page.locator('main')).toContainText('MYR 320.00');
+  await expect(page.locator('body')).toContainText('MYR 320.00');
   await page.getByRole('button', { name: t('p4.sendQuote') }).click();
   await shot(page, { role: 'seller', journey: J, step: '09-seller-submits-quotation', title: 'Seller submitted the quotation', expected: 'Quotation shows as sent', observed: 'MYR 320.00 version 1 sent' });
 
@@ -143,8 +145,8 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await bp.reload();
   await expect(bp.getByText('MYR 320.00').first()).toBeVisible();
   await shot(bp, { role: 'buyer', journey: J, step: '10-buyer-opens-quotation', title: 'Buyer opens the quotation', expected: 'Quotation visible with amount and terms', observed: 'MYR 320.00 shown', widths: WIDTHS_ALL });
-  await bp.getByRole('button', { name: t('p4.accept') }).click();
-  await expect(bp.getByText(t('p4.selectedNotice'))).toBeVisible();
+  await bp.getByRole('button', { name: dl('accept') }).click();
+  await expect(bp.locator('main')).toContainText(dl('ev_order_created'));
   await shot(bp, { role: 'buyer', journey: J, step: '11-buyer-accepts-quotation', title: 'Buyer accepts the quotation', expected: 'Selection notice shown', observed: 'Quotation accepted' });
 
   // 12 final status, refresh, both sides

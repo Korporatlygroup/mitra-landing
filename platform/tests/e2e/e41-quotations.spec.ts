@@ -3,6 +3,7 @@ import { createBusinessOwner } from './support/biz';
 import { createOrgAs, createUser, signedClient, sql } from './support/db';
 import { msg } from './support/i18n';
 import { adminLogin, freshContext, loginUi, logoutUi } from './support/ui';
+import { dl, openPanelSection, openQuoteEditor, requestChanges } from './support/deals-ui';
 
 const t = (key: string) => msg('en', key);
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
@@ -23,9 +24,10 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await page.goto(url);
   await expect(page.getByRole('heading', { level: 1 })).toHaveText('Synthetic uniforms needed');
   await page.locator('#reply-body').fill('We can make these uniforms.');
-  await page.getByRole('button', { name: t('p4.sendReply') }).click();
+  await page.getByRole('button', { name: dl('send') }).click();
   await expect(page.locator('main')).toContainText('We can make these uniforms.');
 
+  await openQuoteEditor(page);
   await page.locator('#scope').fill('100 custom uniforms');
   await page.locator('#description1').fill('Uniforms');
   await page.locator('#quantity1').fill('100');
@@ -35,7 +37,7 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await page.locator('#deliveryTiming').fill('Within three weeks');
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();
-  await expect(page.locator('main')).toContainText('MYR 1250.00');
+  await expect(page.locator('body')).toContainText('MYR 1250.00');
   await page.getByRole('button', { name: t('p4.sendQuote') }).click();
   await expect(page.locator('main')).toContainText('100 custom uniforms');
 
@@ -44,11 +46,11 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await loginUi(bp, buyer, 'en');
   await bp.goto(url);
   await expect(bp.locator('main')).toContainText('MYR 1250.00');
-  await bp.locator('#revision-reason').fill('Please include 10 extra shirts.');
-  await bp.getByRole('button', { name: t('p4.requestChange') }).click();
+  await requestChanges(bp, 'Please include 10 extra shirts.');
   await expect(bp.locator('main')).toContainText('Please include 10 extra shirts.');
 
   await page.reload();
+  await openQuoteEditor(page);
   await page.locator('#scope').fill('110 custom uniforms and shirts');
   await page.locator('#description1').fill('Uniforms and shirts');
   await page.locator('#quantity1').fill('110');
@@ -65,8 +67,8 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await bp.reload();
   await expect(bp.getByText('Version 2')).toBeVisible();
   await expect(bp.getByText('MYR 1375.00').first()).toBeVisible();
-  await bp.getByRole('button', { name: t('p4.accept') }).click();
-  await expect(bp.getByText(t('p4.selectedNotice'))).toBeVisible();
+  await bp.getByRole('button', { name: dl('accept') }).click();
+  await expect(bp.locator('main')).toContainText(dl('ev_order_created'));
   const quote = (await sql<{ status: string; accepted_version_id: string; current_version_id: string }>(
     `select status,accepted_version_id,current_version_id from public.quotations where enquiry_id=$1`, [enquiryId],
   ))[0]!;
@@ -76,16 +78,18 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await page.goto(`/en/orgs/${seller.orgId}/business/leads`);
   await expect(page.locator('main')).toContainText(t('p4.leadsTitle'));
   await page.goto(url);
+  await openPanelSection(page, t('p4.lead'));
   await page.locator('#stage').selectOption('reported_won');
   await page.locator('#lead-note').fill('Customer selected the offer; payment is not recorded.');
   await page.getByRole('button', { name: t('p4.saveLead') }).click();
-  await expect(page.locator('main')).toContainText('Customer selected the offer');
+  await expect(page.locator('body')).toContainText('Customer selected the offer');
 
   await bp.reload();
+  await openPanelSection(bp, t('p4.review'));
   await expect(bp.locator('main')).not.toContainText('Customer selected the offer');
   await bp.locator('#review-text').fill(reviewText);
   await bp.getByRole('button', { name: t('p4.submitReview') }).click();
-  await expect(bp.locator('main')).toContainText(reviewText);
+  await expect(bp.locator('body')).toContainText(reviewText);
   const adminContext = await freshContext(browser, page);
   const adminPage = await adminContext.newPage();
   await adminLogin(adminPage);
@@ -100,9 +104,10 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await adminPage.reload();
   await expect(reviewCard).toHaveCount(0);
   await page.goto(url);
+  await openPanelSection(page, t('p4.review'));
   await page.locator('#seller-response').fill('Thank you for the clear request.');
   await page.getByRole('button', { name: t('p4.sendResponse') }).click();
-  await expect(page.locator('main')).toContainText('Thank you for the clear request.');
+  await expect(page.locator('body')).toContainText('Thank you for the clear request.');
   await adminPage.goto('/en/admin/reviews');
   const responseCard = adminPage.locator('li.rrow').filter({ hasText: reviewText }).filter({ hasText: 'Thank you for the clear request.' });
   await responseCard.locator('summary').click();
@@ -111,7 +116,8 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await expect.poll(async () => (await sql<{ seller_response_status: string }>('select seller_response_status from public.business_reviews where id=$1', [reviewId]))[0]?.seller_response_status).toBe('published');
   await adminContext.close();
   await bp.reload();
-  await expect(bp.locator('main')).toContainText('Thank you for the clear request.');
+  await openPanelSection(bp, t('p4.review'));
+  await expect(bp.locator('body')).toContainText('Thank you for the clear request.');
   await logoutUi(bp, 'en');
   await loginUi(bp, buyer, 'en');
   await bp.goto(url);

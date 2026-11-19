@@ -25,6 +25,9 @@ import msCommon from '../../messages/p5/common.ms.json';
 import enSourcing from '../../messages/p6/en.json';
 import taSourcing from '../../messages/p6/ta.json';
 import msSourcing from '../../messages/p6/ms.json';
+import enDeals from '../../messages/deals/en.json';
+import taDeals from '../../messages/deals/ta.json';
+import msDeals from '../../messages/deals/ms.json';
 
 // Phase 5 strings live in messages/p5/<area>.<locale>.json (top-level namespaces p5partner, p5buyer, p5admin, p5common) so that
 // several people can work on them at once. They are merged here, once, for the app, the unit tests and (by file read) the browser tests.
@@ -43,9 +46,9 @@ const merge = (...parts: Tree[]): Tree => {
 };
 
 export const MESSAGES = {
-  en: merge(en, enPartner, enBuyer, enAdmin, enCommon, enSourcing, enRd, enP7User, enP7Admin),
-  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon, taSourcing, taRd, taP7User, taP7Admin),
-  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon, msSourcing, msRd, msP7User, msP7Admin),
+  en: merge(en, enPartner, enBuyer, enAdmin, enCommon, enSourcing, enRd, enP7User, enP7Admin, enDeals),
+  ta: merge(ta, taPartner, taBuyer, taAdmin, taCommon, taSourcing, taRd, taP7User, taP7Admin, taDeals),
+  ms: merge(ms, msPartner, msBuyer, msAdmin, msCommon, msSourcing, msRd, msP7User, msP7Admin, msDeals),
 } as const;
 
 export type Locale = keyof typeof MESSAGES;

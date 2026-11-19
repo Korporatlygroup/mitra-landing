@@ -125,6 +125,8 @@ export const KNOWN_MESSAGE_KEYS = [
   'invalid_lines', 'all_lines_required', 'duplicate_partner', 'partner_not_available',
   'invalid_item', 'invalid_items', 'invalid_specification', 'invalid_total', 'invalid_file',
   'quote_not_open', 'supplier_changed', 'invalid_transition', 'counter_not_open', 'invitation_not_accepted',
+  // Deals (orders)
+  'order_not_open', 'invalid_order_action', 'note_required',
 ] as const;
 
 /**

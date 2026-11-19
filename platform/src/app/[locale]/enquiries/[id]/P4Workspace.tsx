@@ -1,153 +1,189 @@
 import { randomUUID } from 'node:crypto';
-import { getLocale, getTranslations } from 'next-intl/server';
-import { formatMyt } from '@/lib/time';
+import { getFormatter, getLocale, getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
+import QuoteDialog from '@/components/deals/QuoteDialog';
+import { Link } from '@/i18n/navigation';
+import { formatMyt } from '@/lib/time';
+import { listDealEvents } from '@/server/services/deals';
+import { getEnquiryWorkspace, type QuoteVersionRow } from '@/server/services/enquiries';
 import { calculateQuote } from '@/server/services/quote-calculation';
-import { getEnquiryWorkspace } from '@/server/services/enquiries';
 import type { Db } from '@/server/services/result';
-import { messageAction, saveQuoteAction, sendQuoteAction, respondQuoteAction, withdrawQuoteAction, leadAction, referralAction, respondReferralAction, reviewAction, reviewResponseAction } from './actions';
+import { messageAction, saveQuoteAction, sendQuoteAction, respondQuoteAction, withdrawQuoteAction } from './actions';
 
-const field = (value: unknown) => typeof value === 'string' ? value : '';
+const field = (value: unknown) => (typeof value === 'string' ? value : '');
 const amount = (value: string | number) => { const [whole, fraction = ''] = String(value).split('.'); return `${whole}.${fraction.padEnd(2, '0')}`; };
 
-export default async function P4Workspace({ db, enquiryId, side, buyerOrgId }: {
-  db: Db; enquiryId: string; side: 'buyer' | 'seller'; buyerOrgId: string;
+type Item =
+  | { at: string; kind: 'msg'; id: string; body: string; fromBuyer: boolean }
+  | { at: string; kind: 'quote'; id: string; version: QuoteVersionRow }
+  | { at: string; kind: 'event'; id: string; event: string; orderId: string | null; note: string | null };
+
+/**
+ * The conversation: messages, quotation cards and real transaction events in time order, then the composer. Every card and event
+ * comes from a stored record (messages, quotation versions, deal_events); nothing is invented for display.
+ */
+export default async function P4Workspace({ db, enquiryId, side, buyerOrgId, sellerName, before }: {
+  db: Db; enquiryId: string; side: 'buyer' | 'seller'; buyerOrgId: string; sellerName: string; before?: string | null;
 }) {
   const t = await getTranslations('p4');
+  const d = await getTranslations('deals');
   const tc = await getTranslations('enq');
   const locale = await getLocale();
-  const w = await getEnquiryWorkspace(db, enquiryId);
-  const latest = w.versions.find((version) => version.id === w.quote?.current_version_id);
+  const fmt = await getFormatter({ locale });
+  const [w, events] = await Promise.all([getEnquiryWorkspace(db, enquiryId, before), listDealEvents(db, enquiryId)]);
   const draft = w.draft;
-  const draftLines = Array.isArray(draft?.lines) ? draft.lines as Record<string, unknown>[] : [];
+  const draftLines = Array.isArray(draft?.lines) ? (draft.lines as Record<string, unknown>[]) : [];
+  const nowMs = new Date().getTime();
   let preview: string | null = null;
   if (draft && draftLines.length) {
     try {
       preview = calculateQuote({ currency: 'MYR', lines: draftLines.map((l) => ({ description: field(l.description), quantity: field(l.quantity), unit: field(l.unit), unitPrice: field(l.unit_price) })),
         deliveryFee: field(draft.delivery_fee), taxAmount: field(draft.tax_amount) }).total;
-    } catch { /* Invalid saved draft stays editable; the server rejects send. */ }
+    } catch { /* an invalid saved draft stays editable; the server rejects sending it */ }
   }
 
-  return <>
+  const firstShown = w.messages[0]?.created_at ?? null;
+  const items: Item[] = [
+    ...w.messages.map((m): Item => ({ at: m.created_at, kind: 'msg', id: m.id, body: m.body, fromBuyer: m.sender_org_id === buyerOrgId })),
+    ...events.filter((e) => !(w.hasEarlier || before) || !firstShown || e.created_at >= firstShown).flatMap((e): Item[] => {
+      if (e.kind === 'quote.sent') {
+        const v = w.versions.find((x) => x.id === e.ref_id);
+        return v ? [{ at: e.created_at, kind: 'quote', id: e.id, version: v }] : [];
+      }
+      return [{ at: e.created_at, kind: 'event', id: e.id, event: e.kind, orderId: e.order_id, note: e.note }];
+    }),
+  ].sort((a, b) => a.at.localeCompare(b.at));
+
+  const statusOf = (v: QuoteVersionRow): { key: string; actionable: boolean } => {
+    if (v.id !== w.quote?.current_version_id) return { key: 'outdated', actionable: false };
+    if (w.quote.status === 'sent' && new Date(v.valid_until).getTime() <= nowMs) return { key: 'expired', actionable: false };
+    return { key: w.quote.status, actionable: w.quote.status === 'sent' };
+  };
+
+  const quoteCard = (v: QuoteVersionRow, id: string) => {
+    const st = statusOf(v);
+    const lines = w.items.filter((i) => i.quote_version_id === v.id);
+    return (
+      <article key={id} className="qcard" aria-label={`${d('quoteCard')} ${v.version_number}`} data-quote-status={st.key}>
+        <header className="qcard-head">
+          <strong>{d('quoteCard')} · {d('quoteVersion', { n: v.version_number })}</strong>
+          <span className={`chip-x ${st.key === 'accepted' ? 'green' : st.key === 'sent' ? 'gold' : ''}`}>{st.key === 'outdated' ? d('qs_withdrawn') : d(`qs_${st.key}`)}</span>
+        </header>
+        <p className="mut qcard-sub">{d('quoteBy', { name: sellerName })} · {d('validUntil', { date: fmt.dateTime(new Date(v.valid_until), { dateStyle: 'medium', timeZone: 'Asia/Kuala_Lumpur' }) })}</p>
+        <p style={{ margin: '0 0 8px' }}>{v.scope_text}</p>
+        <ul className="qcard-lines">{lines.map((i) => <li key={i.id}><span>{i.description} · {i.quantity} {i.unit} × {amount(i.unit_price)}</span><span>{v.currency} {amount(i.line_total)}</span></li>)}</ul>
+        <p className="qcard-total"><span>{d('quoteTotal')}</span><strong>{v.currency} {amount(v.total)}</strong></p>
+        <p className="mut" style={{ margin: 0 }}>{d('quoteDelivery')}: {v.delivery_timing}</p>
+        {v.terms_text ? <p className="mut" style={{ margin: '4px 0 0' }}>{d('quoteTerms')}: {v.terms_text}</p> : null}
+        {v.exclusions ? <p className="mut" style={{ margin: '4px 0 0' }}>{d('quoteExclusions')}: {v.exclusions}</p> : null}
+        {st.key === 'outdated' ? <p className="mut" style={{ margin: '6px 0 0' }}>{d('quoteOutdated')}</p> : null}
+        {st.key === 'expired' ? <p className="mut" style={{ margin: '6px 0 0' }}>{d('quoteExpired')}</p> : null}
+        {side === 'buyer' && st.actionable && w.quote ? (
+          <div className="qcard-actions">
+            <p className="mut" style={{ margin: 0 }}>{d('acceptNote')}</p>
+            {(['accept', 'decline'] as const).map((decision) => (
+              <ActionForm key={decision} action={respondQuoteAction} submitLabel={d(decision)} variant={decision === 'decline' ? 'secondary' : 'primary'}>
+                <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote!.id} />
+                <input type="hidden" name="versionId" value={v.id} /><input type="hidden" name="expectedVersion" value={w.quote!.version} />
+                <input type="hidden" name="decision" value={decision} />
+              </ActionForm>
+            ))}
+            <details>
+              <summary className="btn btn-secondary">{d('requestChanges')}</summary>
+              <ActionForm action={respondQuoteAction} submitLabel={d('requestChanges')} variant="secondary">
+                <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote.id} />
+                <input type="hidden" name="versionId" value={v.id} /><input type="hidden" name="expectedVersion" value={w.quote.version} />
+                <input type="hidden" name="decision" value="request_revision" />
+                <label htmlFor="revision-reason">{d('changeReason')}</label>
+                <textarea id="revision-reason" name="reason" minLength={3} maxLength={1000} required />
+              </ActionForm>
+            </details>
+          </div>
+        ) : null}
+        {side === 'seller' && st.key === 'sent' && w.quote ? (
+          <div className="qcard-actions">
+            <ActionForm action={withdrawQuoteAction} submitLabel={d('withdraw')} variant="secondary">
+              <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote.id} /><input type="hidden" name="expectedVersion" value={w.quote.version} />
+            </ActionForm>
+          </div>
+        ) : null}
+      </article>
+    );
+  };
+
+  const canEditQuote = side === 'seller' && (!w.quote || ['draft', 'revision_requested'].includes(w.quote.status));
+  const editor = (
+    <>
+      <ActionForm action={saveQuoteAction} submitLabel={t('saveDraft')} variant="secondary">
+        <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="expectedVersion" value={w.quote?.version ?? 0} />
+        <div className="field"><label htmlFor="scope">{t('scope')}</label><textarea id="scope" name="scope" minLength={3} maxLength={2000} required defaultValue={field(draft?.scope)} /></div>
+        {[1, 2, 3, 4, 5].map((n) => {
+          const line = draftLines[n - 1] ?? {};
+          return <fieldset key={n}><legend>{t('description')} {n}</legend>
+            <div className="field"><label htmlFor={`description${n}`}>{t('description')}</label><input id={`description${n}`} name={`description${n}`} maxLength={500} required={n === 1} defaultValue={field(line.description)} /></div>
+            <div className="field"><label htmlFor={`quantity${n}`}>{t('quantity')}</label><input id={`quantity${n}`} name={`quantity${n}`} inputMode="decimal" required={n === 1} defaultValue={field(line.quantity)} /></div>
+            <div className="field"><label htmlFor={`unit${n}`}>{t('unit')}</label><input id={`unit${n}`} name={`unit${n}`} maxLength={40} required={n === 1} defaultValue={field(line.unit)} /></div>
+            <div className="field"><label htmlFor={`unitPrice${n}`}>{t('unitPrice')}</label><input id={`unitPrice${n}`} name={`unitPrice${n}`} inputMode="decimal" required={n === 1} defaultValue={field(line.unit_price)} /></div>
+          </fieldset>;
+        })}
+        <div className="field"><label htmlFor="deliveryFee">{t('deliveryFee')}</label><input id="deliveryFee" name="deliveryFee" inputMode="decimal" defaultValue={field(draft?.delivery_fee) || '0'} /></div>
+        <div className="field"><label htmlFor="taxAmount">{t('taxAmount')}</label><input id="taxAmount" name="taxAmount" inputMode="decimal" defaultValue={field(draft?.tax_amount) || '0'} /></div>
+        <div className="field"><label htmlFor="taxTreatment">{t('taxTreatment')}</label><input id="taxTreatment" name="taxTreatment" minLength={3} maxLength={500} required defaultValue={field(draft?.tax_treatment)} /></div>
+        <div className="field"><label htmlFor="deliveryTiming">{t('deliveryTiming')}</label><input id="deliveryTiming" name="deliveryTiming" minLength={3} maxLength={500} required defaultValue={field(draft?.delivery_timing)} /></div>
+        <div className="field"><label htmlFor="validUntil">{t('validUntil')}</label><input id="validUntil" type="date" name="validUntil" required defaultValue={field(draft?.valid_until).slice(0, 10)} /></div>
+        <div className="field"><label htmlFor="terms">{t('terms')}</label><textarea id="terms" name="terms" maxLength={2000} defaultValue={field(draft?.terms)} /></div>
+        <div className="field"><label htmlFor="exclusions">{t('exclusions')}</label><textarea id="exclusions" name="exclusions" maxLength={2000} defaultValue={field(draft?.exclusions)} /></div>
+      </ActionForm>
+      {draft && w.quote ? (
+        <div className="qcard" style={{ marginTop: 12 }}>
+          <strong>{d('previewTitle')}</strong>
+          <p className="mut" style={{ margin: '4px 0' }}>{d('previewNote')}</p>
+          <p style={{ margin: '0 0 6px' }}>{field(draft.scope)}</p>
+          <p className="qcard-total"><span>{d('quoteTotal')}</span><strong>MYR {preview ?? '—'}</strong></p>
+          <ActionForm action={sendQuoteAction} submitLabel={t('sendQuote')}>
+            <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote.id} />
+            <input type="hidden" name="expectedVersion" value={w.quote.version} />
+          </ActionForm>
+        </div>
+      ) : null}
+    </>
+  );
+
+  return (
     <section aria-labelledby="conversation-title" className="conv">
-      <h2 id="conversation-title" className="conv-h">{t('conversation')}</h2>
+      <h2 id="conversation-title" className="sr">{t('conversation')}</h2>
       <div className="msg-body" data-testid="conversation">
-        {w.messages.length ? w.messages.map((m) => {
-          const fromBuyer = m.sender_org_id === buyerOrgId;
-          const mine = fromBuyer === (side === 'buyer');
-          return <div key={m.id} className={mine ? 'bub me' : 'bub them'}>
-            {m.body}
-            <time className="bub-meta" dateTime={m.created_at}>{fromBuyer ? tc('buyer') : tc('seller')} · {formatMyt(m.created_at, locale)}</time>
-          </div>;
-        }) : <p className="mut">{t('noMessages')}</p>}
+        {w.hasEarlier && w.messages[0] ? (
+          <p className="deal-earlier"><Link href={`/enquiries/${enquiryId}?before=${encodeURIComponent(w.messages[0].created_at)}`} className="btn btn-secondary btn-sm">{d('earlier')}</Link></p>
+        ) : null}
+        {items.length === 0 ? <p className="mut">{d('noMessages')}</p> : null}
+        {items.map((it) => {
+          if (it.kind === 'msg') {
+            const mine = it.fromBuyer === (side === 'buyer');
+            return <div key={it.id} className={mine ? 'bub me' : 'bub them'}>
+              {it.body}
+              <time className="bub-meta" dateTime={it.at}>{it.fromBuyer ? tc('buyer') : tc('seller')} · {formatMyt(it.at, locale)}</time>
+            </div>;
+          }
+          if (it.kind === 'quote') return quoteCard(it.version, it.id);
+          return <p key={it.id} className="deal-event" data-event={it.event}>
+            <span>{d(`ev_${it.event.replace('.', '_')}`)}{it.note ? ` · ${it.note}` : ''}</span>
+            <time dateTime={it.at}>{formatMyt(it.at, locale)}</time>
+            {it.event === 'order.created' && it.orderId ? <Link href={`/orders/${it.orderId}`} className="btn btn-secondary btn-sm">{d('viewOrder')}</Link> : null}
+          </p>;
+        })}
       </div>
       <div className="msg-composer">
-        <ActionForm action={messageAction} submitLabel={t('sendReply')}>
+        <ActionForm action={messageAction} submitLabel={d('send')}>
           <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="key" value={randomUUID()} />
-          <label htmlFor="reply-body">{t('reply')}</label><textarea id="reply-body" name="body" maxLength={4000} required rows={3} />
+          <label htmlFor="reply-body">{d('composerLabel')}</label><textarea id="reply-body" name="body" maxLength={4000} required rows={2} />
         </ActionForm>
-        <p style={{ margin: '8px 0 0' }}><a href="#quote-title" className="btn btn-secondary btn-sm">{t('quote')}</a></p>
+        {canEditQuote ? (
+          <p style={{ margin: '8px 0 0' }}>
+            <QuoteDialog buttonLabel={draft ? d('editQuote') : d('createQuote')} title={d('quoteEditorTitle')} hint={d('quoteEditorHint')} closeLabel={d('close')}>{editor}</QuoteDialog>
+          </p>
+        ) : null}
       </div>
     </section>
-
-    <section aria-labelledby="quote-title" className="card">
-      <h2 id="quote-title">{t('quote')}</h2>
-      {latest ? <>
-        <p><strong>{t('version')} {latest.version_number}</strong> · {w.quote?.status} · {t('expires')} <time dateTime={latest.valid_until}>{new Date(latest.valid_until).toLocaleDateString()}</time></p>
-        <p>{latest.scope_text}</p>
-        <ul>{w.items.filter((i) => i.quote_version_id === latest.id).map((i) => <li key={i.id}>{i.description}: {i.quantity} {i.unit} × MYR {amount(i.unit_price)} = MYR {amount(i.line_total)}</li>)}</ul>
-        <p>{t('subtotal')}: MYR {amount(latest.subtotal)} · {t('deliveryFee')}: MYR {amount(latest.delivery_fee)} · {t('taxAmount')}: MYR {amount(latest.tax_amount)}</p>
-        <p><strong>{t('total')}: MYR {amount(latest.total)}</strong></p>
-        <p>{latest.tax_treatment} · {latest.delivery_timing}</p>
-        {latest.exclusions ? <p>{t('exclusions')}: {latest.exclusions}</p> : null}
-        {latest.terms_text ? <p>{t('terms')}: {latest.terms_text}</p> : null}
-        {w.quote?.status === 'accepted' ? <p className="banner">{t('selectedNotice')}</p> : null}
-      </> : <p>{t('noQuote')}</p>}
-
-      {side === 'buyer' && latest && w.quote?.status === 'sent' ? <div className="form-grid">
-        <ActionForm action={respondQuoteAction} submitLabel={t('requestChange')}>
-          <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote.id} />
-          <input type="hidden" name="versionId" value={latest.id} /><input type="hidden" name="expectedVersion" value={w.quote.version} />
-          <input type="hidden" name="decision" value="request_revision" /><label htmlFor="revision-reason">{t('revisionReason')}</label>
-          <textarea id="revision-reason" name="reason" minLength={3} maxLength={1000} required />
-        </ActionForm>
-        {(['accept', 'decline'] as const).map((decision) => <ActionForm key={decision} action={respondQuoteAction} submitLabel={t(decision)} variant={decision === 'decline' ? 'secondary' : 'primary'}>
-          <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote!.id} />
-          <input type="hidden" name="versionId" value={latest.id} /><input type="hidden" name="expectedVersion" value={w.quote!.version} />
-          <input type="hidden" name="decision" value={decision} />
-        </ActionForm>)}
-      </div> : null}
-
-      {side === 'seller' && (!w.quote || ['draft','revision_requested'].includes(w.quote.status)) ? <>
-        <h3>{t('quoteBuilder')}</h3><p>{t('draftOnlySeller')}</p>
-        <ActionForm action={saveQuoteAction} submitLabel={t('saveDraft')}>
-          <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="expectedVersion" value={w.quote?.version ?? 0} />
-          <label htmlFor="scope">{t('scope')}</label><textarea id="scope" name="scope" minLength={3} maxLength={2000} required defaultValue={field(draft?.scope)} />
-          {[1,2,3,4,5].map((n) => {
-            const line = draftLines[n-1] ?? {};
-            return <fieldset key={n}><legend>{t('description')} {n}</legend>
-              <div className="field"><label htmlFor={`description${n}`}>{t('description')}</label><input id={`description${n}`} name={`description${n}`} maxLength={500} required={n===1} defaultValue={field(line.description)} /></div>
-              <div className="field"><label htmlFor={`quantity${n}`}>{t('quantity')}</label><input id={`quantity${n}`} name={`quantity${n}`} inputMode="decimal" required={n===1} defaultValue={field(line.quantity)} /></div>
-              <div className="field"><label htmlFor={`unit${n}`}>{t('unit')}</label><input id={`unit${n}`} name={`unit${n}`} maxLength={40} required={n===1} defaultValue={field(line.unit)} /></div>
-              <div className="field"><label htmlFor={`unitPrice${n}`}>{t('unitPrice')}</label><input id={`unitPrice${n}`} name={`unitPrice${n}`} inputMode="decimal" required={n===1} defaultValue={field(line.unit_price)} /></div>
-            </fieldset>;
-          })}
-          <label htmlFor="validUntil">{t('validUntil')}</label><input id="validUntil" type="date" name="validUntil" required defaultValue={field(draft?.valid_until).slice(0,10)} />
-          <label htmlFor="deliveryTiming">{t('deliveryTiming')}</label><input id="deliveryTiming" name="deliveryTiming" minLength={3} maxLength={500} required defaultValue={field(draft?.delivery_timing)} />
-          <label htmlFor="taxTreatment">{t('taxTreatment')}</label><input id="taxTreatment" name="taxTreatment" minLength={3} maxLength={500} required defaultValue={field(draft?.tax_treatment)} />
-          <details><summary>{t('terms')}</summary>
-            <label htmlFor="exclusions">{t('exclusions')}</label><textarea id="exclusions" name="exclusions" maxLength={2000} defaultValue={field(draft?.exclusions)} />
-            <label htmlFor="deliveryFee">{t('deliveryFee')}</label><input id="deliveryFee" name="deliveryFee" inputMode="decimal" defaultValue={field(draft?.delivery_fee) || '0'} />
-            <label htmlFor="taxAmount">{t('taxAmount')}</label><input id="taxAmount" name="taxAmount" inputMode="decimal" defaultValue={field(draft?.tax_amount) || '0'} />
-            <label htmlFor="terms">{t('terms')}</label><textarea id="terms" name="terms" maxLength={2000} defaultValue={field(draft?.terms)} />
-          </details>
-        </ActionForm>
-        {draft ? <div className="card"><h3>{t('preview')}</h3><p>{field(draft.scope)}</p><p>{t('total')}: MYR {preview ?? '—'}</p>
-          <ActionForm action={sendQuoteAction} submitLabel={t('sendQuote')}>
-            <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote!.id} />
-            <input type="hidden" name="expectedVersion" value={w.quote!.version} />
-          </ActionForm></div> : null}
-      </> : null}
-      {side === 'seller' && w.quote?.status === 'sent' ? <ActionForm action={withdrawQuoteAction} submitLabel={t('withdraw')} variant="secondary">
-        <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote.id} /><input type="hidden" name="expectedVersion" value={w.quote.version} />
-      </ActionForm> : null}
-      {w.versions.length > 1 ? <details><summary>{t('quoteHistory')}</summary><ol>{w.versions.slice(1).map((v) => <li key={v.id}>{t('version')} {v.version_number}: MYR {amount(v.total)} · {v.scope_text}</li>)}</ol></details> : null}
-    </section>
-
-    {side === 'seller' ? <section className="card"><h2>{t('lead')}</h2><p>{t('sellerOnly')}</p>
-      <ActionForm action={leadAction} submitLabel={t('saveLead')}>
-        <input type="hidden" name="enquiryId" value={enquiryId} />
-        <label htmlFor="stage">{t('stage')}</label><select id="stage" name="stage" defaultValue={w.leads[0]?.stage ?? 'new'}>
-          {['new','contacted','quoted','discussing','reported_won','reported_lost'].map((s) => <option key={s} value={s}>{s.replace('_',' ')}</option>)}
-        </select>
-        <label htmlFor="followUpAt">{t('followUp')}</label><input id="followUpAt" type="datetime-local" name="followUpAt" />
-        <label htmlFor="lead-note">{t('note')}</label><textarea id="lead-note" name="note" maxLength={2000} />
-      </ActionForm>
-      {w.leads.length ? <ol>{w.leads.map((a) => <li key={a.id}>{a.stage} · {a.next_follow_up_at ? new Date(a.next_follow_up_at).toLocaleDateString() : '—'}{a.note ? <p>{a.note}</p> : null}</li>)}</ol> : null}
-      <h3>{t('referral')}</h3><ActionForm action={referralAction} submitLabel={t('propose')}>
-        <input type="hidden" name="enquiryId" value={enquiryId} /><label htmlFor="sellerOrgId">{t('sellerOrgId')}</label><input id="sellerOrgId" name="sellerOrgId" required />
-      </ActionForm>
-    </section> : null}
-
-    {w.referrals.length ? <section className="card"><h2>{t('referral')}</h2><ul>{w.referrals.map((r) => <li key={r.id}>{r.status} · {r.proposed_seller_org_id}
-      {side === 'buyer' && r.status === 'proposed' ? <div>
-        {(['accept','decline'] as const).map((decision) => <ActionForm key={decision} action={respondReferralAction} submitLabel={decision==='accept'?t('consent'):t('rejectReferral')}>
-          <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="referralId" value={r.id} /><input type="hidden" name="decision" value={decision} />
-        </ActionForm>)}
-      </div> : null}</li>)}</ul></section> : null}
-
-    <section className="card"><h2>{t('review')}</h2><p>{t('reviewDisclaimer')}</p>
-      {w.review ? <><p>{w.review.rating}/5 · {w.review.review_text} · {w.review.status}</p>
-        {w.review.seller_response && (side === 'seller' || w.review.seller_response_status === 'published') ?
-          <p>{t('sellerResponse')}: {w.review.seller_response}{side === 'seller' && w.review.seller_response_status === 'pending' ? ` · ${t('responsePending')}` : ''}</p> : null}
-        {side==='seller' && w.review.status==='published' && !w.review.seller_response ? <ActionForm action={reviewResponseAction} submitLabel={t('sendResponse')}>
-          <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="reviewId" value={w.review.id} />
-          <label htmlFor="seller-response">{t('sellerResponse')}</label><textarea id="seller-response" name="response" minLength={3} maxLength={2000} required />
-        </ActionForm> : null}</> : side==='buyer' ? <ActionForm action={reviewAction} submitLabel={t('submitReview')}>
-        <input type="hidden" name="enquiryId" value={enquiryId} /><label htmlFor="rating">{t('rating')}</label>
-        <select id="rating" name="rating">{[5,4,3,2,1].map((n) => <option key={n} value={n}>{n}</option>)}</select>
-        <label htmlFor="review-text">{t('reviewText')}</label><textarea id="review-text" name="reviewText" minLength={10} maxLength={2000} required />
-      </ActionForm> : null}
-    </section>
-  </>;
+  );
 }
