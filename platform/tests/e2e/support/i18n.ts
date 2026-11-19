@@ -19,11 +19,12 @@ export function msg(locale: 'en' | 'ta' | 'ms', key: string, vars: Record<string
     };
     const withP5 = ['partner', 'buyer', 'admin', 'common'].reduce((acc, x) => merge(acc, read(`p5/${x}.${locale}.json`)), read(`${locale}.json`));
     merge(withP5, read(`p6/${locale}.json`));
-    merge(withP5, read(`deals/${locale}.json`));
     // redesign strings (messages/rd/rd.<locale>.json, built by scripts/rd/build-messages.cjs)
     const withRd = merge(withP5, read(`rd/rd.${locale}.json`));
     // Phase 7 completion strings (messages/p7/<area>.<locale>.json) extend the gov namespace
-    cache[locale] = ['user', 'admin'].reduce((acc, x) => merge(acc, read(`p7/${x}.${locale}.json`)), withRd);
+    const withP7 = ['user', 'admin'].reduce((acc, x) => merge(acc, read(`p7/${x}.${locale}.json`)), withRd);
+    // deals strings (labels the plan changed) are merged last, exactly as src/i18n/messages.ts does
+    cache[locale] = merge(withP7, read(`deals/${locale}.json`));
   }
   let cur: string | Tree | undefined = cache[locale];
   for (const part of key.split('.')) cur = typeof cur === 'object' ? cur[part] : undefined;

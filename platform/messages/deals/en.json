@@ -100,6 +100,42 @@
     "verifyLink": "See what INOK reviewed about this business",
     "saved": "Saved",
     "updated": "Updated",
+    "ask": {
+      "moreOptions": "Need several products or samples at once?"
+    },
+    "quick": {
+      "title": "List your business in 3 steps",
+      "stepOf": "Step {n} of 3",
+      "s1Title": "Your business",
+      "s2Title": "Where are you?",
+      "s2Help": "Customers search by state and town. Your street address stays private.",
+      "s3Title": "What do you offer?",
+      "s3Help": "A few lines are enough. You can add more later.",
+      "next": "Next",
+      "back": "Back",
+      "send": "Send for review",
+      "headline": "One line about your business (at least 10 letters)",
+      "description": "Tell customers more (at least 30 letters)",
+      "service": "Your main product or service",
+      "coverage": "Where do you serve customers?",
+      "coverageState": "My state",
+      "coverageAll": "All Malaysia",
+      "whatsapp": "WhatsApp number (optional)",
+      "whatsappHint": "Shown on your page after INOK approves it.",
+      "reviewNote": "INOK reviews every page before it appears in the directory. Nothing is published until then.",
+      "doneTitle": "Your page was sent for review",
+      "doneText": "INOK will check it and tell you here when it is approved. You do not need to do anything else for this step.",
+      "nextSteps": "Next steps for verification",
+      "nextStepsText": "To show what INOK has reviewed about your business, add these when you are ready. Each one takes a few minutes.",
+      "nsRegistration": "Registration details (SSM)",
+      "nsAddress": "Street address (kept private)",
+      "nsPerson": "Who acts for the business",
+      "nsDocuments": "Send documents for review",
+      "goHome": "Go to Home",
+      "homeAction": "List your business in 3 steps",
+      "homeNextAction": "Finish your verification details"
+    },
+    "consentLegend": "Required to create your account",
     "nav": {
       "work": "Work",
       "findCustomers": "Find customers",
@@ -157,5 +193,27 @@
     "order_not_open": "This agreement can no longer be changed.",
     "invalid_order_action": "That step is not available for this agreement right now.",
     "note_required": "Please add a short note."
+  },
+  "dir2": {
+    "send": "Ask for a quote",
+    "signInToSend": "Sign in to ask for a quote",
+    "dialogTitle": "Ask {name} for a quote",
+    "sentTitle": "Quote request sent to {name}"
+  },
+  "p5common": {
+    "buttons": {
+      "requestPrice": "Ask for a quote"
+    }
+  },
+  "p5buyer": {
+    "request": {
+      "title": "Ask for a quote"
+    }
+  },
+  "req": {
+    "post": "Describe what you need"
+  },
+  "p6": {
+    "new": "Several products or samples"
   }
 }
