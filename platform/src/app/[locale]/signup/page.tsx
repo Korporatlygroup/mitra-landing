@@ -35,13 +35,19 @@ export default async function SignUpPage({ params, searchParams }: { params: Pro
           minLength={10}
           maxLength={72}
         />
-        <SelectField id="language" name="language" label={t('language')} defaultValue={locale}>
-          <option value="en">English</option>
-          <option value="ta">தமிழ்</option>
-          <option value="ms">Bahasa Melayu</option>
-        </SelectField>
-        <CheckField id="acceptTerms" name="acceptTerms" label={t('acceptTerms')} />
-        <CheckField id="acceptPrivacy" name="acceptPrivacy" label={t('acceptPrivacy')} />
+        <details className="signup-more">
+          <summary>{t('language')}</summary>
+          <SelectField id="language" name="language" label={t('language')} defaultValue={locale}>
+            <option value="en">English</option>
+            <option value="ta">தமிழ்</option>
+            <option value="ms">Bahasa Melayu</option>
+          </SelectField>
+        </details>
+        <fieldset className="signup-consents">
+          <legend>{(await getTranslations({ locale, namespace: 'deals' }))('consentLegend')}</legend>
+          <CheckField id="acceptTerms" name="acceptTerms" label={t('acceptTerms')} />
+          <CheckField id="acceptPrivacy" name="acceptPrivacy" label={t('acceptPrivacy')} />
+        </fieldset>
         <CheckField id="acceptMarketing" name="acceptMarketing" label={t('acceptMarketing')} required={false} />
         <p className="hint">{t('marketingHint')}</p>
         <p className="link-row">
