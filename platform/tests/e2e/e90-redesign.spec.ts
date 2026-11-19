@@ -97,8 +97,8 @@ test.describe.serial('business workspace journey', () => {
     await expect(page.getByRole('progressbar').first()).toBeVisible();
     // The side menu marks the current page and lists the groups.
     await expect(page.getByRole('link', { name: t('ws.menu.profileEdit'), exact: true })).toHaveAttribute('aria-current', 'page');
-    for (const k of ['customerRequests', 'enquiries', 'products', 'listing', 'verification', 'govHelp', 'news']) {
-      await expect(page.getByRole('navigation', { name: t('ws.workspace') }).getByRole('link', { name: t(`ws.menu.${k}`), exact: true })).toBeVisible();
+    for (const label of [dl('nav.findCustomers'), dl('nav.myDeals'), t('ws.menu.products'), t('ws.menu.listing'), t('ws.menu.verification'), t('ws.menu.govHelp'), t('ws.menu.news')]) {
+      await expect(page.getByRole('navigation', { name: t('ws.workspace') }).getByRole('link', { name: label, exact: true })).toBeVisible();
     }
     // A card can be dismissed and stays dismissed after a reload.
     const card = page.getByText(`Grant news ${tag}`);

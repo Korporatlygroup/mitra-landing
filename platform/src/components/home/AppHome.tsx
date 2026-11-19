@@ -1,4 +1,5 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
+import RecentActivity from '@/components/deals/RecentActivity';
 import DiscoveryCard from '@/components/cards/DiscoveryCard';
 import MetricCard from '@/components/cards/MetricCard';
 import NewsCard from '@/components/cards/NewsCard';
@@ -65,6 +66,52 @@ export default async function AppHome({ locale }: { locale: string }) {
   const money = (min: string | null, max: string | null) =>
     min || max ? [min, max].filter(Boolean).map((v) => `RM ${fmt.number(Number(v))}`).join(' – ') : t('apphome.amountNone');
   const catLabel = (c: string) => t(`news2.chip${c[0]!.toUpperCase()}${c.slice(1)}`);
+
+  // Seller Home (WP1): short and about the next step. Business 360 stays the detailed workspace, one tap away.
+  if (biz) {
+    const d = await getTranslations({ locale, namespace: 'deals' });
+    const first = actions[0];
+    return (
+      <div className="wide" style={{ display: 'flex', flexDirection: 'column', gap: 24 }}>
+        <div className="pagehead">
+          <div>
+            <h1>{t('home.titleSignedIn', { name: ws.user.name })}</h1>
+            <p>{`${biz.name} · ${t(`orgTypes.${biz.type}`)} · ${approved > 0 ? t('apphome.reviewed') : t('apphome.notReviewed')}`}</p>
+          </div>
+          {ws.isStaff ? (
+            <Link href="/admin" className="btn btn-secondary btn-sm">
+              <Icon name="shield" size={16} />
+              {waiting > 0 ? t('apphome.adminWaiting', { n: waiting }) : t('apphome.adminOpen')}
+            </Link>
+          ) : null}
+        </div>
+        {first ? (
+          <section className="acard" aria-labelledby="sh-next">
+            <h2 id="sh-next" style={{ margin: 0 }}>{d('homeNext')}</h2>
+            <p style={{ margin: 0 }}><Link href={first.href} className="btn btn-gold">{first.text}</Link></p>
+          </section>
+        ) : null}
+        <section aria-label={d('homeNumbers')} className="xgrid xgrid-4" style={{ gap: 12 }}>
+          <MetricCard value={newRequests.length} label={d('homeNewRequests')} />
+          <MetricCard value={m?.quotes_sent ?? 0} label={d('homeQuotesSent')} />
+          <MetricCard value={ws.unread} label={d('homeNotifications')} />
+        </section>
+        <section aria-label={d('homeShortcuts')} className="xgrid xgrid-3">
+          <DiscoveryCard href={`/orgs/${biz.id}/business/requests`} icon="search" title={d('nav.findCustomers')} text={d('homeFindText')} action={d('homeOpen')} />
+          <DiscoveryCard href="/deals" icon="box" title={d('nav.myDeals')} text={d('homeDealsText')} action={d('homeOpen')} />
+          <DiscoveryCard href={`/orgs/${biz.id}/business/360`} icon="store" title={d('nav.businessDetails')} text={d('homeDetailsText')} action={d('homeOpen')} />
+        </section>
+        <section aria-labelledby="sh-act" className="card">
+          <h2 id="sh-act" style={{ marginTop: 0 }}>{d('latestActivity')}</h2>
+          <RecentActivity db={supabase} locale={locale} limit={4} />
+        </section>
+        <section aria-label={t('apphome.govTitle')} className="xgrid xgrid-2">
+          <DiscoveryCard href="/business-help" icon="money" title={t('apphome.dGovT')} text={t('apphome.dGovD')} action={t('apphome.dGovA')} />
+          <DiscoveryCard href="/news" icon="news" title={t('apphome.dNewsT')} text={t('apphome.dNewsD')} action={t('apphome.dNewsA')} />
+        </section>
+      </div>
+    );
+  }
 
   return (
     <div className="wide" style={{ display: 'flex', flexDirection: 'column', gap: 28 }}>
@@ -186,7 +233,7 @@ export default async function AppHome({ locale }: { locale: string }) {
           </h2>
           {biz ? (
             <p className="muted" style={{ margin: 0 }}>
-              {biz.name} · {approved > 0 ? t('apphome.reviewed') : t('apphome.notReviewed')}
+              {ws.org?.name} · {approved > 0 ? t('apphome.reviewed') : t('apphome.notReviewed')}
             </p>
           ) : null}
           <ul className="card-list" style={{ margin: 0 }}>
@@ -251,7 +298,7 @@ export default async function AppHome({ locale }: { locale: string }) {
         )}
         {newRequests.length > 0 && biz ? (
           <p style={{ marginBottom: 0 }}>
-            <Link href={`/orgs/${biz.id}/business/requests`}>{t('apphome.buyerRequests', { n: newRequests.length })}</Link>
+            <Link href={`/orgs/${ws.org?.id}/business/requests`}>{t('apphome.buyerRequests', { n: newRequests.length })}</Link>
           </p>
         ) : null}
       </section>

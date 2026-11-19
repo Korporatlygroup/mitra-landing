@@ -2,7 +2,7 @@ import { getFormatter, getTranslations } from 'next-intl/server';
 import EmptyState from '@/components/shared/EmptyState';
 import PageHeader from '@/components/shared/PageHeader';
 import StatusBadge from '@/components/shared/StatusBadge';
-import TabsNav from '@/components/shared/TabsNav';
+import DealsTabs from '@/components/deals/DealsTabs';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { listOrders } from '@/server/services/deals';
@@ -22,7 +22,7 @@ export default async function OrdersPage({ params }: { params: Promise<{ locale:
   return (
     <div className="wide">
       <PageHeader title={d('myDeals')} sub={d('ordersIntro')} />
-      <TabsNav label={d('myDeals')} items={[{ href: '/enquiries', label: d('tabMessages'), active: false }, { href: '/orders', label: d('tabOrders'), count: orders.length, active: true }]} />
+      <DealsTabs locale={locale} active="orders" />
       {orders.length === 0 ? (
         <EmptyState icon="board" title={d('ordersTitle')} text={d('ordersEmpty')} action={{ href: '/enquiries', label: d('tabMessages') }} />
       ) : (

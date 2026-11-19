@@ -1,5 +1,6 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import EmptyState from '@/components/shared/EmptyState';
+import DealsTabs from '@/components/deals/DealsTabs';
 import PageHeader from '@/components/shared/PageHeader';
 import StatusBadge, { type BadgeTone } from '@/components/shared/StatusBadge';
 import TabsNav from '@/components/shared/TabsNav';
@@ -60,6 +61,7 @@ export default async function MyRequestsPage({ params, searchParams }: { params:
           </>
         }
       />
+      <DealsTabs locale={locale} active="requests" />
 
       {all.length === 0 && enquiries.length === 0 ? (
         <EmptyState icon="board" title={t('req.emptyCta')} text={t('req.emptyHint')} action={{ href: '/requests/new', label: t('req.post') }} />
