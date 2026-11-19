@@ -32,9 +32,12 @@ export interface ReferralRow {
   buyer_consented_at: string | null; recipient_accepted_at: string | null; created_at: string;
 }
 
-export async function getEnquiryWorkspace(db: Db, enquiryId: string) {
+export const MESSAGE_PAGE_SIZE = 50;
+
+/** `before` (an ISO time) loads the page of messages older than it. Older history is never dropped: the caller shows a link while `hasEarlier` is true. */
+export async function getEnquiryWorkspace(db: Db, enquiryId: string, before?: string | null) {
   const [messages, quote, leads, reviews, referrals] = await Promise.all([
-    db.from('enquiry_messages').select('id,enquiry_id,sender_user_id,sender_org_id,body,created_at').eq('enquiry_id', enquiryId).order('created_at').limit(100),
+    (before ? db.from('enquiry_messages').select('id,enquiry_id,sender_user_id,sender_org_id,body,created_at').eq('enquiry_id', enquiryId).lt('created_at', before) : db.from('enquiry_messages').select('id,enquiry_id,sender_user_id,sender_org_id,body,created_at').eq('enquiry_id', enquiryId)).order('created_at', { ascending: false }).limit(MESSAGE_PAGE_SIZE + 1),
     db.from('quotations').select('id,enquiry_id,seller_org_id,buyer_org_id,status,current_version_id,accepted_version_id,version').eq('enquiry_id', enquiryId).maybeSingle(),
     db.from('lead_activities').select('id,enquiry_id,seller_org_id,stage,note,next_follow_up_at,recorded_at').eq('enquiry_id', enquiryId).order('recorded_at', { ascending: false }).limit(20),
     db.from('business_reviews').select('id,enquiry_id,buyer_org_id,seller_org_id,rating,review_text,status,seller_response,seller_response_status,moderation_reason,created_at').eq('enquiry_id', enquiryId).maybeSingle(),
@@ -46,7 +49,7 @@ export async function getEnquiryWorkspace(db: Db, enquiryId: string) {
   const ids = ((versions?.data ?? []) as QuoteVersionRow[]).map((v) => v.id);
   const items = ids.length ? await db.from('quotation_line_items').select('id,quote_version_id,description,quantity,unit,unit_price,line_total,sort_order').in('quote_version_id', ids).order('sort_order') : null;
   return {
-    messages: (messages.data ?? []) as MessageRow[], quote: q, draft: (draft?.data?.data as Record<string, unknown> | undefined) ?? null,
+    messages: ((messages.data ?? []) as MessageRow[]).slice(0, MESSAGE_PAGE_SIZE).reverse(), hasEarlier: (messages.data ?? []).length > MESSAGE_PAGE_SIZE, quote: q, draft: (draft?.data?.data as Record<string, unknown> | undefined) ?? null,
     leads: (leads.data ?? []) as LeadActivityRow[],
     review: (reviews.data as ReviewRow | null) ?? null, referrals: (referrals.data ?? []) as ReferralRow[],
     versions: (versions?.data ?? []) as QuoteVersionRow[], items: (items?.data ?? []) as QuoteItemRow[],

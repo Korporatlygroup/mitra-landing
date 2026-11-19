@@ -2,6 +2,7 @@ import { getTranslations } from 'next-intl/server';
 import ConversationList from '@/components/messages/ConversationList';
 import EmptyState from '@/components/shared/EmptyState';
 import PageHeader from '@/components/shared/PageHeader';
+import TabsNav from '@/components/shared/TabsNav';
 import { pageTitle } from '@/lib/metadata';
 import { requireSession } from '@/server/session';
 
@@ -14,10 +15,12 @@ export default async function MessagesPage({ params }: { params: Promise<{ local
   const { locale } = await params;
   const s = await requireSession({ locale, requireOrg: true, path: '/enquiries', requireMfaIfNeeded: false });
   const t = await getTranslations({ locale });
+  const d = await getTranslations({ locale, namespace: 'deals' });
   const list = await ConversationList({ db: s.supabase, locale });
   return (
     <div className="wide">
-      <PageHeader title={t('biz2.messages.title')} sub={t('biz2.messages.sub')} />
+      <PageHeader title={d('myDeals')} sub={t('biz2.messages.sub')} />
+      <TabsNav label={d('myDeals')} items={[{ href: '/enquiries', label: d('tabMessages'), active: true }, { href: '/orders', label: d('tabOrders'), active: false }]} />
       {list ? (
         <div className="msg-wrap">
           <div className="card msg-left">{list}</div>

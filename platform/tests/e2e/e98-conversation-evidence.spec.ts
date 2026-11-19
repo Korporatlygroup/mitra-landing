@@ -3,6 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { createBusinessOwner } from './support/biz';
 import { createOrgAs, createUser, sql } from './support/db';
 import { msg } from './support/i18n';
+import { dl, openPanelSection, openQuoteEditor } from './support/deals-ui';
 import { freshContext, loginUi } from './support/ui';
 
 // Evidence for the acceptance report: a real buyer and a real seller, in two separate browser sessions, hold a conversation and a quotation
@@ -56,7 +57,7 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   const m1 = 'Hello, I am looking for 50 custom-printed packaging boxes. Could you provide a quotation and estimated delivery time to Kuala Lumpur?';
   await bp.locator('#reply-body').fill(m1);
   await shot(bp, 'buyer', '02-buyer-writes-first-message');
-  await bp.getByRole('button', { name: t('p4.sendReply') }).click();
+  await bp.getByRole('button', { name: dl('send') }).click();
   await expect(bp.locator('main')).toContainText(m1);
   await shot(bp, 'buyer', '03-buyer-message-sent');
 
@@ -70,7 +71,7 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   await shot(page, 'seller', '05-seller-reads-buyer-message');
   const m2 = 'Thank you for your enquiry. We can supply 50 boxes. Could you confirm the dimensions and printing requirements?';
   await page.locator('#reply-body').fill(m2);
-  await page.getByRole('button', { name: t('p4.sendReply') }).click();
+  await page.getByRole('button', { name: dl('send') }).click();
   await expect(page.locator('main')).toContainText(m2);
   await shot(page, 'seller', '06-seller-replies');
 
@@ -80,7 +81,7 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   await shot(bp, 'buyer', '07-buyer-sees-seller-reply');
   const m3 = 'The dimensions are 30 x 20 x 15 cm, with a single-colour logo.';
   await bp.locator('#reply-body').fill(m3);
-  await bp.getByRole('button', { name: t('p4.sendReply') }).click();
+  await bp.getByRole('button', { name: dl('send') }).click();
   await expect(bp.locator('main')).toContainText(m3);
 
   // --- seller prepares and sends the quotation ---
@@ -88,8 +89,9 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   await expect(page.locator('main')).toContainText(m3);
   const m4 = 'Thank you. I have prepared a quotation based on those specifications. Please review the quotation attached to your request.';
   await page.locator('#reply-body').fill(m4);
-  await page.getByRole('button', { name: t('p4.sendReply') }).click();
+  await page.getByRole('button', { name: dl('send') }).click();
   await expect(page.locator('main')).toContainText(m4);
+  await openQuoteEditor(page);
   await page.locator('#scope').fill('50 custom-printed packaging boxes, 30 x 20 x 15 cm, one-colour logo');
   await page.locator('#description1').fill('Printed packaging box');
   await page.locator('#quantity1').fill('50');
@@ -108,8 +110,8 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   await bp.reload();
   await expect(bp.getByText('MYR 240.00').first()).toBeVisible();
   await shot(bp, 'buyer', '10-buyer-views-quotation');
-  await bp.getByRole('button', { name: t('p4.accept') }).click();
-  await expect(bp.getByText(t('p4.selectedNotice'))).toBeVisible();
+  await bp.getByRole('button', { name: dl('accept') }).click();
+  await expect(bp.locator('main')).toContainText(dl('ev_order_created'));
   await shot(bp, 'buyer', '11-buyer-accepts-quotation');
   await bp.goto('/en/enquiries');
   await shot(bp, 'buyer', '12-buyer-conversation-list');

@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { createBusinessOwner } from './support/biz';
 import { createUser, sql, uniq, type TestUser } from './support/db';
 import { msg } from './support/i18n';
+import { dl, openPanelSection, openQuoteEditor } from './support/deals-ui';
 import { freshContext, loginUi } from './support/ui';
 
 // E46: Phases 1-4 together. A customer request on the public board -> seller A replies (Phase 3 enquiry) -> seller A suggests
@@ -71,6 +72,7 @@ test('E46 referral hand-off: customer consent, recipient acceptance, conversatio
   // seller A suggests seller B (UI)
   await loginUi(page, a.owner, 'en');
   await page.goto(enquiryUrl);
+  await openPanelSection(page, t('p4.lead'));
   await page.locator('#sellerOrgId').fill(b.orgId);
   await page.getByRole('button', { name: t('p4.propose') }).click();
   await expect.poll(async () => Number((await sql<{ n: string }>(`select count(*) n from public.referral_suggestions where enquiry_id = $1`, [enq!.id]))[0]!.n)).toBe(1);
@@ -89,6 +91,7 @@ test('E46 referral hand-off: customer consent, recipient acceptance, conversatio
   const cp = await buyerCtx.newPage();
   await loginUi(cp, buyer, 'en');
   await cp.goto(enquiryUrl);
+  await openPanelSection(cp, t('p4.referral'));
   await cp.getByRole('button', { name: t('p4.consent') }).click();
   await expect.poll(async () => (await sql<{ status: string }>(`select status from public.referral_suggestions where id = $1`, [early!.id]))[0]?.status).toBe('buyer_consented');
 
@@ -118,7 +121,7 @@ test('E46 referral hand-off: customer consent, recipient acceptance, conversatio
   // B writes; the customer reads it; the customer's phone and email never reach B's page
   await bp.goto(`/en/enquiries/${newId}`);
   await bp.locator('#reply-body').fill('Thank you for the referral, we can help with the lunch boxes.');
-  await bp.getByRole('button', { name: t('p4.sendReply') }).click();
+  await bp.getByRole('button', { name: dl('send') }).click();
   await expect(bp.locator('main')).toContainText('we can help with the lunch boxes');
   await expect(bp.locator('main')).not.toContainText('buyer-' + tag);
   await expect(bp.locator('main')).not.toContainText('345 6789');
