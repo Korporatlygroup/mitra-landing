@@ -12,5 +12,5 @@ export default async function FindCustomersTabs({ locale, orgId, active }: { loc
     { key: 'board', href: `${base}/requests/board`, label: d('tabBoard') },
     { key: 'results', href: `${base}/leads`, label: d('tabResults') },
   ];
-  return <TabsNav label={d('findCustomers')} items={items.map((i) => ({ href: i.href, label: i.label, active: i.key === active }))} />;
+  return <TabsNav label={d('nav.findCustomers')} items={items.map((i) => ({ href: i.href, label: i.label, active: i.key === active }))} />;
 }
