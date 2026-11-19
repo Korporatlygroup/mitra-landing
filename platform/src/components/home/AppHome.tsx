@@ -10,7 +10,7 @@ import { Link } from '@/i18n/navigation';
 import { displayStatus } from '@/lib/gov-status';
 import { formatRm } from '@/lib/gov-ui';
 import { initialsOf } from '@/components/ui/Tag';
-import { listSellerRequests, searchListings } from '@/server/services/directory';
+import { getOwnerListing, listSellerRequests, searchListings } from '@/server/services/directory';
 import { sellerLeadMetrics } from '@/server/services/enquiries';
 import { listGovProgrammes } from '@/server/services/gov';
 import { listNews } from '@/server/services/news';
@@ -24,6 +24,7 @@ import { getWorkspace } from '@/server/workspace';
  */
 export default async function AppHome({ locale }: { locale: string }) {
   const t = await getTranslations({ locale });
+  const d = await getTranslations({ locale, namespace: 'deals' });
   const fmt = await getFormatter({ locale });
   const { supabase } = await getOptionalUser();
   const ws = await getWorkspace();
@@ -52,6 +53,9 @@ export default async function AppHome({ locale }: { locale: string }) {
 
   type Action = { key: string; text: string; href: string };
   const actions: Action[] = [];
+  // A business that has not yet written its page starts with the 3-step quick start; verification details follow as next steps.
+  const ownListing = biz ? await getOwnerListing(supabase, biz.id) : null;
+  if (biz && !ownListing?.draft?.headline) actions.push({ key: 'quick', text: d('quick.homeAction'), href: `/orgs/${biz.id}/business/quickstart` });
   if (!hasOrg) actions.push({ key: 'org', text: t('apphome.actOrg'), href: '/orgs' });
   if (biz && approved === 0) actions.push({ key: 'verify', text: t('apphome.actVerify'), href: `/orgs/${biz.id}/business/verification` });
   if (biz && newRequests.length > 0) actions.push({ key: 'req', text: t('apphome.actRequests', { n: newRequests.length }), href: `/orgs/${biz.id}/business/requests` });

@@ -438,3 +438,12 @@ input[type='file']::file-selector-button:hover { border-color: var(--brand); col
   .deal-wrap .msg-head { flex-wrap: wrap; }
   .deal-back { flex: 1 1 100%; justify-content: flex-start; }
 }
+
+/* Quick start (3-step onboarding) */
+.quick { max-width: 34rem; display: flex; flex-direction: column; gap: 12px; }
+.quick-bar { height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; }
+.quick-bar span { display: block; height: 100%; background: var(--brand); border-radius: 999px; }
+
+.signup-more > summary { cursor: pointer; font-weight: 600; min-height: 36px; display: flex; align-items: center; }
+.signup-consents { border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px 12px; }
+.signup-consents legend { font-size: 0.8125rem; color: var(--muted); padding: 0 6px; }
