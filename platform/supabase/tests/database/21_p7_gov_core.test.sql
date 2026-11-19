@@ -140,7 +140,7 @@ select throws_ok($$select public.gov_register_source('TEKUN','TEKUN','tekun.gov.
 select tt.act('ops1', 'aal2');
 insert into tt.ids values ('src', public.gov_register_source('TEKUN','TEKUN Nasional','tekun.gov.my','TEKUN schemes','website','tekun',
   '{www.tekun.gov.my,tekunonline.tekun.gov.my}', '{https://www.tekun.gov.my/skim-pembiayaan-tekun-niaga/}', 'public_pages', 'robots respected'));
-select is((select count(*)::int from public.gov_sources where not enabled), 1, 'G9 admin registers a source, disabled by default');
+select is((select count(*)::int from public.gov_sources where not enabled and id = tt.id('src')), 1, 'G9 admin registers a source, disabled by default');
 select throws_ok($$insert into public.gov_sources (agency_id, name, source_type, adapter, allowed_hosts, approved_urls)
   select agency_id, 'bad', 'website', 'tekun', '{x.gov.my}', '{http://x.gov.my/a}' from public.gov_sources limit 1$$, '42501', null, 'G10 no direct table writes');
 
@@ -150,7 +150,7 @@ select throws_ok(format($$select public.gov_decide_source_change(%L, true, 'self
 select throws_ok(format($$select public.gov_propose_source_change(%L, '{"api_key": "x"}', 'bad field here')$$, tt.id('src')), 'PT422', 'field', 'G12 unknown change field refused');
 select tt.act('ops2', 'aal2');
 select lives_ok(format($$select public.gov_decide_source_change(%L, true, 'second person ok')$$, tt.id('chg')), 'G13 second administrator approves');
-select is((select enabled from public.gov_sources), true, 'G14 approved change applied');
+select is((select enabled from public.gov_sources where id = tt.id('src')), true, 'G14 approved change applied');
 select throws_ok(format($$select public.gov_decide_source_change(%L, true, 'again again')$$, tt.id('chg')), 'PT409', 'already_decided', 'G15 change decided once');
 
 -- ===== Worker: switches, enqueue, claim, lease, retry =====
@@ -178,14 +178,14 @@ update public.gov_sources set last_request_at = null;
 select tt.svc();
 select is((select count(*)::int from public.gov_claim_jobs('w3', 5, 60)), 1, 'G25 expired lease is recovered and reclaimed');
 select is(public.gov_fail_job((select id from public.gov_fetch_jobs limit 1), 'w3', 'boom'), 'dead', 'G26 job dead-letters at max attempts');
-select is((select health from public.gov_sources), 'degraded', 'G27 repeated failures degrade the source');
+select is((select health from public.gov_sources where id = tt.id('src')), 'degraded', 'G27 repeated failures degrade the source');
 select tt.pg();
 update public.gov_sources set last_request_at = null;
 update public.gov_fetch_jobs set status = 'running', locked_by = 'w9', lease_until = now() + interval '1 minute', finished_at = null;
 select tt.svc();
 select lives_ok($$select public.gov_complete_job((select id from public.gov_fetch_jobs limit 1), 'w9',
   '{"outcome":"ok","http_status":200,"content_type":"text/html","content_sha256":"0000000000000000000000000000000000000000000000000000000000000000","byte_length":10,"parser_version":"1","evidence_excerpt":"x"}')$$, 'G28 job completes');
-select is((select health from public.gov_sources), 'healthy', 'G29 success restores health');
+select is((select health from public.gov_sources where id = tt.id('src')), 'healthy', 'G29 success restores health');
 
 -- ===== Candidate submission and verification =====
 select is(public.gov_submit_candidate(tt.id('src'), null, 'niaga', tt.cand('TEKUN Niaga') || '{"closes_on":"2026-01-01","opens_on":"2026-06-01"}'), 'invalid', 'G30 contradictory dates rejected');

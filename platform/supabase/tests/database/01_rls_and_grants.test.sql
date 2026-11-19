@@ -258,8 +258,9 @@ select is(
         'admin_list_privacy_requests(p_status text)', 'admin_update_privacy_request(p_id uuid, p_status text, p_note text)',
         'list_duplicate_flags(p_status text)', 'resolve_duplicate_flag(p_flag uuid, p_decision text, p_note text)', 'find_published_duplicates(p_ssm text, p_name text)',
         'request_org_membership(p_slug text, p_message text)', 'list_join_requests(p_org uuid)', 'resolve_join_request(p_request uuid, p_decision text)', 'set_email_notifications(p_on boolean)', 'admin_mfa_required()',
-        'gov_save_programme_me(p_programme uuid)', 'gov_unsave_programme_me(p_programme uuid)', 'gov_list_saved_me()']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 195 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 1 administrator MFA policy read, 3 account-level saved programmes, 6 added by business links, duplicate flags and join requests)');
+        'gov_save_programme_me(p_programme uuid)', 'gov_unsave_programme_me(p_programme uuid)', 'gov_list_saved_me()',
+        'order_action(p_order uuid, p_action text, p_note text)', 'set_order_details(p_order uuid, p_service_date date, p_deposit_note text)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 197 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 1 administrator MFA policy read, 3 account-level saved programmes, 6 added by business links, duplicate flags and join requests, 2 for agreements)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)
@@ -353,7 +354,7 @@ select throws_ok($$ select token_hash from public.invitations $$, '42501', null,
 select tt.pg();
 select is(
   (select count(*)::int from pg_class c join pg_namespace n on n.oid = c.relnamespace where n.nspname = 'public' and c.relkind = 'r'),
-  91, 'S6.6 inventory: exactly the 91 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign, 1 privacy_requests, email_preferences, org_join_requests, gov_saved_user; new tables must come with RLS tests)');
+  93, 'S6.6 inventory: exactly the 93 expected public tables exist (35 up to Phase 4, 19 from Phase 5, 11 from Phase 6, 16 from Phase 7, 6 from the redesign, 1 privacy_requests, email_preferences, org_join_requests, gov_saved_user, 2 for agreements (orders, deal_events); new tables must come with RLS tests)');
 
 select * from finish();
 rollback;

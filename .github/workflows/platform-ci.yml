@@ -59,9 +59,15 @@ jobs:
         run: npx supabase db reset
 
       - name: Database tests (pgTAP)
+        # pipefail: without it the exit status of `tee` hid every pgTAP failure and the job stayed green. The report is still written
+        # and uploaded (the upload step runs `if: always()`); a failure now fails this step. The grep is a second guard in case the runner ever reports 0.
         run: |
+          set -o pipefail
           mkdir -p reports
           npx supabase test db 2>&1 | tee reports/pgtap.txt
+          if grep -Eq '^(not ok|# Failed test|Result: FAIL)|Failed [0-9]+/[0-9]+ subtests' reports/pgtap.txt; then
+            echo "::error::pgTAP reported failed tests (see reports/pgtap.txt in the platform-check-reports artifact)"; exit 1
+          fi
 
       - name: Write local env file (local demo keys only)
         run: node scripts/write-local-env.mjs
