@@ -205,6 +205,7 @@ select tt.build(w) from unnest(array['U', 'S', 'R', 'B', 'C']) w;
 -- 0. Guard: no Phase 1-4 foreign key to organisations / auth.users / enquiries / buyer_requests / quotations may block a delete.
 select is((select count(*)::int from pg_constraint c
            where c.contype = 'f' and c.connamespace = 'public'::regnamespace and c.confdeltype in ('a', 'r')
+             and c.conrelid not in ('public.orders'::regclass, 'public.deal_events'::regclass) -- known exception, pinned exactly by E0f below
              and c.confrelid in ('public.organisations'::regclass, 'auth.users'::regclass, 'public.enquiries'::regclass,
                                  'public.buyer_requests'::regclass, 'public.quotations'::regclass, 'public.referral_suggestions'::regclass,
                                  'public.business_listings'::regclass, 'public.business_profiles'::regclass)
