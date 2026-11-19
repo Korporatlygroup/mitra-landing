@@ -62,6 +62,7 @@ test('E10 weak password shows an error and keeps the other fields', async ({ pag
   await page.goto('/en/signup');
   await page.locator('#displayName').fill('Weak Pass');
   await page.locator('#email').fill(email);
+  await page.locator('.signup-more > summary').click(); // the language choice sits in a collapsed row
   await page.locator('#language').selectOption('ta');
   await page.locator('#acceptTerms').check();
   await page.locator('#acceptPrivacy').check();
@@ -88,6 +89,7 @@ test('E10 weak password shows an error and keeps the other fields', async ({ pag
   await page.evaluate(() => ((document.querySelector('main form') as HTMLFormElement).noValidate = true));
   await page.locator('main form button[type=submit]').click();
   await expect(alert).toBeVisible();
+  await expect(page.locator('#password')).toHaveValue(''); // the second attempt has finished: the form was reset, so the next fill is not wiped
   await expect(page.locator('#email')).toHaveValue(email);
   expect(await sql(`select 1 from auth.users where email = $1`, [email])).toHaveLength(0);
 
