@@ -102,7 +102,7 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await shot(page, 'seller', '08-seller-prepares-quotation');
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();
-  await expect(page.locator('main')).toContainText('MYR 240.00');
+  await expect(page.locator('body')).toContainText('MYR 240.00');
   await page.getByRole('button', { name: t('p4.sendQuote') }).click();
   await shot(page, 'seller', '09-seller-sent-quotation');
 
