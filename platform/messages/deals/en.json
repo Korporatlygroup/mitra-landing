@@ -99,11 +99,36 @@
     "reportLink": "Report a problem or complaint",
     "verifyLink": "See what INOK reviewed about this business",
     "saved": "Saved",
-    "updated": "Updated"
+    "updated": "Updated",
+    "ask": {
+      "moreOptions": "Need several products or samples at once?"
+    }
   },
   "errors": {
     "order_not_open": "This agreement can no longer be changed.",
     "invalid_order_action": "That step is not available for this agreement right now.",
     "note_required": "Please add a short note."
+  },
+  "dir2": {
+    "send": "Ask for a quote",
+    "signInToSend": "Sign in to ask for a quote",
+    "dialogTitle": "Ask {name} for a quote",
+    "sentTitle": "Quote request sent to {name}"
+  },
+  "p5common": {
+    "buttons": {
+      "requestPrice": "Ask for a quote"
+    }
+  },
+  "p5buyer": {
+    "request": {
+      "title": "Ask for a quote"
+    }
+  },
+  "req": {
+    "post": "Describe what you need"
+  },
+  "p6": {
+    "new": "Several products or samples"
   }
 }
