@@ -3,7 +3,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { createBusinessOwner } from './support/biz';
 import { createOrgAs, createUser, sql } from './support/db';
 import { msg } from './support/i18n';
-import { dl, openPanelSection, openQuoteEditor } from './support/deals-ui';
+import { dl, fillBookingTerms, openPanelSection, openQuoteEditor } from './support/deals-ui';
 import { freshContext, loginUi } from './support/ui';
 
 // Evidence for the acceptance report: a real buyer and a real seller, in two separate browser sessions, hold a conversation and a quotation
@@ -99,6 +99,7 @@ test('Buyer and seller hold a real conversation and a quotation', async ({ page,
   await page.locator('#unitPrice1').fill('4.80');
   await page.locator('#validUntil').fill(inDays(14));
   await page.locator('#deliveryTiming').fill('Within ten working days, delivered to Kuala Lumpur');
+  await fillBookingTerms(page);
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await shot(page, 'seller', '08-seller-prepares-quotation');
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();

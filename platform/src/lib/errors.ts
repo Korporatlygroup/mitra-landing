@@ -127,6 +127,8 @@ export const KNOWN_MESSAGE_KEYS = [
   'quote_not_open', 'supplier_changed', 'invalid_transition', 'counter_not_open', 'invitation_not_accepted',
   // Deals (orders)
   'order_not_open', 'invalid_order_action', 'note_required',
+  // Booking terms inside the quotation
+  'terms_required', 'invalid_terms', 'terms_locked',
 ] as const;
 
 /**

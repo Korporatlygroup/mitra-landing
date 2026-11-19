@@ -16,6 +16,7 @@ export interface QuoteVersionRow {
   id: string; quotation_id: string; version_number: number; currency: string; scope_text: string;
   exclusions: string | null; tax_treatment: string; delivery_timing: string; terms_text: string | null;
   valid_until: string; subtotal: string; delivery_fee: string; tax_amount: string; total: string; sent_at: string;
+  booking_date: string | null; completion_by: string | null; deposit_terms: string | null; cancellation_option: string | null; cancellation_text: string | null;
 }
 export interface QuoteItemRow {
   id: string; quote_version_id: string; description: string; quantity: string; unit: string; unit_price: string; line_total: string; sort_order: number;
@@ -45,7 +46,7 @@ export async function getEnquiryWorkspace(db: Db, enquiryId: string, before?: st
   ]);
   const q = (quote.data as QuoteRow | null) ?? null;
   const draft = q ? await db.from('quotation_drafts').select('data').eq('quotation_id', q.id).maybeSingle() : null;
-  const versions = q ? await db.from('quotation_versions').select('id,quotation_id,version_number,currency,scope_text,exclusions,tax_treatment,delivery_timing,terms_text,valid_until,subtotal,delivery_fee,tax_amount,total,sent_at').eq('quotation_id', q.id).order('version_number', { ascending: false }) : null;
+  const versions = q ? await db.from('quotation_versions').select('id,quotation_id,version_number,currency,scope_text,exclusions,tax_treatment,delivery_timing,terms_text,valid_until,subtotal,delivery_fee,tax_amount,total,sent_at,booking_date,completion_by,deposit_terms,cancellation_option,cancellation_text').eq('quotation_id', q.id).order('version_number', { ascending: false }) : null;
   const ids = ((versions?.data ?? []) as QuoteVersionRow[]).map((v) => v.id);
   const items = ids.length ? await db.from('quotation_line_items').select('id,quote_version_id,description,quantity,unit,unit_price,line_total,sort_order').in('quote_version_id', ids).order('sort_order') : null;
   return {

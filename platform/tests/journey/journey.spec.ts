@@ -6,6 +6,7 @@ import { actorGoto, call, createAdmin, createPartner, type Admin } from '../e2e/
 import { clickSend, createBusinessOwner, gotoStep, orgPath, smallPdf, uploadDoc, fillStep1, fillStep2, fillStep3, fillStep4 } from '../e2e/support/biz';
 import { createOrgAs, createUser, serviceClient, sql, uniq, uniqEmail, strongPassword, type TestUser } from '../e2e/support/db';
 import { platformDir } from '../e2e/support/env';
+import { fillBookingTerms } from '../e2e/support/deals-ui';
 import { msg } from '../e2e/support/i18n';
 import { makeProduct, makeReviewer, makeSupplier, makePartner } from '../e2e/support/p5-buyer';
 import { confirmEmailUi, createOrgUi, loginUi, submitSignUp } from '../e2e/support/ui';
@@ -260,6 +261,7 @@ test('whole platform journey at laptop size', async ({ browser }) => {
   await sp.locator('#unitPrice1').fill('18.50');
   await sp.locator('#validUntil').fill(inDays(7));
   await sp.locator('#deliveryTiming').fill('Within three weeks');
+  await fillBookingTerms(sp);
   await sp.locator('#taxTreatment').fill('Tax included as stated');
   await shot(sp, 'quote-form', 'Seller: quotation form (filled in)');
   await sp.getByRole('button', { name: t('p4.saveDraft') }).click();
@@ -280,6 +282,7 @@ test('whole platform journey at laptop size', async ({ browser }) => {
   await sp.locator('#unitPrice1').fill('18.50');
   await sp.locator('#validUntil').fill(inDays(7));
   await sp.locator('#deliveryTiming').fill('Within three weeks');
+  await fillBookingTerms(sp);
   await sp.locator('#taxTreatment').fill('Tax included as stated');
   await sp.getByRole('button', { name: t('p4.saveDraft') }).click();
   await expect(sp.locator('main')).toContainText('MYR 2035.00');
