@@ -100,6 +100,42 @@
     "verifyLink": "Lihat apa yang INOK semak tentang perniagaan ini",
     "saved": "Disimpan",
     "updated": "Dikemas kini",
+    "ask": {
+      "moreOptions": "Perlukan beberapa produk atau sampel sekali gus?"
+    },
+    "quick": {
+      "title": "Senaraikan perniagaan anda dalam 3 langkah",
+      "stepOf": "Langkah {n} daripada 3",
+      "s1Title": "Perniagaan anda",
+      "s2Title": "Di mana anda?",
+      "s2Help": "Pelanggan mencari mengikut negeri dan bandar. Alamat jalan anda kekal persendirian.",
+      "s3Title": "Apa yang anda tawarkan?",
+      "s3Help": "Beberapa baris sudah cukup. Anda boleh tambah kemudian.",
+      "next": "Seterusnya",
+      "back": "Kembali",
+      "send": "Hantar untuk semakan",
+      "headline": "Satu baris tentang perniagaan anda (sekurang-kurangnya 10 huruf)",
+      "description": "Beritahu pelanggan lebih lanjut (sekurang-kurangnya 30 huruf)",
+      "service": "Produk atau perkhidmatan utama anda",
+      "coverage": "Di mana anda melayani pelanggan?",
+      "coverageState": "Negeri saya",
+      "coverageAll": "Seluruh Malaysia",
+      "whatsapp": "Nombor WhatsApp (pilihan)",
+      "whatsappHint": "Dipaparkan pada halaman anda selepas INOK meluluskannya.",
+      "reviewNote": "INOK menyemak setiap halaman sebelum ia muncul dalam direktori. Tiada apa-apa diterbitkan sehingga itu.",
+      "doneTitle": "Halaman anda telah dihantar untuk semakan",
+      "doneText": "INOK akan menyemaknya dan memberitahu anda di sini apabila diluluskan. Anda tidak perlu buat apa-apa lagi untuk langkah ini.",
+      "nextSteps": "Langkah seterusnya untuk pengesahan",
+      "nextStepsText": "Untuk menunjukkan apa yang INOK telah semak tentang perniagaan anda, tambah ini apabila anda bersedia. Setiap satu mengambil beberapa minit.",
+      "nsRegistration": "Butiran pendaftaran (SSM)",
+      "nsAddress": "Alamat jalan (dirahsiakan)",
+      "nsPerson": "Siapa yang bertindak untuk perniagaan",
+      "nsDocuments": "Hantar dokumen untuk semakan",
+      "goHome": "Pergi ke Utama",
+      "homeAction": "Senaraikan perniagaan anda dalam 3 langkah",
+      "homeNextAction": "Lengkapkan butiran pengesahan anda"
+    },
+    "consentLegend": "Diperlukan untuk mencipta akaun anda",
     "nav": {
       "work": "Kerja",
       "findCustomers": "Cari pelanggan",
@@ -163,6 +199,29 @@
     "note_required": "Sila tambah nota ringkas.",
     "terms_required": "Tambah tarikh tempahan, jangkaan deposit dan syarat pembatalan sebelum menghantar.",
     "invalid_terms": "Semak deposit dan syarat pembatalan.",
-    "terms_locked": "Terma ini telah diterima dan tidak boleh diubah di sini. Minta sebut harga baharu."
+    "terms_locked": "Terma ini telah diterima dan tidak boleh diubah di sini. Minta sebut harga baharu.",
+    "note_required": "Sila tambah nota ringkas."
+  },
+  "dir2": {
+    "send": "Minta sebut harga",
+    "signInToSend": "Log masuk untuk meminta sebut harga",
+    "dialogTitle": "Minta sebut harga daripada {name}",
+    "sentTitle": "Permintaan sebut harga dihantar kepada {name}"
+  },
+  "p5common": {
+    "buttons": {
+      "requestPrice": "Minta sebut harga"
+    }
+  },
+  "p5buyer": {
+    "request": {
+      "title": "Minta sebut harga"
+    }
+  },
+  "req": {
+    "post": "Terangkan apa yang anda perlukan"
+  },
+  "p6": {
+    "new": "Beberapa produk atau sampel"
   }
 }

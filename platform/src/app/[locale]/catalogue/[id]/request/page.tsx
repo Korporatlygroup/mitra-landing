@@ -50,6 +50,7 @@ export default async function RequestPricePage({ params }: { params: Promise<{ l
         <PriceSummary priceMode={item.price_mode} fromPrice={item.from_price} currency={item.currency} unit={item.unit} confirmedOn={item.price_confirmed_on} locale={locale} />
       </section>
       <p>{t('request.intro')}</p>
+      <p className="mut">{(await getTranslations({ locale, namespace: 'deals' }))('ask.moreOptions')}{' '}<Link href="/sourcing/new" locale={locale}>{(await getTranslations({ locale, namespace: 'p6' }))('new')}</Link></p>
       <RequestForm
         locale={locale}
         productId={id}
