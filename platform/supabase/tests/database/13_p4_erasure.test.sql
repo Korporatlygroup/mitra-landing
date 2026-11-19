@@ -199,7 +199,7 @@ begin
     values (e1, b, s1, ub, 5, 'Synthetic review text for the test.') returning id) insert into tt.rows select w, 'business_reviews', 'id', id from ins;
 end $$;
 
-select plan(41);
+select plan(42);
 select tt.build(w) from unnest(array['U', 'S', 'R', 'B', 'C']) w;
 
 -- 0. Guard: no Phase 1-4 foreign key to organisations / auth.users / enquiries / buyer_requests / quotations may block a delete.
@@ -210,6 +210,12 @@ select is((select count(*)::int from pg_constraint c
                                  'public.business_listings'::regclass, 'public.business_profiles'::regclass)
              ),
           0, 'E0 no foreign key from a public table to organisations, users, enquiries or requests blocks deletion (NO ACTION / RESTRICT)');
+-- E0f: the agreements tables (000231) are the ONLY known exception to E0. They are pinned exactly, so this test fails the moment they change or any other
+-- table joins them. This is a tracked open issue (privacy erasure of agreements needs a policy decision), not a pass: remove E0f and the E0 exclusion when it is decided.
+select is((select array_agg(c.conrelid::regclass::text || '.' || c.conname order by c.conname) from pg_constraint c
+           where c.contype = 'f' and c.connamespace = 'public'::regnamespace and c.confdeltype in ('a', 'r') and c.conrelid in ('public.orders'::regclass, 'public.deal_events'::regclass)),
+          array['deal_events.deal_events_actor_org_id_fkey','deal_events.deal_events_enquiry_id_fkey','deal_events.deal_events_order_id_fkey','orders.orders_buyer_org_id_fkey','orders.orders_enquiry_id_fkey','orders.orders_quotation_id_fkey','orders.orders_quote_version_id_fkey','orders.orders_seller_org_id_fkey'],
+          'E0f KNOWN OPEN ISSUE: exactly the eight agreement foreign keys still block erasure (orders, deal_events); see docs/erasure-of-agreements.md');
 select ok((select coalesce(array_agg(distinct a.attname::text), '{}'::text[]) from pg_constraint c
            join pg_attribute a on a.attrelid = c.conrelid and a.attnum = any (c.conkey)
            where c.contype = 'f' and c.confrelid = 'auth.users'::regclass and c.connamespace = 'public'::regnamespace and c.confdeltype = 'n')
