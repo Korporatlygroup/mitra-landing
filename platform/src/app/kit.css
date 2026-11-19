@@ -438,3 +438,10 @@ input[type='file']::file-selector-button:hover { border-color: var(--brand); col
   .deal-wrap .msg-head { flex-wrap: wrap; }
   .deal-back { flex: 1 1 100%; justify-content: flex-start; }
 }
+
+/* ---------- My deals hub ---------- */
+.deals-cards { gap: 12px; }
+.deals-card { display: flex; flex-direction: column; gap: 6px; text-decoration: none; color: inherit; padding: 16px; }
+.deals-card strong { color: var(--brand); font-size: 1.0625rem; }
+.deals-card:hover { border-color: var(--brand); }
+.deals-n { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }

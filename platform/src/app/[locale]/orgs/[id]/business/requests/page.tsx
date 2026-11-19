@@ -4,6 +4,7 @@ import { enquiryColumn, type LeadCard } from '@/lib/leads';
 import { pageTitle } from '@/lib/metadata';
 import { requireBusinessContext } from '@/server/business-context';
 import { listEnquiries, listSellerRequests, type SellerInboxRow } from '@/server/services/directory';
+import FindCustomersTabs from '@/components/deals/FindCustomersTabs';
 import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -96,6 +97,7 @@ export default async function SellerInboxPage({ params }: { params: Promise<{ lo
 
   return (
     <div className="wide">
+      <FindCustomersTabs locale={locale} orgId={id} active="requests" />
       <LeadsBoard cards={cards} orgId={id} browseHref={`/orgs/${id}/business/requests/board`} />
     </div>
   );
