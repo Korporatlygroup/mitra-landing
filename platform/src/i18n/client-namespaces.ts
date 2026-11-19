@@ -116,6 +116,27 @@ export const AREA_PATHS: Record<string, string[]> = {
     "ws.tabs",
     "ws.workspace"
   ],
+  "deals": [
+    "orgs.create",
+    "ws.browse",
+    "ws.close",
+    "ws.collapse",
+    "ws.create",
+    "ws.directory",
+    "ws.homeLabel",
+    "ws.notifBell",
+    "ws.notifBellNone",
+    "ws.notifCount",
+    "ws.notifNone",
+    "ws.notifications",
+    "ws.openMenu",
+    "ws.search",
+    "ws.searchPlaceholder",
+    "ws.seeAll",
+    "ws.tabMore",
+    "ws.tabs",
+    "ws.workspace"
+  ],
   "directory": [
     "@actions",
     "dir2",

@@ -7,6 +7,7 @@ import { sellerLeadMetrics } from '@/server/services/enquiries';
 import ActionForm from '@/components/ActionForm';
 import { respondReferralAction } from '@/app/[locale]/enquiries/[id]/actions';
 import { openReferralEnquiryAction } from './actions';
+import FindCustomersTabs from '@/components/deals/FindCustomersTabs';
 import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -35,6 +36,7 @@ export default async function LeadsPage({ params }: { params: Promise<{ locale: 
   const m = metrics.ok ? metrics.data : null;
   return <>
     <PageHeader title={t('leadsTitle')} sub={t('metricsNote')} />
+    <FindCustomersTabs locale={locale} orgId={id} active="results" />
     {(referrals.data?.length ?? 0) > 0 ? <section className="card" aria-labelledby="referral-inbox-title">
       <h2 id="referral-inbox-title">{t('referralInbox')}</h2>
       <ul>{referrals.data!.map((r) => <li key={r.id}>
