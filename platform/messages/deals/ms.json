@@ -100,6 +100,9 @@
     "verifyLink": "Lihat apa yang INOK semak tentang perniagaan ini",
     "saved": "Disimpan",
     "updated": "Dikemas kini",
+    "ask": {
+      "moreOptions": "Perlukan beberapa produk atau sampel sekali gus?"
+    },
     "quick": {
       "title": "Senaraikan perniagaan anda dalam 3 langkah",
       "stepOf": "Langkah {n} daripada 3",
@@ -178,5 +181,27 @@
     "order_not_open": "Perjanjian ini tidak boleh diubah lagi.",
     "invalid_order_action": "Langkah itu tidak tersedia untuk perjanjian ini sekarang.",
     "note_required": "Sila tambah nota ringkas."
+  },
+  "dir2": {
+    "send": "Minta sebut harga",
+    "signInToSend": "Log masuk untuk meminta sebut harga",
+    "dialogTitle": "Minta sebut harga daripada {name}",
+    "sentTitle": "Permintaan sebut harga dihantar kepada {name}"
+  },
+  "p5common": {
+    "buttons": {
+      "requestPrice": "Minta sebut harga"
+    }
+  },
+  "p5buyer": {
+    "request": {
+      "title": "Minta sebut harga"
+    }
+  },
+  "req": {
+    "post": "Terangkan apa yang anda perlukan"
+  },
+  "p6": {
+    "new": "Beberapa produk atau sampel"
   }
 }
