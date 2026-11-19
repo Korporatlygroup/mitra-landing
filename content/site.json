@@ -71,10 +71,8 @@
         "videoUrl": null
       },
       {
-        "label": "Get started",
-        "href": "https://app.inok.my/en/signup",
-        "style": "secondary",
-        "videoUrl": null
+        "label": "Secure and Grow Your Business",
+        "style": "tagline"
       }
     ]
   },
