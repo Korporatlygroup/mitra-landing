@@ -65,6 +65,7 @@ test('E104 terms are written into the quotation, shown to the buyer before accep
 
   // the buyer asks for a change; the seller sends version 2 with a new date and the standard 7-day option
   await requestChanges(bp, 'Can we move it one week later?');
+  await expect(bp.locator('main')).toContainText(dl('ev_quote_revision_requested')); // wait until the request is recorded before the seller reloads
   await page.reload();
   await openQuoteEditor(page);
   await quoteBase(page, 'Lunch buffet, two mains, rice, dessert, drinks', '1800.00');
