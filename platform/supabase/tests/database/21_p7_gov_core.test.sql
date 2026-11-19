@@ -140,7 +140,7 @@ select throws_ok($$select public.gov_register_source('TEKUN','TEKUN','tekun.gov.
 select tt.act('ops1', 'aal2');
 insert into tt.ids values ('src', public.gov_register_source('TEKUN','TEKUN Nasional','tekun.gov.my','TEKUN schemes','website','tekun',
   '{www.tekun.gov.my,tekunonline.tekun.gov.my}', '{https://www.tekun.gov.my/skim-pembiayaan-tekun-niaga/}', 'public_pages', 'robots respected'));
-select is((select count(*)::int from public.gov_sources where not enabled), 1, 'G9 admin registers a source, disabled by default');
+select is((select count(*)::int from public.gov_sources where not enabled and id = tt.id('src')), 1, 'G9 admin registers a source, disabled by default');
 select throws_ok($$insert into public.gov_sources (agency_id, name, source_type, adapter, allowed_hosts, approved_urls)
   select agency_id, 'bad', 'website', 'tekun', '{x.gov.my}', '{http://x.gov.my/a}' from public.gov_sources limit 1$$, '42501', null, 'G10 no direct table writes');
 
