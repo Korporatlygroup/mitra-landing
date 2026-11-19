@@ -94,7 +94,7 @@ test('E105 the buyer reports an issue with a reason; it is recorded, the seller 
   const rctx = await freshContext(browser, page);
   const rp = await rctx.newPage();
   await reviewerGoto(rp, rev, '/en/admin/issues');
-  await expect(rp.getByRole('alert')).toContainText(dl('issuesNoAccess'));
+  await expect(rp.locator('p[role=alert]')).toContainText(dl('issuesNoAccess'));
   await rctx.close();
   const direct = await (await signedClient(buyer)).client.rpc('admin_order_issues', { p_limit: 10 });
   expect(direct.error?.message ?? '').toContain('not_found');
