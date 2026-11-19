@@ -8,6 +8,7 @@ import { getSourcingRequest, listMySourcingRequests } from '@/server/services/p5
 import type { SourcingRequestRow } from '@/server/services/p5-types';
 import { requireSession } from '@/server/session';
 import EmptyState from '@/components/shared/EmptyState';
+import DealsTabs from '@/components/deals/DealsTabs';
 import PageHeader from '@/components/shared/PageHeader';
 
 const PAGE = 25;
@@ -64,6 +65,7 @@ export default async function MyProductRequestsPage({
           </>
         }
       />
+      <DealsTabs locale={locale} active="wholesale" />
       {failed ? (
         <p className="message message-error" role="alert">
           {t('requests.error')}

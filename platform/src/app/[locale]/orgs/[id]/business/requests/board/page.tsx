@@ -7,6 +7,7 @@ import { requireBusinessContext } from '@/server/business-context';
 import { BOARD_PAGE_SIZE, listBoardRequests } from '@/server/services/directory';
 import { listCategories } from '@/server/services/verification';
 import { catName } from '@/lib/category';
+import FindCustomersTabs from '@/components/deals/FindCustomersTabs';
 import PageHeader from '@/components/shared/PageHeader';
 
 export async function generateMetadata({ params }: { params: Promise<{ locale: string }> }) {
@@ -63,6 +64,7 @@ export default async function RequestBoardPage({
         </Link>
       </p>
       <PageHeader title={t('board.title')} sub={t('board.intro')} />
+      <FindCustomersTabs locale={locale} orgId={id} active="board" />
 
       <form method="get" className="card" aria-label={t('board.apply')}>
         <div className="field">
