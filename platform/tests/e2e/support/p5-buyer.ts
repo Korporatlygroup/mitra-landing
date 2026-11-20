@@ -264,6 +264,9 @@ export const tcm = (locale: 'en' | 'ta' | 'ms', key: string, vars: Record<string
 
 export async function axeClean(page: Page, label: string): Promise<void> {
   await page.waitForLoadState('networkidle');
+  // After a client-side navigation Next.js applies the new page title a moment after the content. Wait for it (up to 10 s) so axe judges the settled page;
+  // if a title never arrives, axe still reports document-title below, so nothing is hidden.
+  await page.waitForFunction(() => document.title.trim().length > 0, undefined, { timeout: 10_000 }).catch(() => undefined);
   const r = await new AxeBuilder({ page }).withTags(['wcag2a', 'wcag2aa', 'wcag21a', 'wcag21aa', 'wcag22aa']).analyze();
   const bad = r.violations.filter((v) => v.impact === 'serious' || v.impact === 'critical');
   expect(bad, `axe serious/critical on ${label}:\n${bad.map((v) => `${v.id}: ${v.nodes.map((n) => n.target.join(' ')).join(' | ')}`).join('\n')}`).toEqual([]);

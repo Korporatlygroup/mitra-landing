@@ -229,6 +229,7 @@ a:hover {
   font-size: 0.875rem;
   line-height: 1.45;
 }
+input:not([type]),
 input[type='text'],
 input[type='email'],
 input[type='password'],

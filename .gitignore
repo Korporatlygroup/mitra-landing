@@ -46,3 +46,4 @@ desktop.ini
 /.p6-*/
 .erasure-local/
 .erasure-final/
+platform/tests/audit/out/

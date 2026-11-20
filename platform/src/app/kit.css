@@ -464,3 +464,22 @@ input[type='file']::file-selector-button:hover { border-color: var(--brand); col
 .booking-terms .dl { display: block; }
 .booking-terms dt { margin-top: 6px; }
 .booking-terms dd { margin: 0; }
+
+/* UX review: conversation header on phones keeps the title readable; the agreement button moves to its own row */
+@media (max-width: 520px) {
+  .msg-head { flex-wrap: wrap; row-gap: 8px; }
+  .msg-head > .btn-primary { flex: 1 1 100%; justify-content: center; }
+  .msg-head h1 { overflow-wrap: anywhere; }
+}
+
+/* UX review: phone product lists are shorter: wide thumbnail instead of 4:3 */
+@media (max-width: 520px) {
+  .catalogue-card .p5-thumb { aspect-ratio: 16 / 9; max-height: 150px; }
+}
+
+/* UX review: long checkbox lists (states) use two columns instead of one very tall column */
+.check-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 12px; }
+.check-grid .field.check { margin: 0; }
+
+/* UX review: on phones and tablets the short "next actions" list comes before the long readiness details, not after them */
+@media (max-width: 1099px) { .split-x > .b360-aside { order: -1; } }

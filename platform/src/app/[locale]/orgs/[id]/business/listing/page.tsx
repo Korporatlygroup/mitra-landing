@@ -188,12 +188,14 @@ export default async function ListingEditorPage({ params }: { params: Promise<{ 
                     <input id={`svc_nat_${i}`} name={`svc_nat_${i}`} type="checkbox" defaultChecked={Boolean(s?.nationwide)} />
                     <label htmlFor={`svc_nat_${i}`}>{t('dir.allMalaysia')}</label>
                   </div>
-                  {MY_STATES.map((st) => (
-                    <div className="field check" key={st}>
-                      <input id={`svc_areas_${i}_${st}`} name={`svc_areas_${i}`} value={st} type="checkbox" defaultChecked={s?.areas?.includes(st) ?? (i === 0 && !s && st === profile.state)} />
-                      <label htmlFor={`svc_areas_${i}_${st}`}>{st}</label>
-                    </div>
-                  ))}
+                  <div className="check-grid">
+                    {MY_STATES.map((st) => (
+                      <div className="field check" key={st}>
+                        <input id={`svc_areas_${i}_${st}`} name={`svc_areas_${i}`} value={st} type="checkbox" defaultChecked={s?.areas?.includes(st) ?? (i === 0 && !s && st === profile.state)} />
+                        <label htmlFor={`svc_areas_${i}_${st}`}>{st}</label>
+                      </div>
+                    ))}
+                  </div>
                 </fieldset>
                 <details>
                   <summary>{t('listing.svcMore')}</summary>
