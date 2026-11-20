@@ -1908,6 +1908,7 @@
     "navComplaints": "Complaints and Community Standards"
   },
   "adm": {
-    "privacyRequests": "Data requests"
+    "privacyRequests": "Data requests",
+    "orderIssues": "Order issues"
   }
 }

@@ -259,8 +259,8 @@ select is(
         'list_duplicate_flags(p_status text)', 'resolve_duplicate_flag(p_flag uuid, p_decision text, p_note text)', 'find_published_duplicates(p_ssm text, p_name text)',
         'request_org_membership(p_slug text, p_message text)', 'list_join_requests(p_org uuid)', 'resolve_join_request(p_request uuid, p_decision text)', 'set_email_notifications(p_on boolean)', 'admin_mfa_required()',
         'gov_save_programme_me(p_programme uuid)', 'gov_unsave_programme_me(p_programme uuid)', 'gov_list_saved_me()',
-        'order_action(p_order uuid, p_action text, p_note text)', 'set_order_details(p_order uuid, p_service_date date, p_deposit_note text)']) AS x ORDER BY x),
-  'S7.6 authenticated can execute exactly the 197 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 1 administrator MFA policy read, 3 account-level saved programmes, 6 added by business links, duplicate flags and join requests, 2 for agreements)');
+        'order_action(p_order uuid, p_action text, p_note text)', 'set_order_details(p_order uuid, p_service_date date, p_deposit_note text)', 'admin_order_issues(p_limit integer)']) AS x ORDER BY x),
+  'S7.6 authenticated can execute exactly the 198 allow-listed public RPCs (62 up to Phase 4, 55 added by Phase 5, 24 added by Phase 6, 19 added by Phase 7, 19 added by the redesign, 5 added by the privacy controls, 1 added by transactional email, 1 administrator MFA policy read, 3 account-level saved programmes, 6 added by business links, duplicate flags and join requests, 3 for agreements)');
 
 select is(
   (select array_agg(p.proname::text order by p.proname)

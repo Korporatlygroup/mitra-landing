@@ -1908,6 +1908,7 @@
     "navComplaints": "Aduan dan Piawaian Komuniti"
   },
   "adm": {
-    "privacyRequests": "Permintaan data"
+    "privacyRequests": "Permintaan data",
+    "orderIssues": "Isu pesanan"
   }
 }
