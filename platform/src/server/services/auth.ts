@@ -41,8 +41,8 @@ export async function signUp(supabase: Db, a: SignUpArgs): Promise<Result<null>>
     if (error.code === 'user_already_exists') return ok(null);
     if (error.code === 'weak_password') return fail('password_weak');
     if (error.code === 'over_email_send_rate_limit' || error.status === 429) return fail('rate_limited');
-    // The account cannot be confirmed because no confirmation email can be sent (the project has no custom SMTP yet and the address is not a team
-    // address, or the mail provider failed). Say so plainly instead of the generic error, and never claim the email is on its way.
+    // The account cannot be confirmed because no confirmation email can be sent (the mail provider refused or failed: for example an unverified sending
+    // domain, a revoked key or a provider outage; or, if custom SMTP is ever switched off, an address outside the project team). Say so plainly instead of the generic error, and never claim the email is on its way.
     if (error.code === 'email_address_not_authorized' || error.code === 'email_provider_disabled' || /error sending (confirmation|signup|magic link) email/i.test(error.message ?? '')) return fail('email_unavailable');
     return fail('internal');
   }

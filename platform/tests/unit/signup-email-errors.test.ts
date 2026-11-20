@@ -4,7 +4,8 @@ import ms from '../../messages/ms.json';
 import ta from '../../messages/ta.json';
 import { signUp } from '../../src/server/services/auth';
 
-// Production has no custom SMTP yet: Supabase refuses to email addresses outside the project team and the built-in sender is limited.
+// Production sends Auth mail through custom SMTP (Resend). If the provider refuses or fails (unverified domain, revoked key, outage, or custom SMTP switched off so the
+// built-in sender only serves team addresses), Supabase returns these errors.
 // A person who signs up must be told plainly, not shown "something went wrong", and the existing privacy behaviour must not change.
 const args = { email: 'a@example.test', password: 'Abcdefghi1', displayName: 'A', language: 'en' as const, redirectTo: 'http://x/auth/callback', consentVersion: '2026-07', marketing: false };
 const db = (error: { code?: string; status?: number; message?: string } | null) => ({ auth: { signUp: async () => ({ error }) } }) as never;
