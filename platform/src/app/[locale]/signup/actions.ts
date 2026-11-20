@@ -6,6 +6,7 @@ import { getSiteUrl } from '@/lib/env';
 import { nonSecretValues, parseForm } from '@/lib/form';
 import { failure, type FormState } from '@/lib/form-state';
 import { signUpSchema } from '@/lib/schemas';
+import { captchaEnabled, captchaTokenFrom } from '@/lib/turnstile';
 import { createClient } from '@/lib/supabase/server';
 import { LIMITS, emailThrottleKey } from '@/lib/throttle';
 import { authAttempt } from '@/server/privileged';
@@ -22,8 +23,12 @@ export async function signUpAction(_prev: FormState, formData: FormData): Promis
   const allowed = await authAttempt(emailThrottleKey('signup', d.email), LIMITS.signup.max, LIMITS.signup.windowSeconds);
   if (!allowed) redirect(neutral);
 
+  const captchaToken = captchaTokenFrom(formData);
+  if (captchaEnabled() && !captchaToken) return failure('captcha_failed', nonSecretValues(parsed.raw));
+
   const supabase = await createClient();
   const result = await signUp(supabase, {
+    captchaToken,
     email: d.email,
     password: d.password,
     displayName: d.displayName,
