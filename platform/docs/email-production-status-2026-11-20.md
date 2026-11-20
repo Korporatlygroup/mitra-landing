@@ -11,6 +11,20 @@ Owner decision 2026-11-20: SMTP first. **Nothing was changed in production, DNS,
 | Redirects and site URL | `https://app.inok.my` and the callback allow-list are correct | config diff |
 | Public sign-up | open (`disable_signup: false`); site gate is off | Auth settings endpoint; Worker config |
 
+## 1A. Actual limits (read 2026-11-20; not assumed)
+**Supabase Auth, production** (read-only: `supabase config diff` against `inok-production` with the limit keys declared locally so the remote values are shown; no setting changed):
+| Limit | Value |
+|---|---|
+| Emails sent per hour (`rate_limit.email_sent`) | **30** |
+| Sign-ups and sign-ins per 5 minutes per IP | **30** |
+| Token verifications per 5 minutes per IP | 30 |
+| Anonymous users per hour per IP | 30 |
+| Token refreshes per 5 minutes per IP | 150 |
+| Minimum gap between emails to one address | 1 minute |
+| Auth captcha | **disabled** |
+So at most 30 confirmation, recovery or invitation emails per hour leave Supabase Auth, whatever Resend allows.
+**Resend**: the account plan and its monthly and daily quotas **cannot be read** with the send-only key held by the Worker (it is rejected for account queries), and I did not use any other credential. Published limits: Free 100 emails per day and 3 domains; Pro $20 per month, no daily limit, 50,000 per month. The owner must read the plan in the Resend dashboard (Settings, Billing or Usage) and tell me which plan is active; the controlled delivery test (`email-delivery-test-plan.md`) also shows whether sending works at all.
+
 ## 2. What is missing or unproven (exactly)
 1. **No observed delivery.** The only recorded production send (an invitation, 2026-11-17) was accepted by Supabase but nobody confirmed it reached a mailbox. Whether the Resend domain `mail.inok.my` shows "verified" in the Resend dashboard, and which Resend plan the key belongs to, cannot be read with a send-only key.
 2. **Plan limits.** Resend Free allows **100 emails per day** (published pricing table; Pro, $20 per month, has no daily limit and 50,000 emails per month; Scale $90). Supabase Auth limits email sending on custom SMTP (the documentation says a low default of 30 per hour until adjusted); that limit is not readable here. A burst of sign-ups (or bots) could exhaust either, and legitimate people would then not get their link; the app shows "too many tries" for the Supabase limit.
