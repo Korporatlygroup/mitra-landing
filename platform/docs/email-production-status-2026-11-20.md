@@ -23,7 +23,7 @@ Owner decision 2026-11-20: SMTP first. **Nothing was changed in production, DNS,
 | Minimum gap between emails to one address | 1 minute |
 | Auth captcha | **disabled** |
 So at most 30 confirmation, recovery or invitation emails per hour leave Supabase Auth, whatever Resend allows.
-**Resend**: the account plan and its monthly and daily quotas **cannot be read** with the send-only key held by the Worker (it is rejected for account queries), and I did not use any other credential. Published limits: Free 100 emails per day and 3 domains; Pro $20 per month, no daily limit, 50,000 per month. The owner must read the plan in the Resend dashboard (Settings, Billing or Usage) and tell me which plan is active; the controlled delivery test (`email-delivery-test-plan.md`) also shows whether sending works at all.
+**Resend**: the account plan and its monthly and daily quotas **were not read**: the only Resend credential is the Worker secret, which earlier release notes record as a send-only key, and I did not read or use it. Published limits: Free 100 emails per day and 3 domains; Pro $20 per month, no daily limit, 50,000 per month. The owner must read the plan in the Resend dashboard (Settings, Billing or Usage) and tell me which plan is active; the controlled delivery test (`email-delivery-test-plan.md`) also shows whether sending works at all.
 
 ## 2. What is missing or unproven (exactly)
 1. **No observed delivery.** The only recorded production send (an invitation, 2026-11-17) was accepted by Supabase but nobody confirmed it reached a mailbox. Whether the Resend domain `mail.inok.my` shows "verified" in the Resend dashboard, and which Resend plan the key belongs to, cannot be read with a send-only key.
