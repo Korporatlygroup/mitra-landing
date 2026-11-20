@@ -133,7 +133,7 @@ export const privacy: LegalDocument = {
               ['Rakan kongsi dan pembekal antarabangsa yang dipadankan dengan anda', 'Butiran permintaan sumber yang anda hantar. Jika anda memasukkan butiran peribadi, mereka menerimanya. Lihat bahagian 8.'],
               ['Organisasi anda', 'Pemilik dan pengurus boleh melihat ahli, peranan dan rekod organisasi mengikut peranan mereka.'],
               ['Kakitangan INOK yang diberi kuasa', 'Hanya yang diperlukan peranan mereka: penyemak melihat bukti pengesahan; pentadbir dengan kebenaran berkaitan mengendalikan laporan, permintaan data dan senarai baca sahaja bagi isu yang dilaporkan pada perjanjian. Akaun pentadbir memerlukan langkah pengesahan kedua dan tindakan mereka direkod.'],
-              ['Penyedia perkhidmatan (pemproses)', 'Cloudflare (pengehosan dan penyampaian) dan Supabase (pangkalan data, pengesahan, storan fail persendirian). Penyedia e-mel transaksi akan ditambah apabila e-mel dilancarkan; notis ini akan dikemas kini sebelum itu.'],
+              ['Penyedia perkhidmatan (pemproses)', 'Cloudflare (pengehosan dan penyampaian) dan Supabase (pangkalan data, pengesahan, storan fail persendirian). Resend (penghantaran e-mel: pengesahan akaun, pemulihan kata laluan, jemputan dan e-mel pemberitahuan; ia menerima alamat penerima dan mesej). Lokasi pemprosesan dan terma pemproses masih perlu disahkan oleh pihak pengurusan.'],
               ['Pihak berkuasa', 'Apabila dikehendaki undang-undang atau pihak berkuasa yang berwibawa memintanya secara sah, dan untuk melindungi hak, keselamatan atau daripada penipuan.'],
               ['Pihak lain dalam perjanjian', 'Perjanjian, termanya, sejarah langkah dan nota serta laporan isu di dalamnya. Setiap pihak hanya melihat perjanjian yang ia menjadi pihak kepadanya.'],
             ],
@@ -244,7 +244,7 @@ export const privacy: LegalDocument = {
             ],
           },
         },
-        { p: 'Menolak pemasaran tidak pernah menghadkan akses anda ke platform. Penghantaran e-mel belum aktif; tiada e-mel dalam apa jua jenis dihantar sehingga perkhidmatan e-mel dilancarkan.' },
+        { p: 'Menolak pemasaran tidak pernah menghadkan akses anda ke platform. E-mel akaun dan e-mel pemberitahuan dihantar melalui penyedia e-mel kami (lihat bahagian 6). Platform tidak mempunyai ciri mesej pemasaran buat masa ini, jadi tiada e-mel pemasaran dihantar walaupun anda telah bersetuju.' },
       ],
     },
     {

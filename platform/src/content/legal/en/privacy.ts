@@ -133,7 +133,7 @@ export const privacy: LegalDocument = {
               ['Partners and international suppliers you are matched with', 'The sourcing request details you send them. If you include personal details, they receive them. See section 8.'],
               ['Your organisation', 'Owners and managers can see members, roles and organisation records according to their role.'],
               ['Authorised INOK staff', 'Only what their role needs: reviewers see verification evidence; administrators with the matching permission handle reports, data requests and a read-only list of issues reported on agreements. Administrative accounts require a second authentication step and their actions are logged.'],
-              ['Service providers (processors)', 'Cloudflare (hosting and delivery) and Supabase (database, authentication, private file storage). A transactional email provider will be added when email is launched; this notice will be updated before then.'],
+              ['Service providers (processors)', 'Cloudflare (hosting and delivery) and Supabase (database, authentication, private file storage). Resend (email delivery: account confirmation, password recovery, invitations and notification emails; it receives the recipient address and the message). Its processing location and the processor terms are still to be confirmed by management.'],
               ['Authorities', 'Where the law requires it or a competent authority lawfully asks, and to protect rights, safety or against fraud.'],
               ['The other party to an agreement', 'The agreement, its terms, its history of steps and the notes and issue reports in it. Each side sees only agreements it is party to.'],
             ],
@@ -244,7 +244,7 @@ export const privacy: LegalDocument = {
             ],
           },
         },
-        { p: 'Refusing marketing never limits your access to the platform. Email delivery is not yet active; no email of any kind is sent until the email service is launched.' },
+        { p: 'Refusing marketing never limits your access to the platform. Account emails and notification emails are sent through our email provider (see section 6). The platform has no marketing-message feature at present, so no marketing email is sent even if you have opted in.' },
       ],
     },
     {
