@@ -119,7 +119,18 @@ export const terms: LegalDocument = {
       id: 'quotations',
       title: '15. Sebut harga, rundingan dan penerimaan',
       blocks: [
-        { p: 'Sebut harga menyatakan apa yang ditawarkan penjual, dengan tempoh sahnya. Platform merekod setiap versi, permintaan perubahan dan penerimaan pembeli. Menerima sebut harga merekod persetujuan pihak-pihak di platform; pembekalan barangan atau perkhidmatan, penghantaran dan pembayaran berlaku antara pihak-pihak di luar platform. Sebut harga bukan resit pembelian atau bukti penghantaran. Semak harga akhir, cukai dan kos penghantaran sebelum anda menerima.' },
+        { p: 'Sebut harga menyatakan apa yang ditawarkan penjual, dengan tempoh sahnya. Bagi kerja atau barangan yang mempunyai tarikh, sebut harga juga menyatakan terma tempahan yang diminta daripada pembeli untuk diterima: tarikh perkhidmatan atau penghantaran, tarikh siap (pilihan), jangkaan deposit dan syarat pembatalan (satu daripada tiga pilihan standard, atau kata-kata penjual sendiri). Jangkaan deposit hanyalah teks bertulis.' },
+        { p: 'Platform merekod setiap versi, permintaan perubahan dan penerimaan pembeli. Pembeli boleh meminta perubahan dan penjual boleh menghantar versi baharu; hanya versi terkini boleh diterima, dan versi terdahulu kekal dalam rekod tanpa diubah.' },
+        { p: 'Menerima sebut harga mencipta rekod perjanjian di platform yang mengandungi tepat terma yang diterima. Jika sebut harga mempunyai terma tempahan, terma itu dikunci: tiada pihak boleh menyuntingnya di platform selepas itu. Perubahan memerlukan sebut harga baharu, jadi batalkan perjanjian dahulu jika kedua-dua pihak bersetuju. Perjanjian yang dibuat sebelum terma tempahan wujud mungkin masih boleh ditambah tarikh atau nota deposit oleh penjual.' },
+        { p: 'Rekod perjanjian bukan resit, invois, bukti pembayaran, bukti penghantaran atau jaminan INOK. Pembekalan barangan atau perkhidmatan, penghantaran dan pembayaran berlaku antara pihak-pihak di luar platform. Semak harga akhir, cukai dan kos penghantaran sebelum anda menerima.' },
+      ],
+    },
+    {
+      id: 'agreements',
+      title: '15A. Kemajuan pesanan dan pembatalan',
+      blocks: [
+        { p: 'Selepas penerimaan, perjanjian melalui langkah berikut di platform: dipersetujui; kerja dimulakan (ditanda oleh penjual); dihantar, menunggu pengesahan pembeli (ditanda oleh penjual dengan nota); selesai (disahkan oleh pembeli); atau dibatalkan. Mana-mana pihak boleh membatalkan semasa perjanjian masih "dipersetujui" sahaja, dan boleh menambah nota.' },
+        { p: 'Syarat pembatalan dan jangkaan deposit dalam sebut harga ialah pengaturan antara pembeli dan penjual. INOK tidak menggunakan, mengira, memungut, memegang, memulangkan atau mengesahkan sebarang deposit atau fi, dan platform tidak pernah menanda perjanjian sebagai dibayar atau dilindungi. Pengesahan penghantaran hanya merekod pengesahan pembeli; ia bukan bukti kualiti atau pembayaran.' },
       ],
     },
     {
@@ -141,6 +152,7 @@ export const terms: LegalDocument = {
       title: '18. Pembayaran',
       blocks: [
         { p: 'INOK pada masa ini tidak memproses pembayaran. Apa-apa pembayaran diatur terus antara pembeli dan penjual di luar platform. Berhati-hati semasa membayar, semak kepada siapa anda membayar dan simpan rekod.' },
+        { p: 'Jangkaan deposit atau syarat pembatalan yang ditulis dalam sebut harga ialah teks yang dipersetujui antara pihak-pihak. INOK tidak memungut, memegang, menjejak atau mengesahkan sebarang deposit atau pembayaran.' },
       ],
     },
     {
@@ -193,6 +205,14 @@ export const terms: LegalDocument = {
       title: '24. Aduan dan pelaporan',
       blocks: [
         { p: 'Anda boleh melaporkan penyenaraian, produk, ulasan atau permintaan daripada halaman tempat anda melihatnya (apabila log masuk), dan menghantar sebarang aduan ke {supportEmail}. Proses kami terdapat dalam halaman Aduan dan Piawaian Komuniti.' },
+      ],
+    },
+    {
+      id: 'order-issues',
+      title: '24A. Melaporkan isu dengan perjanjian',
+      blocks: [
+        { p: 'Semasa kerja sedang dijalankan atau menunggu pengesahan, pembeli boleh melaporkan isu pada perjanjian dengan memilih sebab (tidak dihantar, tidak seperti dipersetujui, pihak lain tidak hadir, atau sebab lain) dan menerangkan apa yang berlaku. Penjual dimaklumkan, laporan direkodkan pada perjanjian, dan kakitangan INOK yang diberi kuasa boleh melihatnya dalam senarai baca sahaja.' },
+        { p: 'INOK tidak memutuskan siapa yang betul, tidak memegang atau memindahkan wang dan tidak boleh mengarahkan bayaran balik, penghantaran atau pelaksanaan. Melaporkan isu di platform bukan tuntutan undang-undang dan tidak menggantikan remedi anda yang lain (lihat bahagian 24 dan halaman Aduan dan Standard Komuniti).' },
       ],
     },
     {

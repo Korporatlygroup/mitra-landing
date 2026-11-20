@@ -77,7 +77,7 @@ describe('legal text makes no claim the platform cannot back', () => {
     expect(t).toContain('consumer protection act 1999');
     expect(t).toContain('cannot lawfully be excluded');
     expect(t).toContain('35. contact');
-    expect(LEGAL_CONTENT.en.terms.sections).toHaveLength(35);
+    expect(LEGAL_CONTENT.en.terms.sections).toHaveLength(37);
   });
 
   it('the government notice carries every required statement', () => {
@@ -104,5 +104,37 @@ describe('sign-up marketing consent', () => {
   it('terms and privacy stay required', () => {
     expect(signUpSchema.safeParse({ ...base, acceptTerms: undefined }).success).toBe(false);
     expect(signUpSchema.safeParse({ ...base, acceptPrivacy: undefined }).success).toBe(false);
+  });
+});
+
+describe('legal drafts match the agreement features that are live', () => {
+  const en = (s: keyof typeof LEGAL_CONTENT.en) => textOf(LEGAL_CONTENT.en[s]);
+  const ms = (s: keyof typeof LEGAL_CONTENT.ms) => textOf(LEGAL_CONTENT.ms[s]);
+  it('the terms describe booking terms, locked agreements, order progress and issue reports in both languages', () => {
+    for (const t of [en('terms'), ms('terms')]) {
+      expect(LEGAL_CONTENT.en.terms.sections.map((s) => s.id)).toEqual(expect.arrayContaining(['quotations', 'agreements', 'order-issues']));
+      expect(t.length).toBeGreaterThan(1000);
+    }
+    expect(en('terms')).toMatch(/locked/i);
+    expect(en('terms')).toMatch(/Report|reporting an issue/i);
+    expect(ms('terms')).toMatch(/dikunci/i);
+    expect(ms('terms')).toMatch(/Melaporkan isu/i);
+  });
+  it('never claims that an agreement, deposit or order is paid, protected or guaranteed by INOK', () => {
+    for (const t of [en('terms'), en('marketplace-policy'), en('complaints'), en('privacy')]) {
+      expect(t).not.toMatch(/INOK (guarantees|will refund|holds your (money|deposit))/i);
+      expect(t).not.toMatch(/\bescrow (is|has been) (available|launched|active)/i);
+    }
+    expect(en('terms')).toMatch(/does not collect, hold, track or confirm any deposit/i);
+    expect(ms('terms')).toMatch(/tidak memungut, memegang, menjejak atau mengesahkan/i);
+  });
+  it('the privacy notice is honest that agreement-linked deletion is not automatic yet', () => {
+    expect(en('privacy')).toMatch(/cannot yet complete a deletion automatically/i);
+    expect(en('privacy')).toMatch(/not tell you that your data has been deleted unless it has/i);
+    expect(ms('privacy')).toMatch(/belum dapat melengkapkan pemadaman secara automatik/i);
+  });
+  it('the complaints page says the issue list has no resolution workflow or deadline yet', () => {
+    expect(en('complaints')).toMatch(/no resolution workflow/i);
+    expect(ms('complaints')).toMatch(/tidak mempunyai aliran penyelesaian/i);
   });
 });

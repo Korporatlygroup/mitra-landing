@@ -119,7 +119,18 @@ export const terms: LegalDocument = {
       id: 'quotations',
       title: '15. Quotations, negotiation and acceptance',
       blocks: [
-        { p: 'A quotation states what a seller offers, with its validity period. The platform records each version, change request and the buyer\'s acceptance. Accepting a quotation records the parties\' agreement on the platform; the supply of the goods or services, delivery and payment happen between the parties outside the platform. A quotation is not a purchase receipt or proof of delivery. Check the final price, taxes and delivery cost before you accept.' },
+        { p: 'A quotation states what a seller offers, with its validity period. For work or goods with a date, a quotation also states the booking terms the buyer is asked to accept: the service or delivery date, an optional finish-by date, a deposit expectation and the cancellation conditions (one of three standard options, or the seller\'s own wording). The deposit expectation is written text only.' },
+        { p: 'The platform records each version, change request and the buyer\'s acceptance. A buyer can ask for changes and the seller can send a new version; only the latest version can be accepted, and earlier versions stay on record unchanged.' },
+        { p: 'Accepting a quotation creates an agreement record on the platform containing exactly the terms that were accepted. Where the quotation had booking terms, those terms are locked: neither side can edit them on the platform afterwards. A change needs a new quotation, so cancel the agreement first if both sides agree. Agreements created before booking terms existed may still have a date or deposit note added by the seller.' },
+        { p: 'An agreement record is not a receipt, an invoice, proof of payment, proof of delivery or an INOK guarantee. The supply of the goods or services, delivery and payment happen between the parties outside the platform. Check the final price, taxes and delivery cost before you accept.' },
+      ],
+    },
+    {
+      id: 'agreements',
+      title: '15A. Order progress and cancellation',
+      blocks: [
+        { p: 'After acceptance an agreement moves through these steps on the platform: agreed; work started (marked by the seller); delivered, waiting for the buyer\'s confirmation (marked by the seller with a note); completed (confirmed by the buyer); or cancelled. Either side may cancel while the agreement is still only "agreed", and may add a note.' },
+        { p: 'The cancellation conditions and any deposit expectation in the quotation are arrangements between the buyer and the seller. INOK does not apply, calculate, collect, hold, return or confirm any deposit or fee, and the platform never marks an agreement as paid or protected. Confirming delivery records the buyer\'s confirmation only; it is not proof of quality or of payment.' },
       ],
     },
     {
@@ -141,6 +152,7 @@ export const terms: LegalDocument = {
       title: '18. Payments',
       blocks: [
         { p: 'INOK does not currently process payments. Any payment is arranged directly between buyer and seller outside the platform. Take care when paying, check who you are paying, and keep records.' },
+        { p: 'A deposit expectation or cancellation condition written in a quotation is text agreed between the parties. INOK does not collect, hold, track or confirm any deposit or payment.' },
       ],
     },
     {
@@ -193,6 +205,14 @@ export const terms: LegalDocument = {
       title: '24. Complaints and reporting',
       blocks: [
         { p: 'You can report a listing, product, review or request from the page where you see it (when signed in), and send any complaint to {supportEmail}. Our process is in the Complaints and Community Standards page.' },
+      ],
+    },
+    {
+      id: 'order-issues',
+      title: '24A. Reporting an issue with an agreement',
+      blocks: [
+        { p: 'While work is in progress or waiting for confirmation, the buyer can report an issue on the agreement by choosing a reason (not delivered, not as agreed, the other side did not turn up, or something else) and describing what happened. The seller is told, the report is recorded on the agreement, and authorised INOK staff can see it in a read-only list.' },
+        { p: 'INOK does not decide who is right, does not hold or move money and cannot order a refund, delivery or performance. Reporting an issue on the platform is not a legal claim and does not replace your other remedies (see section 24 and the Complaints and Community Standards page).' },
       ],
     },
     {
