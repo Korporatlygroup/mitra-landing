@@ -662,7 +662,8 @@
     "request_response_limit": "This request already has enough replies.",
     "invalid_details": "Please describe your request (up to 2,000 characters).",
     "invalid_request_type": "Please choose a type of request.",
-    "note_required": "Please write an answer before closing the request."
+    "note_required": "Please write an answer before closing the request.",
+    "email_unavailable": "We cannot send confirmation emails yet, so we could not create your account. Please try again later or contact support."
   },
   "consent": {
     "title": "Review and accept terms and privacy",
