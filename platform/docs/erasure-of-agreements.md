@@ -1,6 +1,6 @@
 # Erasure of agreements (orders): options and decision needed
 
-Status: **open, no policy decided, no migration proposed for production.** Written 2026-11-19.
+Status: **direction chosen by the owner on 2026-11-20: Option C (detach and keep), subject to privacy and legal review. Detailed proposal: `erasure-option-c-proposal.md`. Not implemented; the retention period and the lawful scope are still undecided.** Originally written 2026-11-19 as open.
 
 ## The problem
 Agreements (`orders`) and their events (`deal_events`), added in migration 000231, reference organisations, enquiries, quotations and quotation versions with
