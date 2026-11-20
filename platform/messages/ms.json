@@ -662,7 +662,8 @@
     "amount_too_large": "Jumlah terlalu besar untuk sebut harga.",
     "invalid_details": "Sila terangkan permintaan anda (sehingga 2,000 aksara).",
     "invalid_request_type": "Sila pilih jenis permintaan.",
-    "note_required": "Sila tulis jawapan sebelum menutup permintaan."
+    "note_required": "Sila tulis jawapan sebelum menutup permintaan.",
+    "email_unavailable": "Kami belum dapat menghantar e-mel pengesahan, jadi akaun anda tidak dapat dicipta. Sila cuba lagi kemudian atau hubungi sokongan."
   },
   "consent": {
     "title": "Semak dan terima terma serta privasi",

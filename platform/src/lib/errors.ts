@@ -129,6 +129,8 @@ export const KNOWN_MESSAGE_KEYS = [
   'order_not_open', 'invalid_order_action', 'note_required',
   // Booking terms inside the quotation
   'terms_required', 'invalid_terms', 'terms_locked',
+  // Sign-up when the confirmation email cannot be sent (no custom SMTP yet, address not allowed, provider error)
+  'email_unavailable',
 ] as const;
 
 /**
