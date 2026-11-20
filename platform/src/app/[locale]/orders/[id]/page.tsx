@@ -1,6 +1,7 @@
 import { getFormatter, getTranslations } from 'next-intl/server';
 import { notFound } from 'next/navigation';
 import ActionForm from '@/components/ActionForm';
+import BookingTerms from '@/components/deals/BookingTerms';
 import StatusBadge from '@/components/shared/StatusBadge';
 import { Link } from '@/i18n/navigation';
 import { decodeIssueNote, ISSUE_REASONS } from '@/lib/issue-note';
@@ -54,9 +55,15 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
           <dt>{d('buyer')}</dt><dd>{parties.data.buyer_name ?? '-'}</dd>
           <dt>{d('seller')}</dt><dd>{parties.data.seller_name}</dd>
           <dt>{d('orderDelivery')}</dt><dd>{o.delivery_timing}</dd>
-          <dt>{d('serviceDate')}</dt><dd>{o.service_date ? fmt.dateTime(new Date(`${o.service_date}T00:00:00+08:00`), { dateStyle: 'long', timeZone: 'Asia/Kuala_Lumpur' }) : '-'}</dd>
-          {o.deposit_note ? <><dt>{d('deposit')}</dt><dd>{o.deposit_note}</dd></> : null}
+          {o.terms_locked ? null : <><dt>{d('serviceDate')}</dt><dd>{o.service_date ? fmt.dateTime(new Date(`${o.service_date}T00:00:00+08:00`), { dateStyle: 'long', timeZone: 'Asia/Kuala_Lumpur' }) : '-'}</dd></>}
+          {o.deposit_note && !o.terms_locked ? <><dt>{d('deposit')}</dt><dd>{o.deposit_note}</dd></> : null}
         </dl>
+        {o.terms_locked ? (
+          <>
+            <BookingTerms title={d('acceptedTerms')} terms={{ booking_date: o.service_date, completion_by: o.completion_by, deposit_terms: o.deposit_note, cancellation_option: o.cancellation_option, cancellation_text: o.cancellation_text }} />
+            <p className="mut">{d('termsChange')}</p>
+          </>
+        ) : null}
         <p>{o.scope_text}</p>
         <ul className="qcard-lines">{o.items.map((i, n) => <li key={n}><span>{i.description} · {i.quantity} {i.unit} × {money(i.unit_price)}</span><span>{o.currency} {money(i.line_total)}</span></li>)}</ul>
         <p className="qcard-total"><span>{d('agreedTotal')}</span><strong>{o.currency} {money(o.total)}</strong></p>
@@ -64,7 +71,7 @@ export default async function OrderPage({ params }: { params: Promise<{ locale: 
         <p className="mut">{d('notPromise')}</p>
       </section>
 
-      {side === 'seller' && o.status === 'agreed' ? (
+      {side === 'seller' && o.status === 'agreed' && !o.terms_locked ? (
         <section className="card">
           <h2>{d('serviceDate')}</h2>
           <ActionForm action={orderDetailsAction} submitLabel={d('saveDetails')} variant="secondary">

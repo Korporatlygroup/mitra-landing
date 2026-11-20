@@ -4,6 +4,7 @@ import { def } from './personas';
 import { getData, persona, setData } from './store';
 import { lit, remoteRows, remoteSql } from '../hosted/support';
 import { next, t } from './ui';
+import { fillBookingTerms } from '../e2e/support/deals-ui';
 
 // The coordinated scenario: Buyer A posts a request, the seller independently receives it and answers, they negotiate a quotation
 // (draft, send, revision request, revision, accept), both verify status/messages/notifications, and Buyer B (an outsider) is refused.
@@ -105,6 +106,7 @@ test('Seller receives it independently, expresses interest and quotes; Buyer A n
     await s.page.locator('#unitPrice1').fill(price);
     await s.page.locator('#validUntil').fill(inDays(7));
     await s.page.locator('#deliveryTiming').fill('Within three weeks');
+    await fillBookingTerms(s.page);
     await s.page.locator('#taxTreatment').fill('Tax included as stated');
     await s.page.getByRole('button', { name: t('p4.saveDraft') }).click();
   };

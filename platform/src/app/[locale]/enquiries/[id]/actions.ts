@@ -5,6 +5,7 @@ import { z } from 'zod';
 import { failure, success, type FormState } from '@/lib/form-state';
 import { uuidSchema } from '@/lib/schemas';
 import { actionUser } from '@/server/action-user';
+import { CANCELLATION_OPTIONS } from '@/server/services/deals';
 import { calculateQuote } from '@/server/services/quote-calculation';
 import { postMessage, saveQuoteDraft, sendQuoteVersion, respondToQuote, withdrawQuote, recordLead, proposeReferral, respondToReferral, submitReview, respondToReview } from '@/server/services/enquiries';
 
@@ -29,6 +30,14 @@ export async function saveQuoteAction(_prev: FormState, f: FormData): Promise<Fo
       taxTreatment: text(f, 'taxTreatment'), deliveryTiming: text(f, 'deliveryTiming'),
     });
   if (!p.success) return failure('invalid_input');
+  // Booking terms are part of the quotation the buyer accepts: the date, the deposit expectation (text only) and the cancellation conditions.
+  const terms = z.object({
+    bookingDate: z.iso.date(), completionBy: z.union([z.iso.date(), z.literal('')]),
+    depositTerms: z.string().trim().min(3).max(500), cancellationOption: z.enum(CANCELLATION_OPTIONS), cancellationText: z.string().trim().max(500),
+  }).safeParse({ bookingDate: text(f, 'bookingDate'), completionBy: text(f, 'completionBy'), depositTerms: text(f, 'depositTerms'), cancellationOption: text(f, 'cancellationOption'), cancellationText: text(f, 'cancellationText') });
+  if (!terms.success) return failure('terms_required');
+  if (terms.data.cancellationOption === 'custom' && terms.data.cancellationText.length < 3) return failure('terms_required');
+  if (terms.data.completionBy && terms.data.completionBy < terms.data.bookingDate) return failure('invalid_date');
   const lines = [1, 2, 3, 4, 5].flatMap((n) => {
     const description = text(f, `description${n}`);
     return description ? [{ description, quantity: text(f, `quantity${n}`), unit: text(f, `unit${n}`), unitPrice: text(f, `unitPrice${n}`) }] : [];
@@ -39,6 +48,8 @@ export async function saveQuoteAction(_prev: FormState, f: FormData): Promise<Fo
   const draft = { currency: 'MYR', scope: p.data.scope, exclusions: text(f, 'exclusions'), tax_treatment: p.data.taxTreatment,
     delivery_timing: p.data.deliveryTiming, terms: text(f, 'terms'), valid_until: `${p.data.validUntil}T23:59:59+08:00`,
     delivery_fee: calc.deliveryFee, tax_amount: calc.taxAmount,
+    booking_date: terms.data.bookingDate, completion_by: terms.data.completionBy, deposit_terms: terms.data.depositTerms,
+    cancellation_option: terms.data.cancellationOption, cancellation_text: terms.data.cancellationOption === 'custom' ? terms.data.cancellationText : '',
     lines: calc.lines.map((l) => ({ description: l.description, quantity: l.quantity, unit: l.unit, unit_price: l.unitPrice })) };
   const { supabase, user } = await actionUser(); if (!user) return failure('unauthenticated');
   const r = await saveQuoteDraft(supabase, p.data.enquiryId, draft, p.data.expectedVersion);
@@ -50,6 +61,10 @@ export async function sendQuoteAction(_prev: FormState, f: FormData): Promise<Fo
   const id = text(f, 'quotationId'), enquiryId = text(f, 'enquiryId'), version = Number(text(f, 'expectedVersion'));
   if (!uuidSchema.safeParse(id).success || !uuidSchema.safeParse(enquiryId).success || !Number.isSafeInteger(version)) return failure('invalid_input');
   const { supabase, user } = await actionUser(); if (!user) return failure('unauthenticated');
+  // A draft saved before booking terms existed must get them before it can be sent.
+  const { data: dr } = await supabase.from('quotation_drafts').select('data').eq('quotation_id', id).maybeSingle();
+  const dd = (dr?.data ?? {}) as Record<string, unknown>;
+  if (!dd.booking_date || !dd.deposit_terms || !dd.cancellation_option) return failure('terms_required');
   const r = await sendQuoteVersion(supabase, id, version);
   if (r.ok) refresh(enquiryId);
   return failResult(r);

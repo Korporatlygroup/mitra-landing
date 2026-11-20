@@ -187,11 +187,31 @@
     "issuesIntro": "Perjanjian yang dilaporkan ada isu oleh pembeli atau penjual. Senarai ini baca sahaja: INOK tidak memutuskan siapa yang betul di sini dan tidak mengendalikan wang.",
     "issuesEmpty": "Tiada isu dilaporkan.",
     "issuesNoAccess": "Anda tiada akses kepada senarai ini.",
-    "reportedBy": "Dilaporkan oleh: {who}"
+    "reportedBy": "Dilaporkan oleh: {who}",
+    "termsTitle": "Terma tempahan",
+    "termsHelp": "Dipersetujui sebelum pembeli menerima. Terma ini kekal pada perjanjian seperti yang ditulis.",
+    "bookingDate": "Tarikh perkhidmatan atau penghantaran",
+    "completionBy": "Siap sebelum (pilihan)",
+    "depositTerms": "Jangkaan deposit",
+    "depositHint": "Tulis apa yang pembeli patut jangka, contohnya \"Tiada deposit\" atau \"30% daripada jumlah sebelum tarikh\". INOK tidak mengutip atau memegang deposit.",
+    "cancellation": "Syarat pembatalan",
+    "cancellationChoose": "Pilih",
+    "cancellationText": "Syarat pembatalan anda sendiri (perlu jika memilih Lain-lain)",
+    "canc_free_7d": "Boleh dibatalkan percuma sehingga 7 hari sebelum tarikh",
+    "canc_deposit_kept": "Boleh dibatalkan, tetapi sebarang deposit tidak dikembalikan",
+    "canc_no_cancel": "Tiada pembatalan selepas diterima",
+    "canc_custom": "Lain-lain (tulis di bawah)",
+    "termsMissing": "Tambah tarikh tempahan, jangkaan deposit dan syarat pembatalan, simpan draf, kemudian hantar.",
+    "acceptedTerms": "Terma tempahan yang diterima",
+    "termsChange": "Terma ini diterima bersama sebut harga dan tidak boleh disunting. Perubahan memerlukan sebut harga baharu: batalkan perjanjian ini dahulu jika kedua-dua pihak bersetuju."
   },
   "errors": {
     "order_not_open": "Perjanjian ini tidak boleh diubah lagi.",
     "invalid_order_action": "Langkah itu tidak tersedia untuk perjanjian ini sekarang.",
+    "note_required": "Sila tambah nota ringkas.",
+    "terms_required": "Tambah tarikh tempahan, jangkaan deposit dan syarat pembatalan sebelum menghantar.",
+    "invalid_terms": "Semak deposit dan syarat pembatalan.",
+    "terms_locked": "Terma ini telah diterima dan tidak boleh diubah di sini. Minta sebut harga baharu.",
     "note_required": "Sila tambah nota ringkas."
   },
   "dir2": {

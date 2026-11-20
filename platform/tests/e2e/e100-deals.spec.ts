@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { createBusinessOwner } from './support/biz';
-import { dl, openQuoteEditor, requestChanges } from './support/deals-ui';
+import { daysAhead, dl, fillBookingTerms, openQuoteEditor, requestChanges } from './support/deals-ui';
 import { createOrgAs, createUser, signedClient, sql } from './support/db';
 import { msg } from './support/i18n';
 import { shot } from './support/qa-evidence';
@@ -50,6 +50,7 @@ test('E100 enquiry to quotation, revision, acceptance, agreement, delivery and c
     await page.locator('#unitPrice1').fill(price);
     await page.locator('#validUntil').fill(inDays(7));
     await page.locator('#deliveryTiming').fill('Event date 20 December, edited photos in 14 days');
+    await fillBookingTerms(page);
     await page.locator('#taxTreatment').fill('No tax charged');
     await page.locator('#terms').fill('Deposit and cancellation terms agreed between buyer and seller.');
   };
@@ -129,9 +130,12 @@ test('E100 enquiry to quotation, revision, acceptance, agreement, delivery and c
   }
 
   // seller adds the booking date, starts, delivers (with a note); buyer confirms. Wrong-side actions are refused by the database.
-  await page.locator('#serviceDate').fill(inDays(30));
-  await page.getByRole('button', { name: dl('saveDetails') }).click();
-  await expect.poll(async () => (await sql<{ d: string | null }>('select service_date::text d from public.orders where id=$1', [order.id]))[0]?.d).toBe(inDays(30));
+  // The booking terms came from the accepted quotation: they are shown on the agreement, the "add details later" form is gone and the database refuses edits.
+  await expect(page.getByTestId('booking-terms')).toContainText(dl('bookingDate'));
+  await expect(page.locator('#serviceDate')).toHaveCount(0);
+  expect((await sql<{ d: string | null; locked: boolean }>('select service_date::text d, terms_locked locked from public.orders where id=$1', [order.id]))[0]).toEqual({ d: daysAhead(21), locked: true });
+  const edit = await (await signedClient(seller.owner)).client.rpc('set_order_details', { p_order: order.id, p_service_date: inDays(30), p_deposit_note: 'changed' });
+  expect(edit.error?.message ?? '').toContain('terms_locked');
   await page.getByRole('button', { name: dl('act_start') }).click();
   await expect(page.locator('main')).toContainText(dl('os_in_progress'));
   await expect(bp.goto(`/en/orders/${order.id}`)).resolves.toBeTruthy();

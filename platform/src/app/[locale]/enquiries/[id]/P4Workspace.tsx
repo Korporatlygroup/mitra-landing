@@ -1,11 +1,12 @@
 import { randomUUID } from 'node:crypto';
 import { getFormatter, getLocale, getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
+import BookingTerms from '@/components/deals/BookingTerms';
 import QuoteDialog from '@/components/deals/QuoteDialog';
 import { Link } from '@/i18n/navigation';
 import { decodeIssueNote } from '@/lib/issue-note';
 import { formatMyt } from '@/lib/time';
-import { listDealEvents } from '@/server/services/deals';
+import { CANCELLATION_OPTIONS, listDealEvents } from '@/server/services/deals';
 import { getEnquiryWorkspace, type QuoteVersionRow } from '@/server/services/enquiries';
 import { calculateQuote } from '@/server/services/quote-calculation';
 import type { Db } from '@/server/services/result';
@@ -76,6 +77,7 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId, sel
         <ul className="qcard-lines">{lines.map((i) => <li key={i.id}><span>{i.description} · {i.quantity} {i.unit} × {amount(i.unit_price)}</span><span>{v.currency} {amount(i.line_total)}</span></li>)}</ul>
         <p className="qcard-total"><span>{d('quoteTotal')}</span><strong>{v.currency} {amount(v.total)}</strong></p>
         <p className="mut" style={{ margin: 0 }}>{d('quoteDelivery')}: {v.delivery_timing}</p>
+        <BookingTerms terms={v} headingLevel={4} />
         {v.terms_text ? <p className="mut" style={{ margin: '4px 0 0' }}>{d('quoteTerms')}: {v.terms_text}</p> : null}
         {v.exclusions ? <p className="mut" style={{ margin: '4px 0 0' }}>{d('quoteExclusions')}: {v.exclusions}</p> : null}
         {st.key === 'outdated' ? <p className="mut" style={{ margin: '6px 0 0' }}>{d('quoteOutdated')}</p> : null}
@@ -133,6 +135,20 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId, sel
         <div className="field"><label htmlFor="taxTreatment">{t('taxTreatment')}</label><input id="taxTreatment" name="taxTreatment" minLength={3} maxLength={500} required defaultValue={field(draft?.tax_treatment)} /></div>
         <div className="field"><label htmlFor="deliveryTiming">{t('deliveryTiming')}</label><input id="deliveryTiming" name="deliveryTiming" minLength={3} maxLength={500} required defaultValue={field(draft?.delivery_timing)} /></div>
         <div className="field"><label htmlFor="validUntil">{t('validUntil')}</label><input id="validUntil" type="date" name="validUntil" required defaultValue={field(draft?.valid_until).slice(0, 10)} /></div>
+        <fieldset className="booking-fields">
+          <legend>{d('termsTitle')}</legend>
+          <p className="mut">{d('termsHelp')}</p>
+          <div className="field"><label htmlFor="bookingDate">{d('bookingDate')}</label><input id="bookingDate" type="date" name="bookingDate" required defaultValue={field(draft?.booking_date)} /></div>
+          <div className="field"><label htmlFor="completionBy">{d('completionBy')}</label><input id="completionBy" type="date" name="completionBy" defaultValue={field(draft?.completion_by)} /></div>
+          <div className="field"><label htmlFor="depositTerms">{d('depositTerms')}</label><textarea id="depositTerms" name="depositTerms" minLength={3} maxLength={500} required defaultValue={field(draft?.deposit_terms)} /><small className="mut">{d('depositHint')}</small></div>
+          <div className="field"><label htmlFor="cancellationOption">{d('cancellation')}</label>
+            <select id="cancellationOption" name="cancellationOption" required defaultValue={field(draft?.cancellation_option)}>
+              <option value="" disabled>{d('cancellationChoose')}</option>
+              {CANCELLATION_OPTIONS.map((o) => <option key={o} value={o}>{d(`canc_${o}`)}</option>)}
+            </select>
+          </div>
+          <div className="field"><label htmlFor="cancellationText">{d('cancellationText')}</label><textarea id="cancellationText" name="cancellationText" maxLength={500} defaultValue={field(draft?.cancellation_text)} /></div>
+        </fieldset>
         <div className="field"><label htmlFor="terms">{t('terms')}</label><textarea id="terms" name="terms" maxLength={2000} defaultValue={field(draft?.terms)} /></div>
         <div className="field"><label htmlFor="exclusions">{t('exclusions')}</label><textarea id="exclusions" name="exclusions" maxLength={2000} defaultValue={field(draft?.exclusions)} /></div>
       </ActionForm>
@@ -142,6 +158,9 @@ export default async function P4Workspace({ db, enquiryId, side, buyerOrgId, sel
           <p className="mut" style={{ margin: '4px 0' }}>{d('previewNote')}</p>
           <p style={{ margin: '0 0 6px' }}>{field(draft.scope)}</p>
           <p className="qcard-total"><span>{d('quoteTotal')}</span><strong>MYR {preview ?? '—'}</strong></p>
+          <BookingTerms headingLevel={4} terms={{ booking_date: field(draft.booking_date) || null, completion_by: field(draft.completion_by) || null, deposit_terms: field(draft.deposit_terms) || null,
+            cancellation_option: field(draft.cancellation_option) || null, cancellation_text: field(draft.cancellation_text) || null }} />
+          {draft.booking_date ? null : <p className="message message-error" role="note">{d('termsMissing')}</p>}
           <ActionForm action={sendQuoteAction} submitLabel={t('sendQuote')}>
             <input type="hidden" name="enquiryId" value={enquiryId} /><input type="hidden" name="quotationId" value={w.quote.id} />
             <input type="hidden" name="expectedVersion" value={w.quote.version} />

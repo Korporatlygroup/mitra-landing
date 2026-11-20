@@ -454,3 +454,13 @@ input[type='file']::file-selector-button:hover { border-color: var(--brand); col
 .deals-card strong { color: var(--brand); font-size: 1.0625rem; }
 .deals-card:hover { border-color: var(--brand); }
 .deals-n { font-size: 1.75rem; font-weight: 700; line-height: 1.1; }
+
+/* Booking terms inside a quotation and on the agreement */
+.booking-terms { border-top: 1px solid var(--line); margin-top: 10px; padding-top: 8px; }
+.booking-terms h3, .booking-terms h4 { margin: 0 0 4px; font-size: 0.9375rem; }
+.booking-terms .dl { margin: 0; }
+.booking-fields { border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px 12px; margin: 12px 0; }
+.booking-fields legend { font-weight: 600; padding: 0 6px; }
+.booking-terms .dl { display: block; }
+.booking-terms dt { margin-top: 6px; }
+.booking-terms dd { margin: 0; }
