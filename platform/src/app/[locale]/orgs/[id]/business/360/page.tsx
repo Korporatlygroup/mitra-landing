@@ -324,7 +324,7 @@ export default async function Business360Page({ params }: { params: Promise<{ lo
           </section>
         </div>
 
-        <aside className="stack-x" style={{ gap: 24 }}>
+        <aside className="stack-x b360-aside" style={{ gap: 24 }}>
           <section aria-labelledby="b360-g">
             <div className="sechead">
               <h2 id="b360-g">{t('b360.nextTitle')}</h2>
