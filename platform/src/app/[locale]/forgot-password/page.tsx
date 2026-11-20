@@ -1,6 +1,7 @@
 import { getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
 import { Field } from '@/components/Field';
+import TurnstileField from '@/components/TurnstileField';
 import { Link } from '@/i18n/navigation';
 import { pageTitle } from '@/lib/metadata';
 import { forgotPasswordAction } from './actions';
@@ -19,6 +20,7 @@ export default async function ForgotPasswordPage({ params }: { params: Promise<{
       <p>{t('intro')}</p>
       <ActionForm action={forgotPasswordAction} submitLabel={t('submit')}>
         <Field id="email" name="email" type="email" label={t('email')} required autoComplete="email" inputMode="email" maxLength={254} />
+        <TurnstileField language={locale} />
       </ActionForm>
       <p>
         <Link href="/login" locale={locale}>

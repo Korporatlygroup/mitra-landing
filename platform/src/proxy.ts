@@ -3,6 +3,7 @@ import createIntlMiddleware from 'next-intl/middleware';
 import { NextRequest } from 'next/server';
 import { isOversizedNonUpload } from './lib/body-guard';
 import { buildCsp, newNonce, supabaseOriginFromEnv } from './lib/csp';
+import { TURNSTILE_ORIGIN } from './lib/turnstile';
 import { routing } from './i18n/routing';
 import { sessionCookieOptions } from './lib/supabase/config';
 
@@ -24,7 +25,7 @@ export default async function proxy(request: NextRequest) {
   }
 
   const nonce = newNonce();
-  const csp = buildCsp({ nonce, isDev: process.env.NODE_ENV === 'development', supabaseOrigin: supabaseOriginFromEnv() });
+  const csp = buildCsp({ nonce, isDev: process.env.NODE_ENV === 'development', supabaseOrigin: supabaseOriginFromEnv(), captchaOrigin: process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY ? TURNSTILE_ORIGIN : '' });
   const headers = new Headers(request.headers);
   headers.set('x-nonce', nonce);
   headers.set('content-security-policy', csp);

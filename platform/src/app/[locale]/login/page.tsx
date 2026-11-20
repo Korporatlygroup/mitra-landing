@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
+import TurnstileField from '@/components/TurnstileField';
 import { Field } from '@/components/Field';
 import { Link } from '@/i18n/navigation';
 import { safeRedirectPath } from '@/lib/safe-redirect';
@@ -38,6 +39,7 @@ export default async function LoginPage({
         <input type="hidden" name="next" value={next} />
         <Field id="email" name="email" type="email" label={t('email')} required autoComplete="email" inputMode="email" maxLength={254} />
         <Field id="password" name="password" type="password" label={t('password')} required autoComplete="current-password" maxLength={200} />
+        <TurnstileField language={locale} />
       </ActionForm>
       <p>
         <Link href="/forgot-password" locale={locale}>

@@ -1,5 +1,6 @@
 import { getTranslations } from 'next-intl/server';
 import ActionForm from '@/components/ActionForm';
+import TurnstileField from '@/components/TurnstileField';
 import { CheckField, Field, SelectField } from '@/components/Field';
 import { Link } from '@/i18n/navigation';
 import { signUpAction } from './actions';
@@ -48,6 +49,7 @@ export default async function SignUpPage({ params, searchParams }: { params: Pro
           <CheckField id="acceptTerms" name="acceptTerms" label={t('acceptTerms')} />
           <CheckField id="acceptPrivacy" name="acceptPrivacy" label={t('acceptPrivacy')} />
         </fieldset>
+        <TurnstileField language={locale} />
         <CheckField id="acceptMarketing" name="acceptMarketing" label={t('acceptMarketing')} required={false} />
         <p className="hint">{t('marketingHint')}</p>
         <p className="link-row">

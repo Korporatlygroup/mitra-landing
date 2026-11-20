@@ -4,12 +4,14 @@
  * Styles keep 'unsafe-inline': a nonce does not cover inline style="" attributes and Next/React may emit them;
  * inline styles cannot execute script, so this is an accepted, documented trade-off.
  */
-export function buildCsp(opts: { nonce: string; isDev: boolean; supabaseOrigin: string }): string {
+export function buildCsp(opts: { nonce: string; isDev: boolean; supabaseOrigin: string; captchaOrigin?: string }): string {
   const connect = ["'self'", opts.supabaseOrigin].filter(Boolean);
+  const captcha = opts.captchaOrigin ? [opts.captchaOrigin] : [];
   if (opts.isDev) connect.push('ws:', 'wss:');
   return [
     "default-src 'self'",
-    `script-src 'self' 'nonce-${opts.nonce}' 'strict-dynamic'${opts.isDev ? " 'unsafe-eval'" : ''}`,
+    `script-src 'self' 'nonce-${opts.nonce}' 'strict-dynamic'${opts.isDev ? " 'unsafe-eval'" : ''}${captcha.length ? ' ' + captcha.join(' ') : ''}`,
+    ...(captcha.length ? [`frame-src ${captcha.join(' ')}`] : []),
     "style-src 'self' 'unsafe-inline'",
     "img-src 'self' data:",
     "font-src 'self'",

@@ -7,6 +7,7 @@ import { retargetLocale, safeRedirectPath } from '@/lib/safe-redirect';
 import { localeSchema, loginSchema } from '@/lib/schemas';
 import { createClient } from '@/lib/supabase/server';
 import { LIMITS, emailThrottleKey } from '@/lib/throttle';
+import { captchaEnabled, captchaTokenFrom } from '@/lib/turnstile';
 import { authAttempt } from '@/server/privileged';
 import { getProfile, signIn } from '@/server/services/auth';
 
@@ -20,8 +21,11 @@ export async function loginAction(_prev: FormState, formData: FormData): Promise
   const allowed = await authAttempt(emailThrottleKey('login', email), LIMITS.login.max, LIMITS.login.windowSeconds);
   if (!allowed) return failure('rate_limited', { email });
 
+  const captchaToken = captchaTokenFrom(formData);
+  if (captchaEnabled() && !captchaToken) return failure('captcha_failed', { email });
+
   const supabase = await createClient();
-  const result = await signIn(supabase, email, password);
+  const result = await signIn(supabase, email, password, captchaToken);
   if (!result.ok) return failure(result.errorKey, { email });
 
   // The sign-in itself is audited by the database (trigger on auth.sessions).
