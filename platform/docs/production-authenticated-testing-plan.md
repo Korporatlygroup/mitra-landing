@@ -6,18 +6,19 @@
 | Question | Answer | Evidence |
 |---|---|---|
 | Is account creation enabled on production? | **Yes, open to anyone.** | Supabase Auth settings endpoint of `inok-production`: `disable_signup: false`, `mailer_autoconfirm: false`, email provider on. The site is public (`ACCESS_GATE` is "off", lifted by the owner on 2026-11-17). `docs/production-readiness-checklist.md` still says "Public sign-up: do not enable until you approve launch", so the checklist and the live setting disagree. |
-| Do confirmation emails work? | **Not for ordinary users, as far as can be determined.** | `docs/email-activation-plan.md`: no SMTP provider is configured and nothing was switched on. Supabase documentation: without a custom SMTP server Auth refuses to email any address that is not a member of the project's organisation team, and the built-in sender is limited to 2 messages per hour. So a stranger can submit the form but cannot receive the link. I did not test it live because that would create an account. |
-| What happens to that person? | A confusing dead end (before this branch: "Something went wrong", or "check your email" with nothing arriving). | `signUp` mapped delivery errors to a generic error. Fixed in this branch (message says confirmation emails cannot be sent yet). |
+| Do confirmation emails work? | **Configured, delivery not yet proven.** (CORRECTION 2026-11-20: an earlier version of this page said no SMTP was configured; that was based on a stale plan document.) | Read-only `supabase config diff` of `inok-production`: custom SMTP **enabled**, host `smtp.resend.com`, port 465, sender `INOK <no-reply@mail.inok.my>`; the Worker holds a `RESEND_API_KEY` secret; DNS for `mail.inok.my` has the Resend DKIM, SPF and bounce records. Earlier release notes record one controlled invitation that Supabase handed off without error but whose arrival in a mailbox was never confirmed. No end-to-end delivery has been observed. Details: `email-production-status-2026-11-20.md`. |
+| What happens to a person who signs up? | They should receive a confirmation email from no-reply@mail.inok.my; if the provider refuses (unverified domain, revoked key, outage, daily limit) the app now says so plainly (PR 32). | Unproven until a real inbox test is done. Limits that can bite: Resend Free allows 100 emails per day; Supabase Auth allows about 30 emails per hour on custom SMTP unless raised. |
 | Existing users and staff | 6 users, all confirmed; 1 staff (INOK) membership; 7 non-staff organisations; 0 published listings; 0 queued emails. | read-only counts, no personal data read |
 | Can an existing administrator provision QA accounts? | **Not from the application.** | `/admin/users` lists users and changes roles; it has no "create user" action. Accounts can be created only by sign-up (needs email), or by a person with Supabase dashboard access (Auth > Users > add user, optionally pre-confirmed). That is a production change and needs approval. |
 | Do password reset and invitations work? | Same dependency on email. Unverified. | |
 
-## 2. Safest ways to get company-controlled production QA accounts (each needs your approval)
-Ranked by safety. None has been done.
-1. **Team-address sign-up (no configuration change).** Add two company mailboxes (for example a "QA buyer" and a "QA seller") as members of the Supabase organisation team; Supabase will then deliver Auth mail to those addresses even without custom SMTP. Register them through the normal sign-up form, confirm by email. This exercises the real registration, confirmation, login and consent path. Cost: two team seats (check the plan); accounts are real users that stay in production.
-2. **Dashboard-created, pre-confirmed users.** A project owner creates the two users in the Supabase dashboard (Auth > Users) with a generated password kept in the company password manager. Fast, but does not test email, and password handling is outside the app. Use only if option 1 is not possible.
-3. **Configure custom SMTP first** (the email activation plan), then register QA accounts with `qa-buyer@` and `qa-seller@` company mailboxes. This is the proper long-term fix and also required for real users; it needs a provider, DNS records (SPF, DKIM, DMARC) and your approval.
-Any of these must follow the rules: QA accounts are labelled (display name starts with "QA"), owned by named company staff, use only synthetic business names, are never given a published listing, and are listed in a register with an owner and a removal date.
+## 2. Company-controlled QA accounts (SMTP-first route, chosen by the owner 2026-11-20; nothing created yet)
+Email is already configured through Resend (section 1), so the QA accounts can go through the **real sign-up and confirmation path**, which is the best test of registration. Plan, in order, each step needing approval before it is done:
+1. Set up inbound mail for the inok.my domain (options and exact steps in `email-production-status-2026-11-20.md`), so that two company-controlled addresses exist: `qa-buyer@inok.my` and `qa-seller@inok.my`, each forwarding to a named company mailbox.
+2. Prove delivery once with a controlled message to one company mailbox (headers must show SPF, DKIM and DMARC pass).
+3. Register the two QA accounts through the normal form (display names "QA Buyer", "QA Seller"; synthetic organisation names such as "QA Buyer Co (test)"; strong generated passwords kept in the company password manager, never in chat or the repository), confirm by email, accept the real terms.
+4. Rules: owned by named staff, listed in a QA register with a removal date, no published listing, and no agreement or order until the erasure policy exists (agreements cannot currently be erased).
+Fallbacks if email still fails: add two company mailboxes to the Supabase team, or create pre-confirmed users in the Supabase dashboard.
 
 ## 3. What can run on production without writing test data
 (Already done unless marked.)
@@ -31,7 +32,7 @@ Not possible without an account: everything behind login.
 ## 4. What must stay on the isolated local stack
 Full transaction tests with realistic seeded data (already automated, desktop and phone, three languages): registration and consents, quick start, business review by staff, directory and enquiry, messaging, quotation with booking terms, revision, acceptance, locked agreement, order progress, issue report, staff issues list, permission isolation (a stranger and another seller see nothing), sourcing, government assistance. Latest local run on the released code: 56 + 32 + 36 end-to-end tests passed (see release reports), full pgTAP passed (2493 tests).
 
-## 5. Production authenticated test plan (to run only after approval of option 1, 2 or 3)
+## 5. Production authenticated test plan (to run only after the approvals in section 2)
 Preconditions: two QA accounts, a named tester, a rollback of nothing (read-mostly), a list of every row created (so it can be removed).
 | # | Area | Steps | Expected | Writes to production |
 |---|---|---|---|---|
@@ -49,9 +50,9 @@ Preconditions: two QA accounts, a named tester, a rollback of nothing (read-most
 **Warning for steps 8 and 10:** agreements and events cannot currently be erased (the open privacy limitation), so they would remain in the production database permanently. That is a reason to prefer running steps 7 to 10 only locally until the erasure policy is implemented, and on production only steps 1 to 6 and 9 to 11 read-only, or one agreed set of QA agreements that is accepted as permanent.
 
 ## 6. What I changed to help (this branch)
-- Sign-up now shows a plain message when the confirmation email cannot be sent (unit-tested, three languages). No Supabase, auth or provider setting was changed.
+- PR 32: sign-up shows a plain message when the confirmation email cannot be sent (unit-tested, three languages). No Supabase, auth or provider setting was changed.
 
 ## 7. Decisions for you
-1. Which QA account route (1, 2 or 3), and which two company mailboxes.
-2. Whether production sign-up should stay open before email works (Supabase dashboard setting `Allow new users to sign up`, or restore the access gate). This is a production configuration change: not made.
-3. Whether to accept permanent QA agreements on production before the erasure policy exists.
+1. Approve the inbound-mail setup and the one-time delivery test (see the email document); name the company mailbox that receives the QA addresses.
+2. Whether production sign-up stays open until captcha or invitations exist (no change was made; it is open today).
+3. Whether to accept permanent QA agreements on production before the erasure policy exists (recommended: no, keep transaction tests local).

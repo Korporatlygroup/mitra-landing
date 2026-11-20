@@ -94,3 +94,14 @@ End-to-end (Playwright, desktop and phone, three languages): a buyer and a selle
 
 ## 12. Release plan (after decisions)
 Own PR and migration, local clean-database verification, backup and verified restore, production approval separately, rollback script (re-add the dropped constraints is impossible once rows hold nulls, so rollback is "stop using the new policy and redeploy"; the data-level fallback is the pre-release backup). Not scheduled.
+
+## 13. Copies outside the database (added 2026-11-20; part of the same unapproved proposal)
+Erasure in the database does not reach every copy. For each, the proposal and what management must accept:
+| Copy | Holds | Treatment proposed | Note |
+|---|---|---|---|
+| Resend (email provider, now live for Auth and notification mail) | recipient address, subject, delivery status | rely on the provider's own log retention (its pricing page lists 30 days); no INOK action | processor terms and location still to be confirmed; add to the Privacy Notice (done in the draft) |
+| Supabase backups | the whole database as of the backup | deleted data persists until the backup expires; today only manual dumps exist (see `backup-options-2026-11-20.md`); if Pro daily backups are bought, the 7-day window applies | the Privacy Notice draft proposes up to 90 days for manual backups; not approved |
+| Manual logical dumps (company machine) | personal data and password hashes | encrypt, keep two copies, destroy on the schedule | decide the schedule |
+| Cloudflare logs | request metadata incl. IP | provider retention, outside INOK control | transfer assessment pending |
+| Notification emails already sent | text of the notification (no names, prices or messages by design) | cannot be recalled | |
+The erasure confirmation sent to the person must say that backups and provider logs expire on their own schedule.

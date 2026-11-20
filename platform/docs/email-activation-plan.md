@@ -1,4 +1,4 @@
-# Production email: activation plan (prepared, nothing configured)
+# Production email: activation plan (SUPERSEDED 2026-11-20: see email-production-status-2026-11-20.md; the "nothing configured" statements below are out of date)
 
 Email is the last external dependency before public launch. Everything below is ready to switch on the day management provides the service. No DNS, provider or Supabase setting has been changed.
 

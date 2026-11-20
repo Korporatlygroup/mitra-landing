@@ -15,12 +15,12 @@ Scope: business verification, transactional email, complaint handling. Method: r
 ## 2. Transactional email
 | Item | Status | Detail |
 |---|---|---|
-| Registration confirmation and password recovery | **Needs configuration** | Handled by Supabase Auth. Production has **no custom SMTP**. Per the Supabase documentation, Auth then emails only addresses that belong to the project's organisation team, at 2 messages per hour. Ordinary users cannot receive confirmation or recovery links. Sign-up is open (`disable_signup: false`) while email confirmation is on, so a stranger meets a dead end. |
-| Application notifications (verification decisions, invitations, enquiries, quotations, reminders) | **Needs configuration** | Code is ready: `src/server/mailer.ts` (nodemailer, `SMTP_URL`, `MAIL_FROM`) and a queue (`private.notification_email_queue`, 0 rows in production) with preferences. In-app notifications work without email. Nodemailer over raw TCP is the part most likely to be fragile inside a Worker; the activation plan covers it. |
+| Registration confirmation and password recovery | **Configured, delivery unproven** | Supabase Auth on production uses custom SMTP via Resend (verified read-only; credentials not displayed). DNS for the sending subdomain `mail.inok.my` is in place. What is missing: a delivery test to a real mailbox, a DMARC reporting address, inbound mailboxes, a decision on the Resend plan limit, sign-up abuse protection. See `email-production-status-2026-11-20.md`. (Correction: an earlier version said no SMTP was configured.) |
+| Application notifications (verification decisions, invitations, enquiries, quotations, reminders) | Works in code; delivery unproven | `src/server/mailer.ts` sends through the Resend HTTPS API when `RESEND_API_KEY` exists (it does on the production Worker), otherwise SMTP; queue `private.notification_email_queue` (0 rows: no activity yet) with opt-out, retry and a 10-per-person-per-hour cap; delivered by a cron every 2 minutes. In-app notifications need no email. |
 | Templates | Gap (partial) | Confirmation, recovery and security-notice templates exist in `supabase/templates/`, **English only**; Supabase cannot pick a language without the locale stored in user metadata (not implemented). |
-| Provider, DNS (SPF, DKIM, DMARC), sender, bounce handling | **Needs configuration** | Plan in `email-activation-plan.md`: provider choice (Resend or Amazon SES), a `mail.inok.my` sending subdomain, DNS records, rate limits, real test sends to authorised mailboxes. All need your approval; DNS is a live zone. |
+| Provider, DNS (SPF, DKIM, DMARC), sender, bounce handling | Mostly done; gaps remain | Resend DKIM, SPF and bounce records exist for `mail.inok.my`; DMARC at `_dmarc.inok.my` is `p=none` with **no reporting address**; the root `inok.my` has no MX (it cannot receive mail, so no replies, support or privacy mailboxes). |
 | Sign-up when mail cannot be sent | **Fixed in this branch** | Previously "Something went wrong" or a "check your email" page with nothing arriving. Now a plain message in English, Malay and Tamil. Unit-tested; no setting changed. |
-| Decision needed now | | Either configure email, or close production sign-up (Supabase dashboard setting or the access gate) until it works. Both are production changes and were not made. |
+| Decision needed now | | Approve the delivery test and the inbound-mail setup in `email-production-status-2026-11-20.md`; decide on sign-up abuse protection before any launch campaign. Production sign-up is open today; no change was made. |
 
 ## 3. Complaint handling
 | Item | Status | Detail |
@@ -37,8 +37,8 @@ Scope: business verification, transactional email, complaint handling. Method: r
 `feature/legal-drafts-readiness`: sign-up error handling for undeliverable confirmation email (above). Reviewed and found no further safe, reproducible defect in verification, email or complaint code; the remaining items need configuration, procedures or new features (listed above and not built, as instructed).
 
 ## 5. Readiness checklist (what must be true before a real-business pilot)
-- [ ] Production email configured and tested with real mailboxes (confirmation, recovery, notification)
-- [ ] Sign-up closed or email working (no dead-end sign-ups)
+- [ ] Production email delivery proven with real mailboxes (confirmation, recovery, notification) and inbound addresses working
+- [ ] Sign-up abuse protection (captcha or invitations) before launch; today it is open
 - [ ] A second staff member (reviewer) with a second factor; a recovery owner for the Supabase and Cloudflare accounts
 - [ ] Malware scanner connected (or document verification explicitly not offered)
 - [ ] Written verification standard and fraud/complaint procedure; complaints mailbox and who reads it
