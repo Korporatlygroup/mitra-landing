@@ -175,11 +175,31 @@
     "homeFindText": "See what customers are asking for.",
     "homeDealsText": "Messages, quotations, requests and orders.",
     "homeDetailsText": "Your business in detail: readiness, checks and next steps.",
-    "homeOpen": "Open"
+    "homeOpen": "Open",
+    "termsTitle": "Booking terms",
+    "termsHelp": "Agreed before the buyer accepts. They stay on the agreement exactly as written.",
+    "bookingDate": "Service or delivery date",
+    "completionBy": "Finish by (optional)",
+    "depositTerms": "Deposit expectation",
+    "depositHint": "Write what the buyer should expect, for example \"No deposit\" or \"30% of the total before the date\". INOK does not collect or hold deposits.",
+    "cancellation": "Cancellation conditions",
+    "cancellationChoose": "Choose",
+    "cancellationText": "Your own cancellation conditions (needed if you chose Other)",
+    "canc_free_7d": "Free to cancel up to 7 days before the date",
+    "canc_deposit_kept": "Can be cancelled, but any deposit is not returned",
+    "canc_no_cancel": "No cancellation once accepted",
+    "canc_custom": "Other (write below)",
+    "termsMissing": "Add the booking date, deposit expectation and cancellation conditions, save the draft, then send.",
+    "acceptedTerms": "Accepted booking terms",
+    "termsChange": "These terms were accepted with the quotation and cannot be edited. A change needs a new quotation: cancel this agreement first if both sides agree."
   },
   "errors": {
     "order_not_open": "This agreement can no longer be changed.",
     "invalid_order_action": "That step is not available for this agreement right now.",
+    "note_required": "Please add a short note.",
+    "terms_required": "Add the booking date, deposit expectation and cancellation conditions before sending.",
+    "invalid_terms": "Check the deposit and cancellation conditions.",
+    "terms_locked": "These terms were accepted and cannot be changed here. Ask for a new quotation instead.",
     "note_required": "Please add a short note."
   },
   "dir2": {

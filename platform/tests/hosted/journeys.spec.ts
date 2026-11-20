@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { fillBookingTerms } from '../e2e/support/deals-ui';
 import { msg } from '../e2e/support/i18n';
 import { account, gotoWithMfa, guardStaging, lit, loginUi, remoteRows, remoteSql, run } from './support';
 
@@ -42,6 +43,7 @@ test('quotation: seller replies and quotes, buyer asks for a change, seller revi
     await sp.locator('#unitPrice1').fill('12.50');
     await sp.locator('#validUntil').fill(inDays(7));
     await sp.locator('#deliveryTiming').fill('Within three weeks');
+    await fillBookingTerms(sp);
     await sp.locator('#taxTreatment').fill('Tax included as stated');
     await sp.getByRole('button', { name: t('p4.saveDraft') }).click();
   };

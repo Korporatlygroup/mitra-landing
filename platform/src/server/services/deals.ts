@@ -7,13 +7,16 @@ export interface OrderRow {
   id: string; reference: string; enquiry_id: string; quotation_id: string; quote_version_id: string; buyer_org_id: string; seller_org_id: string;
   currency: string; total: string; scope_text: string; items: { description: string; quantity: string; unit: string; unit_price: string; line_total: string }[];
   delivery_timing: string; terms_text: string | null; exclusions: string | null; service_date: string | null; deposit_note: string | null;
+  completion_by: string | null; cancellation_option: CancellationOption | null; cancellation_text: string | null; terms_locked: boolean;
   status: OrderStatus; version: number; created_at: string; updated_at: string;
 }
+export type CancellationOption = 'free_7d' | 'deposit_kept' | 'no_cancel' | 'custom';
+export const CANCELLATION_OPTIONS: readonly CancellationOption[] = ['free_7d', 'deposit_kept', 'no_cancel', 'custom'];
 export interface DealEventRow {
   id: string; enquiry_id: string; order_id: string | null; kind: string; actor_org_id: string | null; ref_id: string | null; note: string | null; created_at: string;
 }
 
-const ORDER_COLUMNS = 'id,reference,enquiry_id,quotation_id,quote_version_id,buyer_org_id,seller_org_id,currency,total,scope_text,items,delivery_timing,terms_text,exclusions,service_date,deposit_note,status,version,created_at,updated_at';
+const ORDER_COLUMNS = 'id,reference,enquiry_id,quotation_id,quote_version_id,buyer_org_id,seller_org_id,currency,total,scope_text,items,delivery_timing,terms_text,exclusions,service_date,deposit_note,completion_by,cancellation_option,cancellation_text,terms_locked,status,version,created_at,updated_at';
 
 /** Row-level security limits every read to the two organisations in the enquiry. */
 export async function getOrder(db: Db, id: string): Promise<OrderRow | null> {

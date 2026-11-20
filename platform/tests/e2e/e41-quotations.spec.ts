@@ -3,7 +3,7 @@ import { createBusinessOwner } from './support/biz';
 import { createOrgAs, createUser, signedClient, sql } from './support/db';
 import { msg } from './support/i18n';
 import { adminLogin, freshContext, loginUi, logoutUi } from './support/ui';
-import { dl, openPanelSection, openQuoteEditor, requestChanges } from './support/deals-ui';
+import { dl, fillBookingTerms, openPanelSection, openQuoteEditor, requestChanges } from './support/deals-ui';
 
 const t = (key: string) => msg('en', key);
 const inDays = (n: number) => new Date(Date.now() + n * 86_400_000).toISOString().slice(0, 10);
@@ -35,6 +35,7 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await page.locator('#unitPrice1').fill('12.50');
   await page.locator('#validUntil').fill(inDays(7));
   await page.locator('#deliveryTiming').fill('Within three weeks');
+  await fillBookingTerms(page);
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();
   await expect(page.locator('body')).toContainText('MYR 1250.00');
@@ -58,6 +59,7 @@ test('E41 buyer and seller negotiate a quote, select the latest version and trac
   await page.locator('#unitPrice1').fill('12.50');
   await page.locator('#validUntil').fill(inDays(7));
   await page.locator('#deliveryTiming').fill('Within three weeks');
+  await fillBookingTerms(page);
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();
   await page.getByRole('button', { name: t('p4.sendQuote') }).click();

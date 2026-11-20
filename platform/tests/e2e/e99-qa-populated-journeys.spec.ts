@@ -4,7 +4,7 @@ import { tb } from './support/p5-buyer';
 import { actorGoto, call, createAdmin } from './support/p5-admin';
 import { sql } from './support/db';
 import { msg } from './support/i18n';
-import { dl, openPanelSection, openQuoteEditor } from './support/deals-ui';
+import { dl, fillBookingTerms, openPanelSection, openQuoteEditor } from './support/deals-ui';
 import { freshContext, loginUi } from './support/ui';
 import { seedDemo, type DemoData } from './support/demo-seed';
 import { ENABLED, WIDTHS_ALL, shot } from './support/qa-evidence';
@@ -134,6 +134,7 @@ test('J4 buyer and seller conversation: enquiry, messages, quotation, acceptance
   await page.locator('#unitPrice1').fill('3.20');
   await page.locator('#validUntil').fill(inDays(14));
   await page.locator('#deliveryTiming').fill('Within ten working days');
+  await fillBookingTerms(page);
   await page.locator('#taxTreatment').fill('Tax included as stated');
   await shot(page, { role: 'seller', journey: J, step: '08-seller-creates-quotation', title: 'Seller prepares the quotation', expected: 'Quotation form with scope, line item, validity, delivery', observed: 'Form filled', widths: WIDTHS_ALL });
   await page.getByRole('button', { name: t('p4.saveDraft') }).click();
