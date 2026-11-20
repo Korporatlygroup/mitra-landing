@@ -19,6 +19,7 @@ export const complaints: LegalDocument = {
             'maklumat program kerajaan yang salah atau lapuk;',
             'permintaan membetulkan penyenaraian anda sendiri;',
             'pertikaian dengan penjual atau pembeli yang anda temui di INOK.',
+            'masalah dengan perjanjian yang dibuat di INOK: kerja tidak dihantar, tidak seperti dipersetujui, atau pihak lain tidak hadir.',
           ],
         },
       ],
@@ -35,6 +36,7 @@ export const complaints: LegalDocument = {
               ['Aduan privasi atau permintaan data', 'Akaun saya, "Permintaan data anda", atau e-mel ke {privacyEmail}.'],
               ['Perkara lain, termasuk penipuan dan pertikaian', 'E-mel ke {supportEmail} dengan alamat halaman, nama yang terlibat dan apa yang berlaku. Jangan hantar imej kad pengenalan atau butiran bank.'],
               ['Maklumat program kerajaan yang salah', 'E-mel ke {supportEmail} dengan nama program dan sumber rasmi yang betul.'],
+              ['Masalah dengan perjanjian (pesanan)', 'Pembeli: buka perjanjian dan pilih "Laporkan isu" semasa kerja sedang dijalankan atau menunggu pengesahan anda. Pilih sebab dan terangkan apa yang berlaku. Penjual dimaklumkan dan kakitangan INOK yang diberi kuasa boleh melihat laporan.'],
             ],
           },
         },
@@ -46,6 +48,7 @@ export const complaints: LegalDocument = {
       title: '3. Apa berlaku seterusnya',
       blocks: [
         { p: 'Kami merekod laporan anda, menyemaknya berbanding apa yang kami lihat di platform dan boleh meminta maklumat daripada kedua-dua pihak. Laporan tentang penyenaraian dan produk disemak oleh kakitangan INOK yang mempunyai kebenaran sewajarnya. Kami boleh menyembunyikan atau menggantung kandungan atau akaun semasa menyiasat, meminta penjual membetulkan penyenaraian, menarik balik pengesahan, atau membuang kandungan atau akaun. Kami memberitahu anda hasilnya jika boleh. Kami tidak sentiasa dapat berkongsi butiran tindakan terhadap pengguna lain.' },
+        { p: 'Laporan isu pada perjanjian muncul dalam senarai baca sahaja untuk kakitangan INOK yang diberi kuasa. Buat masa ini platform tidak mempunyai aliran penyelesaian, fungsi bayaran balik atau pelepasan, dan tiada tarikh akhir balasan automatik untuk laporan ini. Pihak pengurusan perlu mengesahkan siapa yang menjawab dan dalam tempoh berapa sebelum penerbitan.' },
       ],
     },
     {

@@ -19,6 +19,7 @@ export const complaints: LegalDocument = {
             'wrong or out-of-date government programme information;',
             'a request to correct your own listing;',
             'a dispute with a seller or buyer you met on INOK.',
+            'a problem with an agreement made on INOK: work not delivered, not as agreed, or the other side did not turn up.',
           ],
         },
       ],
@@ -35,6 +36,7 @@ export const complaints: LegalDocument = {
               ['A privacy complaint or data request', 'My account, "Your data requests", or email {privacyEmail}.'],
               ['Anything else, including fraud and disputes', 'Email {supportEmail} with the page address, the names involved and what happened. Do not send identity-card images or bank details.'],
               ['Wrong government programme information', 'Email {supportEmail} with the programme name and the correct official source.'],
+              ['A problem with an agreement (order)', 'Buyers: open the agreement and choose "Report an issue" while the work is in progress or waiting for your confirmation. Choose the reason and describe what happened. The seller is told and authorised INOK staff can see the report.'],
             ],
           },
         },
@@ -46,6 +48,7 @@ export const complaints: LegalDocument = {
       title: '3. What happens next',
       blocks: [
         { p: 'We record your report, check it against what we can see on the platform and may ask both sides for information. Reports about listings and products are reviewed by INOK staff with the right permission. We may hide or suspend content or an account while we look into it, ask a seller to correct a listing, withdraw verification, or remove the content or the account. We tell you the outcome where we can. We cannot always share details about action against another user.' },
+        { p: 'Issue reports on agreements appear in a read-only list for authorised INOK staff. At present the platform has no resolution workflow, no refund or release function and no automatic reply deadline for these reports. Management to confirm who answers them and within what time before publication.' },
       ],
     },
     {
