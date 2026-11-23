@@ -31,7 +31,10 @@ export async function submitSignUp(
   await page.locator('#displayName').fill(o.name);
   await page.locator('#email').fill(o.email);
   await page.locator('#password').fill(o.password);
-  if (o.language) await page.locator('#language').selectOption(o.language);
+  if (o.language) {
+    await page.locator('.signup-more > summary').click(); // the language choice sits in a collapsed row
+    await page.locator('#language').selectOption(o.language);
+  }
   await page.locator('#acceptTerms').check();
   await page.locator('#acceptPrivacy').check();
   await page.locator('main form button[type=submit]').click();

@@ -1,0 +1,216 @@
+{
+ "tag": "mwskyun0",
+ "project": "mobile",
+ "businesses": [
+  {
+   "key": "B1",
+   "name": "Kedai Katering Lestari",
+   "kind": "seller",
+   "lang": "ms"
+  },
+  {
+   "key": "B2",
+   "name": "Ahmad Cetak Digital",
+   "kind": "seller",
+   "lang": "en"
+  },
+  {
+   "key": "B3",
+   "name": "Mohan Tailoring and Textiles",
+   "kind": "seller",
+   "lang": "ta"
+  },
+  {
+   "key": "B4",
+   "name": "Siti Dekorasi Majlis",
+   "kind": "seller",
+   "lang": "ms"
+  },
+  {
+   "key": "B5",
+   "name": "Sri Murugan Sweets and Snacks",
+   "kind": "seller",
+   "lang": "ta"
+  },
+  {
+   "key": "B6",
+   "name": "Wei Packaging Supplies",
+   "kind": "both",
+   "lang": "en"
+  },
+  {
+   "key": "B7",
+   "name": "Priya Boutique",
+   "kind": "buyer",
+   "lang": "en"
+  },
+  {
+   "key": "B8",
+   "name": "Kumar Cafe and Bistro",
+   "kind": "buyer",
+   "lang": "en"
+  },
+  {
+   "key": "B9",
+   "name": "Fatimah Online Store",
+   "kind": "buyer",
+   "lang": "ms"
+  },
+  {
+   "key": "B10",
+   "name": "Raju Logistics Services",
+   "kind": "both",
+   "lang": "en"
+  }
+ ],
+ "steps": [
+  {
+   "step": "B1 Kedai Katering Lestari: sign up in ms, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B2 Ahmad Cetak Digital: sign up in en, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B3 Mohan Tailoring and Textiles: sign up in ta, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B4 Siti Dekorasi Majlis: sign up in ms, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B5 Sri Murugan Sweets and Snacks: sign up in ta, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B6 Wei Packaging Supplies: sign up in en, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B7 Priya Boutique: sign up in en, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B8 Kumar Cafe and Bistro: sign up in en, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B9 Fatimah Online Store: sign up in ms, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B10 Raju Logistics Services: sign up in en, confirm email, create organisation",
+   "ok": true
+  },
+  {
+   "step": "B1: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B2: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B3: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B4: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B5: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B6: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B10: three-step quick start, sent for review",
+   "ok": true
+  },
+  {
+   "step": "B1: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "B2: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "B3: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "B4: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "B5: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "B6: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "B10: INOK staff approve the listing",
+   "ok": true
+  },
+  {
+   "step": "directory: every approved business is found by a visitor, nothing else is listed",
+   "ok": true
+  },
+  {
+   "step": "T1 Kumar Cafe orders catering from Kedai Katering Lestari (revision, then complete)",
+   "ok": true
+  },
+  {
+   "step": "T2 Priya Boutique orders uniforms from Mohan Tailoring (not delivered, issue reported)",
+   "ok": true
+  },
+  {
+   "step": "T3 Fatimah Online Store orders boxes from Wei Packaging (cancelled before work starts)",
+   "ok": true
+  },
+  {
+   "step": "T4 Wei Packaging (as buyer) asks Ahmad Cetak Digital for flyers (declined)",
+   "ok": true
+  },
+  {
+   "step": "T5 Raju Logistics (as buyer) asks Ahmad Cetak Digital for banners (conversation only)",
+   "ok": true
+  },
+  {
+   "step": "T6 Kumar Cafe orders festival snack boxes from Sri Murugan Sweets (complete)",
+   "ok": true
+  },
+  {
+   "step": "T7 Priya Boutique orders event decoration from Siti Dekorasi (complete)",
+   "ok": true
+  },
+  {
+   "step": "staff see exactly the one reported issue (read-only) and nothing about money",
+   "ok": true
+  },
+  {
+   "step": "the seller of the reported issue was told; others had no issue notification",
+   "ok": true
+  },
+  {
+   "step": "privacy: nobody can open another pair's conversation or agreement; strangers and visitors are turned away",
+   "ok": true
+  },
+  {
+   "step": "each business home and deals pages show only its own activity, in its own language, with no raw keys and no sideways scroll",
+   "ok": true
+  },
+  {
+   "step": "agreement totals and locked terms match what each buyer accepted",
+   "ok": true
+  }
+ ]
+}
